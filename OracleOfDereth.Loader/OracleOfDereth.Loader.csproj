@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OutputPath>..\bin\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>10</LangVersion>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <RootNamespace>OracleOfDereth</RootNamespace>
+    <AssemblyName>OracleOfDereth.Loader</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="LoaderCore.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Decal.Adapter">
+      <HintPath>.\..\deps\Decal.Adapter.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Decal.Interop.Core, Version=2.9.8.2, Culture=neutral, PublicKeyToken=481f17d392f1fb65, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>.\..\deps\Decal.Interop.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+</Project>

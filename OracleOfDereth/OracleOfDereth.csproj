@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <OutputPath>..\bin\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <Version>1.0.0</Version>
+    <LangVersion>12</LangVersion>
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <ProjectGuid>976132b4-57ba-470c-9117-55514470a866</ProjectGuid>
+    <RootNamespace>OracleOfDereth</RootNamespace>
+    <AssemblyName>OracleOfDereth</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);VVS_REFERENCED</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);VVS_REFERENCED</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="PluginCore.cs" />
+    <Content Include="README.md" />
+    <Content Include="scripts\installer.nsi" />
+    <Content Include="scripts\post-build.ps1" />
+    <Content Include="deps\Decal.Adapter.dll" />
+    <Content Include="deps\Decal.Interop.Core.dll" />
+	<Content Include="deps\VirindiViewService.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Decal.Adapter">
+      <HintPath>..\deps\Decal.Adapter.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="VirindiViewService">
+      <HintPath>..\deps\VirindiViewService.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NSIS-Tool" Version="3.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="powershell -ExecutionPolicy RemoteSigned -NoProfile &quot;$(ProjectDir)scripts\post-build.ps1&quot; -NuGetPackageRoot &quot;$(NuGetPackageRoot)&quot; -ProjectDir &quot;$(ProjectDir)&quot;" />
+  </Target>
+</Project>
