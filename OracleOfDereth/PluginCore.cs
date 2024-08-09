@@ -58,11 +58,37 @@ namespace OracleOfDereth
                 // subscribe to CharacterFilter_LoginComplete event, make sure to unscribe later.
                 // note: if the plugin was reloaded while ingame, this event will never trigger on the newly reloaded instance.
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete;
+                
+                // Commands
+                CoreManager.Current.CommandLineText += new EventHandler<ChatParserInterceptEventArgs>(Current_CommandLineText);
 
                 // this adds text to the chatbox. it's output is local only, other players do not see this.
                 CoreManager.Current.Actions.AddChatText($"OracleOfDereth Startup. Hotreload? {isHotReload}", 1);
 
                 //ui = new ExampleUI();
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+            }
+        }
+
+        /// <summary>
+        /// Called when your plugin is unloaded. Either when logging out, closing the client, or hot reloading.
+        /// </summary>
+        protected override void Shutdown()
+        {
+            try
+            {
+                // make sure to unsubscribe from any events we were subscribed to. Not doing so
+                // can cause the old plugin to stay loaded between hot reloads.
+                CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
+
+                // Commands
+                CoreManager.Current.CommandLineText -= new EventHandler<ChatParserInterceptEventArgs>(Current_CommandLineText);
+
+                // clean up our ui view
+                // ui.Dispose();
             }
             catch (Exception ex)
             {
@@ -86,30 +112,34 @@ namespace OracleOfDereth
             {
                 CoreManager.Current.Actions.AddChatText($"This is my new decal plugin. CharacterFilter_LoginComplete SIS", 1);
             }
-            catch (Exception ex)
-            {
-                Log(ex);
-            }
+            catch (Exception ex) { Log(ex); }
         }
 
-        /// <summary>
-        /// Called when your plugin is unloaded. Either when logging out, closing the client, or hot reloading.
-        /// </summary>
-        protected override void Shutdown()
+        void Current_CommandLineText(object sender, ChatParserInterceptEventArgs e)
         {
             try
             {
-                // make sure to unsubscribe from any events we were subscribed to. Not doing so
-                // can cause the old plugin to stay loaded between hot reloads.
-                CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
+                if (e.Text == null)
+                    return;
 
-                // clean up our ui view
-                // ui.Dispose();
+                if (ProcessTextCommand(e.Text))
+                    e.Eat = true;
             }
-            catch (Exception ex)
+            catch (Exception ex) { Log(ex); }
+        }
+
+        public bool ProcessTextCommand(string text)
+        {
+            string command = text.ToLower().Trim();
+
+            if (command == "/od" || command == "/ood")
             {
-                Log(ex);
+                Version version = Assembly.GetExecutingAssembly().GetName().Version;
+                CoreManager.Current.Actions.AddChatText($"Oracle of Dereth v{version}", 1);
+                return true;
             }
+
+            return false;
         }
 
         #region logging
