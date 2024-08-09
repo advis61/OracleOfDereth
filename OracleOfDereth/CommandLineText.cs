@@ -23,6 +23,12 @@ namespace OracleOfDereth
                 return true;
             }
 
+            if (command == "/od exception")
+            {
+                CoreManager.Current.Actions.AddChatText($"Oracle of Dereth EXCEPTION", 1);
+                throw new InvalidOperationException("An error occurred.");
+            }
+
             return false;
         }
     }
