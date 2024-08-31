@@ -20,6 +20,9 @@
     <DefineConstants>$(DefineConstants);VVS_REFERENCED</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="mainView.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="PluginCore.cs" />
     <Content Include="README.md" />
     <Content Include="scripts\installer.nsi" />
@@ -27,6 +30,9 @@
     <Content Include="deps\Decal.Adapter.dll" />
     <Content Include="deps\Decal.Interop.Core.dll" />
 	<Content Include="deps\VirindiViewService.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="mainView.xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Decal.Adapter">
