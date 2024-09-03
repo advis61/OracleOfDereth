@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0"?>
-<view icon="8712" title="Oracle Of Dereth" width="320" height="450">
+<view icon="8712" title="Oracle Of Dereth" width="640" height="450">
   <control progid="DecalControls.Notebook">
     
     <page label="Buttons and Text">
       <control progid="DecalControls.FixedLayout" clipped="">
         <control progid="DecalControls.StaticText" name="VersionLabel" left="215" top="370" width="200" height="18" text="Version "/>
-		<control progid="DecalControls.StaticText" name="SummoningLabel" left="215" top="350" width="200" height="18" text="Summoning Label "/>
+		<control progid="DecalControls.StaticText" name="SummoningLabel" left="0" top="350" width="640" height="18" text="Summoning Label "/>
 	  </control>
     </page>
     
