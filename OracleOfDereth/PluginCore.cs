@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
+using WindowsTimer = System.Windows.Forms.Timer;
 using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using MyClasses.MetaViewWrappers;
@@ -49,8 +50,10 @@ namespace OracleOfDereth
             }
         }
 
+        private WindowsTimer timer;
+
         // Views, depends on VirindiViewService.dll
-        MainView mainView;
+        private MainView mainView;
 
         /// <summary>
         /// Called when your plugin is first loaded.
@@ -105,6 +108,21 @@ namespace OracleOfDereth
             didInit = true;
 
             mainView = new MainView();
+
+            // Initialize 1second update timer
+            timer = new WindowsTimer();
+            timer.Tick += new EventHandler(Tick);
+            timer.Interval = 1000; // 1 second
+            timer.Start();
+        }
+
+        private void Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                mainView.Update();
+            }
+            catch (Exception ex) { Debug.Log(ex); }
         }
 
         /// <summary>
@@ -119,6 +137,15 @@ namespace OracleOfDereth
 
                 // Cleanup Events
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
+
+                // Shutdown timer
+                if (timer != null)
+                {
+                    timer.Stop();
+                    timer.Tick -= Tick;
+                    timer.Dispose();
+                    timer = null;
+                }
 
                 // Dispose all views
                 mainView?.Dispose();

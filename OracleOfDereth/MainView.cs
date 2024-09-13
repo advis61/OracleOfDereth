@@ -41,13 +41,13 @@ namespace OracleOfDereth
             catch (Exception ex) { Debug.Log(ex); }
         }
 
-        private void Update()
+        public void Update()
         {
             VersionLabel.Text = $"{DateTime.Now:HH:mm:ss}";
             
             // Summoning
             Skill summoning = new Skill(CharFilterSkillType.Summoning);
-            SummoningLabel.Text = "Current " + summoning.Current().ToString() + "Vitae " + summoning.Vitae().ToString();
+            SummoningLabel.Text = "Current " + summoning.Current().ToString() + "Vitae " + summoning.Vitae().ToString() + "Vitae Minus " + summoning.VitaeMissing().ToString();
         }
 
         private void Update2()
