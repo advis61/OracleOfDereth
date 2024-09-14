@@ -1,13 +1,24 @@
 ﻿<?xml version="1.0"?>
-<view icon="8712" title="Oracle Of Dereth" width="640" height="450">
+<view icon="8894" title="Oracle Of Dereth" width="640" height="450">
   <control progid="DecalControls.Notebook">
     
     <page label="Buttons and Text">
       <control progid="DecalControls.FixedLayout" clipped="">
+		<control progid="DecalControls.StaticText" name="BuffsLabel" left="0" top="0" width="640" height="350" text="Buffs "/>
         <control progid="DecalControls.StaticText" name="VersionLabel" left="215" top="370" width="200" height="18" text="Version "/>
 		<control progid="DecalControls.StaticText" name="SummoningLabel" left="0" top="350" width="640" height="18" text="Summoning Label "/>
 	  </control>
     </page>
+
+	<page label="List Box">
+		<control progid="DecalControls.FixedLayout" clipped="">
+			  <control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="380">
+				  <column progid="DecalControls.IconColumn" name="BuffsIcon" fixedwidth="16" />
+				  <column progid="DecalControls.TextColumn" name="BuffsName" fixedwidth="310" />
+				  <column progid="DecalControls.TextColumn" name="BuffsTime" fixedwidth="300" />
+			  </control>
+		  </control>
+	  </page>
     
   </control>
 </view>

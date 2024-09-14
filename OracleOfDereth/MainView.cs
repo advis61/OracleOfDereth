@@ -8,6 +8,7 @@ using VirindiViewService.Controls;
 
 using Decal.Adapter;
 using Decal.Adapter.Wrappers;
+using Decal.Filters;
 
 namespace OracleOfDereth
 {
@@ -19,6 +20,8 @@ namespace OracleOfDereth
 
         public HudStaticText SummoningLabel { get; private set; }
         public HudStaticText VersionLabel { get; private set; }
+        public HudStaticText BuffsLabel { get; private set; }
+        public HudList BuffsList { get; private set; }
 
         public MainView()
         {
@@ -35,6 +38,8 @@ namespace OracleOfDereth
                 // Assign the views objects to our local variables
                 SummoningLabel = (HudStaticText)view["SummoningLabel"];
                 VersionLabel = (HudStaticText)view["VersionLabel"];
+                BuffsLabel = (HudStaticText)view["BuffsLabel"];
+                BuffsList = (HudList)view["BuffsList"];
 
                 Update();
             }
@@ -44,10 +49,63 @@ namespace OracleOfDereth
         public void Update()
         {
             VersionLabel.Text = $"{DateTime.Now:HH:mm:ss}";
+
+            BuffsLabel.Text = "Something\nOther\nThen";
             
             // Summoning
             Skill summoning = new Skill(CharFilterSkillType.Summoning);
             SummoningLabel.Text = "Current " + summoning.Current().ToString() + "Vitae " + summoning.Vitae().ToString() + "Vitae Minus " + summoning.VitaeMissing().ToString();
+
+            //foreach (WorldObject worldObject in Globals.Core.WorldFilter.GetByContainer(Globals.Core.CharacterFilter.Id))
+
+            // List view
+            FileService service = CoreManager.Current.Filter<FileService>();
+
+            BuffsList.ClearRows();
+
+            foreach (EnchantmentWrapper enchantment in CoreManager.Current.CharacterFilter.Enchantments)
+            {
+                if (enchantment.Duration > 0) {
+                    HudList.HudListRowAccessor row = BuffsList.AddRow();
+
+                    Spell buff = service.SpellTable.GetById(enchantment.SpellId);
+
+                    ((HudPictureBox)row[0]).Image = buff.IconId;
+                    ((HudStaticText)row[1]).Text = buff.Name;
+                    ((HudStaticText)row[2]).Text = enchantment.TimeRemaining.ToString();
+                }
+            }
+
+            //HudList.HudListRowAccessor newRow = mainView.ManaList.AddRow();
+
+            //((HudPictureBox)newRow[0]).Image = wo.Icon + 0x6000000;
+            //((HudStaticText)newRow[1]).Text = wo.Name;
+            //((HudStaticText)newRow[5]).Text = obj.Id.ToString(CultureInfo.InvariantCulture);
+
+            //{
+            //    if (obj.ItemState == EquipmentTrackedItemState.Active)
+            //        ((HudPictureBox)mainView.ManaList[row - 1][2]).Image = IconActive;
+            //    else if (obj.ItemState == EquipmentTrackedItemState.NotActive)
+            //        ((HudPictureBox)mainView.ManaList[row - 1][2]).Image = IconNotActive;
+            //    else if (obj.ItemState == EquipmentTrackedItemState.Unknown)
+            //        ((HudPictureBox)mainView.ManaList[row - 1][2]).Image = IconUnknown;
+            //    else
+            //        ((HudPictureBox)mainView.ManaList[row - 1][2]).Image = IconNone;
+
+            //    if (obj.ItemState != EquipmentTrackedItemState.Active && obj.ItemState != EquipmentTrackedItemState.NotActive)
+            //    {
+            //        ((HudStaticText)mainView.ManaList[row - 1][3]).Text = "-";
+            //        ((HudStaticText)mainView.ManaList[row - 1][4]).Text = "-";
+            //        ((HudStaticText)mainView.ManaList[row - 1][6]).Text = int.MaxValue.ToString(CultureInfo.InvariantCulture);
+            //    }
+            //    else
+            //    {
+            //        ((HudStaticText)mainView.ManaList[row - 1][3]).Text = obj.CalculatedCurrentMana + " / " + obj.MaximumMana;
+            //        ((HudStaticText)mainView.ManaList[row - 1][4]).Text = string.Format("{0:d}h{1:d2}m", (int)obj.ManaTimeRemaining.TotalHours, obj.ManaTimeRemaining.Minutes);
+            //        ((HudStaticText)mainView.ManaList[row - 1][6]).Text = obj.ManaTimeRemaining.TotalSeconds.ToString(CultureInfo.InvariantCulture);
+            //    }
+
+
         }
 
         private void Update2()
