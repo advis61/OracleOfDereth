@@ -9,6 +9,8 @@ using VirindiViewService.Controls;
 using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Decal.Filters;
+using VirindiViewService;
+using System.Security.Authentication.ExtendedProtection.Configuration;
 
 namespace OracleOfDereth
 {
@@ -18,9 +20,11 @@ namespace OracleOfDereth
         readonly VirindiViewService.ControlGroup controls;
         readonly VirindiViewService.HudView view;
 
-        public HudStaticText SummoningLabel { get; private set; }
-        public HudStaticText VersionLabel { get; private set; }
-        public HudStaticText BuffsLabel { get; private set; }
+        public HudStaticText SummoningText { get; private set; }
+        public HudStaticText LockpickText { get; private set; }
+        public HudStaticText LifeText { get; private set; }
+        public HudStaticText BuffsText { get; private set; }
+        public HudStaticText BeersText { get; private set; }
         public HudList BuffsList { get; private set; }
 
         public MainView()
@@ -36,9 +40,11 @@ namespace OracleOfDereth
                 if (view == null) { return; }
 
                 // Assign the views objects to our local variables
-                SummoningLabel = (HudStaticText)view["SummoningLabel"];
-                VersionLabel = (HudStaticText)view["VersionLabel"];
-                BuffsLabel = (HudStaticText)view["BuffsLabel"];
+                SummoningText = (HudStaticText)view["SummoningText"];
+                LockpickText = (HudStaticText)view["LockpickText"];
+                LifeText = (HudStaticText)view["LifeText"];
+                BuffsText = (HudStaticText)view["BuffsText"];
+                BeersText = (HudStaticText)view["BeersText"];
                 BuffsList = (HudList)view["BuffsList"];
 
                 Update();
@@ -48,13 +54,115 @@ namespace OracleOfDereth
 
         public void Update()
         {
-            VersionLabel.Text = $"{DateTime.Now:HH:mm:ss}";
+            UpdateSummoning();
+            UpdateLockpick();
+            UpdateLife();
+            UpdateBuffs();
+            UpdateBeers();
+            UpdateBuffsList();
+        }
 
-            BuffsLabel.Text = "Something\nOther\nThen";
+        private void UpdateSummoning()
+        {
+            Skill skill = new Skill(CharFilterSkillType.Summoning);
+            SummoningText.Text = skill.Current().ToString();
+        }
+        private void UpdateLockpick()
+        {
+            Skill skill = new Skill(CharFilterSkillType.Lockpick);
+            LockpickText.Text = skill.Current().ToString();
+        }
+
+        private void UpdateLife()
+        {
+            Skill skill = new Skill(CharFilterSkillType.LifeMagic);
+            LifeText.Text = skill.Current().ToString();
+        }
+
+        private void UpdateBuffs()
+        {
+            FileService service = CoreManager.Current.Filter<FileService>();
+
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
+                .Where(x => x.Duration > 30)
+                .Where(x => !BeerSpellIds.Contains(x.SpellId))
+                .Where(x => !ExcludeSpellIds.Contains(x.SpellId))
+                .Where(x => !service.SpellTable.GetById(x.SpellId).IsDebuff)
+                .ToList();
+           
+            if (enchantments.Count == 0)
+            {
+                BuffsText.Text = "MISSING";
+                return;
+            }
+
+            double duration = enchantments.Min(x => x.TimeRemaining);
+
+            // Convert to TimeSpan
+            TimeSpan time = TimeSpan.FromSeconds(duration);
+
+            // Format as H:M:S
+            BuffsText.Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds) + " (" + enchantments.Count().ToString() + ")";
+        }
+
+        private static readonly List<int> BeerSpellIds = new List<int> { 3531, 3533, 3862, 3864, 3530, 3863 };
+
+        private static readonly List<int> ExcludeSpellIds = new List<int> {
+            4024, // Asheron's Lesser Benediction
+            3811  // Blackmoor's Favour
+         };
+
+        private void UpdateBeers()
+        {
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => BeerSpellIds.Contains(x.SpellId)).ToList();
+
+            if (enchantments.Count == 0) { 
+                BeersText.Text = "-";
+                return;
+            }
+
+            double duration = enchantments.Min(x => x.TimeRemaining);
+
+            // Convert to TimeSpan
+            TimeSpan time = TimeSpan.FromSeconds(duration);
+
+            // Format as H:M:S
+            BeersText.Text = string.Format("{0:D2}:{1:D2}", time.Minutes, time.Seconds);
+        }
+
+        private void UpdateBuffsList()
+        {
+
+            // List view
+            FileService service = CoreManager.Current.Filter<FileService>();
+
+            BuffsList.ClearRows();
+
+            foreach (EnchantmentWrapper enchantment in CoreManager.Current.CharacterFilter.Enchantments)
+            {
+                if (enchantment.Duration > 0)
+                {
+                    HudList.HudListRowAccessor row = BuffsList.AddRow();
+
+                    Spell spell = service.SpellTable.GetById(enchantment.SpellId);
+
+                    ((HudPictureBox)row[0]).Image = spell.IconId;
+                    ((HudStaticText)row[1]).Text = enchantment.SpellId.ToString();
+                    ((HudStaticText)row[2]).Text = spell.Name;
+                    ((HudStaticText)row[3]).Text = enchantment.TimeRemaining.ToString();
+                }
+            }
+        }
+
+        public void Update3()
+        {
+            LockpickText.Text = $"{DateTime.Now:HH:mm:ss}";
+
+            LifeText.Text = "Something\nOther\nThen";
             
             // Summoning
             Skill summoning = new Skill(CharFilterSkillType.Summoning);
-            SummoningLabel.Text = "Current " + summoning.Current().ToString() + "Vitae " + summoning.Vitae().ToString() + "Vitae Minus " + summoning.VitaeMissing().ToString();
+            SummoningText.Text = "Current " + summoning.Current().ToString() + "Vitae " + summoning.Vitae().ToString() + "Vitae Minus " + summoning.VitaeMissing().ToString();
 
             //foreach (WorldObject worldObject in Globals.Core.WorldFilter.GetByContainer(Globals.Core.CharacterFilter.Id))
 
@@ -72,7 +180,8 @@ namespace OracleOfDereth
 
                     ((HudPictureBox)row[0]).Image = buff.IconId;
                     ((HudStaticText)row[1]).Text = buff.Name;
-                    ((HudStaticText)row[2]).Text = enchantment.TimeRemaining.ToString();
+                    ((HudStaticText)row[2]).Text = buff.Description;
+                    ((HudStaticText)row[3]).Text = enchantment.TimeRemaining.ToString();
                 }
             }
 
@@ -110,10 +219,10 @@ namespace OracleOfDereth
 
         private void Update2()
         {
-            VersionLabel.Text = $"{DateTime.Now:HH:mm:ss}";
+            LockpickText.Text = $"{DateTime.Now:HH:mm:ss}";
 
-            VersionLabel.Text = $"{DateTime.Now:HH:mm:ss}";
-            SummoningLabel.Text = "Oh man";
+            LockpickText.Text = $"{DateTime.Now:HH:mm:ss}";
+            SummoningText.Text = "Oh man";
 
             // Summoning
             // https://gitlab.com/utilitybelt/utilitybelt.scripting/-/blob/master/Interop/Skill.cs?ref_type=heads#L106
@@ -147,7 +256,7 @@ namespace OracleOfDereth
             // Consider Luminance worlds?
             // Consider Enlightens?
 
-            SummoningLabel.Text = "Base " + summoning + ", Bonus " + bonus + ", Buffed " + buffed + ", Effective " + effective;
+            SummoningText.Text = "Base " + summoning + ", Bonus " + bonus + ", Buffed " + buffed + ", Effective " + effective;
 
             // This is how you'd do it in UtilityBelt LUA script I think:
             //game.Character.Weenie.Skills[SkillId.Summoning].Current

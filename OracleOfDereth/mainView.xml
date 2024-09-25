@@ -1,24 +1,38 @@
 ﻿<?xml version="1.0"?>
-<view icon="8894" title="Oracle Of Dereth" width="640" height="450">
+<view icon="8894" title="Oracle Of Dereth" width="310" height="360">
   <control progid="DecalControls.Notebook">
     
-    <page label="Buttons and Text">
+    <page label="Status">
       <control progid="DecalControls.FixedLayout" clipped="">
-		<control progid="DecalControls.StaticText" name="BuffsLabel" left="0" top="0" width="640" height="350" text="Buffs "/>
-        <control progid="DecalControls.StaticText" name="VersionLabel" left="215" top="370" width="200" height="18" text="Version "/>
-		<control progid="DecalControls.StaticText" name="SummoningLabel" left="0" top="350" width="640" height="18" text="Summoning Label "/>
+		  <control progid="DecalControls.StaticText" name="SummoningLabel" left="10" top="10" width="100" height="18" text="Summoning"/>
+		  <control progid="DecalControls.StaticText" name="SummoningText" left="10" top="28" width="100" height="18" text="123"/>
+		  <control progid="DecalControls.StaticText" name="LockpickLabel" left="110" top="10" width="100" height="18" text="Lockpick"/>
+		  <control progid="DecalControls.StaticText" name="LockpickText" left="110" top="28" width="100" height="18" text="123" />
+		  <control progid="DecalControls.StaticText" name="LifeLabel" left="210" top="10" width="100" height="18" text="Life"/>
+		  <control progid="DecalControls.StaticText" name="LifeText" left="210" top="28" width="100" height="18" text="123" />
+
+		  <control progid="DecalControls.StaticText" name="BuffsLabel" left="10" top="60" width="100" height="18" text="Buffs"/>
+		  <control progid="DecalControls.StaticText" name="BuffsText" left="10" top="78" width="100" height="18" text="2:30:40"/>
+		  <control progid="DecalControls.StaticText" name="BeersLabel" left="110" top="60" width="100" height="18" text="Beers"/>
+		  <control progid="DecalControls.StaticText" name="BeersText" left="110" top="78" width="100" height="18" text="28:34" />
 	  </control>
     </page>
 
-	<page label="List Box">
+	<page label="Buffs">
 		<control progid="DecalControls.FixedLayout" clipped="">
 			  <control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="380">
-				  <column progid="DecalControls.IconColumn" name="BuffsIcon" fixedwidth="16" />
-				  <column progid="DecalControls.TextColumn" name="BuffsName" fixedwidth="310" />
-				  <column progid="DecalControls.TextColumn" name="BuffsTime" fixedwidth="300" />
+				  <column progid="DecalControls.IconColumn" name="BuffIcon" fixedwidth="16" />
+				  <column progid="DecalControls.TextColumn" name="BuffId" fixedwidth="50" />
+				  <column progid="DecalControls.TextColumn" name="BuffName" fixedwidth="210" />
+				  <column progid="DecalControls.TextColumn" name="BuffTime" fixedwidth="200" />
 			  </control>
 		  </control>
 	  </page>
+	<page label="About">
+		  <control progid="DecalControls.FixedLayout" clipped="">
+			  <control progid="DecalControls.StaticText" name="About" left="0" top="0" width="640" height="350" text="Oracle of Dereth made by Advis Eveldan of Levistras. Enjoy!"/>
+		  </control>
+ </page>
     
   </control>
 </view>
