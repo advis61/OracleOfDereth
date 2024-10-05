@@ -220,10 +220,10 @@ namespace OracleOfDereth
 
                 BuffsList = (HudList)view["BuffsList"];
 
-                BuffsText.FontHeight = 8;
-                BeersText.FontHeight = 8;
-                HouseText.FontHeight = 8;
-                PagesText.FontHeight = 8;
+                BuffsText.FontHeight = 10;
+                BeersText.FontHeight = 10;
+                HouseText.FontHeight = 10;
+                PagesText.FontHeight = 10;
 
                 SummoningText.FontHeight = 10;
                 LockpickText.FontHeight = 10;
@@ -268,7 +268,38 @@ namespace OracleOfDereth
         private void UpdateLockpick()
         {
             Skill skill = new Skill(CharFilterSkillType.Lockpick);
-            if (skill.IsKnown()) { LockpickText.Text = skill.Current().ToString(); }
+
+            if (skill.IsKnown()) {
+                int value = skill.Current();
+                int vr1 = 0;
+                int vr2 = 0;
+
+                if (value >= 575)
+                {
+                    vr1 = 3;
+                    vr2 = 10;
+                } else if (value >= 570) {
+                    vr1 = 4;
+                    vr2 = 11;
+                } else if (value >= 565) {
+                    vr1 = 5;
+                    vr2 = 12;
+                } else if (value >= 550) {
+                    vr1 = 6;
+                    vr2 = 13;
+                } else if (value >= 525) {
+                    vr1 = 6;
+                    vr2 = 14;
+                } else if (value >= 500) {
+                    vr1 = 7;
+                    vr2 = 15;
+                } else {
+                    vr1 = 10;
+                    vr2 = 20;
+                }
+
+                LockpickText.Text = skill.Current().ToString() + " (VR " + vr1 + "/" + vr2 + ")";
+            }
         }
 
         private void UpdateLife()
@@ -327,7 +358,7 @@ namespace OracleOfDereth
             double duration = enchantments.Min(x => x.TimeRemaining);
             TimeSpan time = TimeSpan.FromSeconds(duration);
 
-            HouseText.Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
+            HouseText.Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds) + " (" + enchantments.Count().ToString() + ")";
         }
 
         private void UpdateBeers()
@@ -342,7 +373,7 @@ namespace OracleOfDereth
             double duration = enchantments.Min(x => x.TimeRemaining);
             TimeSpan time = TimeSpan.FromSeconds(duration);
 
-            BeersText.Text = string.Format("{0:D2}:{1:D2}", time.Minutes, time.Seconds);
+            BeersText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
 
         private void UpdatePages()
@@ -358,7 +389,7 @@ namespace OracleOfDereth
             double duration = enchantments.Min(x => x.TimeRemaining);
             TimeSpan time = TimeSpan.FromSeconds(duration);
 
-            PagesText.Text = string.Format("{0:D2}:{1:D2}", time.Minutes, time.Seconds);
+            PagesText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
 
         private void UpdateRare()
@@ -378,9 +409,9 @@ namespace OracleOfDereth
 
             if (cooldown > 0)
             {
-                RareText.Text = string.Format("{0:D2}:{1:D2}", time.Minutes, time.Seconds) + " " + cooldown;
+                RareText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds) + " (" + enchantments.Count().ToString() + ") " + cooldown.ToString() + "s";
             } else {
-                RareText.Text = string.Format("{0:D2}:{1:D2}", time.Minutes, time.Seconds);
+                RareText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds) + " (" + enchantments.Count().ToString() + ")";
             }
         }
 
@@ -397,7 +428,7 @@ namespace OracleOfDereth
             double duration = enchantments.Min(x => x.TimeRemaining);
             TimeSpan time = TimeSpan.FromSeconds(duration);
 
-            DestructionText.Text = string.Format(":{0:D2}", time.Seconds);
+            DestructionText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
 
         private void UpdateRegen()
@@ -413,7 +444,7 @@ namespace OracleOfDereth
             double duration = enchantments.Min(x => x.TimeRemaining);
             TimeSpan time = TimeSpan.FromSeconds(duration);
 
-            RegenText.Text = string.Format(":{0:D2}", time.Seconds);
+            RegenText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
 
         private void UpdateProtection()
@@ -429,7 +460,7 @@ namespace OracleOfDereth
             double duration = enchantments.Min(x => x.TimeRemaining);
             TimeSpan time = TimeSpan.FromSeconds(duration);
 
-            ProtectionText.Text = string.Format(":{0:D2}", time.Seconds);
+            ProtectionText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
 
         private void UpdateBuffsList()
