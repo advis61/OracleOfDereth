@@ -25,6 +25,7 @@ namespace OracleOfDereth
         public HudStaticText LifeText { get; private set; }
         public HudStaticText BuffsText { get; private set; }
         public HudStaticText BeersText { get; private set; }
+        public HudStaticText HouseText { get; private set; }
         public HudList BuffsList { get; private set; }
 
         public MainView()
@@ -45,6 +46,7 @@ namespace OracleOfDereth
                 LifeText = (HudStaticText)view["LifeText"];
                 BuffsText = (HudStaticText)view["BuffsText"];
                 BeersText = (HudStaticText)view["BeersText"];
+                HouseText = (HudStaticText)view["HouseText"];
                 BuffsList = (HudList)view["BuffsList"];
 
                 Update();
@@ -59,6 +61,7 @@ namespace OracleOfDereth
             UpdateLife();
             UpdateBuffs();
             UpdateBeers();
+            UpdateHouse();
             UpdateBuffsList();
         }
 
@@ -89,7 +92,7 @@ namespace OracleOfDereth
                 .Where(x => !ExcludeSpellIds.Contains(x.SpellId))
                 .Where(x => !service.SpellTable.GetById(x.SpellId).IsDebuff)
                 .ToList();
-           
+
             if (enchantments.Count == 0)
             {
                 BuffsText.Text = "MISSING";
@@ -105,11 +108,41 @@ namespace OracleOfDereth
             BuffsText.Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds) + " (" + enchantments.Count().ToString() + ")";
         }
 
-        private static readonly List<int> BeerSpellIds = new List<int> { 3531, 3533, 3862, 3864, 3530, 3863 };
+        private static readonly List<int> BeerSpellIds = new List<int> { 
+            3531, 
+            3533, 
+            3862, 
+            3864, 
+            3530, 
+            3863 
+        };
+
+        private static readonly List<int> HouseSpellIds = new List<int>
+        {
+            3896, // Dark Equilibrium
+            3894, // Dark Persistence
+            3897, // Dark Purpose
+            3895, // Dark Reflexes
+
+            6146, // Ride the Lightning
+            4099, // Strength of Diemos
+            4025, // Iron Cast Stomach
+            3243, // Consencration
+            3244, // Divine Manipulation
+            3245, // Sacrosanct Touch
+            3237, // Fanaticism
+            3831, // Blessing of the Pitcher Plant
+            3830, // Blessing of the Fly Trap
+            2995, // Power of the Dragon
+            2993, // Grace of the Unicorn
+            2997, // Splendor of the Firebird
+            3829,  // Blessing of the Sundew
+        };
 
         private static readonly List<int> ExcludeSpellIds = new List<int> {
             4024, // Asheron's Lesser Benediction
-            3811  // Blackmoor's Favour
+            3811, // Blackmoor's Favour
+            3869, // Incantation of the Black Book (Pages of Salt and Ash)
          };
 
         private void UpdateBeers()
@@ -128,6 +161,25 @@ namespace OracleOfDereth
 
             // Format as H:M:S
             BeersText.Text = string.Format("{0:D2}:{1:D2}", time.Minutes, time.Seconds);
+        }
+
+        private void UpdateHouse()
+        {
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => HouseSpellIds.Contains(x.SpellId)).ToList();
+
+            if (enchantments.Count == 0)
+            {
+                HouseText.Text = "-";
+                return;
+            }
+
+            double duration = enchantments.Min(x => x.TimeRemaining);
+
+            // Convert to TimeSpan
+            TimeSpan time = TimeSpan.FromSeconds(duration);
+
+            // Format as H:M:S
+            HouseText.Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds) + " (" + enchantments.Count().ToString() + ")";
         }
 
         private void UpdateBuffsList()
