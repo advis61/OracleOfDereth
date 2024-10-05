@@ -1,28 +1,41 @@
 ﻿<?xml version="1.0"?>
-<view icon="8894" title="Oracle Of Dereth" width="310" height="360">
+<view icon="8894" title="Oracle Of Dereth" width="280" height="200">
   <control progid="DecalControls.Notebook">
     
     <page label="Status">
       <control progid="DecalControls.FixedLayout" clipped="">
-		  <control progid="DecalControls.StaticText" name="SummoningLabel" left="10" top="10" width="100" height="18" text="Summoning"/>
-		  <control progid="DecalControls.StaticText" name="SummoningText" left="10" top="28" width="100" height="18" text="-"/>
-		  <control progid="DecalControls.StaticText" name="LockpickLabel" left="110" top="10" width="100" height="18" text="Lockpick"/>
-		  <control progid="DecalControls.StaticText" name="LockpickText" left="110" top="28" width="100" height="18" text="-" />
-		  <control progid="DecalControls.StaticText" name="LifeLabel" left="210" top="10" width="100" height="18" text="Life"/>
-		  <control progid="DecalControls.StaticText" name="LifeText" left="210" top="28" width="100" height="18" text="-" />
+		  <control progid="DecalControls.StaticText" name="BuffsLabel" left="5" top="5" width="100" height="20" text="Buffs"/>
+		  <control progid="DecalControls.StaticText" name="BuffsText" left="5" top="25" width="100" height="20" text="-"/>
+		  <control progid="DecalControls.StaticText" name="HouseLabel" left="90" top="5" width="100" height="20" text="House"/>
+		  <control progid="DecalControls.StaticText" name="HouseText" left="90" top="25" width="100" height="20" text="-" />
+		  <control progid="DecalControls.StaticText" name="BeersLabel" left="160" top="5" width="100" height="20" text="Beers"/>
+		  <control progid="DecalControls.StaticText" name="BeersText" left="160" top="25" width="100" height="20" text="-" />
+		  <control progid="DecalControls.StaticText" name="PagesLabel" left="230" top="5" width="100" height="20" text="Pages"/>
+		  <control progid="DecalControls.StaticText" name="PagesText" left="230" top="25" width="100" height="20" text="-"/>
 
-		  <control progid="DecalControls.StaticText" name="BuffsLabel" left="10" top="60" width="100" height="18" text="Buffs"/>
-		  <control progid="DecalControls.StaticText" name="BuffsText" left="10" top="78" width="100" height="18" text="-"/>
-		  <control progid="DecalControls.StaticText" name="HouseLabel" left="110" top="60" width="100" height="18" text="House"/>
-		  <control progid="DecalControls.StaticText" name="HouseText" left="110" top="78" width="100" height="18" text="-" />
-		  <control progid="DecalControls.StaticText" name="BeersLabel" left="210" top="60" width="100" height="18" text="Beers"/>
-		  <control progid="DecalControls.StaticText" name="BeersText" left="210" top="78" width="100" height="18" text="-" />
+		  <control progid="DecalControls.StaticText" name="LockpickLabel" left="5" top="50" width="100" height="20" text="Lockpick"/>
+		  <control progid="DecalControls.StaticText" name="LockpickText" left="5" top="70" width="100" height="20" text="-" />
+		  <control progid="DecalControls.StaticText" name="SummoningLabel" left="90" top="50" width="100" height="20" text="Summon"/>
+		  <control progid="DecalControls.StaticText" name="SummoningText" left="90" top="70" width="100" height="20" text="-"/>
+		  <control progid="DecalControls.StaticText" name="LifeLabel" left="160" top="50" width="100" height="20" text="Life"/>
+		  <control progid="DecalControls.StaticText" name="LifeText" left="160" top="70" width="100" height="20" text="-" />
+		  <control progid="DecalControls.StaticText" name="MeleeDLabel" left="230" top="50" width="100" height="20" text="Melee"/>
+		  <control progid="DecalControls.StaticText" name="MeleeDText" left="230" top="70" width="100" height="20" text="-" />
+
+		  <control progid="DecalControls.StaticText" name="RareLabel" left="5" top="100" width="100" height="20" text="Rare" />
+		  <control progid="DecalControls.StaticText" name="RareText" left="5" top="120" width="100" height="20" text="-" />
+		  <control progid="DecalControls.StaticText" name="DestructionLabel" left="90" top="100" width="100" height="20" text="Dest"/>
+		  <control progid="DecalControls.StaticText" name="DestructionText" left="90" top="120" width="100" height="20" text="-" />
+		  <control progid="DecalControls.StaticText" name="RegenLabel" left="160" top="100" width="100" height="20" text="Regen"/>
+		  <control progid="DecalControls.StaticText" name="RegenText" left="160" top="120" width="100" height="20" text="-" />
+		  <control progid="DecalControls.StaticText" name="ProtectionLabel" left="230" top="100" width="100" height="20" text="Prot"/>
+		  <control progid="DecalControls.StaticText" name="ProtectionText" left="230" top="120" width="100" height="20" text="-" />
 	  </control>
     </page>
 
 	<page label="Buffs">
 		<control progid="DecalControls.FixedLayout" clipped="">
-			  <control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="380">
+			  <control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="590">
 				  <column progid="DecalControls.IconColumn" name="BuffIcon" fixedwidth="16" />
 				  <column progid="DecalControls.TextColumn" name="BuffId" fixedwidth="50" />
 				  <column progid="DecalControls.TextColumn" name="BuffName" fixedwidth="210" />

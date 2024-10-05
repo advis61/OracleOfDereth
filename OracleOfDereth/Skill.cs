@@ -19,6 +19,12 @@ namespace OracleOfDereth
         {
             SkillType = skillType;
         }
+
+        public bool IsKnown()
+        {
+            return IsSpecialized() || IsTrained();
+        }
+
         public bool IsSpecialized()
         {
             return CoreManager.Current.CharacterFilter.Skills[SkillType].Training == TrainingType.Specialized;
@@ -33,49 +39,78 @@ namespace OracleOfDereth
             return CoreManager.Current.CharacterFilter.Skills[SkillType].Training == TrainingType.Untrained;
         }
 
-            //public virtual int Current
-            //{
-            //    get
-            //    {
-            //        // logic from ACE
-            //        var effectiveBase = (int)(InitLevel + PointsRaised);
-            //        if (Training > SkillTrainingType.Unusable && Formula.UseFormula)
-            //        {
-            //            var attrBonus = _weenie.Attributes[Formula.Attribute1].Current;
-            //            if (Formula.Attribute2 != 0)
-            //            {
-            //                attrBonus += _weenie.Attributes[Formula.Attribute2].Current;
-            //            }
+        public bool IsUnusable()
+        {
+            return CoreManager.Current.CharacterFilter.Skills[SkillType].Training == TrainingType.Unusable;
+        }
 
-            //            effectiveBase += (int)Math.Round(((float)attrBonus / Formula.Divisor));
-            //        }
+        // Summoning
+        // https://gitlab.com/utilitybelt/utilitybelt.scripting/-/blob/master/Interop/Skill.cs?ref_type=heads#L106
+        //string stam = CoreManager.Current.CharacterFilter.Vitals[CharFilterVitalType.Stamina].Base.ToString();
 
-            //        effectiveBase += _weenie.Value(IntId.LumAugAllSkills);
+        //string summoning = CoreManager.Current.CharacterFilter.EffectiveSkill[CharFilterSkillType.Summoning].ToString();
+        //string summoning = CoreManager.Current.CharacterFilter.Skills[CharFilterSkillType.Summoning].Buffed.ToString();
+        //string summoning = CoreManager.Current.CharacterFilter.Skills[CharFilterSkillType.Summoning].Current.ToString();
+        //string summoning = CoreManager.Current.CharacterFilter.EffectiveSkill[CharFilterSkillType.Summoning].ToString();
 
-            //        if (MeleeSkills.Contains(Type))
-            //            effectiveBase += _weenie.Value(IntId.AugmentationSkilledMelee) * 10;
-            //        else if (MissileSkills.Contains(Type))
-            //            effectiveBase += _weenie.Value(IntId.AugmentationSkilledMissile) * 10;
-            //        else if (MagicSkills.Contains(Type))
-            //            effectiveBase += _weenie.Value(IntId.AugmentationSkilledMagic) * 10;
+        // "413"
+        //string summoning = CoreManager.Current.CharacterFilter.Skills[CharFilterSkillType.Summoning].Base.ToString();
 
-            //        var multiplier = _characterState.GetEnchantmentsMultiplierModifier(Type);
-            //        var fTotal = effectiveBase * multiplier;
+        // "Specialized"
+        //string training = CoreManager.Current.CharacterFilter.Skills[CharFilterSkillType.Summoning].Training.ToString();
 
-            //        if (_characterState.Vitae < 1.0f)
-            //        {
-            //            fTotal *= _characterState.Vitae;
-            //        }
+        // "10" - Not sure where this 10 is coming from
+        //string bonus = CoreManager.Current.CharacterFilter.Skills[CharFilterSkillType.Summoning].Bonus.ToString();
 
-            //        fTotal += _weenie.Value(IntId.AugmentationJackOfAllTrades) * 5;
+        // "546"
+        //string buffed = CoreManager.Current.CharacterFilter.Skills[CharFilterSkillType.Summoning].Buffed.ToString();
 
-            //        if (Training == SkillTrainingType.Specialized)
-            //            fTotal += _weenie.Value(IntId.LumAugSkilledSpec) * 2;
+        // "546"
+        //string effective = CoreManager.Current.CharacterFilter.EffectiveSkill[CharFilterSkillType.Summoning].ToString();
 
-            //        var additives = _characterState.GetEnchantmentsAdditiveModifier(Type);
-            //        return (int)Math.Max(Math.Round(fTotal + additives), 0);
-            //    }
-            //}
+        //public virtual int Current
+        //{
+        //    get
+        //    {
+        //        // logic from ACE
+        //        var effectiveBase = (int)(InitLevel + PointsRaised);
+        //        if (Training > SkillTrainingType.Unusable && Formula.UseFormula)
+        //        {
+        //            var attrBonus = _weenie.Attributes[Formula.Attribute1].Current;
+        //            if (Formula.Attribute2 != 0)
+        //            {
+        //                attrBonus += _weenie.Attributes[Formula.Attribute2].Current;
+        //            }
+
+        //            effectiveBase += (int)Math.Round(((float)attrBonus / Formula.Divisor));
+        //        }
+
+        //        effectiveBase += _weenie.Value(IntId.LumAugAllSkills);
+
+        //        if (MeleeSkills.Contains(Type))
+        //            effectiveBase += _weenie.Value(IntId.AugmentationSkilledMelee) * 10;
+        //        else if (MissileSkills.Contains(Type))
+        //            effectiveBase += _weenie.Value(IntId.AugmentationSkilledMissile) * 10;
+        //        else if (MagicSkills.Contains(Type))
+        //            effectiveBase += _weenie.Value(IntId.AugmentationSkilledMagic) * 10;
+
+        //        var multiplier = _characterState.GetEnchantmentsMultiplierModifier(Type);
+        //        var fTotal = effectiveBase * multiplier;
+
+        //        if (_characterState.Vitae < 1.0f)
+        //        {
+        //            fTotal *= _characterState.Vitae;
+        //        }
+
+        //        fTotal += _weenie.Value(IntId.AugmentationJackOfAllTrades) * 5;
+
+        //        if (Training == SkillTrainingType.Specialized)
+        //            fTotal += _weenie.Value(IntId.LumAugSkilledSpec) * 2;
+
+        //        var additives = _characterState.GetEnchantmentsAdditiveModifier(Type);
+        //        return (int)Math.Max(Math.Round(fTotal + additives), 0);
+        //    }
+        //}
 
         public int Current()
         {
