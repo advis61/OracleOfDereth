@@ -140,10 +140,6 @@ namespace OracleOfDereth
             5912, // Spectral Dirty Fighting Mastery
         };
 
-        private static readonly List<int> ExcludeSpellIds = new List<int> {
-            // None
-        };
-
         private static readonly List<int> HouseSpellIds = new List<int>
         {
             3896, // Dark Equilibrium
@@ -215,10 +211,10 @@ namespace OracleOfDereth
 
                 RareText = (HudStaticText)view["RareText"];
                 DestructionText = (HudStaticText)view["DestructionText"];
+
                 RegenText = (HudStaticText)view["RegenText"];
                 ProtectionText = (HudStaticText)view["ProtectionText"];
-
-                BuffsList = (HudList)view["BuffsList"];
+                //BuffsList = (HudList)view["BuffsList"];
 
                 BuffsText.FontHeight = 10;
                 BeersText.FontHeight = 10;
@@ -254,10 +250,10 @@ namespace OracleOfDereth
 
             UpdateRare();
             UpdateDestruction();
+
             UpdateRegen();
             UpdateProtection();
-
-            UpdateBuffsList();
+            //UpdateBuffsList();
         }
 
         private void UpdateSummoning()
@@ -318,15 +314,7 @@ namespace OracleOfDereth
             FileService service = CoreManager.Current.Filter<FileService>();
 
             List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
-                .Where(x => x.Duration > 30)
-                .Where(x => !BeerSpellIds.Contains(x.SpellId))
-                .Where(x => !HouseSpellIds.Contains(x.SpellId))
-                .Where(x => !PagesSpellIds.Contains(x.SpellId))
-                .Where(x => !RareSpellIds.Contains(x.SpellId))
-                .Where(x => !DestructionSpellIds.Contains(x.SpellId))
-                .Where(x => !RegenSpellIds.Contains(x.SpellId))
-                .Where(x => !ProtectionSpellIds.Contains(x.SpellId))
-                .Where(x => !ExcludeSpellIds.Contains(x.SpellId))
+                .Where(x => x.Duration > 900)
                 .Where(x => {
                     var spell = service.SpellTable.GetById(x.SpellId);
                     return spell != null && !spell.IsDebuff && spell.IsUntargetted;

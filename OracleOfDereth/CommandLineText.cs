@@ -32,31 +32,4 @@ namespace OracleOfDereth
             return false;
         }
     }
-
-    //class Command : IDisposable
-    //{
-    //    readonly PluginHost host;
-    //    private bool disposed;
-
-    //    public Command(PluginHost host)
-    //    {
-    //        this.host = host;
-    //    }
-
-    //    public void Dispose()
-    //    {
-    //        Dispose(true);
-    //        GC.SuppressFinalize(this);
-    //    }
-
-    //    protected virtual void Dispose(bool disposing)
-    //    {
-    //        if (disposed || !disposing) { return; }
-
-    //        CoreManager.Current.Actions.AddChatText($"Disposing Command Class", 1);
-
-    //        // Indicate that the instance has been disposed.
-    //        disposed = true;
-    //    }
-    //}
 }
