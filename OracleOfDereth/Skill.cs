@@ -117,6 +117,10 @@ namespace OracleOfDereth
             int value = CoreManager.Current.CharacterFilter.EffectiveSkill[SkillType];
 
             // TODO: Melee / Missile / Magic augs
+            if(SkillType == CharFilterSkillType.LifeMagic)
+            {
+                value += CoreManager.Current.CharacterFilter.GetCharProperty((int)Augmentations.MasterFiveFoldPath) * 10;
+            }
 
             // Worlds
             value += CoreManager.Current.CharacterFilter.GetCharProperty((int)Augmentations.AuraWorld);
