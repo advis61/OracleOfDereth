@@ -294,7 +294,11 @@ namespace OracleOfDereth
                     vr2 = 20;
                 }
 
-                LockpickText.Text = skill.Current().ToString() + " (VR " + vr1 + "/" + vr2 + ")";
+                if (value >= 500) {
+                    LockpickText.Text = skill.Current().ToString() + " (VR " + vr1 + "/" + vr2 + ")";
+                } else {
+                    LockpickText.Text = skill.Current().ToString();
+                }
             }
         }
 
@@ -315,6 +319,7 @@ namespace OracleOfDereth
 
             List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
                 .Where(x => x.Duration > 900)
+                .Where(x => x.TimeRemaining > 0)
                 .Where(x => {
                     var spell = service.SpellTable.GetById(x.SpellId);
                     return spell != null && !spell.IsDebuff && spell.IsUntargetted;
@@ -335,7 +340,10 @@ namespace OracleOfDereth
 
         private void UpdateHouse()
         {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => HouseSpellIds.Contains(x.SpellId)).ToList();
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
+                .Where(x => HouseSpellIds.Contains(x.SpellId))
+                .Where(x => x.TimeRemaining > 0)
+                .ToList();
 
             if (enchantments.Count == 0)
             {
