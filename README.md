@@ -21,7 +21,7 @@ This plugin is just a HUD with no configuration available.
 
 It will:
 
-- Display the time remaining on your Buffs, House Buffs, Beers, Pages.
+- Display the time remaining on your Buffs, House Buffs, Beers, Pages and Rares.
 - Display your current Lockpick, Life, MeleeD and Summon skill.
 - Display how many Viridian Essences are required to complete a Viridian Rise level at your current lockpick skill.
 - Display your Destruction, Protection and Regen aetheria procs.
