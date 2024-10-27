@@ -1,6 +1,6 @@
 ﻿# Oracle Of Dereth
 
-An Asheron's Call [Decal](https://decaldev.com/) v2.9.8.3 plugin that builds against .NET Framework 4.8 and uses VirindiViewService.
+An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) v2.9.8.3 plugin that builds against .NET Framework 4.8 and uses VirindiViewService.
 
 ![Oracle of Dereth](./docs/OracleOfDereth.png)
 
@@ -35,4 +35,4 @@ MIT
 
 ## Contact
 
-Please reach out to Advis Eveldan on the Levistras server Discord with any feedback or bugs
+Please reach out to Advis Eveldan on the [Levistras Discord](https://discord.gg/VwbWHskR) with any feedback or bugs
