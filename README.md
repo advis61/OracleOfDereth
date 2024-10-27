@@ -15,7 +15,7 @@ An Asheron's Call [Decal](https://decaldev.com/) v2.9.8.3 plugin that builds aga
 
 - It should now appear in the Decal list of plugins. You're all done!
 
-## Oracle of Dereth
+## Usage
 
 This plugin is just a HUD with no configuration available.
 
