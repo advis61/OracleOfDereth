@@ -5,7 +5,7 @@ An Asheron's Call [Decal](https://decaldev.com/) v2.9.8.3 plugin that builds aga
 ![Oracle of Dereth](./docs/OracleOfDereth.png)
 
 ## Getting Started
-- You must be running the latest Decal, v2.9.8.3. It will fail to register in previous versions.
+- This plugin requires the latest Decal, v2.9.8.3. It will fail to register in previous versions.
 
 - Download the latest OracleOfDereth.dll from the [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases) page.
 
@@ -13,7 +13,7 @@ An Asheron's Call [Decal](https://decaldev.com/) v2.9.8.3 plugin that builds aga
 
 - Open the Decal windows program, Click Add, Browse, and select this file.
 
-- That's it!
+- It should now appear in the Decal list of plugins. You're all done!
 
 ## Oracle of Dereth
 
@@ -23,7 +23,7 @@ It will:
 
 - Display the time remaining on your Buffs, House Buffs, Beers, Pages.
 - Display your current Lockpick, Life, MeleeD and Summon skill.
-- Display how many viridian essences are required to complete a VR level at your current lockpick skill.
+- Display how many Viridian Essences are required to complete a Viridian Rise level at your current lockpick skill.
 - Display your Destruction, Protection and Regen aetheria procs.
 
 Type `/ood` to print the version number.
