@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,6 +12,12 @@ using WindowsTimer = System.Windows.Forms.Timer;
 using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using MyClasses.MetaViewWrappers;
+
+[assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
+
+// Remember to update installer.nsi to match
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 
 namespace OracleOfDereth
 {
