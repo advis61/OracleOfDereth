@@ -214,7 +214,6 @@ namespace OracleOfDereth
 
                 RegenText = (HudStaticText)view["RegenText"];
                 ProtectionText = (HudStaticText)view["ProtectionText"];
-                //BuffsList = (HudList)view["BuffsList"];
 
                 BuffsText.FontHeight = 10;
                 BeersText.FontHeight = 10;
@@ -230,6 +229,10 @@ namespace OracleOfDereth
                 DestructionText.FontHeight = 10;
                 RegenText.FontHeight = 10;
                 ProtectionText.FontHeight = 10;
+
+                // BuffsList
+                BuffsList = (HudList)view["BuffsList"];
+                BuffsList.ClearRows();
 
                 Update();
             }
@@ -253,7 +256,7 @@ namespace OracleOfDereth
 
             UpdateRegen();
             UpdateProtection();
-            //UpdateBuffsList();
+            UpdateBuffsList();
         }
 
         private void UpdateSummoning()
@@ -361,7 +364,7 @@ namespace OracleOfDereth
         {
             List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => BeerSpellIds.Contains(x.SpellId)).ToList();
 
-            if (enchantments.Count == 0) { 
+            if (enchantments.Count == 0) {
                 BeersText.Text = "-";
                 return;
             }
@@ -459,9 +462,60 @@ namespace OracleOfDereth
             ProtectionText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
 
+        int BuffsListCount = 0;
+
         private void UpdateBuffsList()
         {
+            FileService service = CoreManager.Current.Filter<FileService>();
 
+            // Get all buffs with a duration
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
+                .Where(x => x.Duration > 0)
+                .Where(x => x.TimeRemaining > 0)
+                .Where(x =>
+                {
+                    var spell = service.SpellTable.GetById(x.SpellId);
+                    return spell != null;
+                })
+                .OrderBy(x => x.TimeRemaining)
+                .ToList();
+
+            // Go through all buffs and remove any rows that no longer exist
+            for (int x = 0; x < enchantments.Count(); x++)
+            {
+                HudList.HudListRowAccessor row;
+
+                if (x >= BuffsListCount) {
+                    Debug.Log($"Adding row {x}");
+                    row = BuffsList.AddRow();
+                    BuffsListCount += 1;
+                } else {
+                    Debug.Log($"Using row {x}");
+                    row = BuffsList[x];
+                }
+
+                EnchantmentWrapper enchantment = enchantments[x];
+                Spell spell = service.SpellTable.GetById(enchantment.SpellId);
+
+                double duration = enchantment.TimeRemaining;
+                TimeSpan time = TimeSpan.FromSeconds(duration);
+
+                ((HudPictureBox)row[0]).Image = spell.IconId;
+                ((HudStaticText)row[1]).Text = enchantment.SpellId.ToString();
+                ((HudStaticText)row[2]).Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
+                ((HudStaticText)row[3]).Text = spell.Name;
+            }
+
+            while(BuffsListCount > enchantments.Count())
+            {
+                BuffsListCount -= 1;
+                BuffsList.RemoveRow(BuffsListCount);
+            }
+        }
+
+        private void UpdateBuffsListOld()
+        {
+            // Adja's lessing 2215
             // List view
             FileService service = CoreManager.Current.Filter<FileService>();
 
@@ -474,12 +528,15 @@ namespace OracleOfDereth
                     Spell spell = service.SpellTable.GetById(enchantment.SpellId);
                     if (spell == null) { continue; }
 
+                    double duration = enchantment.TimeRemaining;
+                    TimeSpan time = TimeSpan.FromSeconds(duration);
+
                     HudList.HudListRowAccessor row = BuffsList.AddRow();
 
                     ((HudPictureBox)row[0]).Image = spell.IconId;
                     ((HudStaticText)row[1]).Text = enchantment.SpellId.ToString();
+                    ((HudStaticText)row[3]).Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
                     ((HudStaticText)row[2]).Text = spell.Name;
-                    ((HudStaticText)row[3]).Text = spell.IsUntargetted.ToString();
                 }
             }
         }

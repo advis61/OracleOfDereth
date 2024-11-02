@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0"?>
-<view icon="8894" title="Oracle Of Dereth" width="190" height="310">
+<view icon="8894" title="Oracle Of Dereth" width="640" height="310">
   <control progid="DecalControls.Notebook">
     
     <page label="Status">
@@ -36,16 +36,16 @@
 	  </control>
     </page>
 
-	<!--<page label="Buffs">
+	<page label="Buffs">
 		<control progid="DecalControls.FixedLayout" clipped="">
 			  <control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="590">
 				  <column progid="DecalControls.IconColumn" name="BuffIcon" fixedwidth="16" />
-				  <column progid="DecalControls.TextColumn" name="BuffId" fixedwidth="50" />
-				  <column progid="DecalControls.TextColumn" name="BuffName" fixedwidth="210" />
-				  <column progid="DecalControls.TextColumn" name="BuffTime" fixedwidth="200" />
+				  <column progid="DecalControls.TextColumn" name="BuffId" fixedwidth="32" />
+				  <column progid="DecalControls.TextColumn" name="BuffTime" fixedwidth="50" />
+				  <column progid="DecalControls.TextColumn" name="BuffName" fixedwidth="320" />
 			  </control>
 		  </control>
-	  </page>-->
+	  </page>
 	  
 	<page label="About">
 		  <control progid="DecalControls.FixedLayout" clipped="">
