@@ -164,6 +164,9 @@ namespace OracleOfDereth
             2993, // Grace of the Unicorn
             2997, // Splendor of the Firebird
             3829, // Blessing of the Sundew
+            3977, // Coordination Other Incantation
+            3978, // Focus Other Incantation
+            3979, // Strength Other Incantation
         };
 
         private static readonly List<int> BeerSpellIds = new List<int> {
