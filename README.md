@@ -9,6 +9,10 @@ An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.c
 
 - Download and run the latest OracleOfDerethInstaller.exe from the [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases) page.
 
+- If the "Windows protected your PC" message appears, click on More info near the top-left corner of the window and select Run anyway.
+
+- Complete the installer.
+
 - It should now appear in the Decal list of plugins. You're all done!
 
 ## Usage
