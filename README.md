@@ -13,7 +13,7 @@ An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.c
 
 - Complete the installer.
 
-- It should now appear in the Decal list of plugins. You're all done!
+- It should automatically appear in the Decal list of plugins. You're all done!
 
 ## Usage
 
