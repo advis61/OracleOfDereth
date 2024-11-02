@@ -7,11 +7,7 @@ An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.c
 ## Getting Started
 - This plugin requires the latest Decal, v2.9.8.3. It will fail to register in previous versions.
 
-- Download the latest OracleOfDereth.dll from the [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases) page.
-
-- You need to unblock the plugin dll by right-clicking on it in windows explorer, and going to Properties — If you're on Windows 11, you'll need to click Show more options first before you can see the Properties option in the context menu. And once you're there, select the General tab and tick Unblock at the bottom in the Security section.
-
-- Open the Decal windows program, Click Add, Browse, and select this file.
+- Download and run the latest OracleOfDerethInstaller.exe from the [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases) page.
 
 - It should now appear in the Decal list of plugins. You're all done!
 
