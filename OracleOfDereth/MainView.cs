@@ -11,6 +11,9 @@ using Decal.Adapter.Wrappers;
 using Decal.Filters;
 using VirindiViewService;
 using System.Security.Authentication.ExtendedProtection.Configuration;
+using MyClasses.MetaViewWrappers;
+using MyClasses.MetaViewWrappers.DecalControls;
+using MyClasses.MetaViewWrappers.VirindiViewServiceHudControls;
 
 namespace OracleOfDereth
 {
@@ -19,6 +22,7 @@ namespace OracleOfDereth
         readonly VirindiViewService.ViewProperties properties;
         readonly VirindiViewService.ControlGroup controls;
         readonly VirindiViewService.HudView view;
+        public HudTabView MainViewNotebook { get; private set; }
 
         public HudStaticText SummoningText { get; private set; }
         public HudStaticText LockpickText { get; private set; }
@@ -32,6 +36,7 @@ namespace OracleOfDereth
         public HudStaticText DestructionText { get; private set; }
         public HudStaticText RegenText { get; private set; }
         public HudStaticText ProtectionText { get; private set; }
+        public HudFixedLayout BuffsLayout { get; private set; }
         public HudList BuffsList { get; private set; }
 
         private static readonly List<int> RareSpellIds = new List<int> {
@@ -198,6 +203,10 @@ namespace OracleOfDereth
                 view = new VirindiViewService.HudView(properties, controls);
                 if (view == null) { return; }
 
+                // The Notebook
+                MainViewNotebook = (HudTabView)view["MainViewNotebook"];
+                MainViewNotebook.OpenTabChange += MainViewNotebook_OpenTabChange;
+
                 // Assign the views objects to our local variable
                 BuffsText = (HudStaticText)view["BuffsText"];
                 BeersText = (HudStaticText)view["BeersText"];
@@ -232,11 +241,33 @@ namespace OracleOfDereth
 
                 // BuffsList
                 BuffsList = (HudList)view["BuffsList"];
+                BuffsList.Click += BuffsList_Click;
                 BuffsList.ClearRows();
 
                 Update();
             }
             catch (Exception ex) { Debug.Log(ex); }
+        }
+
+        private void MainViewNotebook_OpenTabChange(object sender, EventArgs e)
+        {
+            int currentTab = MainViewNotebook.CurrentTab;
+
+            if (currentTab == 0) { 
+                view.Width = 190;
+            } else if (currentTab == 1) { 
+                view.Width = 460;
+            } else if (currentTab == 2) { 
+                view.Width = 190;
+            } else {
+                Debug.Log("Invalid tab");
+                view.Width = 190;
+            }
+        }
+
+        void BuffsList_Click(object sender, int row, int col)
+        {
+            //Debug.Log("buffs list clicked");
         }
 
         public void Update()
@@ -486,11 +517,9 @@ namespace OracleOfDereth
                 HudList.HudListRowAccessor row;
 
                 if (x >= BuffsListCount) {
-                    Debug.Log($"Adding row {x}");
-                    row = BuffsList.AddRow();
                     BuffsListCount += 1;
+                    row = BuffsList.AddRow();
                 } else {
-                    Debug.Log($"Using row {x}");
                     row = BuffsList[x];
                 }
 
@@ -513,33 +542,33 @@ namespace OracleOfDereth
             }
         }
 
-        private void UpdateBuffsListOld()
-        {
-            // Adja's lessing 2215
-            // List view
-            FileService service = CoreManager.Current.Filter<FileService>();
+        //private void UpdateBuffsListOld()
+        //{
+        //    // Adja's lessing 2215
+        //    // List view
+        //    FileService service = CoreManager.Current.Filter<FileService>();
 
-            BuffsList.ClearRows();
+        //    BuffsList.ClearRows();
 
-            foreach (EnchantmentWrapper enchantment in CoreManager.Current.CharacterFilter.Enchantments)
-            {
-                if (enchantment.Duration > 0)
-                {
-                    Spell spell = service.SpellTable.GetById(enchantment.SpellId);
-                    if (spell == null) { continue; }
+        //    foreach (EnchantmentWrapper enchantment in CoreManager.Current.CharacterFilter.Enchantments)
+        //    {
+        //        if (enchantment.Duration > 0)
+        //        {
+        //            Spell spell = service.SpellTable.GetById(enchantment.SpellId);
+        //            if (spell == null) { continue; }
 
-                    double duration = enchantment.TimeRemaining;
-                    TimeSpan time = TimeSpan.FromSeconds(duration);
+        //            double duration = enchantment.TimeRemaining;
+        //            TimeSpan time = TimeSpan.FromSeconds(duration);
 
-                    HudList.HudListRowAccessor row = BuffsList.AddRow();
+        //            HudList.HudListRowAccessor row = BuffsList.AddRow();
 
-                    ((HudPictureBox)row[0]).Image = spell.IconId;
-                    ((HudStaticText)row[1]).Text = enchantment.SpellId.ToString();
-                    ((HudStaticText)row[3]).Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
-                    ((HudStaticText)row[2]).Text = spell.Name;
-                }
-            }
-        }
+        //            ((HudPictureBox)row[0]).Image = spell.IconId;
+        //            ((HudStaticText)row[1]).Text = enchantment.SpellId.ToString();
+        //            ((HudStaticText)row[3]).Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
+        //            ((HudStaticText)row[2]).Text = spell.Name;
+        //        }
+        //    }
+        //}
 
         public void Dispose()
         {
