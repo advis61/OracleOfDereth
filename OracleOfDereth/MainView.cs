@@ -35,8 +35,13 @@ namespace OracleOfDereth
         public HudStaticText DestructionText { get; private set; }
         public HudStaticText RegenText { get; private set; }
         public HudStaticText ProtectionText { get; private set; }
-        public HudFixedLayout BuffsLayout { get; private set; }
         public HudList BuffsList { get; private set; }
+
+        // John Tracker
+        public HudStaticText JohnLabel { get; private set; }
+        public HudStaticText JohnText { get; private set; }
+
+        public HudList JohnList { get; private set; }
 
         private static readonly List<int> RareSpellIds = new List<int> {
             3679,  // Prodigal Acid Bane
@@ -245,6 +250,14 @@ namespace OracleOfDereth
                 BuffsList.Click += BuffsList_Click;
                 BuffsList.ClearRows();
 
+                // JohnQuestsList 
+                JohnText = (HudStaticText)view["JohnText"];
+                JohnText.FontHeight = 10;
+
+                JohnList = (HudList)view["JohnList"];
+                JohnList.Click += JohnList_Click;
+                JohnList.ClearRows();
+
                 Update();
             }
             catch (Exception ex) { Debug.Log(ex); }
@@ -254,11 +267,13 @@ namespace OracleOfDereth
         {
             int currentTab = MainViewNotebook.CurrentTab;
 
-            if (currentTab == 0) { 
+            if (currentTab == 0) { // HUD
                 view.Width = 190;
-            } else if (currentTab == 1) { 
+            } else if (currentTab == 1) { // Buffs
                 view.Width = 460;
-            } else if (currentTab == 2) { 
+            } else if (currentTab == 2) {  // John
+                view.Width = 460;
+            } else if (currentTab == 3) {  // About
                 view.Width = 190;
             } else {
                 Debug.Log("Invalid tab");
@@ -270,9 +285,14 @@ namespace OracleOfDereth
         {
             //Debug.Log("buffs list clicked");
         }
+        void JohnList_Click(object sender, int row, int col)
+        {
+            //Debug.Log("john list clicked");
+        }
 
         public void Update()
         {
+            // Update HUD
             UpdateBuffs();
             UpdateHouse();
             UpdateBeers();
@@ -288,7 +308,13 @@ namespace OracleOfDereth
 
             UpdateRegen();
             UpdateProtection();
+
+            // Update Buffs List
             UpdateBuffsList();
+
+            // Update John Quests
+            UpdateJohn();
+            UpdateJohnList();
         }
 
         private void UpdateSummoning()
@@ -541,6 +567,31 @@ namespace OracleOfDereth
                 BuffsListCount -= 1;
                 BuffsList.RemoveRow(BuffsListCount);
             }
+        }
+
+        private void UpdateJohn()
+        {
+            int totalSolves = 0;
+
+            QuestFlag legendaryQuestsA;
+            QuestFlag legendaryQuestsB;
+
+            if (QuestFlag.QuestFlags.TryGetValue("pathwardencomplete", out legendaryQuestsA) && legendaryQuestsA != null)
+            {
+                totalSolves += legendaryQuestsA.Solves;
+            }
+
+            //QuestFlag legendaryQuestsB = QuestFlag.QuestFlags["callingstonegiven"];
+            //if( legendaryQuestsB != null) {
+            //    totalSolves += legendaryQuestsB.Solves;
+            //}
+
+            JohnText.Text = $"Legendary Quests: {totalSolves} / 30";
+        }
+
+        private void UpdateJohnList()
+        {
+
         }
 
         //private void UpdateBuffsListOld()

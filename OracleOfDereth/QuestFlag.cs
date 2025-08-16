@@ -18,13 +18,9 @@ namespace OracleOfDereth
 
         // Quest Flags I care to track
         private static readonly List<string> QuestFlagsToTrack = new List<string> {
-            "pathwardencomplete",
-            "callingstonegiven",
-            "pathwardenquestcomplete",
-            "pathwardenqueststarted",
-            "pathwardenquestsolved",
-            "pathwardenquestsolves",
-            "pathwardenquestrepeattime",
+            "legendaryquestsa",
+            "legendaryquestsb",
+            "legendaryquestsc"
         };
 
         // Collection of Quest Flags data objects
