@@ -23,7 +23,6 @@ namespace OracleOfDereth
         readonly VirindiViewService.ControlGroup controls;
         readonly VirindiViewService.HudView view;
         public HudTabView MainViewNotebook { get; private set; }
-
         public HudStaticText SummoningText { get; private set; }
         public HudStaticText LockpickText { get; private set; }
         public HudStaticText LifeText { get; private set; }
@@ -114,7 +113,6 @@ namespace OracleOfDereth
             5907,  // Prodigal Shield Mastery
             5909,  // Prodigal Sneak Attack Mastery
             5911,  // Prodigal Dirty Fighting Mastery
-
             4131, // Spectral Light Weapon Mastery
             4132, // Spectral Blood Drinker
             4133, // Spectral Missile Weapon Mastery

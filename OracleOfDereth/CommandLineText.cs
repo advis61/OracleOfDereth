@@ -29,6 +29,12 @@ namespace OracleOfDereth
                 throw new InvalidOperationException("An error occurred.");
             }
 
+            if (command == "/myquests")
+            {
+                CoreManager.Current.Actions.AddChatText("OOD myquests", 1);
+                return false;
+            }
+
             return false;
         }
     }

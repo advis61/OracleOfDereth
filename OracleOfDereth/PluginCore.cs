@@ -30,6 +30,7 @@ namespace OracleOfDereth
     {
         private static string _assemblyDirectory = null;
         private bool didInit = false;
+        private MyQuests myQuests = new MyQuests();
 
         /// <summary>
         /// Assembly directory containing the plugin dll
@@ -72,11 +73,14 @@ namespace OracleOfDereth
                 // Commands
                 CoreManager.Current.CommandLineText += new EventHandler<ChatParserInterceptEventArgs>(Current_CommandLineText);
 
+                // Chat
+                CoreManager.Current.ChatBoxMessage += new EventHandler<ChatTextInterceptEventArgs>(Current_ChatBoxMessage);
+
                 // Events
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete; // Not run on hot reload
 
                 // Initialize
-                if (CoreManager.Current.CharacterFilter.LoginStatus >= 1) 
+                if (CoreManager.Current.CharacterFilter.LoginStatus >= 1)
                 {
                     Init();
                     CoreManager.Current.Actions.AddChatText($"[Oracle Of Dereth] Hot Reloaded", 18);
@@ -142,6 +146,9 @@ namespace OracleOfDereth
                 // Commands
                 CoreManager.Current.CommandLineText -= new EventHandler<ChatParserInterceptEventArgs>(Current_CommandLineText);
 
+                // Chat
+                CoreManager.Current.ChatBoxMessage -= new EventHandler<ChatTextInterceptEventArgs>(Current_ChatBoxMessage);
+
                 // Cleanup Events
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
 
@@ -169,10 +176,15 @@ namespace OracleOfDereth
             {
                 if (e.Text == null) return;
 
-                if (OracleOfDereth.CommandLineText.Process(e.Text)) 
+                if (OracleOfDereth.CommandLineText.Process(e.Text))
                     e.Eat = true;
             }
             catch (Exception ex) { Debug.Log(ex); }
         }
+        private void Current_ChatBoxMessage(object sender, ChatTextInterceptEventArgs e)
+        {
+            CoreManager.Current.Actions.AddChatText("chat chat", 1);
+        }
     }
+
 }
