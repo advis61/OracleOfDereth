@@ -30,7 +30,6 @@ namespace OracleOfDereth
     {
         private static string _assemblyDirectory = null;
         private bool didInit = false;
-        private MyQuests myQuests = new MyQuests();
 
         /// <summary>
         /// Assembly directory containing the plugin dll
@@ -183,8 +182,13 @@ namespace OracleOfDereth
         }
         private void Current_ChatBoxMessage(object sender, ChatTextInterceptEventArgs e)
         {
-            CoreManager.Current.Actions.AddChatText("chat chat", 1);
+            try
+            {
+                if (e.Text == null) return;
+
+                OracleOfDereth.ChatBoxMessage.Process(e.Text);
+            }
+            catch (Exception ex) { Debug.Log(ex); }
         }
     }
-
 }
