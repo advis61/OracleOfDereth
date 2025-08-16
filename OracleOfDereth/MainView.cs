@@ -581,7 +581,12 @@ namespace OracleOfDereth
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing) view?.Dispose();
+            if (disposing)
+            {
+                MainViewNotebook.OpenTabChange -= MainViewNotebook_OpenTabChange;
+                BuffsList.Click -= BuffsList_Click;
+                view?.Dispose();
+            }
         }
     }
 }

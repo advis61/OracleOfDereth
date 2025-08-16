@@ -61,6 +61,7 @@ namespace OracleOfDereth
 
         // Views, depends on VirindiViewService.dll
         private MainView mainView;
+        private VoidView voidView;
 
         /// <summary>
         /// Called when your plugin is first loaded.
@@ -75,6 +76,9 @@ namespace OracleOfDereth
                 // Events
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete; // Not run on hot reload
 
+                CoreManager.Current.CharacterFilter.SpellCast += CharacterFilter_SpellCast;
+                CoreManager.Current.ItemSelected += ItemSelected;
+
                 // Initialize
                 if (CoreManager.Current.CharacterFilter.LoginStatus >= 1) 
                 {
@@ -87,6 +91,20 @@ namespace OracleOfDereth
                 }
             }
             catch (Exception ex) { Debug.Log(ex); }
+        }
+
+        // 0xF754: Effects_PlayScriptID - S2C - SmartBox
+        // 0xF755: Effects_PlayScriptType - S2C - SmartBox
+
+        private void CharacterFilter_SpellCast(object sender, SpellCastEventArgs e)
+        {
+            Debug.Log($"spell cast #{e.SpellId} on #{e.TargetId}");
+        }
+
+        private void ItemSelected(object sender, ItemSelectedEventArgs e)
+        {
+            Debug.Log($"item selected#{e.ToString()}");
+
         }
 
         private void CharacterFilter_Login(object sender, EventArgs e)
@@ -115,6 +133,7 @@ namespace OracleOfDereth
             didInit = true;
 
             mainView = new MainView();
+            voidView = new VoidView();
 
             // Initialize 1second update timer
             timer = new WindowsTimer();
@@ -128,6 +147,7 @@ namespace OracleOfDereth
             try
             {
                 mainView.Update();
+                voidView.Update();
             }
             catch (Exception ex) { Debug.Log(ex); }
         }
@@ -145,6 +165,10 @@ namespace OracleOfDereth
                 // Cleanup Events
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
 
+                CoreManager.Current.CharacterFilter.SpellCast -= CharacterFilter_SpellCast;
+
+                CoreManager.Current.ItemSelected -= ItemSelected;
+
                 // Shutdown timer
                 if (timer != null)
                 {
@@ -156,6 +180,7 @@ namespace OracleOfDereth
 
                 // Dispose all views
                 mainView?.Dispose();
+                voidView?.Dispose();
 
             } catch (Exception ex) { Debug.Log(ex); }
         }
