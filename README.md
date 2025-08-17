@@ -3,12 +3,15 @@
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) v2.9.8.3 plugin.
 
 Status HUD
+
 ![Status HUD](./docs/Status.png)
 
 Buffs List
+
 ![Buffs List](./docs/Buffs.png)
 
 John Tracker
+
 ![John Tracker](./docs/John.png)
 
 ## Getting Started
