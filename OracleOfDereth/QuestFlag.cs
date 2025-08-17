@@ -25,6 +25,7 @@ namespace OracleOfDereth
 
         // Collection of Quest Flags data objects
         public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();
+        public static bool QuestsChanged = true;
 
         // Properties
         public string Key = "";
@@ -50,6 +51,8 @@ namespace OracleOfDereth
                 QuestFlags[questFlag.Key] = questFlag;
                 CoreManager.Current.Actions.AddChatText($"Now tracking #{questFlag.ToString()}.#{QuestFlags.Count()} quests tracked total", 1);
             }
+
+            QuestsChanged = true;
 
             return true;
         }

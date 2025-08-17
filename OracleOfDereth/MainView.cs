@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using VirindiViewService.Controls;
-
-using Decal.Adapter;
+﻿using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Decal.Filters;
-using VirindiViewService;
-using System.Security.Authentication.ExtendedProtection.Configuration;
 using MyClasses.MetaViewWrappers;
 using MyClasses.MetaViewWrappers.DecalControls;
 using MyClasses.MetaViewWrappers.VirindiViewServiceHudControls;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Authentication.ExtendedProtection.Configuration;
+using System.Text;
+using System.Threading.Tasks;
+using VirindiViewService;
+using VirindiViewService.Controls;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace OracleOfDereth
 {
@@ -312,9 +311,8 @@ namespace OracleOfDereth
             // Update Buffs List
             UpdateBuffsList();
 
-            // Update John Quests
+            // Update John
             UpdateJohn();
-            UpdateJohnList();
         }
 
         private void UpdateSummoning()
@@ -568,30 +566,56 @@ namespace OracleOfDereth
                 BuffsList.RemoveRow(BuffsListCount);
             }
         }
-
-        private void UpdateJohn()
+        public void UpdateJohn()
         {
-            int totalSolves = 0;
-
-            QuestFlag legendaryQuestsA;
-            QuestFlag legendaryQuestsB;
-
-            if (QuestFlag.QuestFlags.TryGetValue("pathwardencomplete", out legendaryQuestsA) && legendaryQuestsA != null)
+            if (QuestFlag.QuestsChanged)
             {
-                totalSolves += legendaryQuestsA.Solves;
+                UpdateJohnList();
+                QuestFlag.QuestsChanged = false;
             }
-
-            //QuestFlag legendaryQuestsB = QuestFlag.QuestFlags["callingstonegiven"];
-            //if( legendaryQuestsB != null) {
-            //    totalSolves += legendaryQuestsB.Solves;
-            //}
-
-            JohnText.Text = $"Legendary Quests: {totalSolves} / 30";
         }
+
+        int JohnListCount = 0;
 
         private void UpdateJohnList()
         {
+            // For each quest in JohnQuest.Quests, add a row to the JohnList
+            // This function will be called multiple times, so we need to add or update
 
+            int questCount = JohnQuest.Quests.Count;
+            int questCompletedCount = 0;
+
+            // Add or update rows
+            for (int i = 0; i < questCount; i++)
+            {
+                HudList.HudListRowAccessor row;
+                if (i >= JohnListCount)
+                {
+                    JohnListCount += 1;
+                    row = JohnList.AddRow();
+                }
+                else
+                {
+                    row = JohnList[i];
+                }
+
+                var quest = JohnQuest.Quests[i];
+
+                if (quest.IsComplete()) {
+                    questCompletedCount += 1;
+                    ((HudPictureBox)row[0]).Image = JohnQuest.IconComplete;
+                } else {
+                    ((HudPictureBox)row[0]).Image = JohnQuest.IconNotComplete;
+                }
+
+                ((HudStaticText)row[1]).Text = quest.Name;
+                ((HudStaticText)row[2]).Text = quest.QuestFlag;
+                ((HudStaticText)row[3]).Text = quest.LegendaryQuestsFlag;
+            }
+
+            JohnText.Text = $"Legendary John Quests: {questCompletedCount} / 30";
+
+            CoreManager.Current.Actions.AddChatText("[OOD] Legendary John Quests Updated", 1);
         }
 
         //private void UpdateBuffsListOld()

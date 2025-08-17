@@ -49,12 +49,12 @@
 
 	  <page label="John">
 		  <control progid="DecalControls.FixedLayout" clipped="">
-			  <control progid="DecalControls.StaticText" name="JohnText" left="5" top="5" width="200" height="20" text="Legendary Quests: -"/>
+			  <control progid="DecalControls.StaticText" name="JohnText" left="5" top="5" width="300" height="20" text="Legendary Quests: -"/>
 			  <control progid="DecalControls.List" name="JohnList" left="0" top="25" width="640" height="590">
-				  <column progid="DecalControls.IconColumn" name="JohnIcon" fixedwidth="16" />
-				  <column progid="DecalControls.TextColumn" name="JohnId" fixedwidth="32" />
-				  <column progid="DecalControls.TextColumn" name="JohnTime" fixedwidth="50" />
-				  <column progid="DecalControls.TextColumn" name="JohnName" fixedwidth="320" />
+				  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="200" />
+				  <column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="32" />
+				  <column progid="DecalControls.TextColumn" name="LegendaryQuestsFlag" fixedwidth="32" />
 			  </control>
 		  </control>
 	  </page>
