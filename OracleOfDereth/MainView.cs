@@ -41,6 +41,7 @@ namespace OracleOfDereth
         public HudStaticText JohnText { get; private set; }
 
         public HudList JohnList { get; private set; }
+        public HudButton JohnRefresh { get; private set; }
 
         private static readonly List<int> RareSpellIds = new List<int> {
             3679,  // Prodigal Acid Bane
@@ -212,7 +213,7 @@ namespace OracleOfDereth
                 MainViewNotebook = (HudTabView)view["MainViewNotebook"];
                 MainViewNotebook.OpenTabChange += MainViewNotebook_OpenTabChange;
 
-                // Assign the views objects to our local variable
+                // HUD Tab
                 BuffsText = (HudStaticText)view["BuffsText"];
                 BeersText = (HudStaticText)view["BeersText"];
                 HouseText = (HudStaticText)view["HouseText"];
@@ -244,14 +245,17 @@ namespace OracleOfDereth
                 RegenText.FontHeight = 10;
                 ProtectionText.FontHeight = 10;
 
-                // BuffsList
+                // Buffs Tab
                 BuffsList = (HudList)view["BuffsList"];
                 BuffsList.Click += BuffsList_Click;
                 BuffsList.ClearRows();
 
-                // JohnQuestsList 
+                // John Tab
                 JohnText = (HudStaticText)view["JohnText"];
                 JohnText.FontHeight = 10;
+
+                JohnRefresh = (HudButton)view["JohnRefresh"];
+                JohnRefresh.Hit += JohnRefresh_Hit;
 
                 JohnList = (HudList)view["JohnList"];
                 JohnList.Click += JohnList_Click;
@@ -285,19 +289,18 @@ namespace OracleOfDereth
             }
         }
 
-        void BuffsList_Click(object sender, int row, int col)
-        {
-            //Debug.Log("buffs list clicked");
-        }
-        void JohnList_Click(object sender, int row, int col)
-        {
-            //Debug.Log("john list clicked");
-        }
 
         public void Update()
         {
-            // Update HUD
+            UpdateHud();
             UpdateBuffs();
+            UpdateJohn();
+        }
+
+        // HUD Tab
+        public void UpdateHud()
+        {
+            UpdateBuffTimes();
             UpdateHouse();
             UpdateBeers();
             UpdatePages();
@@ -312,12 +315,6 @@ namespace OracleOfDereth
 
             UpdateRegen();
             UpdateProtection();
-
-            // Update Buffs List
-            UpdateBuffsList();
-
-            // Update John
-            UpdateJohn();
         }
 
         private void UpdateSummoning()
@@ -377,7 +374,7 @@ namespace OracleOfDereth
             if (skill.IsKnown()) { MeleeDText.Text = skill.Current().ToString(); }
         }
 
-        private void UpdateBuffs()
+        private void UpdateBuffTimes()
         {
             FileService service = CoreManager.Current.Filter<FileService>();
 
@@ -523,6 +520,13 @@ namespace OracleOfDereth
             ProtectionText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
 
+        // Buffs Tab
+
+        private void UpdateBuffs()
+        {
+            UpdateBuffsList();
+        }
+
         int BuffsListCount = 0;
 
         private void UpdateBuffsList()
@@ -571,6 +575,13 @@ namespace OracleOfDereth
                 BuffsList.RemoveRow(BuffsListCount);
             }
         }
+
+        void BuffsList_Click(object sender, int row, int col)
+        {
+            //Debug.Log("buffs list clicked");
+        }
+
+        // John Tab
         public void UpdateJohn()
         {
             if (QuestFlag.QuestsChanged)
@@ -619,7 +630,17 @@ namespace OracleOfDereth
 
             JohnText.Text = $"Legendary John Quests: {questCompletedCount} / 30";
 
-            CoreManager.Current.Actions.AddChatText("[OOD] Legendary John Quests Updated", 1);
+            CoreManager.Current.Actions.AddChatText("[OracleOfDereth] Legendary John Quests Updated", 1);
+        }
+        void JohnList_Click(object sender, int row, int col)
+        {
+            //Debug.Log("john list clicked");
+        }
+
+        void JohnRefresh_Hit(object sender, EventArgs e)
+        {
+
+            CoreManager.Current.Actions.InvokeChatParser("/myquests");
         }
 
         //private void UpdateBuffsListOld()
