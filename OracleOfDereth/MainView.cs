@@ -277,8 +277,8 @@ namespace OracleOfDereth
                 view.Width = 460;
                 view.Height = 310;
             } else if (currentTab == 2) {  // John
-                view.Width = 660;
-                view.Height = 790;
+                view.Width = 425;
+                view.Height = 300; // 790 for all
             } else if (currentTab == 3) {  // About
                 view.Width = 190;
                 view.Height = 310;
@@ -665,13 +665,24 @@ namespace OracleOfDereth
         {
             string flag = ((HudStaticText)JohnList[row][4]).Text;
 
-            // Quest Hint
-            if (col == 0 || col == 1) {
-                JohnQuest johnQuest;
-                johnQuest = JohnQuest.Quests.FirstOrDefault(x => x.Flag == flag);
+            JohnQuest johnQuest;
+            johnQuest = JohnQuest.Quests.FirstOrDefault(x => x.Flag == flag);
 
-                if (johnQuest.Hint == "")
-                {
+            QuestFlag questFlag;
+            QuestFlag.QuestFlags.TryGetValue(flag, out questFlag);
+
+            // Quest URL
+            if (col == 0) {
+                if (johnQuest == null || johnQuest.Url == "") {
+                    Util.Chat($"Missing quest wiki url", Util.ColorPink);
+                } else {
+                    Util.Think($"{johnQuest.Name}: {johnQuest.Url}");
+                }
+            }
+
+            // Quest Hint
+            if (col == 1) {
+                if (johnQuest == null || johnQuest.Hint == "") {
                     Util.Chat($"Missing quest hint", Util.ColorPink);
                 } else {
                     Util.Think($"{johnQuest.Name}: {johnQuest.Hint}");
@@ -679,12 +690,8 @@ namespace OracleOfDereth
             }
 
             // Quest Flag
-            if(col == 2 || col == 3 || col == 4) {
-                QuestFlag questFlag;
-                QuestFlag.QuestFlags.TryGetValue(flag, out questFlag);
-
-                if (questFlag == null)
-                {
+            if(col >= 2) {
+                if (questFlag == null) {
                     Util.Chat($"Missing quest flag", Util.ColorPink);
                 } else {
                     Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
