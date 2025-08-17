@@ -264,7 +264,7 @@ namespace OracleOfDereth
 
                 Update();
             }
-            catch (Exception ex) { Debug.Log(ex); }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         private void MainViewNotebook_OpenTabChange(object sender, EventArgs e)
@@ -278,13 +278,13 @@ namespace OracleOfDereth
                 view.Width = 460;
                 view.Height = 310;
             } else if (currentTab == 2) {  // John
-                view.Width = 860;
+                view.Width = 660;
                 view.Height = 790;
             } else if (currentTab == 3) {  // About
                 view.Width = 190;
                 view.Height = 310;
             } else {
-                Debug.Log("Invalid tab");
+                Util.Log("Invalid tab");
                 view.Width = 190;
                 view.Height = 310;
             }
@@ -610,6 +610,8 @@ namespace OracleOfDereth
                 {
                     JohnListCount += 1;
                     row = JohnList.AddRow();
+                    ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                    ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
                 }
                 else
                 {
@@ -617,7 +619,9 @@ namespace OracleOfDereth
                 }
 
                 var quest = JohnQuest.Quests[i];
+
                 bool complete = quest.IsComplete();
+                if (complete) { questCompletedCount += 1; }
 
                 // Only update this if the /myquests changes
                 if (QuestFlag.QuestsChanged)
@@ -632,7 +636,7 @@ namespace OracleOfDereth
                     }
 
                     ((HudStaticText)row[1]).Text = quest.Name;
-                    ((HudStaticText)row[2]).Text = quest.Flag;
+                    ((HudStaticText)row[4]).Text = quest.Flag;
                 }
 
                 // Always update this
@@ -641,38 +645,38 @@ namespace OracleOfDereth
 
                 if (questFlag == null)
                 {
-                    ((HudStaticText)row[3]).Text = "ready";
-                    ((HudStaticText)row[4]).Text = "0";
+                    ((HudStaticText)row[2]).Text = "ready";
+                    ((HudStaticText)row[3]).Text = "0";
                 }
                 else
                 {
                     // (int)questFlag.RepeatTime.TotalSeconds
-                    ((HudStaticText)row[3]).Text = questFlag.NextAvailable();
-                    ((HudStaticText)row[4]).Text = $"{questFlag.Solves}";
+                    ((HudStaticText)row[2]).Text = questFlag.NextAvailable();
+                    ((HudStaticText)row[3]).Text = $"{questFlag.Solves}";
                 }
 
-                if (complete) { questCompletedCount += 1; }
             }
 
+            // Update Top Text
             JohnText.Text = $"Legendary John Quests: {questCompletedCount} completed";
 
-            CoreManager.Current.Actions.AddChatText("[OracleOfDereth] Legendary John Quests Updated", 1);
+            if (QuestFlag.QuestsChanged) { Util.Chat("Quests updated", Util.ColorPink); }
         }
         void JohnList_Click(object sender, int row, int col)
         {
-            string flag = ((HudStaticText)JohnList[row][2]).Text;
+            string flag = ((HudStaticText)JohnList[row][4]).Text;
 
             QuestFlag questFlag;
             QuestFlag.QuestFlags.TryGetValue(flag, out questFlag);
 
             if(questFlag == null)
             {
-                CoreManager.Current.Actions.AddChatText("[OracleOfDereth] No Quest Flag", 1);
+               Util.Chat($"No quest flag", Util.ColorPink);
             }
 
             if(questFlag != null)
             {
-                CoreManager.Current.Actions.AddChatText($"{questFlag.ToString()}", 1);
+               Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
             }
         }
 

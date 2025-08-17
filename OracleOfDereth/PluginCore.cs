@@ -82,14 +82,14 @@ namespace OracleOfDereth
                 if (CoreManager.Current.CharacterFilter.LoginStatus >= 1)
                 {
                     Init();
-                    CoreManager.Current.Actions.AddChatText($"[Oracle Of Dereth] Hot Reloaded", 18);
+                    Util.Chat($"Hot Reloaded", 18);
                 }
                 else
                 {
                     CoreManager.Current.CharacterFilter.Login += CharacterFilter_Login;
                 }
             }
-            catch (Exception ex) { Debug.Log(ex); }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         private void CharacterFilter_Login(object sender, EventArgs e)
@@ -99,16 +99,16 @@ namespace OracleOfDereth
                 Core.CharacterFilter.Login -= CharacterFilter_Login;
                 Init();
             }
-            catch (Exception ex) { Debug.Log(ex); }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         private void CharacterFilter_LoginComplete(object sender, EventArgs e)
         {
             try
             {
-                CoreManager.Current.Actions.AddChatText($"[Oracle Of Dereth] Running", 18);
+               Util.Chat($"[Oracle Of Dereth] Running", 18);
             }
-            catch (Exception ex) { Debug.Log(ex); }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         private void Init()
@@ -132,7 +132,7 @@ namespace OracleOfDereth
             {
                 mainView.Update();
             }
-            catch (Exception ex) { Debug.Log(ex); }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace OracleOfDereth
                 // Dispose all views
                 mainView?.Dispose();
 
-            } catch (Exception ex) { Debug.Log(ex); }
+            } catch (Exception ex) { Util.Log(ex); }
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace OracleOfDereth
                 if (OracleOfDereth.CommandLineText.Process(e.Text))
                     e.Eat = true;
             }
-            catch (Exception ex) { Debug.Log(ex); }
+            catch (Exception ex) { Util.Log(ex); }
         }
         private void Current_ChatBoxMessage(object sender, ChatTextInterceptEventArgs e)
         {
@@ -188,7 +188,7 @@ namespace OracleOfDereth
 
                 OracleOfDereth.ChatBoxMessage.Process(e.Text);
             }
-            catch (Exception ex) { Debug.Log(ex); }
+            catch (Exception ex) { Util.Log(ex); }
         }
     }
 }

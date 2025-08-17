@@ -19,20 +19,14 @@ namespace OracleOfDereth
             if (command == "/od" || command == "/ood")
             {
                 Version version = Assembly.GetExecutingAssembly().GetName().Version;
-                CoreManager.Current.Actions.AddChatText($"Oracle of Dereth v{version}", 1);
+                Util.Chat($"Oracle of Dereth v{version}", 1);
                 return true;
             }
 
             if (command == "/od exception")
             {
-                CoreManager.Current.Actions.AddChatText($"Oracle of Dereth EXCEPTION", 1);
+                Util.Chat($"Oracle of Dereth EXCEPTION", 1);
                 throw new InvalidOperationException("An error occurred.");
-            }
-
-            if (command == "/myquests")
-            {
-                CoreManager.Current.Actions.AddChatText("OOD myquests", 1);
-                return false;
             }
 
             return false;

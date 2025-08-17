@@ -20,19 +20,6 @@ namespace OracleOfDereth
             }
             return false;
         }
-
-        //private static bool ProcessQuestFlag(string text)
-        //{
-        //    CoreManager.Current.Actions.AddChatText("found it", 1);
-
-        //    QuestFlag questFlag = QuestFlag.Process(text);
-
-        //    // Add questFlag Key and Solves to chat
-        //    CoreManager.Current.Actions.AddChatText($"found it #{questFlag}", 1);
-        //    CoreManager.Current.Actions.AddChatText($"Key: {questFlag.Key}", 1);
-        //    CoreManager.Current.Actions.AddChatText($"Solves: {questFlag.Solves}", 1);
-        //    return true;
-        //}
     }
 }
 

@@ -49,7 +49,7 @@ namespace OracleOfDereth
             if (QuestFlagsToTrack.Contains(questFlag.Key))
             {
                 QuestFlags[questFlag.Key] = questFlag;
-                CoreManager.Current.Actions.AddChatText($"Now tracking #{questFlag.ToString()}.#{QuestFlags.Count()} quests tracked total", 1);
+                Util.Chat($"Now tracking #{questFlag.ToString()}.#{QuestFlags.Count()} quests tracked total", 1);
             }
 
             QuestsChanged = true;
@@ -89,11 +89,11 @@ namespace OracleOfDereth
                 }
                 else
                 {
-                    Debug.Log("Unable to parse myquests line: " + line);
+                    Util.Log("Unable to parse myquests line: " + line);
                     return null;
                 }
             }
-            catch (Exception ex) { Debug.Log(ex); }
+            catch (Exception ex) { Util.Log(ex); }
 
             return null;
         }

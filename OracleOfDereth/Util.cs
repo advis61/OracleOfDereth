@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace OracleOfDereth
 {
-    public static class Debug
+    public static class Util
     {
         public static void Log(Exception ex)
         {
             try
             {
-                CoreManager.Current.Actions.AddChatText(ex.ToString(), 1);
+               Util.Chat(ex.ToString(), 1);
 
                 using (StreamWriter writer = new StreamWriter(Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\Decal Plugins\Oracle of Dereth" + "\\errors.txt", true))
                 {
@@ -47,9 +47,20 @@ namespace OracleOfDereth
             try
             {
                 File.AppendAllText(System.IO.Path.Combine(PluginCore.AssemblyDirectory, "log.txt"), $"{message}\n");
-                CoreManager.Current.Actions.AddChatText(message, 1);
+               Util.Chat(message, 1);
             }
             catch { }
+        }
+
+        public static readonly int ColorGreen = 1;
+        public static readonly int ColorYellow = 4;
+        public static readonly int ColorPink = 5;
+        public static readonly int ColorRed = 6;
+        public static readonly int ColorBlue = 7;
+
+        public static void Chat(string message, int color = 1)
+        {
+            CoreManager.Current.Actions.AddChatText("[Oracle of Dereth] " + message, color);
         }
     }
 }

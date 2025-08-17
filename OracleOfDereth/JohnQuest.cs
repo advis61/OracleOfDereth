@@ -17,7 +17,12 @@ namespace OracleOfDereth
     public class JohnQuest
     {
         public static readonly List<JohnQuest> Quests = new List<JohnQuest> {
-            new JohnQuest { Name = "Apostate Finale", Flag = "apostatefinalemaskshardpickup", LegendaryQuestsFlag = "legendaryquestsc", BitMask = 1 },
+            new JohnQuest { 
+                Name = "Apostate Finale", 
+                Flag = "apostatefinalemaskshardpickup", 
+                LegendaryQuestsFlag = "legendaryquestsc", 
+                BitMask = 1 
+            },
             new JohnQuest { Name = "Bloodstone Investigation", Flag = "", LegendaryQuestsFlag = "legendaryquestsa", BitMask = 16384 },
             new JohnQuest { Name = "Count Phainor's Amulet", Flag = "", LegendaryQuestsFlag = "legendaryquestsb", BitMask = 8192 },
             new JohnQuest { Name = "Deewain's Dark Cavern", Flag = "deewaincompleted0211", LegendaryQuestsFlag = "legendaryquestsa", BitMask = 32768 },
