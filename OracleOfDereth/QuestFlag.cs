@@ -37,7 +37,7 @@ namespace OracleOfDereth
 
         public new string ToString()
         {
-            return $"{Key}: {Description} CompletedOn:{CompletedOn} Solves:{Solves} MaxSolves:{MaxSolves} RepeatTime:{GetFriendlyTimeDifference(RepeatTime)}";
+            return $"{Key}: {Description} CompletedOn:{CompletedOn} Solves:{Solves} MaxSolves:{MaxSolves} RepeatTime:{Util.GetFriendlyTimeDifference(RepeatTime)}";
         }
 
         public static bool Process(string line)

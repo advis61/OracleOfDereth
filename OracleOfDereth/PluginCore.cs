@@ -117,6 +117,10 @@ namespace OracleOfDereth
             if (didInit) return;
             didInit = true;
 
+            // Load Data
+            JohnQuest.LoadJohnQuestsCSV();
+
+            // Initialize Views
             mainView = new MainView();
 
             // Initialize 1second update timer

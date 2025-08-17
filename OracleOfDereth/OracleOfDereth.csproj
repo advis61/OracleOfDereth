@@ -22,6 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="mainView.xml" />
+    <None Remove="Resources\quests.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PluginCore.cs" />
@@ -34,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="mainView.xml" />
+    <EmbeddedResource Include="Resources\quests.csv" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Decal.Adapter">
