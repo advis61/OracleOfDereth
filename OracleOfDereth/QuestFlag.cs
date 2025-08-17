@@ -76,7 +76,7 @@ namespace OracleOfDereth
                     double completedOn = 0;
                     if (double.TryParse(match.Groups["completedOn"].Value, out completedOn))
                     {
-                        questFlag.CompletedOn = UnixTimeStampToDateTime(completedOn);
+                        questFlag.CompletedOn = Util.UnixTimeStampToDateTime(completedOn);
 
                         double repeatTime = 0;
                         if (double.TryParse(match.Groups["repeatTime"].Value, out repeatTime))
@@ -103,32 +103,12 @@ namespace OracleOfDereth
 
             if (difference.TotalSeconds > 0)
             {
-                return GetFriendlyTimeDifference(difference);
+                return Util.GetFriendlyTimeDifference(difference);
             }
             else
             {
                 return "ready";
             }
-        }
-
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp);
-            return dtDateTime;
-        }
-        public static string GetFriendlyTimeDifference(TimeSpan difference)
-        {
-            string output = "";
-
-            if (difference.Days > 0) output += difference.Days.ToString() + "d ";
-            if (difference.Hours > 0) output += difference.Hours.ToString() + "h ";
-            if (difference.Minutes > 0) output += difference.Minutes.ToString() + "m ";
-            if (difference.Seconds > 0) output += difference.Seconds.ToString() + "s ";
-
-            if (output.Length == 0)
-                return "0s";
-            return output.Trim();
         }
     }
 }

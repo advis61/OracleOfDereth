@@ -197,7 +197,6 @@ namespace OracleOfDereth
         private static readonly List<int> ProtectionSpellIds = new List<int> {
             5206, // Surge of Protection
          };
-
         public MainView()
         {
             try
@@ -589,7 +588,6 @@ namespace OracleOfDereth
         public void UpdateJohn()
         {
             UpdateJohnList();
-            QuestFlag.QuestsChanged = false;
         }
 
         int JohnListCount = 0;
@@ -658,7 +656,10 @@ namespace OracleOfDereth
             // Update Top Text
             JohnText.Text = $"Legendary John Quests: {questCompletedCount} completed";
 
-            if (QuestFlag.QuestsChanged) { Util.Chat("Quests updated", Util.ColorPink); }
+            if (QuestFlag.QuestsChanged) { 
+                Util.Chat("Quests updated", Util.ColorPink); 
+                QuestFlag.QuestsChanged = false;
+            }
         }
         void JohnList_Click(object sender, int row, int col)
         {
@@ -693,37 +694,8 @@ namespace OracleOfDereth
 
         void JohnRefresh_Hit(object sender, EventArgs e)
         {
-
             Util.Command("/myquests");
         }
-
-        //private void UpdateBuffsListOld()
-        //{
-        //    // Adja's lessing 2215
-        //    // List view
-        //    FileService service = CoreManager.Current.Filter<FileService>();
-
-        //    BuffsList.ClearRows();
-
-        //    foreach (EnchantmentWrapper enchantment in CoreManager.Current.CharacterFilter.Enchantments)
-        //    {
-        //        if (enchantment.Duration > 0)
-        //        {
-        //            Spell spell = service.SpellTable.GetById(enchantment.SpellId);
-        //            if (spell == null) { continue; }
-
-        //            double duration = enchantment.TimeRemaining;
-        //            TimeSpan time = TimeSpan.FromSeconds(duration);
-
-        //            HudList.HudListRowAccessor row = BuffsList.AddRow();
-
-        //            ((HudPictureBox)row[0]).Image = spell.IconId;
-        //            ((HudStaticText)row[1]).Text = enchantment.SpellId.ToString();
-        //            ((HudStaticText)row[3]).Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
-        //            ((HudStaticText)row[2]).Text = spell.Name;
-        //        }
-        //    }
-        //}
 
         public void Dispose()
         {

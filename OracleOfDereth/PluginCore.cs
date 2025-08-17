@@ -82,7 +82,7 @@ namespace OracleOfDereth
                 if (CoreManager.Current.CharacterFilter.LoginStatus >= 1)
                 {
                     Init();
-                    Util.Chat($"Hot Reloaded", 18);
+                    Util.Chat($"Hot Reloaded", Util.ColorOrange);
                 }
                 else
                 {
@@ -106,7 +106,7 @@ namespace OracleOfDereth
         {
             try
             {
-               Util.Chat($"[Oracle Of Dereth] Running", 18);
+               Util.Chat("Running", Util.ColorOrange);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
