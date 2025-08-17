@@ -1,7 +1,7 @@
 ; Define your application name
 !define APPNAME "OracleOfDereth"
 !define SOFTWARECOMPANY "AdvisEveldan"
-!define VERSION	"1.1.0.0"
+!define VERSION	"1.2.0.0"
 !define APPGUID "{153809C7-5D30-12E1-8730-11111104AC1E}"
 
 !define ASSEMBLY "OracleOfDereth.dll"
