@@ -296,9 +296,9 @@ namespace OracleOfDereth
         {
             int currentTab = MainViewNotebook.CurrentTab;
 
-            if(currentTab == 0) { UpdateHud(); }
-            if(currentTab == 1) { UpdateBuffs(); }
-            if(currentTab == 2) { UpdateJohn(); }
+            if (currentTab == 0) { UpdateHud(); }
+            if (currentTab == 1) { UpdateBuffs(); }
+            if (currentTab == 2) { UpdateJohn(); }
         }
 
         // HUD Tab
@@ -573,7 +573,7 @@ namespace OracleOfDereth
                 ((HudStaticText)row[3]).Text = spell.Name;
             }
 
-            while(BuffsListCount > enchantments.Count())
+            while (BuffsListCount > enchantments.Count())
             {
                 BuffsListCount -= 1;
                 BuffsList.RemoveRow(BuffsListCount);
@@ -646,15 +646,13 @@ namespace OracleOfDereth
                 if (questFlag == null)
                 {
                     ((HudStaticText)row[2]).Text = "ready";
-                    ((HudStaticText)row[3]).Text = "0";
+                    ((HudStaticText)row[3]).Text = "";
                 }
                 else
                 {
-                    // (int)questFlag.RepeatTime.TotalSeconds
                     ((HudStaticText)row[2]).Text = questFlag.NextAvailable();
                     ((HudStaticText)row[3]).Text = $"{questFlag.Solves}";
                 }
-
             }
 
             // Update Top Text
@@ -666,24 +664,37 @@ namespace OracleOfDereth
         {
             string flag = ((HudStaticText)JohnList[row][4]).Text;
 
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(flag, out questFlag);
+            // Quest Hint
+            if (col == 0 || col == 1) {
+                JohnQuest johnQuest;
+                johnQuest = JohnQuest.Quests.FirstOrDefault(x => x.Flag == flag);
 
-            if(questFlag == null)
-            {
-               Util.Chat($"No quest flag", Util.ColorPink);
+                if (johnQuest.Hint == "")
+                {
+                    Util.Chat($"Missing quest hint", Util.ColorPink);
+                } else {
+                    Util.Think($"{johnQuest.Name}: {johnQuest.Hint}");
+                }
             }
 
-            if(questFlag != null)
-            {
-               Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
+            // Quest Flag
+            if(col == 2 || col == 3 || col == 4) {
+                QuestFlag questFlag;
+                QuestFlag.QuestFlags.TryGetValue(flag, out questFlag);
+
+                if (questFlag == null)
+                {
+                    Util.Chat($"Missing quest flag", Util.ColorPink);
+                } else {
+                    Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
+                }
             }
         }
 
         void JohnRefresh_Hit(object sender, EventArgs e)
         {
 
-            CoreManager.Current.Actions.InvokeChatParser("/myquests");
+            Util.Command("/myquests");
         }
 
         //private void UpdateBuffsListOld()

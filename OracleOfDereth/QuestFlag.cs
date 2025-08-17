@@ -49,7 +49,7 @@ namespace OracleOfDereth
             if (QuestFlagsToTrack.Contains(questFlag.Key))
             {
                 QuestFlags[questFlag.Key] = questFlag;
-                Util.Chat($"Now tracking #{questFlag.ToString()}.#{QuestFlags.Count()} quests tracked total", 1);
+                //Util.Chat($"Now tracking #{questFlag.ToString()}.#{QuestFlags.Count()} quests tracked total", 1);
             }
 
             QuestsChanged = true;

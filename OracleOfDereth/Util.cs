@@ -53,6 +53,7 @@ namespace OracleOfDereth
         }
 
         public static readonly int ColorGreen = 1;
+        public static readonly int ColorWhite = 2;
         public static readonly int ColorYellow = 4;
         public static readonly int ColorPink = 5;
         public static readonly int ColorRed = 6;
@@ -62,5 +63,16 @@ namespace OracleOfDereth
         {
             CoreManager.Current.Actions.AddChatText("[Oracle of Dereth] " + message, color);
         }
+
+        public static void Command(string message)
+        {
+            CoreManager.Current.Actions.InvokeChatParser(message);
+        }
+
+        internal static void Think(string message)
+        {
+            CoreManager.Current.Actions.InvokeChatParser(string.Format("/tell {0}, {1}", CoreManager.Current.CharacterFilter.Name, message));
+        }
+
     }
 }
