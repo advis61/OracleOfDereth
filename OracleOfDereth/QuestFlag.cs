@@ -21,10 +21,10 @@ namespace OracleOfDereth
             "legendaryquestsa",
             "legendaryquestsb",
             "legendaryquestsc"
-        };
+        }.Concat(JohnQuest.Quests.Select(q => q.Flag)).ToList();
 
-        // Collection of Quest Flags data objects
-        public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();
+    // Collection of Quest Flags data objects
+    public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();
         public static bool QuestsChanged = true;
 
         // Properties
@@ -97,6 +97,20 @@ namespace OracleOfDereth
 
             return null;
         }
+        public string NextAvailable()
+        {
+            var difference = (CompletedOn + RepeatTime) - DateTime.UtcNow;
+
+            if (difference.TotalSeconds > 0)
+            {
+                return GetFriendlyTimeDifference(difference);
+            }
+            else
+            {
+                return "ready";
+            }
+        }
+
         public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);

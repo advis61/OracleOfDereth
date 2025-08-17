@@ -5,6 +5,7 @@ using MyClasses.MetaViewWrappers;
 using MyClasses.MetaViewWrappers.DecalControls;
 using MyClasses.MetaViewWrappers.VirindiViewServiceHudControls;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication.ExtendedProtection.Configuration;
@@ -277,7 +278,7 @@ namespace OracleOfDereth
                 view.Width = 460;
                 view.Height = 310;
             } else if (currentTab == 2) {  // John
-                view.Width = 460;
+                view.Width = 860;
                 view.Height = 790;
             } else if (currentTab == 3) {  // About
                 view.Width = 190;
@@ -287,14 +288,17 @@ namespace OracleOfDereth
                 view.Width = 190;
                 view.Height = 310;
             }
-        }
 
+            Update();
+        }
 
         public void Update()
         {
-            UpdateHud();
-            UpdateBuffs();
-            UpdateJohn();
+            int currentTab = MainViewNotebook.CurrentTab;
+
+            if(currentTab == 0) { UpdateHud(); }
+            if(currentTab == 1) { UpdateBuffs(); }
+            if(currentTab == 2) { UpdateJohn(); }
         }
 
         // HUD Tab
@@ -584,11 +588,8 @@ namespace OracleOfDereth
         // John Tab
         public void UpdateJohn()
         {
-            if (QuestFlag.QuestsChanged)
-            {
-                UpdateJohnList();
-                QuestFlag.QuestsChanged = false;
-            }
+            UpdateJohnList();
+            QuestFlag.QuestsChanged = false;
         }
 
         int JohnListCount = 0;
@@ -616,25 +617,63 @@ namespace OracleOfDereth
                 }
 
                 var quest = JohnQuest.Quests[i];
+                bool complete = quest.IsComplete();
 
-                if (quest.IsComplete()) {
-                    questCompletedCount += 1;
-                    ((HudPictureBox)row[0]).Image = JohnQuest.IconComplete;
-                } else {
-                    ((HudPictureBox)row[0]).Image = JohnQuest.IconNotComplete;
+                // Only update this if the /myquests changes
+                if (QuestFlag.QuestsChanged)
+                {
+                    if (complete)
+                    {
+                        ((HudPictureBox)row[0]).Image = JohnQuest.IconComplete;
+                    }
+                    else
+                    {
+                        ((HudPictureBox)row[0]).Image = JohnQuest.IconNotComplete;
+                    }
+
+                    ((HudStaticText)row[1]).Text = quest.Name;
+                    ((HudStaticText)row[2]).Text = quest.Flag;
                 }
 
-                ((HudStaticText)row[1]).Text = quest.Name;
-                ((HudStaticText)row[2]).Text = quest.QuestFlag;
+                // Always update this
+                QuestFlag questFlag;
+                QuestFlag.QuestFlags.TryGetValue(quest.Flag, out questFlag);
+
+                if (questFlag == null)
+                {
+                    ((HudStaticText)row[3]).Text = "ready";
+                    ((HudStaticText)row[4]).Text = "0";
+                }
+                else
+                {
+                    // (int)questFlag.RepeatTime.TotalSeconds
+                    ((HudStaticText)row[3]).Text = questFlag.NextAvailable();
+                    ((HudStaticText)row[4]).Text = $"{questFlag.Solves}";
+                }
+
+                if (complete) { questCompletedCount += 1; }
             }
 
-            JohnText.Text = $"Legendary John Quests: {questCompletedCount} / 30";
+            JohnText.Text = $"Legendary John Quests: {questCompletedCount} completed";
 
             CoreManager.Current.Actions.AddChatText("[OracleOfDereth] Legendary John Quests Updated", 1);
         }
         void JohnList_Click(object sender, int row, int col)
         {
-            //Debug.Log("john list clicked");
+            string flag = ((HudStaticText)JohnList[row][2]).Text;
+
+            QuestFlag questFlag;
+            QuestFlag.QuestFlags.TryGetValue(flag, out questFlag);
+
+            if(questFlag == null)
+            {
+                CoreManager.Current.Actions.AddChatText("[OracleOfDereth] No Quest Flag", 1);
+            }
+
+            if(questFlag != null)
+            {
+                CoreManager.Current.Actions.AddChatText($"{questFlag.ToString()}", 1);
+            }
         }
 
         void JohnRefresh_Hit(object sender, EventArgs e)
