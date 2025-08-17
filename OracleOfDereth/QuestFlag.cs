@@ -17,15 +17,15 @@ namespace OracleOfDereth
         public static readonly Regex KillTaskRegex = new Regex(@"(killtask|killcount|slayerquest|totalgolem.*dead|(kills$))");
 
         // Quest Flags I care to track
-        private static readonly List<string> QuestFlagsToTrack = new List<string> {
-            "legendaryquestsa",
-            "legendaryquestsb",
-            "legendaryquestsc"
+        private static readonly List<string> QuestFlagsToTrack = new List<string> { 
+            "legendaryquestsa", "legendaryquestsb", "legendaryquestsc"
         }.Concat(JohnQuest.Quests.Select(q => q.Flag)).ToList();
 
-    // Collection of Quest Flags data objects
-    public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();
+        // Collection of Quest Flags data objects
+        public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();
+
         public static bool QuestsChanged = true;
+        public static bool MyQuestsRan = false;
 
         // Properties
         public string Key = "";
@@ -42,6 +42,8 @@ namespace OracleOfDereth
 
         public static bool Process(string line)
         {
+            MyQuestsRan = true;
+
             QuestFlag questFlag = FromMyQuestsLine(line);
             if (questFlag == null) { return false; }
 
@@ -97,9 +99,15 @@ namespace OracleOfDereth
 
             return null;
         }
+
+        public TimeSpan NextAvailableTime()
+        {
+            return (CompletedOn + RepeatTime) - DateTime.UtcNow;
+        }
+
         public string NextAvailable()
         {
-            var difference = (CompletedOn + RepeatTime) - DateTime.UtcNow;
+            var difference = NextAvailableTime();
 
             if (difference.TotalSeconds > 0)
             {

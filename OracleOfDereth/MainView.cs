@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Authentication.ExtendedProtection.Configuration;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using VirindiViewService;
 using VirindiViewService.Controls;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
@@ -40,6 +41,10 @@ namespace OracleOfDereth
         // John Tracker
         public HudStaticText JohnLabel { get; private set; }
         public HudStaticText JohnText { get; private set; }
+
+        public HudStaticText JohnListSortName { get; private set;      }
+        public HudStaticText JohnListSortReady { get; private set; }
+        public HudStaticText JohnListSortSolves { get; private set; }
 
         public HudList JohnList { get; private set; }
         public HudButton JohnRefresh { get; private set; }
@@ -108,6 +113,15 @@ namespace OracleOfDereth
                 JohnList.Click += JohnList_Click;
                 JohnList.ClearRows();
 
+                JohnListSortName = (HudStaticText)view["JohnListSortName"];
+                JohnListSortName.Hit += JohnListSortName_Click;
+
+                JohnListSortReady = (HudStaticText)view["JohnListSortReady"];
+                JohnListSortReady.Hit += JohnListSortReady_Click;
+
+                JohnListSortSolves = (HudStaticText)view["JohnListSortSolves"];
+                JohnListSortSolves.Hit += JohnListSortSolves_Click;
+
                 Update();
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -119,7 +133,7 @@ namespace OracleOfDereth
 
             if (currentTab == 0) { // HUD
                 view.Width = 190;
-                view.Height = 310;
+                view.Height = 290;
             } else if (currentTab == 1) { // Buffs
                 view.Width = 460;
                 view.Height = 310;
@@ -434,20 +448,21 @@ namespace OracleOfDereth
         // John Tab
         public void UpdateJohn()
         {
+            if(QuestFlag.MyQuestsRan == false) { Util.Command("/myquests"); }
+
             UpdateJohnList();
         }
 
         int JohnListCount = 0;
-        private void UpdateJohnList()
+        private void UpdateJohnList(bool force = false)
         {
             // For each quest in JohnQuest.Quests, add a row to the JohnList
             // This function will be called multiple times, so we need to add or update
 
-            int questCount = JohnQuest.Quests.Count;
             int questCompletedCount = 0;
 
             // Add or update rows
-            for (int i = 0; i < questCount; i++)
+            for (int i = 0; i < JohnQuest.Quests.Count; i++)
             {
                 HudList.HudListRowAccessor row;
                 if (i >= JohnListCount) {
@@ -465,8 +480,8 @@ namespace OracleOfDereth
                 bool complete = quest.IsComplete();
                 if (complete) { questCompletedCount += 1; }
 
-                // Only update this if the /myquests changes
-                if (QuestFlag.QuestsChanged)
+                // Only update this if the /myquests changes or sort order changes
+                if (QuestFlag.QuestsChanged || force)
                 {
                     if (complete)
                     {
@@ -497,13 +512,11 @@ namespace OracleOfDereth
                 }
             }
 
+            // Quests are now unchanged
+            QuestFlag.QuestsChanged = false;
+
             // Update Top Text
             JohnText.Text = $"Legendary John Quests: {questCompletedCount} completed";
-
-            if (QuestFlag.QuestsChanged) { 
-                Util.Chat("Quest data updated", Util.ColorPink); 
-                QuestFlag.QuestsChanged = false;
-            }
         }
         void JohnList_Click(object sender, int row, int col)
         {
@@ -557,6 +570,41 @@ namespace OracleOfDereth
         {
             Util.Command("/myquests");
         }
+
+        void JohnListSortName_Click(object sender, EventArgs e)
+        {
+            if (JohnQuest.CurrentSortType == JohnQuest.QuestSortType.NameAscending) {
+                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.NameDescending);
+            } else {
+                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.NameAscending);
+            }
+
+            UpdateJohnList(true);
+        }
+
+        void JohnListSortReady_Click(object sender, EventArgs e)
+        {
+            if( JohnQuest.CurrentSortType == JohnQuest.QuestSortType.ReadyAscending) {
+                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.ReadyDescending);
+            } else {
+                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.ReadyAscending);
+            }
+
+            UpdateJohnList(true);
+        }
+
+        void JohnListSortSolves_Click(object sender, EventArgs e)
+        {
+            if (JohnQuest.CurrentSortType == JohnQuest.QuestSortType.SolvesAscending) {
+                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.SolvesDescending);
+            } else {
+                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.SolvesAscending);
+            }
+
+            UpdateJohnList(true);
+        }
+
+        // Shutdown
 
         public void Dispose()
         {

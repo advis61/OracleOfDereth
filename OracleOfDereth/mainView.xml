@@ -52,14 +52,16 @@
 			  <control progid="DecalControls.StaticText" name="JohnText" left="5" top="5" width="300" height="20" text="Legendary John Quests"/>
 			  <control progid="DecalControls.PushButton" name="JohnRefresh" left="322" top="3" width="100" height="24" text="Refresh"/>
 
-			  <control progid="DecalControls.List" name="JohnList" left="0" top="33" width="425" height="800">
+			  <control progid="DecalControls.StaticText" name="JohnListSortName" left="1" top="33" width="100" height="17" text="Quest Name"/>
+			  <control progid="DecalControls.StaticText" name="JohnListSortReady" left="310" top="33" width="55" height="17" text="Ready In"/>
+			  <control progid="DecalControls.StaticText" name="JohnListSortSolves" left="375" top="33" width="50" height="17" text="Solves"/>
+
+			  <control progid="DecalControls.List" name="JohnList" left="0" top="53" width="425" height="800">
 				  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="250" />
 				  <column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
 				  <column progid="DecalControls.TextColumn" name="Solves" fixedwidth="30" />
 				  <column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="100" />
-
-
 			  </control>
 		  </control>
 	  </page>

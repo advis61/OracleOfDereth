@@ -21,6 +21,17 @@ namespace OracleOfDereth
 
         // Collection of JohnQuests loaded from quests.csv
         public static List<JohnQuest> Quests = new List<JohnQuest>();
+        public static QuestSortType CurrentSortType = QuestSortType.NameAscending;
+
+        public enum QuestSortType
+        {
+            NameAscending,
+            NameDescending,
+            ReadyAscending,
+            ReadyDescending,
+            SolvesAscending,
+            SolvesDescending,
+        }
 
         // Properties
         public string Name = "";
@@ -29,6 +40,32 @@ namespace OracleOfDereth
         public string Flag = "";
         public string Url = "";
         public string Hint = "";
+
+        public static void SortJohnQuests(QuestSortType sortType)
+        {
+            CurrentSortType = sortType;
+            switch (sortType)
+            {
+                case QuestSortType.NameAscending:
+                    Quests = Quests.OrderBy(q => q.Name).ToList();
+                    break;
+                case QuestSortType.NameDescending:
+                    Quests = Quests.OrderByDescending(q => q.Name).ToList();
+                    break;
+                case QuestSortType.ReadyAscending:
+                    Quests = Quests.OrderBy(q => q.NextAvailableTime()).ThenBy(q => q.Name).ToList();
+                    break;
+                case QuestSortType.ReadyDescending:
+                    Quests = Quests.OrderByDescending(q => q.NextAvailableTime()).ThenBy(q => q.Name).ToList();
+                    break;
+                case QuestSortType.SolvesAscending:
+                    Quests = Quests.OrderBy(q => q.Solves()).ThenBy(q => q.Name).ToList();
+                    break;
+                case QuestSortType.SolvesDescending:
+                    Quests = Quests.OrderByDescending(q => q.Solves()).ThenBy(q => q.Name).ToList();
+                    break;
+            }
+        }
 
         public static void LoadJohnQuestsCSV()
         {
@@ -57,8 +94,8 @@ namespace OracleOfDereth
                     {
                         Name = fields[0].Trim(),
                         BitMask = int.Parse(fields[1].Trim()),
-                        LegendaryQuestsFlag = fields[2].Trim(),
-                        Flag = fields[3].Trim(),
+                        LegendaryQuestsFlag = fields[2].Trim().ToLower(),
+                        Flag = fields[3].Trim().ToLower(),
                         Url = fields[4].Trim(),
                         Hint = fields[5].Trim()
                     });
@@ -85,6 +122,35 @@ namespace OracleOfDereth
 
             // Check if the BitMask is set in solves
             return (questFlag.Solves & BitMask) == BitMask;
+        }
+
+        public DateTime? CompletedOn()
+        {
+            QuestFlag questFlag;
+            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
+
+            if (questFlag == null) { return null; }
+
+            return questFlag.CompletedOn;
+        }
+        public TimeSpan? NextAvailableTime()
+        {
+            QuestFlag questFlag;
+            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
+
+            if (questFlag == null) { return null; }
+
+            return questFlag.NextAvailableTime();
+        }
+
+        public int Solves()
+        {
+            QuestFlag questFlag;
+            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
+
+            if (questFlag == null) { return 0; }
+
+            return questFlag.Solves;
         }
     }
 }
