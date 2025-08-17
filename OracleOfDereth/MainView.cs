@@ -521,6 +521,16 @@ namespace OracleOfDereth
                     Util.Chat($"Missing quest wiki url", Util.ColorPink);
                 } else {
                     Util.Think($"{johnQuest.Name}: {johnQuest.Url}");
+
+                    try
+                    {
+                        System.Windows.Forms.Clipboard.SetText(johnQuest.Url);
+                        Util.Chat("Quest URL copied to clipboard.", Util.ColorPink);
+                    }
+                    catch (Exception ex)
+                    {
+                        Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
+                    }
                 }
             }
 
