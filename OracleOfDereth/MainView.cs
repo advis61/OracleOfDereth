@@ -268,15 +268,20 @@ namespace OracleOfDereth
 
             if (currentTab == 0) { // HUD
                 view.Width = 190;
+                view.Height = 310;
             } else if (currentTab == 1) { // Buffs
                 view.Width = 460;
+                view.Height = 310;
             } else if (currentTab == 2) {  // John
                 view.Width = 460;
+                view.Height = 790;
             } else if (currentTab == 3) {  // About
                 view.Width = 190;
+                view.Height = 310;
             } else {
                 Debug.Log("Invalid tab");
                 view.Width = 190;
+                view.Height = 310;
             }
         }
 
@@ -610,7 +615,6 @@ namespace OracleOfDereth
 
                 ((HudStaticText)row[1]).Text = quest.Name;
                 ((HudStaticText)row[2]).Text = quest.QuestFlag;
-                ((HudStaticText)row[3]).Text = quest.LegendaryQuestsFlag;
             }
 
             JohnText.Text = $"Legendary John Quests: {questCompletedCount} / 30";

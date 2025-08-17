@@ -50,11 +50,10 @@
 	  <page label="John">
 		  <control progid="DecalControls.FixedLayout" clipped="">
 			  <control progid="DecalControls.StaticText" name="JohnText" left="5" top="5" width="300" height="20" text="Legendary Quests: -"/>
-			  <control progid="DecalControls.List" name="JohnList" left="0" top="25" width="640" height="590">
+			  <control progid="DecalControls.List" name="JohnList" left="0" top="30" width="640" height="800">
 				  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
-				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="200" />
-				  <column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="32" />
-				  <column progid="DecalControls.TextColumn" name="LegendaryQuestsFlag" fixedwidth="32" />
+				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="300" />
+				  <column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="50" />
 			  </control>
 		  </control>
 	  </page>
