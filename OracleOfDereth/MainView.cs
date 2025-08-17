@@ -278,7 +278,7 @@ namespace OracleOfDereth
                 view.Height = 310;
             } else if (currentTab == 2) {  // John
                 view.Width = 425;
-                view.Height = 300; // 790 for all
+                view.Height = 430; // 790 for all
             } else if (currentTab == 3) {  // About
                 view.Width = 190;
                 view.Height = 310;
