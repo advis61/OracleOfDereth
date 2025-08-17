@@ -68,7 +68,7 @@ namespace OracleOfDereth
             Quests.Clear();
             Quests.AddRange(quests);
 
-            Util.Chat($"Loaded {Quests.Count} John Quests from embedded CSV.", 1);
+            //Util.Chat($"Loaded {Quests.Count} John Quests from embedded CSV.", 1);
         }
 
         public new string ToString()

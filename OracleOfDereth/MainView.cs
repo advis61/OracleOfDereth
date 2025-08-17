@@ -278,7 +278,7 @@ namespace OracleOfDereth
                 view.Height = 310;
             } else if (currentTab == 2) {  // John
                 view.Width = 425;
-                view.Height = 430; // 790 for all
+                view.Height = 310; // 790 for all
             } else if (currentTab == 3) {  // About
                 view.Width = 190;
                 view.Height = 310;
@@ -591,7 +591,6 @@ namespace OracleOfDereth
         }
 
         int JohnListCount = 0;
-
         private void UpdateJohnList()
         {
             // For each quest in JohnQuest.Quests, add a row to the JohnList
@@ -604,15 +603,13 @@ namespace OracleOfDereth
             for (int i = 0; i < questCount; i++)
             {
                 HudList.HudListRowAccessor row;
-                if (i >= JohnListCount)
-                {
-                    JohnListCount += 1;
+                if (i >= JohnListCount) {
                     row = JohnList.AddRow();
                     ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
                     ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
-                }
-                else
-                {
+
+                    JohnListCount += 1;
+                } else {
                     row = JohnList[i];
                 }
 
@@ -657,7 +654,7 @@ namespace OracleOfDereth
             JohnText.Text = $"Legendary John Quests: {questCompletedCount} completed";
 
             if (QuestFlag.QuestsChanged) { 
-                Util.Chat("Quests updated", Util.ColorPink); 
+                Util.Chat("Quest data updated", Util.ColorPink); 
                 QuestFlag.QuestsChanged = false;
             }
         }
@@ -692,7 +689,7 @@ namespace OracleOfDereth
             // Quest Flag
             if(col >= 2) {
                 if (questFlag == null) {
-                    Util.Chat($"Missing quest flag", Util.ColorPink);
+                    Util.Chat($"{flag}: Player has not completed", Util.ColorPink);
                 } else {
                     Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
                 }

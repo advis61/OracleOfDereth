@@ -52,7 +52,7 @@
 			  <control progid="DecalControls.StaticText" name="JohnText" left="5" top="5" width="300" height="20" text="Legendary John Quests"/>
 			  <control progid="DecalControls.PushButton" name="JohnRefresh" left="322" top="3" width="100" height="24" text="Refresh"/>
 
-			  <control progid="DecalControls.List" name="JohnList" left="0" top="30" width="425" height="800">
+			  <control progid="DecalControls.List" name="JohnList" left="0" top="33" width="425" height="800">
 				  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="250" />
 				  <column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
