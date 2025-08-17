@@ -242,9 +242,12 @@ namespace OracleOfDereth
         {
             FileService service = CoreManager.Current.Filter<FileService>();
 
+            //List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.BeerSpellIds.Contains(x.SpellId)).ToList();
+
             List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
                 .Where(x => x.Duration > 900)
                 .Where(x => x.TimeRemaining > 0)
+                .Where(x => !SpellId.BeerSpellIds.Contains(x.SpellId))
                 .Where(x => {
                     var spell = service.SpellTable.GetById(x.SpellId);
                     return spell != null && !spell.IsDebuff && spell.IsUntargetted;
