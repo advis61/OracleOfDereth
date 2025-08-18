@@ -1,7 +1,8 @@
 To release a new build:
 
 - Update the version number in PluginCore.cs and installer.nsi
-- Right click OracleOfDereth in Solution Explorer and do a full Rebuild
+- Build -> Clean Solution
+- Build -> Build Solution
 - Run the MakeNSISW.exe program and select this project's installer.nsi file
 - Look for the output string Output: "C:\Projects\OracleOfDereth\OracleOfDerethInstaller-1.2.0.0.exe"
 
@@ -14,7 +15,7 @@ To release a new build:
 - Create a new tag name 1.2.0
 - Add two attachments:
 Installer.exe from above step from C:\Projects\OracleOfDereth\
-OracleOfDereth.dll file from C:\Projects\OracleOfDereth\OracleOfDereth\obj\Release\net48\
+OracleOfDereth.dll file from C:\Projects\OracleOfDereth\OracleOfDereth\bin\net48\
 - Publish it
 
 - Get the OracleOfDerethInstaller.exe link from the releases page
