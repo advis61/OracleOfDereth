@@ -1,5 +1,9 @@
 ﻿# Oracle Of Dereth
 
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.2.0/OracleOfDerethInstaller-1.2.0.0.exe)
+
+## About
+
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) v2.9.8.3 plugin.
 
 Status HUD
