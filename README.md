@@ -17,7 +17,9 @@ John Tracker
 ## Getting Started
 - This plugin requires the latest Decal, v2.9.8.3. It will fail to register in previous versions.
 
-- Download and run the latest OracleOfDerethInstaller.exe from the [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases) page.
+- Download the latest version: [Oracle of Dereth Latest Version 1.2.0](https://github.com/advis61/OracleOfDereth/releases/download/1.2.0/OracleOfDerethInstaller-1.2.0.0.exe).
+
+- Run the .exe program.
 
 - If the "Windows protected your PC" message appears, click on More info near the top-left corner of the window and select Run anyway.
 

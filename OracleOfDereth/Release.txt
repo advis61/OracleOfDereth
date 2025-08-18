@@ -1,0 +1,22 @@
+To release a new build:
+
+- Update the version number in PluginCore.cs and installer.nsi
+- Right click OracleOfDereth in Solution Explorer and do a full Rebuild
+- Run the MakeNSISW.exe program and select this project's installer.nsi file
+- Look for the output string Output: "C:\Projects\OracleOfDereth\OracleOfDerethInstaller-1.2.0.0.exe"
+
+- Copy that file to Dropbox and test on another machine
+
+- Make a Github release:
+- https://github.com/advis61/OracleOfDereth/releases
+- Click Draft a new release
+- Select the target commit. Name it Version 1.2.0
+- Create a new tag name 1.2.0
+- Add two attachments:
+Installer.exe from above step from C:\Projects\OracleOfDereth\
+OracleOfDereth.dll file from C:\Projects\OracleOfDereth\OracleOfDereth\obj\Release\net48\
+- Publish it
+
+- Get the OracleOfDerethInstaller.exe link from the releases page
+- Add it to the instructions in README.md
+- Git push the changes to GitHub
