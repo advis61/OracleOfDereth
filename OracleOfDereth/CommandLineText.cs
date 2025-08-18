@@ -29,6 +29,11 @@ namespace OracleOfDereth
                 throw new InvalidOperationException("An error occurred.");
             }
 
+            if (command == "/myquests")
+            {
+                Util.Chat($"Oracle of Dereth Parsing MyQuests", 1);
+            }
+
             return false;
         }
     }

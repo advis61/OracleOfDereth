@@ -453,6 +453,10 @@ namespace OracleOfDereth
         {
             if(QuestFlag.MyQuestsRan == false) { Util.Command("/myquests"); }
 
+            if(QuestFlag.QuestsChanged) {
+                Util.Chat("Quest data changed", Util.ColorPink);
+            }
+
             UpdateJohnList();
         }
 
@@ -463,9 +467,10 @@ namespace OracleOfDereth
             // This function will be called multiple times, so we need to add or update
 
             int questCompletedCount = 0;
+            int questsCount = JohnQuest.Quests.Count;
 
             // Add or update rows
-            for (int i = 0; i < JohnQuest.Quests.Count; i++)
+            for (int i = 0; i < questsCount; i++)
             {
                 HudList.HudListRowAccessor row;
                 if (i >= JohnListCount) {
@@ -571,6 +576,7 @@ namespace OracleOfDereth
 
         void JohnRefresh_Hit(object sender, EventArgs e)
         {
+            QuestFlag.Reset();
             Util.Command("/myquests");
         }
 

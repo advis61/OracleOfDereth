@@ -107,6 +107,8 @@ namespace OracleOfDereth
             try
             {
                Util.Chat("Running", Util.ColorOrange);
+               QuestFlag.Reset();
+                //Util.Chat("Resetting Quest Flags", Util.ColorOrange);
             }
             catch (Exception ex) { Util.Log(ex); }
         }

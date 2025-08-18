@@ -47,7 +47,7 @@ namespace OracleOfDereth
             try
             {
                 File.AppendAllText(System.IO.Path.Combine(PluginCore.AssemblyDirectory, "log.txt"), $"{message}\n");
-               Util.Chat(message, 1);
+                Util.Chat(message, 1);
             }
             catch { }
         }

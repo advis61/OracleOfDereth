@@ -40,6 +40,13 @@ namespace OracleOfDereth
             return $"{Key}: {Description} CompletedOn:{CompletedOn} Solves:{Solves} MaxSolves:{MaxSolves} RepeatTime:{Util.GetFriendlyTimeDifference(RepeatTime)}";
         }
 
+        public static void Reset()
+        {
+            QuestFlags.Clear();
+            QuestsChanged = true;
+            MyQuestsRan = false;
+        }
+
         public static bool Process(string line)
         {
             MyQuestsRan = true;
