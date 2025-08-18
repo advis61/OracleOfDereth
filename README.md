@@ -1,6 +1,6 @@
 ﻿# Oracle Of Dereth
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.2.0/OracleOfDerethInstaller-1.2.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.2.0/OracleOfDerethInstaller-1.2.1.0.exe)
 
 ## About
 
@@ -21,7 +21,7 @@ John Tracker
 ## Getting Started
 - This plugin requires the latest Decal, v2.9.8.3. It will fail to register in previous versions.
 
-- Download the latest version: [Oracle of Dereth Latest Version 1.2.0](https://github.com/advis61/OracleOfDereth/releases/download/1.2.0/OracleOfDerethInstaller-1.2.0.0.exe).
+- Download the latest .exe from above. Or check out all [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases).
 
 - Run the .exe program.
 
