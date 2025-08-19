@@ -20,10 +20,10 @@ namespace OracleOfDereth
         public static readonly int IconNotComplete = 0x60011F8;    // Red Circle
 
         // Collection of JohnQuests loaded from quests.csv
-        public static List<JohnQuest> Quests = new List<JohnQuest>();
-        public static QuestSortType CurrentSortType = QuestSortType.NameAscending;
+        public static List<JohnQuest> JohnQuests = new List<JohnQuest>();
+        public static SortType CurrentSortType = SortType.NameAscending;
 
-        public enum QuestSortType
+        public enum SortType
         {
             NameAscending,
             NameDescending,
@@ -41,30 +41,13 @@ namespace OracleOfDereth
         public string Url = "";
         public string Hint = "";
 
-        public static void SortJohnQuests(QuestSortType sortType)
+        public static void Init()
         {
-            CurrentSortType = sortType;
-            switch (sortType)
-            {
-                case QuestSortType.NameAscending:
-                    Quests = Quests.OrderBy(q => q.Name).ToList();
-                    break;
-                case QuestSortType.NameDescending:
-                    Quests = Quests.OrderByDescending(q => q.Name).ToList();
-                    break;
-                case QuestSortType.ReadyAscending:
-                    Quests = Quests.OrderBy(q => q.NextAvailableTime()).ThenBy(q => q.Name).ToList();
-                    break;
-                case QuestSortType.ReadyDescending:
-                    Quests = Quests.OrderByDescending(q => q.NextAvailableTime()).ThenBy(q => q.Name).ToList();
-                    break;
-                case QuestSortType.SolvesAscending:
-                    Quests = Quests.OrderBy(q => q.Solves()).ThenBy(q => q.Name).ToList();
-                    break;
-                case QuestSortType.SolvesDescending:
-                    Quests = Quests.OrderByDescending(q => q.Solves()).ThenBy(q => q.Name).ToList();
-                    break;
-            }
+            LoadJohnQuestsCSV();
+        }
+        public static void Reset()
+        {
+            JohnQuests.Clear();
         }
 
         public static void LoadJohnQuestsCSV()
@@ -102,10 +85,36 @@ namespace OracleOfDereth
                 }
             }
 
-            Quests.Clear();
-            Quests.AddRange(quests);
+            JohnQuests.Clear();
+            JohnQuests.AddRange(quests);
 
             //Util.Chat($"Loaded {Quests.Count} John Quests from embedded CSV.", 1);
+        }
+
+        public static void Sort(SortType sortType)
+        {
+            CurrentSortType = sortType;
+            switch (sortType)
+            {
+                case SortType.NameAscending:
+                    JohnQuests = JohnQuests.OrderBy(q => q.Name).ToList();
+                    break;
+                case SortType.NameDescending:
+                    JohnQuests = JohnQuests.OrderByDescending(q => q.Name).ToList();
+                    break;
+                case SortType.ReadyAscending:
+                    JohnQuests = JohnQuests.OrderBy(q => q.NextAvailableTime()).ThenBy(q => q.Name).ToList();
+                    break;
+                case SortType.ReadyDescending:
+                    JohnQuests = JohnQuests.OrderByDescending(q => q.NextAvailableTime()).ThenBy(q => q.Name).ToList();
+                    break;
+                case SortType.SolvesAscending:
+                    JohnQuests = JohnQuests.OrderBy(q => q.Solves()).ThenBy(q => q.Name).ToList();
+                    break;
+                case SortType.SolvesDescending:
+                    JohnQuests = JohnQuests.OrderByDescending(q => q.Solves()).ThenBy(q => q.Name).ToList();
+                    break;
+            }
         }
 
         public new string ToString()

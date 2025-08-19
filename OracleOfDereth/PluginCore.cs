@@ -81,8 +81,8 @@ namespace OracleOfDereth
                 // Initialize
                 if (CoreManager.Current.CharacterFilter.LoginStatus >= 1)
                 {
-                    Init();
                     Util.Chat($"Hot Reloaded", Util.ColorOrange);
+                    Init();
                 }
                 else
                 {
@@ -107,8 +107,6 @@ namespace OracleOfDereth
             try
             {
                Util.Chat("Running", Util.ColorOrange);
-               QuestFlag.Reset();
-                //Util.Chat("Resetting Quest Flags", Util.ColorOrange);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -119,8 +117,9 @@ namespace OracleOfDereth
             if (didInit) return;
             didInit = true;
 
-            // Load Data
-            JohnQuest.LoadJohnQuestsCSV();
+            // Initialize Collection
+            JohnQuest.Init();
+            QuestFlag.Init();
 
             // Initialize Views
             mainView = new MainView();
@@ -165,6 +164,10 @@ namespace OracleOfDereth
                     timer.Dispose();
                     timer = null;
                 }
+
+                // Reset Collections
+                JohnQuest.Reset();
+                QuestFlag.Reset();
 
                 // Dispose all views
                 mainView?.Dispose();

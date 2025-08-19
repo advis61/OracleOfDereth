@@ -19,7 +19,7 @@ namespace OracleOfDereth
         // Quest Flags I care to track
         private static readonly List<string> QuestFlagsToTrack = new List<string> { 
             "legendaryquestsa", "legendaryquestsb", "legendaryquestsc"
-        }.Concat(JohnQuest.Quests.Select(q => q.Flag)).ToList();
+        }.Concat(JohnQuest.JohnQuests.Select(q => q.Flag)).ToList();
 
         // Collection of Quest Flags data objects
         public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();
@@ -35,9 +35,8 @@ namespace OracleOfDereth
         public DateTime CompletedOn = DateTime.MinValue;
         public TimeSpan RepeatTime = TimeSpan.FromSeconds(0);
 
-        public new string ToString()
+        public static void Init()
         {
-            return $"{Key}: {Description} CompletedOn:{CompletedOn} Solves:{Solves} MaxSolves:{MaxSolves} RepeatTime:{Util.GetFriendlyTimeDifference(RepeatTime)}";
         }
 
         public static void Reset()
@@ -47,7 +46,7 @@ namespace OracleOfDereth
             MyQuestsRan = false;
         }
 
-        public static bool Process(string line)
+        public static bool Add(string line)
         {
             MyQuestsRan = true;
 
@@ -105,6 +104,12 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
 
             return null;
+        }
+
+        // instance methods
+        public new string ToString()
+        {
+            return $"{Key}: {Description} CompletedOn:{CompletedOn} Solves:{Solves} MaxSolves:{MaxSolves} RepeatTime:{Util.GetFriendlyTimeDifference(RepeatTime)}";
         }
 
         public TimeSpan NextAvailableTime()

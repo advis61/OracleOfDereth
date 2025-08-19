@@ -16,7 +16,7 @@ namespace OracleOfDereth
         {
             if (QuestFlag.MyQuestRegex.IsMatch(text))
             {
-                return QuestFlag.Process(text);
+                return QuestFlag.Add(text);
             }
             return false;
         }

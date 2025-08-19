@@ -458,6 +458,9 @@ namespace OracleOfDereth
             }
 
             UpdateJohnList();
+
+            // Quests are now unchanged
+            QuestFlag.QuestsChanged = false;
         }
 
         int JohnListCount = 0;
@@ -467,10 +470,13 @@ namespace OracleOfDereth
             // This function will be called multiple times, so we need to add or update
 
             int questCompletedCount = 0;
-            int questsCount = JohnQuest.Quests.Count;
+            int count = JohnQuest.JohnQuests.Count;
+
+            // Force happens when we sort, when quests changed, or the john list is empty
+            if(QuestFlag.QuestsChanged || JohnListCount == 0) { force = true; }
 
             // Add or update rows
-            for (int i = 0; i < questsCount; i++)
+            for (int i = 0; i < count; i++)
             {
                 HudList.HudListRowAccessor row;
                 if (i >= JohnListCount) {
@@ -483,13 +489,13 @@ namespace OracleOfDereth
                     row = JohnList[i];
                 }
 
-                var quest = JohnQuest.Quests[i];
+                var quest = JohnQuest.JohnQuests[i];
 
                 bool complete = quest.IsComplete();
                 if (complete) { questCompletedCount += 1; }
 
                 // Only update this if the /myquests changes or sort order changes
-                if (QuestFlag.QuestsChanged || force)
+                if(force)
                 {
                     if (complete)
                     {
@@ -520,9 +526,6 @@ namespace OracleOfDereth
                 }
             }
 
-            // Quests are now unchanged
-            QuestFlag.QuestsChanged = false;
-
             // Update Top Text
             JohnText.Text = $"Legendary John Quests: {questCompletedCount} completed";
         }
@@ -531,7 +534,7 @@ namespace OracleOfDereth
             string flag = ((HudStaticText)JohnList[row][4]).Text;
 
             JohnQuest johnQuest;
-            johnQuest = JohnQuest.Quests.FirstOrDefault(x => x.Flag == flag);
+            johnQuest = JohnQuest.JohnQuests.FirstOrDefault(x => x.Flag == flag);
 
             QuestFlag questFlag;
             QuestFlag.QuestFlags.TryGetValue(flag, out questFlag);
@@ -582,10 +585,10 @@ namespace OracleOfDereth
 
         void JohnListSortName_Click(object sender, EventArgs e)
         {
-            if (JohnQuest.CurrentSortType == JohnQuest.QuestSortType.NameAscending) {
-                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.NameDescending);
+            if (JohnQuest.CurrentSortType == JohnQuest.SortType.NameAscending) {
+                JohnQuest.Sort(JohnQuest.SortType.NameDescending);
             } else {
-                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.NameAscending);
+                JohnQuest.Sort(JohnQuest.SortType.NameAscending);
             }
 
             UpdateJohnList(true);
@@ -593,10 +596,10 @@ namespace OracleOfDereth
 
         void JohnListSortReady_Click(object sender, EventArgs e)
         {
-            if( JohnQuest.CurrentSortType == JohnQuest.QuestSortType.ReadyAscending) {
-                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.ReadyDescending);
+            if( JohnQuest.CurrentSortType == JohnQuest.SortType.ReadyAscending) {
+                JohnQuest.Sort(JohnQuest.SortType.ReadyDescending);
             } else {
-                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.ReadyAscending);
+                JohnQuest.Sort(JohnQuest.SortType.ReadyAscending);
             }
 
             UpdateJohnList(true);
@@ -604,10 +607,10 @@ namespace OracleOfDereth
 
         void JohnListSortSolves_Click(object sender, EventArgs e)
         {
-            if (JohnQuest.CurrentSortType == JohnQuest.QuestSortType.SolvesAscending) {
-                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.SolvesDescending);
+            if (JohnQuest.CurrentSortType == JohnQuest.SortType.SolvesAscending) {
+                JohnQuest.Sort(JohnQuest.SortType.SolvesDescending);
             } else {
-                JohnQuest.SortJohnQuests(JohnQuest.QuestSortType.SolvesAscending);
+                JohnQuest.Sort(JohnQuest.SortType.SolvesAscending);
             }
 
             UpdateJohnList(true);

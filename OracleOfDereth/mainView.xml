@@ -58,7 +58,7 @@
 
 			  <control progid="DecalControls.List" name="JohnList" left="0" top="53" width="425" height="800">
 				  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
-				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="250" />
+				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="252" />
 				  <column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
 				  <column progid="DecalControls.TextColumn" name="Solves" fixedwidth="30" />
 				  <column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="100" />
