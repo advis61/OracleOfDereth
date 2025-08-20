@@ -55,7 +55,7 @@ namespace OracleOfDereth
         {
             { 0, 190 }, // Hud
             { 1, 460 }, // Buffs
-            { 2, 425 }, // John
+            { 2, 430 }, // John
             { 3, 190 }  // About
         };
 
@@ -403,8 +403,7 @@ namespace OracleOfDereth
 
         void JohnRefresh_Hit(object sender, EventArgs e)
         {
-            QuestFlag.Reset();
-            Util.Command("/myquests");
+            QuestFlag.Refresh();
         }
 
         void JohnListSortName_Click(object sender, EventArgs e)

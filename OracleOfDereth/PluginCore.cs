@@ -166,10 +166,6 @@ namespace OracleOfDereth
                     timer = null;
                 }
 
-                // Reset Collections
-                JohnQuest.Reset();
-                QuestFlag.Reset();
-
                 // Dispose all views
                 mainView?.Dispose();
 

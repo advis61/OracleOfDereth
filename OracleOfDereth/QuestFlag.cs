@@ -37,13 +37,16 @@ namespace OracleOfDereth
 
         public static void Init()
         {
-        }
-
-        public static void Reset()
-        {
             QuestFlags.Clear();
+
             QuestsChanged = true;
             MyQuestsRan = false;
+        }
+
+        public static void Refresh()
+        {
+            Init();
+            Util.Command("/myquests");
         }
 
         public static bool Add(string line)

@@ -43,11 +43,8 @@ namespace OracleOfDereth
 
         public static void Init()
         {
-            LoadJohnQuestsCSV();
-        }
-        public static void Reset()
-        {
             JohnQuests.Clear();
+            LoadJohnQuestsCSV();
         }
 
         public static void LoadJohnQuestsCSV()
@@ -85,7 +82,6 @@ namespace OracleOfDereth
                 }
             }
 
-            JohnQuests.Clear();
             JohnQuests.AddRange(quests);
 
             //Util.Chat($"Loaded {Quests.Count} John Quests from embedded CSV.", 1);
