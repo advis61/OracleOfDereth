@@ -38,7 +38,7 @@
 
 	<page label="Buffs">
 		<control progid="DecalControls.FixedLayout" clipped="">
-			  <control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="590">
+			  <control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="2000">
 				  <column progid="DecalControls.IconColumn" name="BuffIcon" fixedwidth="16" />
 				  <column progid="DecalControls.TextColumn" name="BuffId" fixedwidth="32" />
 				  <column progid="DecalControls.TextColumn" name="BuffTime" fixedwidth="50" />

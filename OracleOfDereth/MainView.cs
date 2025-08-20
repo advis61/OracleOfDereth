@@ -49,6 +49,24 @@ namespace OracleOfDereth
         public HudList JohnList { get; private set; }
         public HudButton JohnRefresh { get; private set; }
 
+        public bool wasResized = false; // Ever resized
+
+        private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
+        {
+            { 0, 190 }, // Hud
+            { 1, 460 }, // Buffs
+            { 2, 425 }, // John
+            { 3, 190 }  // About
+        };
+
+        private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
+        {
+            { 0, 290 }, // Hud
+            { 1, 310 }, // Buffs
+            { 2, 340 }, // John (810 for full list)
+            { 3, 310 }  // About
+        };
+
         public MainView()
         {
             try
@@ -60,6 +78,10 @@ namespace OracleOfDereth
                 // Display the view
                 view = new VirindiViewService.HudView(properties, controls);
                 if (view == null) { return; }
+
+                // Make the view resizable
+                view.UserResizeable = true;
+                view.Resize += MainView_Resized;
 
                 // The Notebook
                 MainViewNotebook = (HudTabView)view["MainViewNotebook"];
@@ -131,26 +153,24 @@ namespace OracleOfDereth
         {
             int currentTab = MainViewNotebook.CurrentTab;
 
-            if (currentTab == 0) { // HUD
-                view.Width = 190;
-                view.Height = 290;
-            } else if (currentTab == 1) { // Buffs
-                view.Width = 460;
-                view.Height = 310;
-            } else if (currentTab == 2) {  // John
-                view.Width = 425;
-                view.Height = 810; // 790 for all
-            } else if (currentTab == 3) {  // About
-                view.Width = 190;
-                view.Height = 310;
-            } else {
-                Util.Log("Invalid tab");
-                view.Width = 190;
-                view.Height = 310;
-            }
+            view.Height = MainViewHeights[currentTab];
+            view.Width = MainViewWidths[currentTab];
 
             Update();
         }
+
+        private void MainView_Resized(object sender, EventArgs e)
+        {
+            int currentTab = MainViewNotebook.CurrentTab;
+
+            // Save the new view height
+            MainViewHeights[currentTab] = view.Height;
+
+            // Prevent width updates
+            view.Width = MainViewWidths[currentTab];
+        }
+
+        // The Tick
 
         public void Update()
         {
@@ -177,231 +197,24 @@ namespace OracleOfDereth
         // HUD Tab
         public void UpdateHud()
         {
-            UpdateBuffTimes();
-            UpdateHouse();
-            UpdateBeers();
-            UpdatePages();
+            BuffsText.Text = Hud.BuffsText();
+            HouseText.Text = Hud.HouseText();
+            BeersText.Text = Hud.BeersText();
+            PagesText.Text = Hud.PagesText();
 
-            UpdateLockpick();
-            UpdateSummoning();
-            UpdateLife();
-            UpdateMeleeD();
+            LockpickText.Text = Hud.LockpickText();
+            SummoningText.Text = Hud.SummoningText();
+            LifeText.Text = Hud.LifeText();
+            MeleeDText.Text = Hud.MeleeDText();
 
-            UpdateRare();
-            UpdateDestruction();
+            RareText.Text = Hud.RareText();
 
-            UpdateRegen();
-            UpdateProtection();
-        }
-
-        private void UpdateSummoning()
-        {
-            Skill skill = new Skill(CharFilterSkillType.Summoning);
-            if (skill.IsKnown()) { SummoningText.Text = skill.Current().ToString(); }
-        }
-        private void UpdateLockpick()
-        {
-            Skill skill = new Skill(CharFilterSkillType.Lockpick);
-
-            if (skill.IsKnown()) {
-                int value = skill.Current();
-                int vr1 = 0;
-                int vr2 = 0;
-
-                if (value >= 575)
-                {
-                    vr1 = 3;
-                    vr2 = 10;
-                } else if (value >= 570) {
-                    vr1 = 4;
-                    vr2 = 11;
-                } else if (value >= 565) {
-                    vr1 = 5;
-                    vr2 = 12;
-                } else if (value >= 550) {
-                    vr1 = 6;
-                    vr2 = 13;
-                } else if (value >= 525) {
-                    vr1 = 6;
-                    vr2 = 14;
-                } else if (value >= 500) {
-                    vr1 = 7;
-                    vr2 = 15;
-                } else {
-                    vr1 = 10;
-                    vr2 = 20;
-                }
-
-                if (value >= 500) {
-                    LockpickText.Text = skill.Current().ToString() + " (VR " + vr1 + "/" + vr2 + ")";
-                } else {
-                    LockpickText.Text = skill.Current().ToString();
-                }
-            }
-        }
-
-        private void UpdateLife()
-        {
-            Skill skill = new Skill(CharFilterSkillType.LifeMagic);
-            if (skill.IsKnown()) { LifeText.Text = skill.Current().ToString(); }
-        }
-        private void UpdateMeleeD()
-        {
-            Skill skill = new Skill(CharFilterSkillType.MeleeDefense);
-            if (skill.IsKnown()) { MeleeDText.Text = skill.Current().ToString(); }
-        }
-
-        private void UpdateBuffTimes()
-        {
-            FileService service = CoreManager.Current.Filter<FileService>();
-
-            //List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.BeerSpellIds.Contains(x.SpellId)).ToList();
-
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
-                .Where(x => x.Duration > 900)
-                .Where(x => x.TimeRemaining > 0)
-                .Where(x => !SpellId.BeerSpellIds.Contains(x.SpellId))
-                .Where(x => {
-                    var spell = service.SpellTable.GetById(x.SpellId);
-                    return spell != null && !spell.IsDebuff && spell.IsUntargetted;
-                })
-                .ToList();
-
-            if (enchantments.Count == 0)
-            {
-                BuffsText.Text = "-";
-                return;
-            }
-
-            double duration = enchantments.Min(x => x.TimeRemaining);
-            TimeSpan time = TimeSpan.FromSeconds(duration);
-
-            BuffsText.Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds) + " (" + enchantments.Count().ToString() + ")";
-        }
-
-        private void UpdateHouse()
-        {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
-                .Where(x => SpellId.HouseSpellIds.Contains(x.SpellId))
-                .Where(x => x.TimeRemaining > 0)
-                .ToList();
-
-            if (enchantments.Count == 0)
-            {
-                HouseText.Text = "-";
-                return;
-            }
-
-            double duration = enchantments.Min(x => x.TimeRemaining);
-            TimeSpan time = TimeSpan.FromSeconds(duration);
-
-            HouseText.Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds) + " (" + enchantments.Count().ToString() + ")";
-        }
-
-        private void UpdateBeers()
-        {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.BeerSpellIds.Contains(x.SpellId)).ToList();
-
-            if (enchantments.Count == 0) {
-                BeersText.Text = "-";
-                return;
-            }
-
-            double duration = enchantments.Min(x => x.TimeRemaining);
-            TimeSpan time = TimeSpan.FromSeconds(duration);
-
-            BeersText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
-        }
-
-        private void UpdatePages()
-        {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.PagesSpellIds.Contains(x.SpellId)).ToList();
-
-            if (enchantments.Count == 0)
-            {
-                PagesText.Text = "-";
-                return;
-            }
-
-            double duration = enchantments.Min(x => x.TimeRemaining);
-            TimeSpan time = TimeSpan.FromSeconds(duration);
-
-            PagesText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
-        }
-
-        private void UpdateRare()
-        {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.RareSpellIds.Contains(x.SpellId)).ToList();
-
-            if (enchantments.Count == 0)
-            {
-                RareText.Text = "-";
-                return;
-            }
-
-            double duration = enchantments.Min(x => x.TimeRemaining);
-            TimeSpan time = TimeSpan.FromSeconds(duration);
-
-            double cooldown = 180 - (900 - enchantments.Max(x => x.TimeRemaining));
-
-            if (cooldown > 0)
-            {
-                RareText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds) + " (" + enchantments.Count().ToString() + ") " + cooldown.ToString() + "s";
-            } else {
-                RareText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds) + " (" + enchantments.Count().ToString() + ")";
-            }
-        }
-
-        private void UpdateDestruction()
-        {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.DestructionSpellIds.Contains(x.SpellId)).ToList();
-
-            if (enchantments.Count == 0)
-            {
-                DestructionText.Text = "-";
-                return;
-            }
-
-            double duration = enchantments.Min(x => x.TimeRemaining);
-            TimeSpan time = TimeSpan.FromSeconds(duration);
-
-            DestructionText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
-        }
-
-        private void UpdateRegen()
-        {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.RegenSpellIds.Contains(x.SpellId)).ToList();
-
-            if (enchantments.Count == 0)
-            {
-                RegenText.Text = "-";
-                return;
-            }
-
-            double duration = enchantments.Min(x => x.TimeRemaining);
-            TimeSpan time = TimeSpan.FromSeconds(duration);
-
-            RegenText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
-        }
-
-        private void UpdateProtection()
-        {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.ProtectionSpellIds.Contains(x.SpellId)).ToList();
-
-            if (enchantments.Count == 0)
-            {
-                ProtectionText.Text = "-";
-                return;
-            }
-
-            double duration = enchantments.Min(x => x.TimeRemaining);
-            TimeSpan time = TimeSpan.FromSeconds(duration);
-
-            ProtectionText.Text = string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
+            DestructionText.Text = Hud.DestructionText();
+            RegenText.Text = Hud.RegenText();
+            ProtectionText.Text = Hud.ProtectionText();
         }
 
         // Buffs Tab
-
         private void UpdateBuffs()
         {
             UpdateBuffsList();
@@ -411,7 +224,6 @@ namespace OracleOfDereth
 
         private void UpdateBuffsList()
         {
-            Util.Chat("Buffs update");
             FileService service = CoreManager.Current.Filter<FileService>();
 
             // Get all buffs with a duration
@@ -459,7 +271,6 @@ namespace OracleOfDereth
 
         void BuffsList_Click(object sender, int row, int col)
         {
-            //Debug.Log("buffs list clicked");
         }
 
         // John Tab

@@ -106,7 +106,8 @@ namespace OracleOfDereth
         {
             try
             {
-               Util.Chat("Running", Util.ColorOrange);
+                Util.Chat("Running", Util.ColorOrange);
+                Util.Chat(Hud.BuffNowText(), Util.ColorBlue);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
