@@ -139,7 +139,7 @@ namespace OracleOfDereth
                 view.Height = 310;
             } else if (currentTab == 2) {  // John
                 view.Width = 425;
-                view.Height = 310; // 790 for all
+                view.Height = 810; // 790 for all
             } else if (currentTab == 3) {  // About
                 view.Width = 190;
                 view.Height = 310;
@@ -156,9 +156,22 @@ namespace OracleOfDereth
         {
             int currentTab = MainViewNotebook.CurrentTab;
 
+            if(QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
             if (currentTab == 0) { UpdateHud(); }
             if (currentTab == 1) { UpdateBuffs(); }
             if (currentTab == 2) { UpdateJohn(); }
+        }
+
+        // Quest Flag Changes
+        public void UpdateQuestFlags()
+        {
+            // Update anything that relies on quest flags
+            UpdateJohnList(true);
+
+            Util.Chat("Quest data updated.", Util.ColorPink);
+
+            // Quests are now unchanged
+            QuestFlag.QuestsChanged = false;
         }
 
         // HUD Tab
@@ -398,6 +411,7 @@ namespace OracleOfDereth
 
         private void UpdateBuffsList()
         {
+            Util.Chat("Buffs update");
             FileService service = CoreManager.Current.Filter<FileService>();
 
             // Get all buffs with a duration
@@ -453,14 +467,7 @@ namespace OracleOfDereth
         {
             if(QuestFlag.MyQuestsRan == false) { Util.Command("/myquests"); }
 
-            if(QuestFlag.QuestsChanged) {
-                Util.Chat("Quest data changed", Util.ColorPink);
-            }
-
             UpdateJohnList();
-
-            // Quests are now unchanged
-            QuestFlag.QuestsChanged = false;
         }
 
         int JohnListCount = 0;
@@ -469,33 +476,36 @@ namespace OracleOfDereth
             // For each quest in JohnQuest.Quests, add a row to the JohnList
             // This function will be called multiple times, so we need to add or update
 
-            int questCompletedCount = 0;
+            int completed = 0;
             int count = JohnQuest.JohnQuests.Count;
 
-            // Force happens when we sort, when quests changed, or the john list is empty
-            if(QuestFlag.QuestsChanged || JohnListCount == 0) { force = true; }
+            // When empty
+            if (JohnListCount == 0) { force = true; }
 
             // Add or update rows
             for (int i = 0; i < count; i++)
             {
                 HudList.HudListRowAccessor row;
-                if (i >= JohnListCount) {
+                if (i >= JohnListCount)
+                {
                     row = JohnList.AddRow();
                     ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
                     ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
 
                     JohnListCount += 1;
-                } else {
+                }
+                else
+                {
                     row = JohnList[i];
                 }
 
-                var quest = JohnQuest.JohnQuests[i];
+                var johnQuest = JohnQuest.JohnQuests[i];
 
-                bool complete = quest.IsComplete();
-                if (complete) { questCompletedCount += 1; }
+                bool complete = johnQuest.IsComplete();
+                if (complete) { completed += 1; }
 
                 // Only update this if the /myquests changes or sort order changes
-                if(force)
+                if (force)
                 {
                     if (complete)
                     {
@@ -506,13 +516,13 @@ namespace OracleOfDereth
                         ((HudPictureBox)row[0]).Image = JohnQuest.IconNotComplete;
                     }
 
-                    ((HudStaticText)row[1]).Text = quest.Name;
-                    ((HudStaticText)row[4]).Text = quest.Flag;
+                    ((HudStaticText)row[1]).Text = johnQuest.Name;
+                    ((HudStaticText)row[4]).Text = johnQuest.Flag;
                 }
 
                 // Always update this
                 QuestFlag questFlag;
-                QuestFlag.QuestFlags.TryGetValue(quest.Flag, out questFlag);
+                QuestFlag.QuestFlags.TryGetValue(johnQuest.Flag, out questFlag);
 
                 if (questFlag == null)
                 {
@@ -527,7 +537,10 @@ namespace OracleOfDereth
             }
 
             // Update Top Text
-            JohnText.Text = $"Legendary John Quests: {questCompletedCount} completed";
+            if (force)
+            {
+                JohnText.Text = $"Legendary John Quests: {completed} completed";
+            }
         }
         void JohnList_Click(object sender, int row, int col)
         {

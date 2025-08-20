@@ -49,6 +49,7 @@ namespace OracleOfDereth
         public static bool Add(string line)
         {
             MyQuestsRan = true;
+            QuestsChanged = true;
 
             QuestFlag questFlag = FromMyQuestsLine(line);
             if (questFlag == null) { return false; }
@@ -59,8 +60,6 @@ namespace OracleOfDereth
                 QuestFlags[questFlag.Key] = questFlag;
                 //Util.Chat($"Now tracking #{questFlag.ToString()}.#{QuestFlags.Count()} quests tracked total", 1);
             }
-
-            QuestsChanged = true;
 
             return true;
         }
