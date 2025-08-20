@@ -119,6 +119,12 @@ namespace OracleOfDereth
             return (CompletedOn + RepeatTime) - DateTime.UtcNow;
         }
 
+        public bool Ready()
+        {
+            var difference = NextAvailableTime();
+            return difference.TotalSeconds <= 0;
+        }
+
         public string NextAvailable()
         {
             var difference = NextAvailableTime();

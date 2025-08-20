@@ -99,10 +99,10 @@ namespace OracleOfDereth
                     JohnQuests = JohnQuests.OrderByDescending(q => q.Name).ToList();
                     break;
                 case SortType.ReadyAscending:
-                    JohnQuests = JohnQuests.OrderBy(q => q.NextAvailableTime()).ThenBy(q => q.Name).ToList();
+                    JohnQuests = JohnQuests.OrderBy(q => q.Ready()).ThenBy(q => q.NextAvailableTime()).ToList();
                     break;
                 case SortType.ReadyDescending:
-                    JohnQuests = JohnQuests.OrderByDescending(q => q.NextAvailableTime()).ThenBy(q => q.Name).ToList();
+                    JohnQuests = JohnQuests.OrderByDescending(q => q.NextAvailableTime()).ToList();
                     break;
                 case SortType.SolvesAscending:
                     JohnQuests = JohnQuests.OrderBy(q => q.Solves()).ThenBy(q => q.Name).ToList();
@@ -146,6 +146,16 @@ namespace OracleOfDereth
             if (questFlag == null) { return null; }
 
             return questFlag.NextAvailableTime();
+        }
+
+        public bool Ready()
+        {
+            QuestFlag questFlag;
+            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
+
+            if (questFlag == null) { return true; }
+
+            return questFlag.Ready();
         }
 
         public int Solves()
