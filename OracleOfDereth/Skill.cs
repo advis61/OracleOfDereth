@@ -27,6 +27,11 @@ namespace OracleOfDereth
             return IsSpecialized() || IsTrained();
         }
 
+        public bool IsUnKnown()
+        {
+            return !IsKnown();
+        }
+
         public bool IsSpecialized()
         {
             return CharacterFilter.Skills[SkillType].Training == TrainingType.Specialized;
