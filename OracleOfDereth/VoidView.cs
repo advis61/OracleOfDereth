@@ -53,7 +53,7 @@ namespace OracleOfDereth
 
                 Update();
             }
-            catch (Exception ex) { Debug.Log(ex); }
+            catch (Exception ex) { Util.Log(ex); }
         }
         void BuffsList_Click(object sender, int row, int col)
         {

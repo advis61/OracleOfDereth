@@ -101,12 +101,12 @@ namespace OracleOfDereth
 
         private void CharacterFilter_SpellCast(object sender, SpellCastEventArgs e)
         {
-            Debug.Log($"spell cast #{e.SpellId} on #{e.TargetId}");
+            Util.Chat($"spell cast #{e.SpellId} on #{e.TargetId}");
         }
 
         private void ItemSelected(object sender, ItemSelectedEventArgs e)
         {
-            Debug.Log($"item selected#{e.ToString()}");
+            Util.Chat($"item selected#{e.ToString()}");
 
         }
 

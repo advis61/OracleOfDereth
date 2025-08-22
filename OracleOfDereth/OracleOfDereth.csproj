@@ -37,7 +37,6 @@
     <EmbeddedResource Include="mainView.xml" />
     <EmbeddedResource Include="voidView.xml" />
     <EmbeddedResource Include="Resources\quests.csv" />
->>>>>>> master
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Decal.Adapter">
