@@ -58,12 +58,10 @@ namespace OracleOfDereth
 
         private void UpdateTarget()
         {
-            //TargetName.Text = Target.CurrentTarget?.Name();
-
             if (Target.CurrentTarget != null) {
-                TargetName.Text = Target.CurrentTarget.ToString();
+                TargetName.Text = Target.CurrentTarget?.ToString();
             } else {
-                TargetName.Text = "No target";
+                TargetName.Text = "";
             }
         }
 
@@ -121,7 +119,6 @@ namespace OracleOfDereth
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
         protected virtual void Dispose(bool disposing)
         {
             if (disposing) view?.Dispose();

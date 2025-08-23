@@ -100,18 +100,14 @@ namespace OracleOfDereth
 
         private void CharacterFilter_SpellCast(object sender, SpellCastEventArgs e)
         {
-            Util.Chat($"spell cast #{e.SpellId} on #{e.TargetId}");
-
-            WorldObject item = CoreManager.Current.WorldFilter[e.TargetId];
-            Util.Chat($"Target: Id={item.Id} Type={item.Type} SpellCount={item.ActiveSpellCount} {item.Category} {item.Name} {item.SpellCount}");
+            Target.SpellCast(e.TargetId, e.SpellId);
+            targetView.Update();
         }
 
         //private WorldObject targetItem = null;
 
         private void ItemSelected(object sender, ItemSelectedEventArgs e)
         {
-            Util.Chat($"ItemSelected: {e.ItemGuid}");
-
             Target.SetCurrentTarget(e.ItemGuid);
             targetView.Update();
         }

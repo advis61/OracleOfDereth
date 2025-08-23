@@ -22,6 +22,7 @@ namespace OracleOfDereth
 
         // Properties
         public int Id = 0;
+        public Dictionary<int, DateTime> ActiveSpells = new Dictionary<int, DateTime>();
 
         public static void Init()
         {
@@ -29,17 +30,39 @@ namespace OracleOfDereth
             CurrentTarget = null;
         }
 
-        public static void SetCurrentTarget(int itemGuid)
+        public static void SetCurrentTarget(int id)
         {
-            Target target;
-            Target.Targets.TryGetValue(itemGuid, out target);
-
-            if(target == null)
-            {
-                target = new Target() { Id = itemGuid };
-            }
+            Target.Targets.TryGetValue(id, out Target target);
+            if(target == null) { target = new Target() { Id = id }; }
 
             CurrentTarget = target;
+        }
+
+        public static void SpellCast(int id, int spellId)
+        {
+            // Find or create target
+            Target.Targets.TryGetValue(id, out Target target);
+
+            if(target == null) { 
+                target = new Target() { Id = id }; 
+
+                // Save Targets
+                Targets[id] = target;
+            }
+
+            // Find or create spell
+            target.ActiveSpells.TryGetValue(spellId, out DateTime spellTime);
+
+            if(spellTime == null) {
+                spellTime = DateTime.Now;
+                target.ActiveSpells[spellId] = spellTime;
+            } else if(DateTime.Now - spellTime < TimeSpan.FromSeconds(1)) {
+                return; // Don't update if the spell was cast less than 1 second ago
+            } else {
+                target.ActiveSpells[spellId] = spellTime;
+            }
+
+            Util.Chat($"Active spells are now: {string.Join(", ", target.ActiveSpells.Keys)}", 1);
         }
 
         // Instance methods
