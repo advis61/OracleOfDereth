@@ -62,7 +62,7 @@ namespace OracleOfDereth
             3721,  // Prodigal Light Weapon Mastery
             3722,  // Prodigal Magic Item Expertise
             3723,  // Prodigal Magic Resistance
-            3724,  // Prodigal Mana Conversion Mastery
+            3732,  // Prodigal Mana Conversion Mastery
             3725,  // Prodigal Mana Renewal
             3726,  // Prodigal Monster Attunement
             3727,  // Prodigal Person Attunement
@@ -106,7 +106,7 @@ namespace OracleOfDereth
             4208, // Spectral Flame
             4221, // Spectral Life Magic Mastery
             5023, // Spectral Two Handed Combat Mastery
-            5024, // Spectral Item Expertise
+            5032, // Spectral Item Expertise
             5168, // a spectacular view of the Mhoire lands
             5169, // a descent into the Mhoire catacombs
             5170, // a descent into the Mhoire catacombs
@@ -130,9 +130,9 @@ namespace OracleOfDereth
             6146, // Ride the Lightning
             4099, // Strength of Diemos
             4025, // Iron Cast Stomach
-            3243, // Consencration
-            3244, // Divine Manipulation
-            3245, // Sacrosanct Touch
+            3323, // Consencration
+            3324, // Divine Manipulation
+            3325, // Sacrosanct Touch
             3237, // Fanaticism
             3831, // Blessing of the Pitcher Plant
             3830, // Blessing of the Fly Trap
@@ -175,5 +175,9 @@ namespace OracleOfDereth
             5402, // Incantation of Corruption
             5338, // Incantation of Destructive Curse
         };
+
+        public static int CorrosionSpellId = 5394; // Incantation of Corrosion
+        public static int CorruptionSpellId = 5402; // Incantation of Corruption
+        public static int CurseSpellId = 5338; // Incantation of Destructive Curse
     }
 }

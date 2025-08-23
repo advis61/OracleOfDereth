@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using VirindiViewService.Controls;
-
-using Decal.Adapter;
+﻿using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Decal.Filters;
-using VirindiViewService;
-using System.Security.Authentication.ExtendedProtection.Configuration;
 using MyClasses.MetaViewWrappers;
 using MyClasses.MetaViewWrappers.DecalControls;
 using MyClasses.MetaViewWrappers.VirindiViewServiceHudControls;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Security.Authentication.ExtendedProtection.Configuration;
+using System.Text;
+using System.Threading.Tasks;
+using VirindiViewService;
+using VirindiViewService.Controls;
 
 namespace OracleOfDereth
 {
@@ -25,6 +24,28 @@ namespace OracleOfDereth
 
         public HudStaticText TargetName { get; private set; }
         public HudList BuffsList { get; private set; }
+
+        // Corrosion
+        public HudFixedLayout CorrosionLayout { get; private set; }
+        public HudPictureBox CorrosionIcon { get; private set; }
+        public HudStaticText CorrosionText { get; private set; }
+
+        // Corruption
+        public HudFixedLayout CorruptionLayout { get; private set; }
+        public HudPictureBox CorruptionIcon { get; private set; }
+        public HudStaticText CorruptionText { get; private set; }
+        
+        // Curse
+        public HudFixedLayout CurseLayout { get; private set; }
+        public HudPictureBox CurseIcon { get; private set; }
+        public HudStaticText CurseText { get; private set; }
+
+        // Dest
+        public HudFixedLayout DestLayout { get; private set; }
+        public HudPictureBox DestIcon { get; private set; }
+        public HudStaticText DestText { get; private set; }
+
+
         public TargetView()
         {
             try
@@ -37,79 +58,81 @@ namespace OracleOfDereth
                 view = new VirindiViewService.HudView(properties, controls);
                 if (view == null) { return; }
 
-                TargetName = (HudStaticText)view["TargetName"];
+                //TargetName = (HudStaticText)view["TargetName"];
 
-                // BuffsList
-                BuffsList = (HudList)view["BuffsList"];
-                BuffsList.ClearRows();
+                // Corrosion
+                CorrosionIcon = new HudPictureBox();
+                CorrosionIcon.Image = 100691559; //  Corrosion icon
+                CorrosionLayout = (HudFixedLayout)view["CorrosionIcon"];
+                CorrosionLayout.AddControl(CorrosionIcon, new Rectangle(0, 3, 32, 32));
+
+                CorrosionText = (HudStaticText)view["CorrosionText"];
+                CorrosionText.FontHeight = 10;
+                CorrosionText.TextAlignment = VirindiViewService.WriteTextFormats.Center;
+
+
+                // Corruption
+                CorruptionIcon = new HudPictureBox();
+                CorruptionIcon.Image = 100691561; // Corruption icon
+                CorruptionLayout = (HudFixedLayout)view["CorruptionIcon"];
+                CorruptionLayout.AddControl(CorruptionIcon, new Rectangle(0, 1, 28, 28));
+
+                CorruptionText = (HudStaticText)view["CorruptionText"];
+                CorruptionText.FontHeight = 10;
+                CorruptionText.TextAlignment = VirindiViewService.WriteTextFormats.Center;
+
+                // Curse
+                CurseIcon = new HudPictureBox();
+                CurseIcon.Image = 100691551; // Curse icon
+                CurseLayout = (HudFixedLayout)view["CurseIcon"];
+                CurseLayout.AddControl(CurseIcon, new Rectangle(0, 1, 28, 28));
+
+                CurseText = (HudStaticText)view["CurseText"];
+                CurseText.FontHeight = 10;
+                CurseText.TextAlignment = VirindiViewService.WriteTextFormats.Center;
+
+                // Dest
+                DestIcon = new HudPictureBox();
+                DestIcon.Image = 100670995; // Dest icon
+                DestLayout = (HudFixedLayout)view["DestIcon"];
+                DestLayout.AddControl(DestIcon, new Rectangle(0, 1, 28, 28));
+
+                DestText = (HudStaticText)view["DestText"];
+                DestText.FontHeight = 10;
+                DestText.TextAlignment = VirindiViewService.WriteTextFormats.Center;
 
                 Update();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
-        void BuffsList_Click(object sender, int row, int col)
-        {
-            //Debug.Log("buffs list clicked");
-        }
         public void Update()
         {
-            UpdateTargetName();
-            UpdateBuffsList();
+            UpdateSpells();
+            DestText.Text = DestructionText();
         }
 
-        private void UpdateTargetName()
+        public void UpdateSpells()
         {
-            if (Target.GetCurrentTarget() != null) {
-                TargetName.Text = Target.GetCurrentTarget().ToString();
-            } else {
-                TargetName.Text = "";
-            }
+            Target target = Target.GetCurrentTarget();
+            if(target == null) { target = new Target(); }
+
+            CorrosionText.Text = target.CorrosionText();
+            CorruptionText.Text = target.CorruptionText();
+            CurseText.Text = target.CurseText();
         }
 
-        private int BuffsListCount = 0;
-        private void UpdateBuffsList(bool force = false)
+        public string DestructionText()
         {
-            FileService service = CoreManager.Current.Filter<FileService>();
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.DestructionSpellIds.Contains(x.SpellId)).ToList();
+            if (enchantments.Count == 0) { return ""; }
 
-            // When empty
-            if (BuffsListCount == 0) { force = true; }
+            double duration = enchantments.Min(x => x.TimeRemaining);
+            TimeSpan time = TimeSpan.FromSeconds(duration);
 
-            //for (int x = 0; x < SpellId.VoidSpellIds.Count(); x++)
-            for (int x = 0; x < 1; x++)
-            {
-                HudList.HudListRowAccessor row;
+            int seconds = time.Seconds;
+            if(seconds < 0) { return ""; }
 
-                if (x >= BuffsListCount) {
-                    BuffsListCount += 1;
-                    row = BuffsList.AddRow();
-                } else { 
-                    row = BuffsList[x];
-                }
-
-                int spellId = SpellId.VoidSpellIds[x];
-                Spell spell = service.SpellTable.GetById(spellId);
-
-                if (force)
-                {
-                    ((HudPictureBox)row[0]).Image = spell.IconId;
-                    ((HudStaticText)row[1]).Text = "-";
-                }
-
-                if(Target.GetCurrentTarget() == null) { continue; }
-
-                // Always
-                Target.GetCurrentTarget().ActiveSpells.TryGetValue(spellId, out DateTime spellTime);
-
-                if (spellTime == null || spellTime == DateTime.MinValue)
-                {
-                    ((HudStaticText)row[1]).Text = "-";
-                }
-                else
-                {
-                    int seconds = (int)(DateTime.Now - spellTime).TotalSeconds;
-                    ((HudStaticText)row[1]).Text = seconds.ToString();
-                }
-            }
+            return time.Seconds.ToString();
         }
 
         public void Dispose()

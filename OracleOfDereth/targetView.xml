@@ -1,11 +1,16 @@
 ﻿<?xml version="1.0"?>
-<view icon="8895" title="Void" width="165" height="120">
-	<control progid="DecalControls.FixedLayout" clipped="">
-		<control progid="DecalControls.StaticText" name="TargetName" left="0" top="0" width="70" height="20" text="Target"/>
+<view icon="8895" title="Void" width="222" height="55">
+	<control progid="DecalControls.FixedLayout" name="TargetLayout" clipped="">
+		<control progid="DecalControls.FixedLayout" name="CorrosionIcon" left="0" top="0" width="32" height="32"/>
+		<control progid="DecalControls.StaticText" name="CorrosionText" left="32" top="5" width="20" height="32" text="12"/>
 
-		<control progid="DecalControls.List" name="BuffsList" left="0" top="20" width="165" height="120">
-			<column progid="DecalControls.IconColumn" name="BuffIcon" fixedwidth="16" />
-			<column progid="DecalControls.TextColumn" name="BuffTime" fixedwidth="40" />
-		</control>
+		<control progid="DecalControls.FixedLayout" name="CorruptionIcon" left="56" top="0" width="32" height="32"/>
+		<control progid="DecalControls.StaticText" name="CorruptionText" left="88" top="5" width="20" height="32" text="12"/>
+
+		<control progid="DecalControls.FixedLayout" name="CurseIcon" left="112" top="0" width="32" height="32"/>
+		<control progid="DecalControls.StaticText" name="CurseText" left="144" top="5" width="20" height="32" text="12"/>
+
+		<control progid="DecalControls.FixedLayout" name="DestIcon" left="168" top="0" width="32" height="32"/>
+		<control progid="DecalControls.StaticText" name="DestText" left="200" top="5" width="20" height="32" text="12"/>
 	</control>
 </view>

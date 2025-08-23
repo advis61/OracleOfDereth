@@ -11,10 +11,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VirindiViewService.Controls;
 
 namespace OracleOfDereth
 {
-    public class Target 
+    public class Target
     {
         // Collection of Targets that have had spells cast on them
         public static Dictionary<int, Target> Targets = new Dictionary<int, Target>();
@@ -42,7 +43,8 @@ namespace OracleOfDereth
             // Find or create target
             Target.Targets.TryGetValue(CurrentTargetId, out Target target);
 
-            if (target == null) {
+            if (target == null)
+            {
                 target = new Target() { Id = CurrentTargetId };
             }
 
@@ -52,13 +54,14 @@ namespace OracleOfDereth
         public static void SpellCast(int id, int spellId)
         {
             // Return false unless SpellId.VoidSpellIds include this spellId
-            if(!SpellId.VoidSpellIds.Contains(spellId)) { return; }
+            if (!SpellId.VoidSpellIds.Contains(spellId)) { return; }
 
             // Find or create target
             Target.Targets.TryGetValue(id, out Target target);
 
-            if(target == null) { 
-                target = new Target() { Id = id }; 
+            if (target == null)
+            {
+                target = new Target() { Id = id };
 
                 // Save Target
                 Targets[id] = target;
@@ -84,6 +87,32 @@ namespace OracleOfDereth
         public string Name()
         {
             return Item().Name;
+        }
+
+        public string CorrosionText() { return GetSpellText(SpellId.CorrosionSpellId); }
+        public string CorruptionText() { return GetSpellText(SpellId.CorruptionSpellId); }
+        public string CurseText() { return GetSpellText(SpellId.CurseSpellId); }
+
+        private int GetSpellDuration(int spellId)
+        {
+            if (spellId == SpellId.CorrosionSpellId) { return 15; }
+            if (spellId == SpellId.CorruptionSpellId) { return 15; }
+            if (spellId == SpellId.CurseSpellId) { return 30; }
+            return 0;
+        }
+
+        private string GetSpellText(int spellId)
+        {
+            Target target = GetCurrentTarget();
+            if (target == null) { return ""; }
+
+            Target.GetCurrentTarget().ActiveSpells.TryGetValue(spellId, out DateTime spellTime);
+            if (spellTime == null || spellTime == DateTime.MinValue) { return ""; }
+
+            int seconds = GetSpellDuration(spellId) - (int)(DateTime.Now - spellTime).TotalSeconds;
+            if(seconds < 0) { return ""; }
+
+            return seconds.ToString();
         }
     }
 }

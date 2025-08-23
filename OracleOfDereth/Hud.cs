@@ -165,6 +165,7 @@ namespace OracleOfDereth
 
             double duration = enchantments.Min(x => x.TimeRemaining);
             TimeSpan time = TimeSpan.FromSeconds(duration);
+            if(time.Seconds < 0) { return "-"; }
 
             return string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
@@ -176,6 +177,7 @@ namespace OracleOfDereth
 
             double duration = enchantments.Min(x => x.TimeRemaining);
             TimeSpan time = TimeSpan.FromSeconds(duration);
+            if(time.Seconds < 0) { return "-"; }
 
             return string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
@@ -187,6 +189,7 @@ namespace OracleOfDereth
 
             double duration = enchantments.Min(x => x.TimeRemaining);
             TimeSpan time = TimeSpan.FromSeconds(duration);
+            if(time.Seconds < 0) { return "-"; }
 
             return string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
