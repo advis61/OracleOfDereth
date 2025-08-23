@@ -17,7 +17,7 @@ using MyClasses.MetaViewWrappers.VirindiViewServiceHudControls;
 
 namespace OracleOfDereth
 {
-    class VoidView : IDisposable
+    class TargetView : IDisposable
     {
         readonly VirindiViewService.ViewProperties properties;
         readonly VirindiViewService.ControlGroup controls;
@@ -25,21 +25,13 @@ namespace OracleOfDereth
 
         public HudStaticText TargetName { get; private set; }
         public HudList BuffsList { get; private set; }
-
-        private static readonly List<int> VoidSpellIds = new List<int> {
-            5394, // Incantation of Corrosion
-            5402, // Incantation of Corruption
-            5338, // Incantation of Destructive Curse
-            5204, // Surge of Destruction
-        };
-
-        public VoidView()
+        public TargetView()
         {
             try
             {
                 // Create the view
                 VirindiViewService.XMLParsers.Decal3XMLParser parser = new VirindiViewService.XMLParsers.Decal3XMLParser();
-                parser.ParseFromResource("OracleOfDereth.voidView.xml", out properties, out controls);
+                parser.ParseFromResource("OracleOfDereth.targetView.xml", out properties, out controls);
 
                 // Display the view
                 view = new VirindiViewService.HudView(properties, controls);
@@ -61,7 +53,18 @@ namespace OracleOfDereth
         }
         public void Update()
         {
-            UpdateBuffsList();
+            UpdateTarget();
+        }
+
+        private void UpdateTarget()
+        {
+            //TargetName.Text = Target.CurrentTarget?.Name();
+
+            if (Target.CurrentTarget != null) {
+                TargetName.Text = Target.CurrentTarget.ToString();
+            } else {
+                TargetName.Text = "No target";
+            }
         }
 
         private int BuffsListCount = 0;

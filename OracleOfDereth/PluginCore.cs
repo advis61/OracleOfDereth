@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -61,7 +60,7 @@ namespace OracleOfDereth
 
         // Views, depends on VirindiViewService.dll
         private MainView mainView;
-        private VoidView voidView;
+        private TargetView targetView;
 
         /// <summary>
         /// Called when your plugin is first loaded.
@@ -102,12 +101,19 @@ namespace OracleOfDereth
         private void CharacterFilter_SpellCast(object sender, SpellCastEventArgs e)
         {
             Util.Chat($"spell cast #{e.SpellId} on #{e.TargetId}");
+
+            WorldObject item = CoreManager.Current.WorldFilter[e.TargetId];
+            Util.Chat($"Target: Id={item.Id} Type={item.Type} SpellCount={item.ActiveSpellCount} {item.Category} {item.Name} {item.SpellCount}");
         }
+
+        //private WorldObject targetItem = null;
 
         private void ItemSelected(object sender, ItemSelectedEventArgs e)
         {
-            Util.Chat($"item selected#{e.ToString()}");
+            Util.Chat($"ItemSelected: {e.ItemGuid}");
 
+            Target.SetCurrentTarget(e.ItemGuid);
+            targetView.Update();
         }
 
         private void CharacterFilter_Login(object sender, EventArgs e)
@@ -142,7 +148,7 @@ namespace OracleOfDereth
 
             // Initialize Views
             mainView = new MainView();
-            voidView = new VoidView();
+            targetView = new TargetView();
 
             // Initialize 1second update timer
             timer = new WindowsTimer();
@@ -156,7 +162,7 @@ namespace OracleOfDereth
             try
             {
                 mainView.Update();
-                voidView.Update();
+                targetView.Update();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -192,7 +198,7 @@ namespace OracleOfDereth
 
                 // Dispose all views
                 mainView?.Dispose();
-                voidView?.Dispose();
+                targetView?.Dispose();
 
             } catch (Exception ex) { Util.Log(ex); }
         }
