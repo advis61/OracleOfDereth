@@ -170,11 +170,10 @@ namespace OracleOfDereth
             5206, // Surge of Protection
          };
 
-        private static readonly List<int> VoidSpellIds = new List<int> {
+        public static readonly List<int> VoidSpellIds = new List<int> {
             5394, // Incantation of Corrosion
             5402, // Incantation of Corruption
             5338, // Incantation of Destructive Curse
-            5204, // Surge of Destruction
         };
     }
 }

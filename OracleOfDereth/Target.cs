@@ -18,7 +18,7 @@ namespace OracleOfDereth
     {
         // Collection of Targets that have had spells cast on them
         public static Dictionary<int, Target> Targets = new Dictionary<int, Target>();
-        public static Target CurrentTarget = null;
+        public static int CurrentTargetId = 0;
 
         // Properties
         public int Id = 0;
@@ -27,42 +27,47 @@ namespace OracleOfDereth
         public static void Init()
         {
             Targets.Clear();
-            CurrentTarget = null;
+            CurrentTargetId = 0;
         }
 
         public static void SetCurrentTarget(int id)
         {
-            Target.Targets.TryGetValue(id, out Target target);
-            if(target == null) { target = new Target() { Id = id }; }
+            CurrentTargetId = id;
+        }
 
-            CurrentTarget = target;
+        public static Target? GetCurrentTarget()
+        {
+            if (CurrentTargetId == 0) { return null; }
+
+            // Find or create target
+            Target.Targets.TryGetValue(CurrentTargetId, out Target target);
+
+            if (target == null) {
+                target = new Target() { Id = CurrentTargetId };
+            }
+
+            return target;
         }
 
         public static void SpellCast(int id, int spellId)
         {
+            // Return false unless SpellId.VoidSpellIds include this spellId
+            if(!SpellId.VoidSpellIds.Contains(spellId)) { return; }
+
             // Find or create target
             Target.Targets.TryGetValue(id, out Target target);
 
             if(target == null) { 
                 target = new Target() { Id = id }; 
 
-                // Save Targets
+                // Save Target
                 Targets[id] = target;
             }
 
-            // Find or create spell
-            target.ActiveSpells.TryGetValue(spellId, out DateTime spellTime);
+            target.ActiveSpells[spellId] = DateTime.Now;
 
-            if(spellTime == null) {
-                spellTime = DateTime.Now;
-                target.ActiveSpells[spellId] = spellTime;
-            } else if(DateTime.Now - spellTime < TimeSpan.FromSeconds(1)) {
-                return; // Don't update if the spell was cast less than 1 second ago
-            } else {
-                target.ActiveSpells[spellId] = spellTime;
-            }
-
-            Util.Chat($"Active spells are now: {string.Join(", ", target.ActiveSpells.Keys)}", 1);
+            //Util.Chat($"Active spells are now: {string.Join(", ", target.ActiveSpells.Keys)}", 1);
+            //Util.Chat($"Active spells are now: {string.Join(", ", target.ActiveSpells.Values)}", 1);
         }
 
         // Instance methods

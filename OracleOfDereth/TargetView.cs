@@ -53,64 +53,62 @@ namespace OracleOfDereth
         }
         public void Update()
         {
-            UpdateTarget();
+            UpdateTargetName();
+            UpdateBuffsList();
         }
 
-        private void UpdateTarget()
+        private void UpdateTargetName()
         {
-            if (Target.CurrentTarget != null) {
-                TargetName.Text = Target.CurrentTarget?.ToString();
+            if (Target.GetCurrentTarget() != null) {
+                TargetName.Text = Target.GetCurrentTarget().ToString();
             } else {
                 TargetName.Text = "";
             }
         }
 
         private int BuffsListCount = 0;
-        private void UpdateBuffsList()
+        private void UpdateBuffsList(bool force = false)
         {
             FileService service = CoreManager.Current.Filter<FileService>();
 
-            // Get all buffs with a duration
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
-                .Where(x => x.Duration > 0)
-                .Where(x => x.TimeRemaining > 0)
-                .Where(x =>
-                {
-                    var spell = service.SpellTable.GetById(x.SpellId);
-                    return spell != null;
-                })
-                .OrderBy(x => x.TimeRemaining)
-                .ToList();
+            // When empty
+            if (BuffsListCount == 0) { force = true; }
 
-            // Go through all buffs and remove any rows that no longer exist
-            for (int x = 0; x < enchantments.Count(); x++)
+            //for (int x = 0; x < SpellId.VoidSpellIds.Count(); x++)
+            for (int x = 0; x < 1; x++)
             {
                 HudList.HudListRowAccessor row;
 
-                if (x >= BuffsListCount)
-                {
+                if (x >= BuffsListCount) {
                     BuffsListCount += 1;
                     row = BuffsList.AddRow();
+                } else { 
+                    row = BuffsList[x];
+                }
+
+                int spellId = SpellId.VoidSpellIds[x];
+                Spell spell = service.SpellTable.GetById(spellId);
+
+                if (force)
+                {
+                    ((HudPictureBox)row[0]).Image = spell.IconId;
+                    ((HudStaticText)row[1]).Text = "-";
+                }
+
+                if(Target.GetCurrentTarget() == null) { continue; }
+
+                // Always
+                Target.GetCurrentTarget().ActiveSpells.TryGetValue(spellId, out DateTime spellTime);
+
+                if (spellTime == null || spellTime == DateTime.MinValue)
+                {
+                    ((HudStaticText)row[1]).Text = "-";
                 }
                 else
                 {
-                    row = BuffsList[x];
+                    int seconds = (int)(DateTime.Now - spellTime).TotalSeconds;
+                    ((HudStaticText)row[1]).Text = seconds.ToString();
                 }
-                
-                EnchantmentWrapper enchantment = enchantments[x];
-                Spell spell = service.SpellTable.GetById(enchantment.SpellId);
-
-                double duration = enchantment.TimeRemaining;
-                TimeSpan time = TimeSpan.FromSeconds(duration);
-
-                ((HudPictureBox)row[0]).Image = spell.IconId;
-                ((HudStaticText)row[1]).Text = string.Format("{0:D2}", time.Seconds);
-            }
-
-            while (BuffsListCount > enchantments.Count())
-            {
-                BuffsListCount -= 1;
-                BuffsList.RemoveRow(BuffsListCount);
             }
         }
 

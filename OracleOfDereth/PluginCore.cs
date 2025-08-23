@@ -69,17 +69,11 @@ namespace OracleOfDereth
         {
             try
             {
-                // Commands
-                CoreManager.Current.CommandLineText += new EventHandler<ChatParserInterceptEventArgs>(Current_CommandLineText);
-
-                // Chat
-                CoreManager.Current.ChatBoxMessage += new EventHandler<ChatTextInterceptEventArgs>(Current_ChatBoxMessage);
-
-                // Events
+                CoreManager.Current.CommandLineText += Current_CommandLineText;
+                CoreManager.Current.ChatBoxMessage += Current_ChatBoxMessage;
+                CoreManager.Current.ItemSelected += Current_ItemSelected;
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete; // Not run on hot reload
-
                 CoreManager.Current.CharacterFilter.SpellCast += CharacterFilter_SpellCast;
-                CoreManager.Current.ItemSelected += ItemSelected;
 
                 // Initialize
                 if (CoreManager.Current.CharacterFilter.LoginStatus >= 1)
@@ -95,22 +89,6 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        // 0xF754: Effects_PlayScriptID - S2C - SmartBox
-        // 0xF755: Effects_PlayScriptType - S2C - SmartBox
-
-        private void CharacterFilter_SpellCast(object sender, SpellCastEventArgs e)
-        {
-            Target.SpellCast(e.TargetId, e.SpellId);
-            targetView.Update();
-        }
-
-        //private WorldObject targetItem = null;
-
-        private void ItemSelected(object sender, ItemSelectedEventArgs e)
-        {
-            Target.SetCurrentTarget(e.ItemGuid);
-            targetView.Update();
-        }
 
         private void CharacterFilter_Login(object sender, EventArgs e)
         {
@@ -126,8 +104,7 @@ namespace OracleOfDereth
         {
             try
             {
-                Util.Chat("Running", Util.ColorOrange);
-                Util.Chat(Hud.BuffNowText(), Util.ColorBlue);
+                Util.Chat($"Running. {Hud.BuffNowText()}", Util.ColorOrange);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -141,6 +118,7 @@ namespace OracleOfDereth
             // Initialize Collection
             JohnQuest.Init();
             QuestFlag.Init();
+            Target.Init();
 
             // Initialize Views
             mainView = new MainView();
@@ -170,18 +148,11 @@ namespace OracleOfDereth
         {
             try
             {
-                // Commands
-                CoreManager.Current.CommandLineText -= new EventHandler<ChatParserInterceptEventArgs>(Current_CommandLineText);
-
-                // Chat
-                CoreManager.Current.ChatBoxMessage -= new EventHandler<ChatTextInterceptEventArgs>(Current_ChatBoxMessage);
-
-                // Cleanup Events
+                CoreManager.Current.CommandLineText -= Current_CommandLineText;
+                CoreManager.Current.ChatBoxMessage -= Current_ChatBoxMessage;
+                CoreManager.Current.ItemSelected -= Current_ItemSelected;
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
-
                 CoreManager.Current.CharacterFilter.SpellCast -= CharacterFilter_SpellCast;
-
-                CoreManager.Current.ItemSelected -= ItemSelected;
 
                 // Shutdown timer
                 if (timer != null)
@@ -199,9 +170,6 @@ namespace OracleOfDereth
             } catch (Exception ex) { Util.Log(ex); }
         }
 
-        /// <summary>
-        /// Current_CommandLineText event handler.
-        /// </summary>
         private void Current_CommandLineText(object sender, ChatParserInterceptEventArgs e)
         {
             try
@@ -218,8 +186,26 @@ namespace OracleOfDereth
             try
             {
                 if (e.Text == null) return;
-
                 OracleOfDereth.ChatBoxMessage.Process(e.Text);
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+        private void Current_ItemSelected(object sender, ItemSelectedEventArgs e)
+        {
+            try
+            {
+                Target.SetCurrentTarget(e.ItemGuid);
+                targetView.Update();
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        private void CharacterFilter_SpellCast(object sender, SpellCastEventArgs e)
+        {
+            try
+            {
+                Target.SpellCast(e.TargetId, e.SpellId);
+                targetView.Update();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
