@@ -34,6 +34,7 @@ namespace OracleOfDereth
         public static void SetCurrentTarget(int id)
         {
             CurrentTargetId = id;
+            Util.Chat($"Targeting {GetCurrentTarget().ToString()}", Util.ColorOrange);
         }
 
         public static Target? GetCurrentTarget()
@@ -77,7 +78,7 @@ namespace OracleOfDereth
 
         public new string ToString()
         {
-            return $"{Name()}";
+            return $"{Name()} {ObjectClass()}";
         }
 
         public WorldObject Item()
@@ -87,6 +88,15 @@ namespace OracleOfDereth
         public string Name()
         {
             return Item().Name;
+        }
+
+        public bool IsMob() {
+            return ObjectClass() == "Monster";
+        }
+
+        public string ObjectClass()
+        {
+            return Item().ObjectClass.ToString();
         }
 
         public string CorrosionText() { return GetSpellText(SpellId.CorrosionSpellId); }

@@ -276,7 +276,7 @@ namespace OracleOfDereth
         // John Tab
         public void UpdateJohn()
         {
-            if(QuestFlag.MyQuestsRan == false) { Util.Command("/myquests"); }
+            if(QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
 
             UpdateJohnList();
         }
@@ -453,6 +453,12 @@ namespace OracleOfDereth
             {
                 MainViewNotebook.OpenTabChange -= MainViewNotebook_OpenTabChange;
                 BuffsList.Click -= BuffsList_Click;
+                JohnRefresh.Hit -= JohnRefresh_Hit;
+                JohnList.Click -= JohnList_Click;
+                JohnListSortName.Hit -= JohnListSortName_Click;
+                JohnListSortReady.Hit -= JohnListSortReady_Click;
+                JohnListSortSolves.Hit -= JohnListSortSolves_Click;
+
                 view?.Dispose();
             }
         }

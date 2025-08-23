@@ -58,8 +58,6 @@ namespace OracleOfDereth
                 view = new VirindiViewService.HudView(properties, controls);
                 if (view == null) { return; }
 
-                //TargetName = (HudStaticText)view["TargetName"];
-
                 // Corrosion
                 CorrosionIcon = new HudPictureBox();
                 CorrosionIcon.Image = 100691559; //  Corrosion icon
@@ -69,7 +67,6 @@ namespace OracleOfDereth
                 CorrosionText = (HudStaticText)view["CorrosionText"];
                 CorrosionText.FontHeight = 10;
                 CorrosionText.TextAlignment = VirindiViewService.WriteTextFormats.Center;
-
 
                 // Corruption
                 CorruptionIcon = new HudPictureBox();
@@ -107,8 +104,26 @@ namespace OracleOfDereth
         }
         public void Update()
         {
+            UpdateVisibility();
+            if(view.Visible == false) { return; }
+
             UpdateSpells();
             DestText.Text = DestructionText();
+        }
+
+        public void UpdateVisibility()
+        {
+            Target target = Target.GetCurrentTarget();
+            if (target == null) { view.Visible = false; return;  }
+
+            try
+            {
+                view.Visible = target.IsMob();
+            }
+            catch (Exception ex)
+            {
+                view.Visible = false;
+            }
         }
 
         public void UpdateSpells()
