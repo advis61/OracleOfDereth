@@ -79,6 +79,7 @@ namespace OracleOfDereth
         {
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp);
+
             return dtDateTime;
         }
         public static string GetFriendlyTimeDifference(TimeSpan difference)
@@ -90,8 +91,8 @@ namespace OracleOfDereth
             if (difference.Minutes > 0) output += difference.Minutes.ToString() + "m ";
             if (difference.Seconds > 0) output += difference.Seconds.ToString() + "s ";
 
-            if (output.Length == 0)
-                return "0s";
+            if (output.Length == 0) return "0s";
+
             return output.Trim();
         }
 

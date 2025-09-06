@@ -45,7 +45,6 @@ namespace OracleOfDereth
         public HudPictureBox DestIcon { get; private set; }
         public HudStaticText DestText { get; private set; }
 
-
         public TargetView()
         {
             try
@@ -108,25 +107,22 @@ namespace OracleOfDereth
             if(view.Visible == false) { return; }
 
             UpdateSpells();
-            DestText.Text = DestructionText();
         }
 
         public void UpdateVisibility()
         {
-            Target target = Target.GetCurrentTarget();
-
-            view.Visible = target.IsMob();
+            view.Visible = Target.GetCurrentTarget().IsMob();
         }
 
         public void UpdateSpells()
         {
-            Target.RemoveAllExpired();
-
             Target target = Target.GetCurrentTarget();
 
             CorrosionText.Text = target.CorrosionText();
             CorruptionText.Text = target.CorruptionText();
             CurseText.Text = target.CurseText();
+
+            DestText.Text = DestructionText();
         }
 
         public string DestructionText()

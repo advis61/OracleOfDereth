@@ -38,6 +38,7 @@ namespace OracleOfDereth
         public static void SetCurrentTarget(int id)
         {
             CurrentTargetId = id;
+
             //Util.Chat($"Targeting {GetCurrentTarget().ToString()}");
         }
 
@@ -67,7 +68,8 @@ namespace OracleOfDereth
             };
 
             TargetSpells.Insert(0, targetSpell);
-            // Util.Chat($"You casting '{spellId}' on '{id}'");
+
+            Util.Chat($"You casting '{spellId}' on '{id}'");
         }
 
         public static void SpellStarted(string text)
@@ -87,7 +89,8 @@ namespace OracleOfDereth
             if (targetSpell == null) { return; }
 
             targetSpell.SetStarted();
-            //Util.Chat($"You cast '{spellName}' on '{targetName}'", 1);
+
+            Util.Chat($"You cast '{spellName}' on '{targetName}'", 1);
         }
 
         // Instance methods
@@ -126,7 +129,7 @@ namespace OracleOfDereth
 
         private string GetSpellText(int spellId)
         {
-            if (Id == 0) return "";
+            if (Item() == null) return "";
 
             TargetSpell targetSpell = TargetSpells.Where(s => s.TargetId == Id && s.SpellId == spellId && s.IsActive()).FirstOrDefault();
             if(targetSpell == null) { return ""; }

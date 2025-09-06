@@ -134,6 +134,8 @@ namespace OracleOfDereth
         {
             try
             {
+                Target.RemoveAllExpired();
+
                 mainView.Update();
                 targetView.Update();
             }
