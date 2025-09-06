@@ -143,11 +143,16 @@ namespace OracleOfDereth
         }
         public static string RareText()
         {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.RareSpellIds.Contains(x.SpellId)).ToList();
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
+                .Where(x => Spell.RareSpellIds.Contains(x.SpellId))
+                .Where(x => x.TimeRemaining > 0)
+                .ToList();
+
             if (enchantments.Count == 0) { return "-"; }
 
             double duration = enchantments.Min(x => x.TimeRemaining);
             TimeSpan time = TimeSpan.FromSeconds(duration);
+            if(time.Seconds < 0) { return "-"; }
 
             double cooldown = 180 - (900 - enchantments.Max(x => x.TimeRemaining));
 
