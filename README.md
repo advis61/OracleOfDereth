@@ -85,6 +85,7 @@ The Corruption blast spell is tracked on 1 target only and is not aware of any s
 ### Commands
 
 Type `/ood` to print the version number.
+
 Type `/myquests` to manually refresh the John tracker.
 
 ## Technicals
