@@ -62,8 +62,8 @@ namespace OracleOfDereth
             if(Spell.CorrosionSpellIds.Contains(SpellId)) { return 15; }
             if(Spell.CorruptionSpellIds.Contains(SpellId)) { return 15; }
             if(Spell.CurseSpellIds.Contains(SpellId)) { return 30; }
-            return 0;
-        }
 
+            return (int)Spell.GetSpell(SpellId).Duration;
+        }
     }
 }
