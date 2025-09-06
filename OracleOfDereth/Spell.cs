@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VirindiViewService;
 
 namespace OracleOfDereth
 {
@@ -146,12 +147,7 @@ namespace OracleOfDereth
         };
 
         public static readonly List<int> BeerSpellIds = new List<int> {
-            3531,
-            3533,
-            3862,
-            3864,
-            3530,
-            3863
+            3531, 3533, 3862, 3864, 3530, 3863
         };
 
         public static readonly List<int> PagesSpellIds = new List<int> {
@@ -170,24 +166,32 @@ namespace OracleOfDereth
             5206, // Surge of Protection
          };
 
-        public static readonly List<int> VoidSpellIds = new List<int> {
-            5394, // Incantation of Corrosion
-            5402, // Incantation of Corruption
-            5338, // Incantation of Destructive Curse
+        public static readonly List<int> CorrosionSpellIds = new List<int> {
+            5387, 5388, 5389, 5390, 5391, 5392, 5393, 5394 // Corrosion
         };
 
-        public static int CorrosionSpellId = 5394; // Incantation of Corrosion
-        public static int CorruptionSpellId = 5402; // Incantation of Corruption
-        public static int CurseSpellId = 5338; // Incantation of Destructive Curse
+        public static readonly List<int> CorruptionSpellIds = new List<int> {
+            5395, 5396, 5397, 5398, 5399, 5400, 5401, 5402 // Corruption
+        };
+
+        public static readonly List<int> CurseSpellIds = new List<int> {
+            5339, 5340, 5341, 5342, 5343, 5344, 5337, 5338 // Destructive Curse
+        };
+
+        public static Decal.Filters.Spell GetSpell(int id)
+        {
+            FileService service = CoreManager.Current.Filter<FileService>();
+
+            Decal.Filters.Spell spell = service.SpellTable.GetById(id);
+            return spell;
+        }
 
         public static string GetSpellName(int id)
         {
-            if(id == 0) { return ""; }
-            if(id == CorrosionSpellId) { return "Incantation of Corrosion"; }
-            if(id == CorruptionSpellId) { return "Incantation of Corruption"; }
-            if(id == CurseSpellId) { return "Incantation of Destructive Curse"; }
-            return "";
-        }
+            Decal.Filters.Spell spell = GetSpell(id);
+            if(spell == null) { return ""; }
 
+            return spell.Name;
+        }
     }
 }

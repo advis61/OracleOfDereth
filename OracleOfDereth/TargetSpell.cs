@@ -23,6 +23,11 @@ namespace OracleOfDereth
         {
             StartedOn = DateTime.Now;
         }
+        public bool IsCasting()
+        {
+            return (!IsStarted() && SecondsSinceCast() < 3);
+        }
+
         public bool IsStarted()
         {
             return StartedOn != DateTime.MinValue;
@@ -40,11 +45,6 @@ namespace OracleOfDereth
             return false;
         }
 
-        public bool IsCasting()
-        {
-            return(!IsStarted() && SecondsSinceCast() < 3);
-        }
-
         public int SecondsRemaining()
         {
             if(StartedOn == DateTime.MinValue) { return -1; }
@@ -59,9 +59,9 @@ namespace OracleOfDereth
 
         public int Duration()
         {
-            if (SpellId == Spell.CorrosionSpellId) { return 15; }
-            if (SpellId == Spell.CorruptionSpellId) { return 15; }
-            if (SpellId == Spell.CurseSpellId) { return 30; }
+            if(Spell.CorrosionSpellIds.Contains(SpellId)) { return 15; }
+            if(Spell.CorruptionSpellIds.Contains(SpellId)) { return 15; }
+            if(Spell.CurseSpellIds.Contains(SpellId)) { return 30; }
             return 0;
         }
 

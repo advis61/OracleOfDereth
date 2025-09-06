@@ -20,6 +20,13 @@ namespace OracleOfDereth
     {
         public static readonly Regex YouCastRegex = new Regex(@"^You cast (.+?) on (.+?)(?:,.*)?$");
 
+        // Target Spells I care to track
+        private static readonly List<int> TargetSpellIds = new List<int> {}
+            .Concat(Spell.CorrosionSpellIds)
+            .Concat(Spell.CorruptionSpellIds)
+            .Concat(Spell.CurseSpellIds)
+            .ToList();
+
         // My current target
         public static int CurrentTargetId = 0;
 
@@ -54,7 +61,7 @@ namespace OracleOfDereth
 
         public static void SpellCast(int id, int spellId)
         {
-            if (!Spell.VoidSpellIds.Contains(spellId)) { return; }
+            if(TargetSpellIds.Contains(spellId) == false) { return; }
 
             Target target = new() { Id = id };
 
@@ -69,7 +76,7 @@ namespace OracleOfDereth
 
             TargetSpells.Insert(0, targetSpell);
 
-            Util.Chat($"You casting '{spellId}' on '{id}'");
+            //Util.Chat($"You casting '{spellId}' on '{id}'");
         }
 
         public static void SpellStarted(string text)
@@ -90,7 +97,7 @@ namespace OracleOfDereth
 
             targetSpell.SetStarted();
 
-            Util.Chat($"You cast '{spellName}' on '{targetName}'", 1);
+            //Util.Chat($"You cast '{spellName}' on '{targetName}'", 1);
         }
 
         // Instance methods
@@ -123,15 +130,15 @@ namespace OracleOfDereth
             return Item().ObjectClass.ToString();
         }
 
-        public string CorrosionText() { return GetSpellText(Spell.CorrosionSpellId); }
-        public string CorruptionText() { return GetSpellText(Spell.CorruptionSpellId); }
-        public string CurseText() { return GetSpellText(Spell.CurseSpellId); }
+        public string CorrosionText() { return GetSpellText(Spell.CorrosionSpellIds); }
+        public string CorruptionText() { return GetSpellText(Spell.CorruptionSpellIds); }
+        public string CurseText() { return GetSpellText(Spell.CurseSpellIds); }
 
-        private string GetSpellText(int spellId)
+        private string GetSpellText(List<int> spellIds)
         {
             if (Item() == null) return "";
 
-            TargetSpell targetSpell = TargetSpells.Where(s => s.TargetId == Id && s.SpellId == spellId && s.IsActive()).FirstOrDefault();
+            TargetSpell targetSpell = TargetSpells.Where(s => s.TargetId == Id && spellIds.Contains(s.SpellId) && s.IsActive()).FirstOrDefault();
             if(targetSpell == null) { return ""; }
 
             int seconds = targetSpell.SecondsRemaining();

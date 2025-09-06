@@ -57,6 +57,9 @@ namespace OracleOfDereth
                 view = new VirindiViewService.HudView(properties, controls);
                 if (view == null) { return; }
 
+                // Hide from Decal bar
+                view.ShowInBar = false;
+
                 // Corrosion
                 CorrosionIcon = new HudPictureBox();
                 CorrosionIcon.Image = 100691559; //  Corrosion icon
@@ -103,6 +106,9 @@ namespace OracleOfDereth
         }
         public void Update()
         {
+            Skill skill = new Skill(CharFilterSkillType.VoidMagic);
+            if(skill.IsUnKnown()) { return; }
+
             UpdateVisibility();
             if(view.Visible == false) { return; }
 

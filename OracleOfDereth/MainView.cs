@@ -224,17 +224,9 @@ namespace OracleOfDereth
 
         private void UpdateBuffsList()
         {
-            FileService service = CoreManager.Current.Filter<FileService>();
-
             // Get all buffs with a duration
             List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
-                .Where(x => x.Duration > 0)
-                .Where(x => x.TimeRemaining > 0)
-                .Where(x =>
-                {
-                    var spell = service.SpellTable.GetById(x.SpellId);
-                    return spell != null;
-                })
+                .Where(x => x.Duration > 0 && x.TimeRemaining > 0)
                 .OrderBy(x => x.TimeRemaining)
                 .ToList();
 
@@ -251,7 +243,7 @@ namespace OracleOfDereth
                 }
 
                 EnchantmentWrapper enchantment = enchantments[x];
-                Decal.Filters.Spell spell = service.SpellTable.GetById(enchantment.SpellId);
+                Decal.Filters.Spell spell = Spell.GetSpell(enchantment.SpellId);
 
                 double duration = enchantment.TimeRemaining;
                 TimeSpan time = TimeSpan.FromSeconds(duration);
