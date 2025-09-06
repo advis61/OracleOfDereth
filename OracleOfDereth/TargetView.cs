@@ -114,22 +114,15 @@ namespace OracleOfDereth
         public void UpdateVisibility()
         {
             Target target = Target.GetCurrentTarget();
-            if (target == null) { view.Visible = false; return; }
 
-            try
-            {
-                view.Visible = target.IsMob();
-            }
-            catch (Exception ex)
-            {
-                view.Visible = false;
-            }
+            view.Visible = target.IsMob();
         }
 
         public void UpdateSpells()
         {
+            Target.RemoveAllExpired();
+
             Target target = Target.GetCurrentTarget();
-            if(target == null) { target = new Target(); }
 
             CorrosionText.Text = target.CorrosionText();
             CorruptionText.Text = target.CorruptionText();

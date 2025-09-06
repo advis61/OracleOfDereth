@@ -89,7 +89,6 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
-
         private void CharacterFilter_Login(object sender, EventArgs e)
         {
             try
@@ -104,7 +103,7 @@ namespace OracleOfDereth
         {
             try
             {
-                Util.Chat($"Running. {Hud.BuffNowText()}", Util.ColorOrange);
+                Util.Chat($"{Hud.BuffNowText()}", Util.ColorOrange);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -172,30 +171,42 @@ namespace OracleOfDereth
 
         private void Current_CommandLineText(object sender, ChatParserInterceptEventArgs e)
         {
-            try
-            {
-                if (e.Text == null) return;
+            if (e.Text == null) return;
+            string command = e.Text.ToLower().Trim();
 
-                if (OracleOfDereth.CommandLineText.Process(e.Text))
+            try 
+            {
+                if (command == "/od" || command == "/ood")
+                {
+                    Version version = Assembly.GetExecutingAssembly().GetName().Version;
+                    Util.Chat($"Oracle of Dereth v{version}", 1);
                     e.Eat = true;
+                }
+
+                if (command == "/od exception")
+                {
+                    Util.Chat($"Oracle of Dereth EXCEPTION", 1);
+                    e.Eat = true;
+                    throw new InvalidOperationException("An error occurred.");
+                }
             }
             catch (Exception ex) { Util.Log(ex); }
         }
         private void Current_ChatBoxMessage(object sender, ChatTextInterceptEventArgs e)
         {
-            try
-            {
-                if (e.Text == null) return;
+            if (e.Text == null) return;
 
+            try 
+            {
                 // Track /myquests output
-                if (QuestFlag.MyQuestRegex.IsMatch(e.Text))
+                if (QuestFlag.MyQuestRegex.IsMatch(e.Text)) 
                 {
                     QuestFlag.Add(e.Text);
                     return;
                 }
 
                 // Track You cast ... on ...
-                if (Target.YouCastRegex.IsMatch(e.Text))
+                if (Target.YouCastRegex.IsMatch(e.Text)) 
                 {
                     Target.SpellStarted(e.Text);
                     targetView.Update();

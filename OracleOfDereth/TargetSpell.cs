@@ -19,6 +19,32 @@ namespace OracleOfDereth
         public DateTime CastOn = DateTime.MinValue;        // Got the SpellCast event
         public DateTime StartedOn = DateTime.MinValue;     // Got the Chat event
 
+        public void SetStarted()
+        {
+            StartedOn = DateTime.Now;
+        }
+        public bool IsStarted()
+        {
+            return StartedOn != DateTime.MinValue;
+        }
+
+        public bool IsActive()
+        {
+            return SecondsRemaining() > 0;
+        }
+
+        public bool IsExpired()
+        {
+            if(IsStarted() && !IsActive()) { return true; }
+            if(!IsStarted() && SecondsSinceCast() > 6) { return true; }
+            return false;
+        }
+
+        public bool IsCasting()
+        {
+            return(!IsStarted() && SecondsSinceCast() < 3);
+        }
+
         public int SecondsRemaining()
         {
             if(StartedOn == DateTime.MinValue) { return -1; }

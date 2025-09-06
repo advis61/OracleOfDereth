@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VirindiViewService.Controls;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace OracleOfDereth
 {
@@ -19,22 +20,17 @@ namespace OracleOfDereth
     {
         public static readonly Regex YouCastRegex = new Regex(@"^You cast (.+?) on (.+?)(?:,.*)?$");
 
-        // Collection of Targets that have had spells cast on them
-        public static Dictionary<int, Target> Targets = new Dictionary<int, Target>();
-
         // My current target
         public static int CurrentTargetId = 0;
 
         // Spells tracking
         public static List<TargetSpell> TargetSpells = new List<TargetSpell>();
 
-        // Properties
+        // Instance properties
         public int Id = 0;
-        //public Dictionary<int, DateTime> ActiveSpells = new Dictionary<int, DateTime>();
 
         public static void Init()
         {
-            Targets.Clear();
             TargetSpells.Clear();
             CurrentTargetId = 0;
         }
@@ -42,63 +38,28 @@ namespace OracleOfDereth
         public static void SetCurrentTarget(int id)
         {
             CurrentTargetId = id;
-            Util.Chat($"Targeting {GetCurrentTarget().ToString()}", Util.ColorOrange);
+            //Util.Chat($"Targeting {GetCurrentTarget().ToString()}");
         }
 
-        public static Target? GetCurrentTarget()
+        public static Target GetCurrentTarget()
         {
-            if (CurrentTargetId == 0) { return null; }
-
-            // Find or create target
-            Target.Targets.TryGetValue(CurrentTargetId, out Target target);
-
-            if (target == null)
-            {
-                target = new Target() { Id = CurrentTargetId };
-            }
-
-            return target;
+            return new() { Id = CurrentTargetId };
         }
 
-        //public static void SpellCastStarted(int id, int spellId)
-        //{
-        //    if (!Spell.VoidSpellIds.Contains(spellId)) { return; }
-
-        //    // Find or create target
-        //    Target.Targets.TryGetValue(id, out Target target);
-
-        //    if (target == null)
-        //    {
-        //        target = new Target() { Id = id };
-
-        //        // Save Target
-        //        Targets[id] = target;
-        //    }
-
-        //    target.ActiveSpells[spellId] = DateTime.Now;
-
-        //    //Util.Chat($"Active spells are now: {string.Join(", ", target.ActiveSpells.Keys)}", 1);
-        //    //Util.Chat($"Active spells are now: {string.Join(", ", target.ActiveSpells.Values)}", 1);
-        //}
+        public static void RemoveAllExpired()
+        {
+            TargetSpells.RemoveAll(s => s.IsExpired());
+        }
 
         public static void SpellCast(int id, int spellId)
         {
             if (!Spell.VoidSpellIds.Contains(spellId)) { return; }
 
-            // Find or create target
-            Target.Targets.TryGetValue(id, out Target target);
+            Target target = new() { Id = id };
 
-            if (target == null)
+            TargetSpell targetSpell = new()
             {
-                target = new Target() { Id = id };
-
-                // Save Target
-                Targets[id] = target;
-            }
-
-            TargetSpell targetSpell = new TargetSpell()
-            {
-                TargetId = id,
+                TargetId = target.Id,
                 TargetName = target.Name(),
                 SpellId = spellId,
                 spellName = Spell.GetSpellName(spellId),
@@ -106,6 +67,7 @@ namespace OracleOfDereth
             };
 
             TargetSpells.Insert(0, targetSpell);
+            // Util.Chat($"You casting '{spellId}' on '{id}'");
         }
 
         public static void SpellStarted(string text)
@@ -113,34 +75,48 @@ namespace OracleOfDereth
             Match match = YouCastRegex.Match(text);
             if(!match.Success) { return; }
 
-            string spell = match.Groups[1].Value;
-            string target = match.Groups[2].Value;
+            string spellName = match.Groups[1].Value;
+            string targetName = match.Groups[2].Value;
 
-            Util.Chat($"You cast '{spell}' on '{target}' bro.", 1);
+            TargetSpell targetSpell = TargetSpells.Where(s => s.TargetName == targetName && s.spellName == spellName && !s.IsStarted() && !s.IsCasting()).FirstOrDefault();
+
+            if(targetSpell == null) {
+                targetSpell = TargetSpells.Where(s => s.TargetName == targetName && s.spellName == spellName && !s.IsStarted()).FirstOrDefault();
+            }
+
+            if (targetSpell == null) { return; }
+
+            targetSpell.SetStarted();
+            //Util.Chat($"You cast '{spellName}' on '{targetName}'", 1);
         }
 
         // Instance methods
-
-        public new string ToString()
-        {
-            return $"{Name()} {ObjectClass()}";
-        }
-
-        public WorldObject Item()
-        {
-            return CoreManager.Current.WorldFilter[Id];
-        }
         public string Name()
         {
+            if (Item() == null) return "";
             return Item().Name;
         }
 
-        public bool IsMob() {
+        public bool IsMob()
+        {
+            if (Item() == null) return false;
             return ObjectClass() == "Monster";
         }
 
-        public string ObjectClass()
+        private WorldObject? Item()
         {
+            if(Id == 0) { return null; }
+
+            try {
+                return CoreManager.Current.WorldFilter[Id];
+            } catch { 
+                return null; 
+            }
+        }
+
+        private string ObjectClass()
+        {
+            if (Item() == null) return "";
             return Item().ObjectClass.ToString();
         }
 
@@ -148,23 +124,14 @@ namespace OracleOfDereth
         public string CorruptionText() { return GetSpellText(Spell.CorruptionSpellId); }
         public string CurseText() { return GetSpellText(Spell.CurseSpellId); }
 
-        private int GetSpellDuration(int spellId)
-        {
-            if (spellId == Spell.CorrosionSpellId) { return 15; }
-            if (spellId == Spell.CorruptionSpellId) { return 15; }
-            if (spellId == Spell.CurseSpellId) { return 30; }
-            return 0;
-        }
-
         private string GetSpellText(int spellId)
         {
-            Target target = GetCurrentTarget();
-            if (target == null) { return ""; }
+            if (Id == 0) return "";
 
-            Target.GetCurrentTarget().ActiveSpells.TryGetValue(spellId, out DateTime spellTime);
-            if (spellTime == null || spellTime == DateTime.MinValue) { return ""; }
+            TargetSpell targetSpell = TargetSpells.Where(s => s.TargetId == Id && s.SpellId == spellId && s.IsActive()).FirstOrDefault();
+            if(targetSpell == null) { return ""; }
 
-            int seconds = GetSpellDuration(spellId) - (int)(DateTime.Now - spellTime).TotalSeconds;
+            int seconds = targetSpell.SecondsRemaining();
             if(seconds < 0) { return ""; }
 
             return seconds.ToString();
