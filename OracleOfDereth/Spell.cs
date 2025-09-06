@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace OracleOfDereth
 {
-    public class SpellId
+    public class Spell
     {
         public static readonly List<int> RareSpellIds = new List<int> {
             3679,  // Prodigal Acid Bane
@@ -179,5 +179,15 @@ namespace OracleOfDereth
         public static int CorrosionSpellId = 5394; // Incantation of Corrosion
         public static int CorruptionSpellId = 5402; // Incantation of Corruption
         public static int CurseSpellId = 5338; // Incantation of Destructive Curse
+
+        public static string GetSpellName(int id)
+        {
+            if(id == 0) { return ""; }
+            if(id == CorrosionSpellId) { return "Incantation of Corrosion"; }
+            if(id == CorruptionSpellId) { return "Incantation of Corruption"; }
+            if(id == CurseSpellId) { return "Incantation of Destructive Curse"; }
+            return "";
+        }
+
     }
 }

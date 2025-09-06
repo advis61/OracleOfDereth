@@ -19,7 +19,7 @@ namespace OracleOfDereth
             List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
                 .Where(x => x.Duration > 900)
                 .Where(x => x.TimeRemaining > 0)
-                .Where(x => !SpellId.BeerSpellIds.Contains(x.SpellId))
+                .Where(x => !Spell.BeerSpellIds.Contains(x.SpellId))
                 .Where(x =>
                 {
                     var spell = service.SpellTable.GetById(x.SpellId);
@@ -46,7 +46,7 @@ namespace OracleOfDereth
         public static string HouseText()
         {
             List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments
-                .Where(x => SpellId.HouseSpellIds.Contains(x.SpellId))
+                .Where(x => Spell.HouseSpellIds.Contains(x.SpellId))
                 .Where(x => x.TimeRemaining > 0)
                 .ToList();
 
@@ -60,7 +60,7 @@ namespace OracleOfDereth
 
         public static string BeersText()
         {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.BeerSpellIds.Contains(x.SpellId)).ToList();
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.BeerSpellIds.Contains(x.SpellId)).ToList();
             if (enchantments.Count == 0) { return "-"; }
 
             double duration = enchantments.Min(x => x.TimeRemaining);
@@ -71,7 +71,7 @@ namespace OracleOfDereth
 
         public static string PagesText()
         {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.PagesSpellIds.Contains(x.SpellId)).ToList();
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.PagesSpellIds.Contains(x.SpellId)).ToList();
             if (enchantments.Count == 0) { return "-"; }
 
             double duration = enchantments.Min(x => x.TimeRemaining);
@@ -143,7 +143,7 @@ namespace OracleOfDereth
         }
         public static string RareText()
         {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.RareSpellIds.Contains(x.SpellId)).ToList();
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.RareSpellIds.Contains(x.SpellId)).ToList();
             if (enchantments.Count == 0) { return "-"; }
 
             double duration = enchantments.Min(x => x.TimeRemaining);
@@ -160,7 +160,7 @@ namespace OracleOfDereth
 
         public static string DestructionText()
         {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.DestructionSpellIds.Contains(x.SpellId)).ToList();
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.DestructionSpellIds.Contains(x.SpellId)).ToList();
             if (enchantments.Count == 0) { return "-"; }
 
             double duration = enchantments.Min(x => x.TimeRemaining);
@@ -172,7 +172,7 @@ namespace OracleOfDereth
 
         public static string RegenText()
         {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.RegenSpellIds.Contains(x.SpellId)).ToList();
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.RegenSpellIds.Contains(x.SpellId)).ToList();
             if (enchantments.Count == 0) { return "-"; }
 
             double duration = enchantments.Min(x => x.TimeRemaining);
@@ -184,7 +184,7 @@ namespace OracleOfDereth
 
         public static string ProtectionText()
         {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.ProtectionSpellIds.Contains(x.SpellId)).ToList();
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.ProtectionSpellIds.Contains(x.SpellId)).ToList();
             if (enchantments.Count == 0) { return "-"; }
 
             double duration = enchantments.Min(x => x.TimeRemaining);

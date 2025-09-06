@@ -251,7 +251,7 @@ namespace OracleOfDereth
                 }
 
                 EnchantmentWrapper enchantment = enchantments[x];
-                Spell spell = service.SpellTable.GetById(enchantment.SpellId);
+                Decal.Filters.Spell spell = service.SpellTable.GetById(enchantment.SpellId);
 
                 double duration = enchantment.TimeRemaining;
                 TimeSpan time = TimeSpan.FromSeconds(duration);

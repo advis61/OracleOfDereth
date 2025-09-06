@@ -114,7 +114,7 @@ namespace OracleOfDereth
         public void UpdateVisibility()
         {
             Target target = Target.GetCurrentTarget();
-            if (target == null) { view.Visible = false; return;  }
+            if (target == null) { view.Visible = false; return; }
 
             try
             {
@@ -138,7 +138,7 @@ namespace OracleOfDereth
 
         public string DestructionText()
         {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => SpellId.DestructionSpellIds.Contains(x.SpellId)).ToList();
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.DestructionSpellIds.Contains(x.SpellId)).ToList();
             if (enchantments.Count == 0) { return ""; }
 
             double duration = enchantments.Min(x => x.TimeRemaining);

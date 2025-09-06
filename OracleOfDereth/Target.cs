@@ -17,17 +17,25 @@ namespace OracleOfDereth
 {
     public class Target
     {
+        public static readonly Regex YouCastRegex = new Regex(@"^You cast (.+?) on (.+?)(?:,.*)?$");
+
         // Collection of Targets that have had spells cast on them
         public static Dictionary<int, Target> Targets = new Dictionary<int, Target>();
+
+        // My current target
         public static int CurrentTargetId = 0;
+
+        // Spells tracking
+        public static List<TargetSpell> TargetSpells = new List<TargetSpell>();
 
         // Properties
         public int Id = 0;
-        public Dictionary<int, DateTime> ActiveSpells = new Dictionary<int, DateTime>();
+        //public Dictionary<int, DateTime> ActiveSpells = new Dictionary<int, DateTime>();
 
         public static void Init()
         {
             Targets.Clear();
+            TargetSpells.Clear();
             CurrentTargetId = 0;
         }
 
@@ -52,10 +60,30 @@ namespace OracleOfDereth
             return target;
         }
 
+        //public static void SpellCastStarted(int id, int spellId)
+        //{
+        //    if (!Spell.VoidSpellIds.Contains(spellId)) { return; }
+
+        //    // Find or create target
+        //    Target.Targets.TryGetValue(id, out Target target);
+
+        //    if (target == null)
+        //    {
+        //        target = new Target() { Id = id };
+
+        //        // Save Target
+        //        Targets[id] = target;
+        //    }
+
+        //    target.ActiveSpells[spellId] = DateTime.Now;
+
+        //    //Util.Chat($"Active spells are now: {string.Join(", ", target.ActiveSpells.Keys)}", 1);
+        //    //Util.Chat($"Active spells are now: {string.Join(", ", target.ActiveSpells.Values)}", 1);
+        //}
+
         public static void SpellCast(int id, int spellId)
         {
-            // Return false unless SpellId.VoidSpellIds include this spellId
-            if (!SpellId.VoidSpellIds.Contains(spellId)) { return; }
+            if (!Spell.VoidSpellIds.Contains(spellId)) { return; }
 
             // Find or create target
             Target.Targets.TryGetValue(id, out Target target);
@@ -68,10 +96,27 @@ namespace OracleOfDereth
                 Targets[id] = target;
             }
 
-            target.ActiveSpells[spellId] = DateTime.Now;
+            TargetSpell targetSpell = new TargetSpell()
+            {
+                TargetId = id,
+                TargetName = target.Name(),
+                SpellId = spellId,
+                spellName = Spell.GetSpellName(spellId),
+                CastOn = DateTime.Now
+            };
 
-            //Util.Chat($"Active spells are now: {string.Join(", ", target.ActiveSpells.Keys)}", 1);
-            //Util.Chat($"Active spells are now: {string.Join(", ", target.ActiveSpells.Values)}", 1);
+            TargetSpells.Insert(0, targetSpell);
+        }
+
+        public static void SpellStarted(string text)
+        {
+            Match match = YouCastRegex.Match(text);
+            if(!match.Success) { return; }
+
+            string spell = match.Groups[1].Value;
+            string target = match.Groups[2].Value;
+
+            Util.Chat($"You cast '{spell}' on '{target}' bro.", 1);
         }
 
         // Instance methods
@@ -99,15 +144,15 @@ namespace OracleOfDereth
             return Item().ObjectClass.ToString();
         }
 
-        public string CorrosionText() { return GetSpellText(SpellId.CorrosionSpellId); }
-        public string CorruptionText() { return GetSpellText(SpellId.CorruptionSpellId); }
-        public string CurseText() { return GetSpellText(SpellId.CurseSpellId); }
+        public string CorrosionText() { return GetSpellText(Spell.CorrosionSpellId); }
+        public string CorruptionText() { return GetSpellText(Spell.CorruptionSpellId); }
+        public string CurseText() { return GetSpellText(Spell.CurseSpellId); }
 
         private int GetSpellDuration(int spellId)
         {
-            if (spellId == SpellId.CorrosionSpellId) { return 15; }
-            if (spellId == SpellId.CorruptionSpellId) { return 15; }
-            if (spellId == SpellId.CurseSpellId) { return 30; }
+            if (spellId == Spell.CorrosionSpellId) { return 15; }
+            if (spellId == Spell.CorruptionSpellId) { return 15; }
+            if (spellId == Spell.CurseSpellId) { return 30; }
             return 0;
         }
 

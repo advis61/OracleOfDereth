@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Decal.Adapter;
+using Decal.Adapter.Wrappers;
+using MyClasses.MetaViewWrappers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
-
+using static System.Net.Mime.MediaTypeNames;
 using WindowsTimer = System.Windows.Forms.Timer;
-using Decal.Adapter;
-using Decal.Adapter.Wrappers;
-using MyClasses.MetaViewWrappers;
 
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
@@ -186,7 +186,21 @@ namespace OracleOfDereth
             try
             {
                 if (e.Text == null) return;
-                OracleOfDereth.ChatBoxMessage.Process(e.Text);
+
+                // Track /myquests output
+                if (QuestFlag.MyQuestRegex.IsMatch(e.Text))
+                {
+                    QuestFlag.Add(e.Text);
+                    return;
+                }
+
+                // Track You cast ... on ...
+                if (Target.YouCastRegex.IsMatch(e.Text))
+                {
+                    Target.SpellStarted(e.Text);
+                    targetView.Update();
+                    return;
+                }
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -205,7 +219,6 @@ namespace OracleOfDereth
             try
             {
                 Target.SpellCast(e.TargetId, e.SpellId);
-                targetView.Update();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
