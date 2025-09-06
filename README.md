@@ -18,6 +18,9 @@ John Tracker
 
 ![John Tracker](./docs/John.png)
 
+Void Target View
+![Void Target View](.docs/Void.png)
+
 ## Getting Started
 - This plugin requires the latest Decal, v2.9.8.3. It will fail to register in previous versions.
 
@@ -65,6 +68,18 @@ Click the quest icon to /think the wiki url to yourself, and copy it to the Wind
 Click the quest name to /think some handy quest notes to yourself. Use alongside GoArrow to always known the next step.
 
 Click the Refresh button will run /myquests and refresh the quest data.
+
+### Void Target View
+
+Only visible for characters with Void Magic.
+
+Intended to work alongside the amazing [Target HUD](https://www.accpp.net/archive/922b4feec61670a97ef5b965092c709d) plugin (no affiliation).
+
+Displays a target view that tracks your Corruption, Corrosion and Destructive Curse spells on each target. As well as your destruction aetheria proc.
+
+It only tracks your own void spells, and will not display other void mage's spells.
+
+The Corruption blast spell is tracked on 1 target only and is not aware of any splash damage targets.
 
 ### Commands
 
