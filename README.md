@@ -19,7 +19,7 @@ John Tracker
 ![John Tracker](./docs/John.png)
 
 Void Target View
-![Void Target View](.docs/Void.png)
+![Void Target View](./docs/Void.png)
 
 ## Getting Started
 - This plugin requires the latest Decal, v2.9.8.3. It will fail to register in previous versions.
