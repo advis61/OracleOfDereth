@@ -1,6 +1,6 @@
 ﻿# Oracle Of Dereth
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.4.2/OracleOfDerethInstaller-1.4.2.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.4.3/OracleOfDerethInstaller-1.4.3.0.exe)
 
 ## About
 
@@ -81,6 +81,8 @@ Displays a target view that tracks your Corruption, Corrosion and Destructive Cu
 It only tracks your own void spells, and will not display other void mage's spells.
 
 The Corruption blast spell is tracked on 1 target only and is not aware of any splash damage targets.
+
+If your dot was cast with the destruction proc up, it will be displayed in gold color.
 
 ### Commands
 

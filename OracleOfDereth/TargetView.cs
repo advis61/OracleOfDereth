@@ -99,6 +99,7 @@ namespace OracleOfDereth
                 DestText = (HudStaticText)view["DestText"];
                 DestText.FontHeight = 10;
                 DestText.TextAlignment = VirindiViewService.WriteTextFormats.Center;
+                DestText.TextColor = Target.DestructionColor;
 
                 Update();
             }
@@ -125,24 +126,15 @@ namespace OracleOfDereth
             Target target = Target.GetCurrentTarget();
 
             CorrosionText.Text = target.CorrosionText();
+            CorrosionText.TextColor = target.CorrosionColor();
+
             CorruptionText.Text = target.CorruptionText();
+            CorruptionText.TextColor = target.CorruptionColor();
+
             CurseText.Text = target.CurseText();
+            CurseText.TextColor = target.CurseColor();
 
-            DestText.Text = DestructionText();
-        }
-
-        public string DestructionText()
-        {
-            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.DestructionSpellIds.Contains(x.SpellId)).ToList();
-            if (enchantments.Count == 0) { return ""; }
-
-            double duration = enchantments.Min(x => x.TimeRemaining);
-            TimeSpan time = TimeSpan.FromSeconds(duration);
-
-            int seconds = time.Seconds;
-            if(seconds < 0) { return ""; }
-
-            return time.Seconds.ToString();
+            DestText.Text = target.DestructionText();
         }
 
         public void Dispose()

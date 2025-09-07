@@ -16,6 +16,8 @@ namespace OracleOfDereth
         public int TargetId = 0;
         public string TargetName = "";
 
+        public bool Destruction = false;
+
         public DateTime CastOn = DateTime.MinValue;        // Got the SpellCast event
         public DateTime StartedOn = DateTime.MinValue;     // Got the Chat event
         public DateTime TickedOn = DateTime.MinValue;      // Got the period damage chat event

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using VirindiViewService.Controls;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using System.Drawing;
 
 namespace OracleOfDereth
 {
@@ -27,6 +28,8 @@ namespace OracleOfDereth
             .Concat(Spell.CorruptionSpellIds)
             .Concat(Spell.CurseSpellIds)
             .ToList();
+
+        public static Color DestructionColor = Color.Gold;
 
         // My current target
         public static int CurrentTargetId = 0;
@@ -66,13 +69,19 @@ namespace OracleOfDereth
 
             Target target = new() { Id = id };
 
+            // Figure out if this is a destruction boosted spell or not
+            bool destruction = (target.DestructionText() != "");
+            bool existingSpell = (target.GetSpellText(new List<int> { spellId }) != "");
+            bool existingDestruction = (target.GetSpellColor(new List<int> { spellId }) == DestructionColor);
+
             TargetSpell targetSpell = new()
             {
                 TargetId = target.Id,
                 TargetName = target.Name(),
                 SpellId = spellId,
                 spellName = Spell.GetSpellName(spellId),
-                CastOn = DateTime.Now
+                CastOn = DateTime.Now,
+                Destruction = (existingDestruction || (!existingSpell && destruction))
             };
 
             TargetSpells.Insert(0, targetSpell);
@@ -141,6 +150,19 @@ namespace OracleOfDereth
             if (Item() == null) return "";
             return Item().ObjectClass.ToString();
         }
+        public string DestructionText()
+        {
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.DestructionSpellIds.Contains(x.SpellId)).ToList();
+            if (enchantments.Count == 0) { return ""; }
+
+            double duration = enchantments.Min(x => x.TimeRemaining);
+            TimeSpan time = TimeSpan.FromSeconds(duration);
+
+            int seconds = time.Seconds;
+            if (seconds < 0) { return ""; }
+
+            return time.Seconds.ToString();
+        }
 
         public string CorrosionText() { return GetSpellText(Spell.CorrosionSpellIds); }
         public string CorruptionText() { return GetSpellText(Spell.CorruptionSpellIds); }
@@ -157,6 +179,21 @@ namespace OracleOfDereth
             if(seconds < 0) { return ""; }
 
             return seconds.ToString();
+        }
+
+        public Color CorrosionColor() { return GetSpellColor(Spell.CorrosionSpellIds); }
+        public Color CorruptionColor() { return GetSpellColor(Spell.CorruptionSpellIds); }
+        public Color CurseColor() { return GetSpellColor(Spell.CurseSpellIds); }
+
+        private Color GetSpellColor(List<int> spellIds)
+        {
+            if(Item() == null) { return Color.White; }
+
+            TargetSpell targetSpell = TargetSpells.Where(s => s.TargetId == Id && spellIds.Contains(s.SpellId) && s.IsActive()).FirstOrDefault();
+            if (targetSpell == null) { return Color.White; }
+
+            if (targetSpell.Destruction) { return DestructionColor; }
+            return Color.White;
         }
     }
 }
