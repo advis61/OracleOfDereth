@@ -1,6 +1,6 @@
 ﻿# Oracle Of Dereth
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.4.1/OracleOfDerethInstaller-1.4.1.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.4.2/OracleOfDerethInstaller-1.4.2.0.exe)
 
 ## About
 
