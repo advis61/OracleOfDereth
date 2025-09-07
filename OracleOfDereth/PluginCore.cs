@@ -214,10 +214,6 @@ namespace OracleOfDereth
                 {
                     Target.SpellTicked(e.Text);
                 }
-                else if (Target.DestructionProcRegex.IsMatch(e.Text))
-                {
-                    Target.DestructionProc(e.Text);
-                } 
             }
             catch (Exception ex) { Util.Log(ex); }
         }

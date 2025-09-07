@@ -22,7 +22,6 @@ namespace OracleOfDereth
         public static Color DestructionColor = Color.Gold;
         public static readonly Regex YouCastRegex = new Regex(@"^You cast (.+?) on (.+?)(?:,.*)?$");
         public static readonly Regex PeriodicNetherRegex = new Regex(@"^You scar (.+?) for (\d+) points of periodic nether damage.*$");
-        public static readonly Regex DestructionProcRegex = new Regex(@"^Aetheria surges on (.+?) with the power of Surge of Destruction.*$");
 
         // Target Spells I care to track
         private static readonly List<int> TargetSpellIds = new List<int> {}
@@ -84,25 +83,6 @@ namespace OracleOfDereth
             TargetSpells.Insert(0, targetSpell);
         }
 
-        public static void DestructionProc(string text)
-        {
-            Match match = DestructionProcRegex.Match(text);
-            if(!match.Success) { return; }
-
-            string playerName = match.Groups[1].Value;
-            if(playerName != CoreManager.Current.CharacterFilter.Name) { return; }
-
-            CurrentDestructionProc = DateTime.Now;
-
-            Util.Chat($"Destruction proc on '{playerName}'", 1);
-        }
-
-        public static int DestructionSecondsRemaining()
-        {
-            if (CurrentDestructionProc == DateTime.MinValue) { return -1; }
-            return 15 - (int)(DateTime.Now - CurrentDestructionProc).TotalSeconds;
-        }
-
         public static void SpellStarted(string text)
         {
             Match match = YouCastRegex.Match(text);
@@ -111,6 +91,7 @@ namespace OracleOfDereth
             string spellName = match.Groups[1].Value;
             string targetName = match.Groups[2].Value;
 
+            // Find the correct previous cast
             TargetSpell targetSpell = TargetSpells.Where(s => s.TargetName == targetName && s.SpellName == spellName && !s.IsStarted() && !s.IsCasting()).FirstOrDefault();
 
             if(targetSpell == null) {
@@ -119,18 +100,18 @@ namespace OracleOfDereth
 
             if (targetSpell == null) { return; }
 
-            // Figure out if this is a destruction boosted spell or not
+            // Determine if this is a destruction boosted spell or not
             Target target = new() { Id = targetSpell.TargetId };
 
             bool destruction = (target.DestructionText() != "");
             bool existingSpell = (target.GetSpellText(new List<int> { targetSpell.SpellId }) != "");
             bool existingDestruction = (target.GetSpellColor(new List<int> { targetSpell.SpellId }) == DestructionColor);
 
-            if (existingDestruction || (!existingSpell && destruction)) { targetSpell.SetDestruction(); }
+            if (existingDestruction || (destruction && !existingSpell)) { targetSpell.SetDestruction(); }
 
             targetSpell.SetStarted();
 
-            Util.Chat($"You cast '{spellName}' on '{targetName}' with '{targetSpell.Destruction}'");
+            //Util.Chat($"You cast '{spellName}' on '{targetName}' with '{targetSpell.Destruction}'");
         }
 
         public static void SpellTicked(string text)
