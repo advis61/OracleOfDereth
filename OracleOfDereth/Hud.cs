@@ -20,6 +20,7 @@ namespace OracleOfDereth
                 .Where(x => x.Duration > 900)
                 .Where(x => x.TimeRemaining > 0)
                 .Where(x => !Spell.BeerSpellIds.Contains(x.SpellId))
+                .Where(x => !Spell.NotBuffSpellIds.Contains(x.SpellId))
                 .Where(x =>
                 {
                     var spell = service.SpellTable.GetById(x.SpellId);

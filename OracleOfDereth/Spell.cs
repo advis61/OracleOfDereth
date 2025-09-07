@@ -146,6 +146,12 @@ namespace OracleOfDereth
             3979, // Strength Other Incantation
         };
 
+        public static readonly List<int> NotBuffSpellIds = new List<int> {
+            3204, // Blazing Heart
+            5127, // Answer of Loyalty (Mana)
+            5132 // Answer of Loyalty (Stam)
+        };
+
         public static readonly List<int> BeerSpellIds = new List<int> {
             3531, 3533, 3862, 3864, 3530, 3863
         };
