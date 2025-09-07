@@ -11,7 +11,7 @@ namespace OracleOfDereth
     public class TargetSpell
     {
         public int SpellId = 0;
-        public string spellName = "";
+        public string SpellName = "";
 
         public int TargetId = 0;
         public string TargetName = "";
@@ -29,6 +29,10 @@ namespace OracleOfDereth
         public void SetTicked()
         {
             TickedOn = DateTime.Now;
+        }
+        public void SetDestruction()
+        {
+            Destruction = true;
         }
 
         public bool IsCasting()
