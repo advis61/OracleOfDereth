@@ -15,8 +15,8 @@ using WindowsTimer = System.Windows.Forms.Timer;
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
 // Remember to update installer.nsi to match
-[assembly: AssemblyVersion("1.3.0.0")]
-[assembly: AssemblyFileVersion("1.3.0.0")]
+[assembly: AssemblyVersion("1.4.0.0")]
+[assembly: AssemblyFileVersion("1.4.0.0")]
 
 namespace OracleOfDereth
 {
