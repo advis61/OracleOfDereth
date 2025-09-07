@@ -37,7 +37,7 @@ Void Target View
 
 ## Usage
 
-There are 3 main areas: the Status HUD, Buffs List and John Tracker.
+There are 4 main areas: the Status HUD, Buffs List, John Tracker and Void Target View.
 
 ### Status HUD
 

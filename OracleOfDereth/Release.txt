@@ -8,6 +8,8 @@ To release a new build:
 
 - Copy that file to Dropbox and test on another machine
 
+- Update README.md with the new link to the installer
+
 - Make a Github release:
 - https://github.com/advis61/OracleOfDereth/releases
 - Click Draft a new release
@@ -15,7 +17,7 @@ To release a new build:
 - Create a new tag name 1.2.0
 - Add two attachments:
 Installer.exe from above step from C:\Projects\OracleOfDereth\
-OracleOfDereth.dll file from C:\Projects\OracleOfDereth\OracleOfDereth\bin\net48\
+OracleOfDereth.dll file from C:\Projects\OracleOfDereth\bin\net48\
 - Publish it
 
 - Get the OracleOfDerethInstaller.exe link from the releases page
