@@ -18,11 +18,17 @@ namespace OracleOfDereth
 
         public DateTime CastOn = DateTime.MinValue;        // Got the SpellCast event
         public DateTime StartedOn = DateTime.MinValue;     // Got the Chat event
+        public DateTime TickedOn = DateTime.MinValue;      // Got the period damage chat event
 
         public void SetStarted()
         {
             StartedOn = DateTime.Now;
         }
+        public void SetTicked()
+        {
+            TickedOn = DateTime.Now;
+        }
+
         public bool IsCasting()
         {
             return (!IsStarted() && SecondsSinceCast() < 3);
@@ -31,6 +37,11 @@ namespace OracleOfDereth
         public bool IsStarted()
         {
             return StartedOn != DateTime.MinValue;
+        }
+
+        public bool IsTicked()
+        {
+            return TickedOn != DateTime.MinValue;
         }
 
         public bool IsActive()
@@ -48,7 +59,13 @@ namespace OracleOfDereth
         public int SecondsRemaining()
         {
             if(StartedOn == DateTime.MinValue) { return -1; }
-            return Duration() - (int)(DateTime.Now - StartedOn).TotalSeconds;
+
+            if (TickedOn == DateTime.MinValue)
+            {
+                return Duration() - (int)(DateTime.Now - StartedOn).TotalSeconds + 2;
+            }
+
+            return Duration() - (int)(DateTime.Now - TickedOn).TotalSeconds;
         }
 
         public int SecondsSinceCast()

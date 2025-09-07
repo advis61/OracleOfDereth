@@ -19,6 +19,7 @@ namespace OracleOfDereth
     public class Target
     {
         public static readonly Regex YouCastRegex = new Regex(@"^You cast (.+?) on (.+?)(?:,.*)?$");
+        public static readonly Regex PeriodicNetherRegex = new Regex(@"^You scar (.+?) for (\d+) points of periodic nether damage.*$");
 
         // Target Spells I care to track
         private static readonly List<int> TargetSpellIds = new List<int> {}
@@ -98,6 +99,17 @@ namespace OracleOfDereth
             targetSpell.SetStarted();
 
             //Util.Chat($"You cast '{spellName}' on '{targetName}'", 1);
+        }
+
+        public static void SpellTicked(string text)
+        {
+            Match match = PeriodicNetherRegex.Match(text);
+            if(!match.Success) { return; }
+
+            string targetName = match.Groups[1].Value;
+
+            var targetSpells = TargetSpells.Where(s => s.TargetName == targetName && s.IsStarted() && !s.IsTicked());
+            foreach(var targetSpell in targetSpells) { targetSpell.SetTicked(); }
         }
 
         // Instance methods

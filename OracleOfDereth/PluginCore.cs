@@ -204,15 +204,15 @@ namespace OracleOfDereth
                 if (QuestFlag.MyQuestRegex.IsMatch(e.Text)) 
                 {
                     QuestFlag.Add(e.Text);
-                    return;
-                }
-
-                // Track You cast ... on ...
-                if (Target.YouCastRegex.IsMatch(e.Text)) 
+                } 
+                else if (Target.YouCastRegex.IsMatch(e.Text))
                 {
                     Target.SpellStarted(e.Text);
                     targetView.Update();
-                    return;
+                }
+                else if (Target.PeriodicNetherRegex.IsMatch(e.Text))
+                {
+                    Target.SpellTicked(e.Text);
                 }
             }
             catch (Exception ex) { Util.Log(ex); }
