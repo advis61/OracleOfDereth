@@ -19,7 +19,7 @@ namespace OracleOfDereth
 {
     public class Target
     {
-        public static Color DestructionColor = Color.Gold;
+        public static readonly Color DestructionColor = Color.DeepPink;
         public static readonly Regex YouCastRegex = new Regex(@"^You cast (.+?) on (.+?)(?:,.*)?$");
         public static readonly Regex PeriodicNetherRegex = new Regex(@"^You scar (.+?) for (\d+) points of periodic nether damage.*$");
 

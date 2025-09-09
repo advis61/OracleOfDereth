@@ -97,7 +97,7 @@ namespace OracleOfDereth
                 DestLayout.AddControl(DestIcon, new Rectangle(0, 1, 28, 28));
 
                 DestText = (HudStaticText)view["DestText"];
-                DestText.FontHeight = 10;
+                DestText.FontHeight = 11;
                 DestText.TextAlignment = VirindiViewService.WriteTextFormats.Center;
                 DestText.TextColor = Target.DestructionColor;
 
@@ -125,16 +125,34 @@ namespace OracleOfDereth
         {
             Target target = Target.GetCurrentTarget();
 
+            // Texts
             CorrosionText.Text = target.CorrosionText();
-            CorrosionText.TextColor = target.CorrosionColor();
-
             CorruptionText.Text = target.CorruptionText();
-            CorruptionText.TextColor = target.CorruptionColor();
-
             CurseText.Text = target.CurseText();
+            DestText.Text = target.DestructionText();
+
+            // Colors
+            List<int> before = new List<int> { CorrosionText.FontHeight, CorruptionText.FontHeight, CurseText.FontHeight };
+
+            CorrosionText.TextColor = target.CorrosionColor();
+            CorruptionText.TextColor = target.CorruptionColor();
             CurseText.TextColor = target.CurseColor();
 
-            DestText.Text = target.DestructionText();
+            if (CorrosionText.TextColor == Target.DestructionColor) { CorrosionText.FontHeight = 11; } else { CorrosionText.FontHeight = 10; }
+            if (CorruptionText.TextColor == Target.DestructionColor) { CorruptionText.FontHeight = 11; } else { CorruptionText.FontHeight = 10; }
+            if (CurseText.TextColor == Target.DestructionColor) { CurseText.FontHeight = 11; } else { CurseText.FontHeight = 10; }
+
+            List<int> after = new List<int> { CorrosionText.FontHeight, CorruptionText.FontHeight, CurseText.FontHeight };
+
+            // Nice
+            bool nice = !before.All(fontHeight => fontHeight == 11) && after.All(fontHeight => fontHeight == 11);
+
+            if(nice) {
+                CorrosionText.Text = "N";
+                CorruptionText.Text = "I";
+                CurseText.Text = "C";
+                DestText.Text = "E";
+            }
         }
 
         public void Dispose()
