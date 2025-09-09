@@ -19,7 +19,14 @@ namespace OracleOfDereth
 {
     public class Target
     {
-        public static readonly Color DestructionColor = Color.DeepPink;
+
+        public static readonly Color DestructionColor = Color.FromArgb(
+            Color.DeepPink.A, 
+            Math.Min(255, (int)(Color.DeepPink.R * (1 + 0.5f))), 
+            Math.Min(255, (int)(Color.DeepPink.G * (1 + 0.5f))), 
+            Math.Min(255, (int)(Color.DeepPink.B * (1 + 0.5f)))
+        );
+
         public static readonly Regex YouCastRegex = new Regex(@"^You cast (.+?) on (.+?)(?:,.*)?$");
         public static readonly Regex PeriodicNetherRegex = new Regex(@"^You scar (.+?) for (\d+) points of periodic nether damage.*$");
 
@@ -32,9 +39,6 @@ namespace OracleOfDereth
 
         // My current target
         public static int CurrentTargetId = 0;
-
-        // Last time I got a Destruction proc
-        public static DateTime CurrentDestructionProc = DateTime.MinValue;
 
         // Spells tracking
         public static List<TargetSpell> TargetSpells = new List<TargetSpell>();

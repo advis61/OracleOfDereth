@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Authentication.ExtendedProtection.Configuration;
 using System.Text;
 using System.Threading.Tasks;
@@ -97,7 +98,7 @@ namespace OracleOfDereth
                 DestLayout.AddControl(DestIcon, new Rectangle(0, 1, 28, 28));
 
                 DestText = (HudStaticText)view["DestText"];
-                DestText.FontHeight = 11;
+                DestText.FontHeight = 10;
                 DestText.TextAlignment = VirindiViewService.WriteTextFormats.Center;
                 DestText.TextColor = Target.DestructionColor;
 
@@ -108,7 +109,7 @@ namespace OracleOfDereth
         public void Update()
         {
             Skill skill = new Skill(CharFilterSkillType.VoidMagic);
-            if(skill.IsUnKnown()) { return; }
+            if(skill.IsUnKnown()) { view.Visible = false; return; }
 
             UpdateVisibility();
             if(view.Visible == false) { return; }
@@ -121,6 +122,8 @@ namespace OracleOfDereth
             view.Visible = Target.GetCurrentTarget().IsMob();
         }
 
+        private int LastTargetId = 0;
+
         public void UpdateSpells()
         {
             Target target = Target.GetCurrentTarget();
@@ -132,27 +135,24 @@ namespace OracleOfDereth
             DestText.Text = target.DestructionText();
 
             // Colors
-            List<int> before = new List<int> { CorrosionText.FontHeight, CorruptionText.FontHeight, CurseText.FontHeight };
+            List<Color> before = new List<Color> { CorrosionText.TextColor, CorruptionText.TextColor, CurseText.TextColor };
 
             CorrosionText.TextColor = target.CorrosionColor();
             CorruptionText.TextColor = target.CorruptionColor();
             CurseText.TextColor = target.CurseColor();
 
-            if (CorrosionText.TextColor == Target.DestructionColor) { CorrosionText.FontHeight = 11; } else { CorrosionText.FontHeight = 10; }
-            if (CorruptionText.TextColor == Target.DestructionColor) { CorruptionText.FontHeight = 11; } else { CorruptionText.FontHeight = 10; }
-            if (CurseText.TextColor == Target.DestructionColor) { CurseText.FontHeight = 11; } else { CurseText.FontHeight = 10; }
-
-            List<int> after = new List<int> { CorrosionText.FontHeight, CorruptionText.FontHeight, CurseText.FontHeight };
+            List<Color> after = new List<Color> { CorrosionText.TextColor, CorruptionText.TextColor, CurseText.TextColor };
 
             // Nice
-            bool nice = !before.All(fontHeight => fontHeight == 11) && after.All(fontHeight => fontHeight == 11);
-
-            if(nice) {
+            if(target.Id == LastTargetId && DestText.Text != "" && before.Count(color => color == Target.DestructionColor) == 2 && after.Count(color => color == Target.DestructionColor) == 3)
+            {
                 CorrosionText.Text = "N";
                 CorruptionText.Text = "I";
                 CurseText.Text = "C";
                 DestText.Text = "E";
             }
+
+            LastTargetId = target.Id;
         }
 
         public void Dispose()
