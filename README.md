@@ -2,6 +2,8 @@
 
 Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.4.5/OracleOfDerethInstaller-1.4.5.0.exe)
 
+If you crash at the login screen, make sure to upgrade to latest Decal v2.9.8.3
+
 ## About
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) v2.9.8.3 plugin.
