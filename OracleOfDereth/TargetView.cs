@@ -98,9 +98,9 @@ namespace OracleOfDereth
                 DestLayout.AddControl(DestIcon, new Rectangle(0, 1, 28, 28));
 
                 DestText = (HudStaticText)view["DestText"];
-                DestText.FontHeight = 10;
                 DestText.TextAlignment = VirindiViewService.WriteTextFormats.Center;
                 DestText.TextColor = Target.DestructionColor;
+                DestText.FontHeight = 11;
 
                 Update();
             }
@@ -140,6 +140,10 @@ namespace OracleOfDereth
             CorrosionText.TextColor = target.CorrosionColor();
             CorruptionText.TextColor = target.CorruptionColor();
             CurseText.TextColor = target.CurseColor();
+
+            if(CorrosionText.TextColor == Target.DestructionColor) { CorrosionText.FontHeight = 11; } else {  CorrosionText.FontHeight = 10; }
+            if(CorruptionText.TextColor == Target.DestructionColor) { CorruptionText.FontHeight = 11; } else { CorruptionText.FontHeight = 10; }
+            if(CurseText.TextColor == Target.DestructionColor) { CurseText.FontHeight = 11; } else { CurseText.FontHeight = 10; }
 
             List<Color> after = new List<Color> { CorrosionText.TextColor, CorruptionText.TextColor, CurseText.TextColor };
 
