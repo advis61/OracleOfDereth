@@ -63,7 +63,7 @@ namespace OracleOfDereth
         {
             { 0, 190 }, // Hud
             { 1, 460 }, // Buffs
-            { 2, 460 }, // Cantrips
+            { 2, 350 }, // Cantrips
             { 3, 430 }, // John
             { 4, 190 }  // About
         };
@@ -72,7 +72,7 @@ namespace OracleOfDereth
         {
             { 0, 290 }, // Hud
             { 1, 310 }, // Buffs
-            { 2, 310 }, // Cantrips
+            { 2, 380 }, // Cantrips
             { 3, 340 }, // John (810 for full list)
             { 4, 310 }  // About
         };
@@ -317,6 +317,8 @@ namespace OracleOfDereth
                 }
 
                 var cantrip = cantrips[i];
+
+                if(cantrip.Name == "Blank") { continue; }
 
                 // Only update this if first time
                 if (force)

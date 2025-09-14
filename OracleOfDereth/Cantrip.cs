@@ -99,6 +99,16 @@ namespace OracleOfDereth
             return (SkillId == -2);
         }
 
+        public bool IsEssence()
+        {
+            return (SkillId == -3);
+        }
+
+        public bool IsWarriorsVitality()
+        { 
+            return (SkillId == -4); 
+        }
+
         public bool IsMinor()
         {
             return CoreManager.Current.CharacterFilter.Enchantments.Where(x => x.SpellId == Minor).Count() > 0;
@@ -135,6 +145,8 @@ namespace OracleOfDereth
         {
             if(IsSetDedicationBonus()) { return SetDedicationBonusLevel(); }
             if(IsSetBonus()) { return SetBonusLevel(); }
+            if(IsEssence()) { return EssenceLevel(); }
+            if(IsWarriorsVitality()) { return WarriorsVitalityLevel(); }
             return CantripLevel();
         }
 
@@ -163,6 +175,25 @@ namespace OracleOfDereth
             if (IsMajor()) { return "6 pieces"; };
             if (IsModerate()) { return "4 pieces"; }
             if (IsMinor()) { return "2 pieces"; }
+            return "-";
+        }
+
+        public string EssenceLevel()
+        {
+            if (IsLegendary()) { return "+30 health"; };
+            if (IsEpic()) { return "+25 health"; };
+            if (IsMajor()) { return "+25 helath"; };
+            if (IsModerate()) { return "+20 health"; } 
+            if (IsMinor()) { return "+15 health"; }
+            return "-";
+        }
+
+        public string WarriorsVitalityLevel()
+        {
+            if (IsLegendary()) { return "+20 health"; };
+            if (IsEpic()) { return "+15 health"; };
+            if (IsMajor()) { return "+10 health"; };
+            if (IsModerate()) { return "+5 health"; }
             return "-";
         }
     }

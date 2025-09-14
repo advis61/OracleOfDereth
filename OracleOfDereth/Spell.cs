@@ -149,7 +149,13 @@ namespace OracleOfDereth
         public static readonly List<int> NotBuffSpellIds = new List<int> {
             3204, // Blazing Heart
             5127, // Answer of Loyalty (Mana)
-            5132 // Answer of Loyalty (Stam)
+            5131, // Answer of Loyalty (Stam)
+            5132, // Answer of Loyalty (Stam)
+            5978, // Rare Armor Damage
+            5192, // Rare Damage Reduction
+            6170, // Life Mead
+            5966, // Vigor Mead
+            5122, // Call of Leadership V
         };
 
         public static readonly List<int> BeerSpellIds = new List<int> {
