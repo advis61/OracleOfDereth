@@ -86,8 +86,17 @@ namespace OracleOfDereth
 
         public bool SkillIsKnown()
         {
-            if(SkillId == 0) { return true; }
+            if(SkillId <= 0) { return true; }
             return new Skill((CharFilterSkillType)SkillId).IsKnown();
+        }
+
+        public bool IsSetBonus()
+        {
+            return (SkillId == -1);
+        }
+        public bool IsSetDedicationBonus()
+        {
+            return (SkillId == -2);
         }
 
         public bool IsMinor()
@@ -124,11 +133,36 @@ namespace OracleOfDereth
 
         public string Level()
         {
+            if(IsSetDedicationBonus()) { return SetDedicationBonusLevel(); }
+            if(IsSetBonus()) { return SetBonusLevel(); }
+            return CantripLevel();
+        }
+
+        public string CantripLevel()
+        {
             if(IsLegendary()) { return "Legendary"; };
             if(IsEpic()) { return "Epic"; };
             if(IsMajor()) { return "Major"; };
             if(IsModerate()) { return "Moderate"; };
             if(IsMinor()) { return "Minor"; };
+            return "-";
+        }
+
+        public string SetBonusLevel()
+        {
+            if (IsLegendary()) { return "5 pieces"; };
+            if (IsEpic()) { return "4 pieces"; };
+            if (IsMajor()) { return "3 pieces"; };
+            if (IsModerate()) { return "2 pieces"; };
+            return "-";
+        }
+        public string SetDedicationBonusLevel()
+        {
+            if (IsLegendary()) { return "9 pieces"; };
+            if (IsEpic()) { return "8 pieces"; };
+            if (IsMajor()) { return "6 pieces"; };
+            if (IsModerate()) { return "4 pieces"; }
+            if (IsMinor()) { return "2 pieces"; }
             return "-";
         }
     }
