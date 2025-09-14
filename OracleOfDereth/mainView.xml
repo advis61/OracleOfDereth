@@ -53,7 +53,6 @@
 				  <column progid="DecalControls.IconColumn" name="CantripIcon" fixedwidth="16" />
 				  <column progid="DecalControls.TextColumn" name="CantripName" fixedwidth="200" />
 				  <column progid="DecalControls.TextColumn" name="CantripLevel" fixedwidth="100" />
-				  <column progid="DecalControls.TextColumn" name="CantripNumber" fixedwidth="100" />
 			  </control>
 		  </control>
 	  </page>

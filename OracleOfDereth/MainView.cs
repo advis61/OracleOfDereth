@@ -299,8 +299,7 @@ namespace OracleOfDereth
             // For each cantrip in Cantrip.Cantrips, add a row to the CantripsList
             // This function will be called multiple times, so we need to add or update
 
-            //List<Cantrip> cantrips = Cantrip.Cantrips.Where(x => x.SkillIsKnown()).ToList();
-            List<Cantrip> cantrips = Cantrip.Cantrips;
+            List<Cantrip> cantrips = Cantrip.Cantrips.Where(x => x.SkillIsKnown()).ToList();
             int count = cantrips.Count();
 
             // When empty
@@ -322,13 +321,12 @@ namespace OracleOfDereth
                 // Only update this if first time
                 if (force)
                 {
-                    ((HudPictureBox)row[0]).Image = cantrip.Another();
+                    ((HudPictureBox)row[0]).Image = cantrip.Icon();
                     ((HudStaticText)row[1]).Text = cantrip.Name;
                 }
 
                 // Always update
                 ((HudStaticText)row[2]).Text = cantrip.Level();
-                ((HudStaticText)row[3]).Text =cantrip.Another().ToString();
             }
         }
 

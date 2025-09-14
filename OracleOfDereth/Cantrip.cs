@@ -24,7 +24,7 @@ namespace OracleOfDereth
         // Properties
         public string Name = "";
         public int SkillId = 0;
-        public int Icon = 0;
+        public int SpellId = 0;
         public int Minor = 0;
         public int Moderate = 0;
         public int Major = 0;
@@ -64,7 +64,7 @@ namespace OracleOfDereth
                     {
                         Name = fields[0].Trim(),
                         SkillId = int.Parse(fields[1].Trim()),
-                        Icon = int.Parse(fields[2].Trim()),
+                        SpellId = int.Parse(fields[2].Trim()),
                         Minor = int.Parse(fields[3].Trim()),
                         Moderate = int.Parse(fields[4].Trim()),
                         Major = int.Parse(fields[5].Trim()),
@@ -114,10 +114,10 @@ namespace OracleOfDereth
             return CoreManager.Current.CharacterFilter.Enchantments.Where(x => x.SpellId == Legendary).Count() > 0;
         }
 
-        public int Another()
+        public int Icon()
         {
             FileService service = CoreManager.Current.Filter<FileService>();
-            Decal.Filters.Spell spell = service.SpellTable.GetById(SkillId);
+            Decal.Filters.Spell spell = service.SpellTable.GetById(SpellId);
             if(spell == null) { return 0; }
             return spell.IconId;
         }
