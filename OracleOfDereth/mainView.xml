@@ -47,6 +47,17 @@
 		  </control>
 	  </page>
 
+	  <page label="Cantrips">
+		  <control progid="DecalControls.FixedLayout" clipped="">
+			  <control progid="DecalControls.List" name="CantripsList" left="0" top="0" width="640" height="2000">
+				  <column progid="DecalControls.IconColumn" name="CantripIcon" fixedwidth="16" />
+				  <column progid="DecalControls.TextColumn" name="CantripName" fixedwidth="200" />
+				  <column progid="DecalControls.TextColumn" name="CantripLevel" fixedwidth="100" />
+				  <column progid="DecalControls.TextColumn" name="CantripNumber" fixedwidth="100" />
+			  </control>
+		  </control>
+	  </page>
+
 	  <page label="John">
 		  <control progid="DecalControls.FixedLayout" clipped="">
 			  <control progid="DecalControls.StaticText" name="JohnText" left="5" top="5" width="300" height="20" text="Legendary John Quests"/>

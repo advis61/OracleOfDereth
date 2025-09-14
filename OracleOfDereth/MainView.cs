@@ -20,10 +20,13 @@ namespace OracleOfDereth
 {
     class MainView : IDisposable
     {
+        // Main View
         readonly VirindiViewService.ViewProperties properties;
         readonly VirindiViewService.ControlGroup controls;
         readonly VirindiViewService.HudView view;
         public HudTabView MainViewNotebook { get; private set; }
+
+        // Status HUD
         public HudStaticText SummoningText { get; private set; }
         public HudStaticText LockpickText { get; private set; }
         public HudStaticText LifeText { get; private set; }
@@ -36,7 +39,12 @@ namespace OracleOfDereth
         public HudStaticText DestructionText { get; private set; }
         public HudStaticText RegenText { get; private set; }
         public HudStaticText ProtectionText { get; private set; }
+
+        // Buffs
         public HudList BuffsList { get; private set; }
+
+        // Cantrips
+        public HudList CantripsList { get; private set; }
 
         // John Tracker
         public HudStaticText JohnLabel { get; private set; }
@@ -55,16 +63,18 @@ namespace OracleOfDereth
         {
             { 0, 190 }, // Hud
             { 1, 460 }, // Buffs
-            { 2, 430 }, // John
-            { 3, 190 }  // About
+            { 2, 460 }, // Cantrips
+            { 3, 430 }, // John
+            { 4, 190 }  // About
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
         {
             { 0, 290 }, // Hud
             { 1, 310 }, // Buffs
-            { 2, 340 }, // John (810 for full list)
-            { 3, 310 }  // About
+            { 2, 310 }, // Cantrips
+            { 3, 340 }, // John (810 for full list)
+            { 4, 310 }  // About
         };
 
         public MainView()
@@ -124,6 +134,11 @@ namespace OracleOfDereth
                 BuffsList.Click += BuffsList_Click;
                 BuffsList.ClearRows();
 
+                // Cantrips Tab
+                CantripsList = (HudList)view["CantripsList"];
+                CantripsList.Click += CantripsList_Click;
+                CantripsList.ClearRows();
+
                 // John Tab
                 JohnText = (HudStaticText)view["JohnText"];
                 JohnText.FontHeight = 10;
@@ -179,7 +194,8 @@ namespace OracleOfDereth
             if(QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
             if (currentTab == 0) { UpdateHud(); }
             if (currentTab == 1) { UpdateBuffs(); }
-            if (currentTab == 2) { UpdateJohn(); }
+            if (currentTab == 2) { UpdateCantrips(); }
+            if (currentTab == 3) { UpdateJohn(); }
         }
 
         // Quest Flag Changes
@@ -268,6 +284,55 @@ namespace OracleOfDereth
         }
 
         void BuffsList_Click(object sender, int row, int col)
+        {
+        }
+
+        // Cantrips Tab
+        private void UpdateCantrips()
+        {
+            UpdateCantripsList();
+        }
+
+        int CantripsListCount = 0;
+        private void UpdateCantripsList(bool force = false)
+        {
+            // For each cantrip in Cantrip.Cantrips, add a row to the CantripsList
+            // This function will be called multiple times, so we need to add or update
+
+            //List<Cantrip> cantrips = Cantrip.Cantrips.Where(x => x.SkillIsKnown()).ToList();
+            List<Cantrip> cantrips = Cantrip.Cantrips;
+            int count = cantrips.Count();
+
+            // When empty
+            if (CantripsListCount != count) { force = true; }
+
+            // Add or update rows
+            for (int i = 0; i < count; i++)
+            {
+                HudList.HudListRowAccessor row;
+                if (i >= CantripsListCount) {
+                    row = CantripsList.AddRow();
+                    CantripsListCount += 1;
+                } else {
+                    row = CantripsList[i];
+                }
+
+                var cantrip = cantrips[i];
+
+                // Only update this if first time
+                if (force)
+                {
+                    ((HudPictureBox)row[0]).Image = cantrip.Another();
+                    ((HudStaticText)row[1]).Text = cantrip.Name;
+                }
+
+                // Always update
+                ((HudStaticText)row[2]).Text = cantrip.Level();
+                ((HudStaticText)row[3]).Text =cantrip.Another().ToString();
+            }
+        }
+
+        void CantripsList_Click(object sender, int row, int col)
         {
         }
 
@@ -450,6 +515,7 @@ namespace OracleOfDereth
             {
                 MainViewNotebook.OpenTabChange -= MainViewNotebook_OpenTabChange;
                 BuffsList.Click -= BuffsList_Click;
+                CantripsList.Click -= CantripsList_Click;
                 JohnRefresh.Hit -= JohnRefresh_Hit;
                 JohnList.Click -= JohnList_Click;
                 JohnListSortName.Hit -= JohnListSortName_Click;
