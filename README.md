@@ -1,6 +1,6 @@
 ﻿# Oracle Of Dereth
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.4.5/OracleOfDerethInstaller-1.4.5.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.5.0/OracleOfDerethInstaller-1.5.0.0.exe)
 
 If you crash at the login screen, make sure to upgrade to latest Decal v2.9.8.3
 
@@ -15,6 +15,10 @@ Status HUD
 Buffs List
 
 ![Buffs List](./docs/Buffs.png)
+
+Cantrips List
+
+![Cantrips List](./docs/Cantrips.png)
 
 John Tracker
 
@@ -39,7 +43,7 @@ Void Target View
 
 ## Usage
 
-There are 4 main areas: the Status HUD, Buffs List, John Tracker and Void Target View.
+There are 5 main areas: the Status HUD, Buffs List, Cantrips List, John Tracker and Void Target View.
 
 ### Status HUD
 
@@ -57,6 +61,14 @@ It will:
 ### Buffs List
 
 Displays your buffs and debuffs with time remaining.
+
+### Cantrips List
+
+- Displays minor / moderate / epic / legendary for every cantrip. 
+- Displays suit set bonuses.
+- Displays Essence Glutton and Warrior's Vitality
+
+Only displays cantrips for skills that you have known.
 
 ### John Tracker
 
