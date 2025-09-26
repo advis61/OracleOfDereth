@@ -119,7 +119,7 @@ namespace OracleOfDereth
 
         public void UpdateVisibility()
         {
-            view.Visible = Target.GetCurrentTarget().IsMob();
+            view.Visible = Target.GetCurrentTarget().IsTarget();
         }
 
         private int LastTargetId = 0;

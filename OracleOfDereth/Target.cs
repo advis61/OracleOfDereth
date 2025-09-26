@@ -136,10 +136,27 @@ namespace OracleOfDereth
             return Item().Name;
         }
 
-        public bool IsMob()
+        public bool IsPk()
         {
             if (Item() == null) return false;
-            return ObjectClass() == "Monster";
+            return Item().Values((LongValueKey)134) == 4; // PlayerKiller
+        }
+        public bool IsPkLite()
+        {
+            if (Item() == null) return false;
+            return Item().Values((LongValueKey)134) == 64; // PkLite
+        }
+
+        public bool IsTarget()
+        {
+            if (Item() == null) return false;
+            if (ObjectClass() == "Player" && Name() == CoreManager.Current.CharacterFilter.Name) return false;
+
+            if (ObjectClass() == "Monster") return true;
+            if (ObjectClass() == "Player" && IsPk()) return true;
+            if (ObjectClass() == "Player" && IsPkLite()) return true;
+
+            return false;
         }
 
         private WorldObject? Item()
