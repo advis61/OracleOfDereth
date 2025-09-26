@@ -1,6 +1,6 @@
 ﻿# Oracle Of Dereth
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.5.0/OracleOfDerethInstaller-1.5.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.5.1/OracleOfDerethInstaller-1.5.1.0.exe)
 
 If you crash at the login screen, make sure to upgrade to latest Decal v2.9.8.3
 
@@ -96,7 +96,9 @@ It only tracks your own void spells, and will not display other void mage's spel
 
 The Corruption blast spell is tracked on 1 target only and is not aware of any splash damage targets.
 
-If your dot was cast with the destruction proc up, it will be displayed in gold color.
+If your dot was cast with the destruction proc up, it will be displayed in highlighted color.
+
+Works for PK and PKLite.
 
 ### Commands
 
