@@ -40,6 +40,12 @@ namespace OracleOfDereth
         public HudStaticText RegenText { get; private set; }
         public HudStaticText ProtectionText { get; private set; }
 
+        // Augs
+        public HudList AugQuestsList { get; private set; }
+        public HudList AugXPList { get; private set; }
+        public HudList AugLuminanceList { get; private set; }
+        public HudButton AugQuestsRefresh { get; private set; }
+
         // Buffs
         public HudList BuffsList { get; private set; }
 
@@ -50,7 +56,7 @@ namespace OracleOfDereth
         public HudStaticText JohnLabel { get; private set; }
         public HudStaticText JohnText { get; private set; }
 
-        public HudStaticText JohnListSortName { get; private set;      }
+        public HudStaticText JohnListSortName { get; private set; }
         public HudStaticText JohnListSortReady { get; private set; }
         public HudStaticText JohnListSortSolves { get; private set; }
 
@@ -62,19 +68,21 @@ namespace OracleOfDereth
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
         {
             { 0, 190 }, // Hud
-            { 1, 460 }, // Buffs
-            { 2, 350 }, // Cantrips
-            { 3, 430 }, // John
-            { 4, 190 }  // About
+            { 1, 430}, // Augs
+            { 2, 460 }, // Buffs
+            { 3, 350 }, // Cantrips
+            { 4, 430 }, // John
+            { 5, 350 }  // About
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
         {
             { 0, 290 }, // Hud
-            { 1, 310 }, // Buffs
-            { 2, 380 }, // Cantrips
-            { 3, 340 }, // John (810 for full list)
-            { 4, 310 }  // About
+            { 1, 340 }, // Augs
+            { 2, 310 }, // Buffs
+            { 3, 380 }, // Cantrips
+            { 4, 340 }, // John (810 for full list)
+            { 5, 310 }  // About
         };
 
         public MainView()
@@ -159,6 +167,22 @@ namespace OracleOfDereth
                 JohnListSortSolves = (HudStaticText)view["JohnListSortSolves"];
                 JohnListSortSolves.Hit += JohnListSortSolves_Click;
 
+                // Augs Tab
+                AugQuestsRefresh = (HudButton)view["AugQuestsRefresh"];
+                AugQuestsRefresh.Hit += AugQuestsRefresh_Hit;
+
+                AugQuestsList = (HudList)view["AugQuestsList"];
+                AugQuestsList.Click += AugQuestsList_Click;
+                AugQuestsList.ClearRows();
+
+                AugXPList = (HudList)view["AugXPList"];
+                AugXPList.Click += AugXPList_Click;
+                AugXPList.ClearRows();
+
+                AugLuminanceList = (HudList)view["AugLuminanceList"];
+                AugLuminanceList.Click += AugLuminanceList_Click;
+                AugLuminanceList.ClearRows();
+
                 Update();
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -193,9 +217,10 @@ namespace OracleOfDereth
 
             if(QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
             if (currentTab == 0) { UpdateHud(); }
-            if (currentTab == 1) { UpdateBuffs(); }
-            if (currentTab == 2) { UpdateCantrips(); }
-            if (currentTab == 3) { UpdateJohn(); }
+            if (currentTab == 1) { UpdateAugs(); }
+            if (currentTab == 2) { UpdateBuffs(); }
+            if (currentTab == 3) { UpdateCantrips(); }
+            if (currentTab == 4) { UpdateJohn(); }
         }
 
         // Quest Flag Changes
@@ -501,6 +526,147 @@ namespace OracleOfDereth
             UpdateJohnList(true);
         }
 
+        // Augs List
+        public void UpdateAugs() {
+            if(QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            UpdateAugQuestsList();
+        }
+
+        int AugQuestsListCount = 0;
+        private void UpdateAugQuestsList(bool force = false)
+        {
+            // For each quest in AugQuest.AugQuests, add a row to the AugQuestList
+            // This function will be called multiple times, so we need to add or update
+
+            int count = AugQuest.AugQuests.Count;
+
+            // When empty
+            if (AugQuestsListCount == 0) { force = true; }
+
+            // Add or update rows
+            for (int i = 0; i < count; i++)
+            {
+                HudList.HudListRowAccessor row;
+                if (i >= AugQuestsListCount)
+                {
+                    row = AugQuestsList.AddRow();
+                    ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                    ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+
+                    AugQuestsListCount += 1;
+                }
+                else
+                {
+                    row = AugQuestsList[i];
+                }
+
+                var augQuest = AugQuest.AugQuests[i];
+
+                bool complete = augQuest.IsComplete();
+
+                // Only update this if the /myquests changes or sort order changes
+                if (force)
+                {
+                    if (complete)
+                    {
+                        ((HudPictureBox)row[0]).Image = AugQuest.IconComplete;
+                    }
+                    else
+                    {
+                        ((HudPictureBox)row[0]).Image = AugQuest.IconNotComplete;
+                    }
+
+                    ((HudStaticText)row[1]).Text = augQuest.Name;
+                    ((HudStaticText)row[4]).Text = augQuest.Flag;
+                }
+
+                // Always update this
+                QuestFlag questFlag;
+                QuestFlag.QuestFlags.TryGetValue(augQuest.Flag, out questFlag);
+
+                if (questFlag == null)
+                {
+                    ((HudStaticText)row[2]).Text = "ready";
+                    ((HudStaticText)row[3]).Text = "";
+                }
+                else
+                {
+                    ((HudStaticText)row[2]).Text = questFlag.NextAvailable();
+                    ((HudStaticText)row[3]).Text = $"{questFlag.Solves}";
+                }
+            }
+        }
+
+        void AugQuestsRefresh_Hit(object sender, EventArgs e)
+        {
+            QuestFlag.Refresh();
+        }
+
+        void AugQuestsList_Click(object sender, int row, int col) {
+            string flag = ((HudStaticText)AugQuestsList[row][4]).Text;
+
+            AugQuest augQuest;
+            augQuest = AugQuest.AugQuests.FirstOrDefault(x => x.Flag == flag);
+
+            QuestFlag questFlag;
+            QuestFlag.QuestFlags.TryGetValue(flag, out questFlag);
+
+            // Quest URL
+            if (col == 0)
+            {
+                if (augQuest == null || augQuest.Url == "")
+                {
+                    Util.Chat($"Missing quest wiki url", Util.ColorPink);
+                }
+                else
+                {
+                    Util.Think($"{augQuest.Name}: {augQuest.Url}");
+
+                    try
+                    {
+                        System.Windows.Forms.Clipboard.SetText(augQuest.Url);
+                        Util.Chat("Quest URL copied to clipboard.", Util.ColorPink);
+                    }
+                    catch (Exception ex)
+                    {
+                        Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
+                    }
+                }
+            }
+
+            // Quest Hint
+            if (col == 1)
+            {
+                if (augQuest == null || augQuest.Hint == "")
+                {
+                    Util.Chat($"Missing quest hint", Util.ColorPink);
+                }
+                else
+                {
+                    Util.Think($"{augQuest.Name}: {augQuest.Hint}");
+                }
+            }
+
+            // Quest Flag
+            if (col >= 2)
+            {
+                if (questFlag == null)
+                {
+                    Util.Chat($"{flag}: Player has not completed", Util.ColorPink);
+                }
+                else
+                {
+                    Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
+                }
+            }
+        }
+
+        void AugXPList_Click(object sender, int row, int col) { 
+        }
+
+        void AugLuminanceList_Click(object sender, int row, int col) { 
+        }
+
         // Shutdown
 
         public void Dispose()
@@ -514,13 +680,21 @@ namespace OracleOfDereth
             if (disposing)
             {
                 MainViewNotebook.OpenTabChange -= MainViewNotebook_OpenTabChange;
+
                 BuffsList.Click -= BuffsList_Click;
+
                 CantripsList.Click -= CantripsList_Click;
+
                 JohnRefresh.Hit -= JohnRefresh_Hit;
                 JohnList.Click -= JohnList_Click;
                 JohnListSortName.Hit -= JohnListSortName_Click;
                 JohnListSortReady.Hit -= JohnListSortReady_Click;
                 JohnListSortSolves.Hit -= JohnListSortSolves_Click;
+
+                AugQuestsRefresh.Hit -= AugQuestsRefresh_Hit;
+                AugQuestsList.Click -= AugQuestsList_Click;
+                AugXPList.Click -= AugXPList_Click;
+                AugLuminanceList.Click -= AugLuminanceList_Click;
 
                 view?.Dispose();
             }

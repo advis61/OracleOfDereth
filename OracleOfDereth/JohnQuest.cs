@@ -53,8 +53,8 @@ namespace OracleOfDereth
 
             var assembly = Assembly.GetExecutingAssembly();
 
-            string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("quests.csv", StringComparison.OrdinalIgnoreCase));
-            if (resourceName == null) throw new FileNotFoundException("Embedded resource quests.csv not found.");
+            string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("johnquests.csv", StringComparison.OrdinalIgnoreCase));
+            if (resourceName == null) throw new FileNotFoundException("Embedded resource johnquests.csv not found.");
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             using (var reader = new StreamReader(stream))

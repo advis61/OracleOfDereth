@@ -22,8 +22,8 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="mainView.xml" />
+    <None Remove="Resources\augquests.csv" />
     <None Remove="Resources\cantrips.csv" />
-    <None Remove="Resources\quests.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PluginCore.cs" />
@@ -36,9 +36,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="mainView.xml" />
+    <EmbeddedResource Include="Resources\augquests.csv" />
+    <EmbeddedResource Include="Resources\augmentations.csv" />
     <EmbeddedResource Include="Resources\cantrips.csv" />
     <EmbeddedResource Include="targetView.xml" />
-    <EmbeddedResource Include="Resources\quests.csv" />
+    <EmbeddedResource Include="Resources\johnquests.csv" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Decal.Adapter">

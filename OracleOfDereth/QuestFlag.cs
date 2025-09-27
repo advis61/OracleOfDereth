@@ -17,9 +17,11 @@ namespace OracleOfDereth
         public static readonly Regex KillTaskRegex = new Regex(@"(killtask|killcount|slayerquest|totalgolem.*dead|(kills$))");
 
         // Quest Flags I care to track
-        private static readonly List<string> QuestFlagsToTrack = new List<string> { 
-            "legendaryquestsa", "legendaryquestsb", "legendaryquestsc"
-        }.Concat(JohnQuest.JohnQuests.Select(q => q.Flag)).ToList();
+        private static readonly List<string> QuestFlagsToTrack = new List<string> 
+            { "legendaryquestsa", "legendaryquestsb", "legendaryquestsc" }
+            .Concat(JohnQuest.JohnQuests.Select(q => q.Flag))
+            .Concat(AugQuest.AugQuests.Select(q => q.Flag))
+            .ToList();
 
         // Collection of Quest Flags data objects
         public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();
