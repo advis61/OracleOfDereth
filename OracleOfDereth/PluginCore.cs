@@ -115,6 +115,7 @@ namespace OracleOfDereth
             didInit = true;
 
             // Initialize Collection
+            Augmentation.Init();
             AugQuest.Init();
             Cantrip.Init();
             JohnQuest.Init();

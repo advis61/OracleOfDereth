@@ -68,7 +68,7 @@ namespace OracleOfDereth
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
         {
             { 0, 190 }, // Hud
-            { 1, 430}, // Augs
+            { 1, 650 }, // Augs
             { 2, 460 }, // Buffs
             { 3, 350 }, // Cantrips
             { 4, 430 }, // John
@@ -78,10 +78,10 @@ namespace OracleOfDereth
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
         {
             { 0, 290 }, // Hud
-            { 1, 340 }, // Augs
+            { 1, 810 }, // Augs
             { 2, 310 }, // Buffs
             { 3, 380 }, // Cantrips
-            { 4, 340 }, // John (810 for full list)
+            { 4, 810 }, // John (810 for full list or 340)
             { 5, 310 }  // About
         };
 
@@ -530,7 +530,71 @@ namespace OracleOfDereth
         public void UpdateAugs() {
             if(QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
             UpdateAugQuestsList();
+            UpdateAugXPList();
         }
+
+        int AugXPListCount = 0;
+        int AugXPListCompleted = 0;
+        private void UpdateAugXPList(bool force = false)
+        {
+            List<Augmentation> augmentations = Augmentation.XPAugmentations();
+            int count = augmentations.Count();
+            int completed = augmentations.Count(x => x.IsComplete());
+
+            // When empty
+            if (AugXPListCount != count) { force = true; }
+            if (AugXPListCompleted != completed) { force = true; }
+
+            // Add or update rows
+            for (int i = 0; i < count; i++)
+            {
+                HudList.HudListRowAccessor row;
+                if (i >= AugXPListCount)
+                {
+                    row = AugXPList.AddRow();
+                    ((HudStaticText)row[1]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
+                    AugXPListCount += 1;
+                }
+                else
+                {
+                    row = AugXPList[i];
+                }
+
+                var augmentation = augmentations[i];
+
+                if (augmentation.Name == "Blank") { continue; }
+
+                if (augmentation.Id == 0) {
+                    ((HudStaticText)row[2]).Text = augmentation.Name;
+                    continue;
+                }
+
+                bool complete = augmentation.IsComplete();
+
+                // Only update this if first time
+                if (force)
+                {
+                    if (complete)
+                    {
+                        ((HudPictureBox)row[0]).Image = Augmentation.IconComplete;
+                    }
+                    else
+                    {
+                        ((HudPictureBox)row[0]).Image = Augmentation.IconNotComplete;
+                    }
+
+                    ((HudStaticText)row[2]).Text = augmentation.Name;
+                    ((HudStaticText)row[3]).Text = augmentation.Effect;
+                }
+
+                // Always update
+                ((HudStaticText)row[1]).Text = augmentation.Text();
+                ((HudStaticText)row[4]).Text = augmentation.CostText();
+            }
+
+            AugXPListCompleted = completed;
+        }
+
 
         int AugQuestsListCount = 0;
         private void UpdateAugQuestsList(bool force = false)

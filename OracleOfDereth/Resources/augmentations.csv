@@ -1,50 +1,65 @@
 Name,Category,Id,Effect,Cost,Times,NPC,Url
-Reinforcement of the Lugians,XP,218,5 Inate Strength,500m,10,Dude,https://acportalstorm.com/wiki/Reinforcement_of_the_Lugians
-BleearghFortitude,XP,219,BleearghFortitude,500m,1,Dude,
-OswaldEnchancement,XP,220,OswaldEnchancement,500m,1,Dude,
-SiraluunBlessing,XP,221,SiraluunBlessing,500m,1,Dude,
-EnduringCalm,XP,222,EnduringCalm,500m,1,Dude,
-SteadfastWill,XP,223,SteadfastWill,500m,1,Dude,
-CiandraEssence,XP,224,CiandraEssence,500m,1,Dude,
-YoshiEssence,XP,225,YoshiEssence,500m,1,Dude,
-JibrilEssence,XP,226,JibrilEssence,500m,1,Dude,
-CeldisethEssence,XP,227,CeldisethEssence,500m,1,Dude,
-KogaEssence,XP,228,KogaEssence,500m,1,Dude,
-ShadowSeventhMule,XP,229,ShadowSeventhMule,500m,1,Dude,
-MightSeventhMule,XP,230,MightSeventhMule,500m,1,Dude,
-ClutchMiser,XP,231,ClutchMiser,500m,1,Dude,
-EnduringEnchantment,XP,232,EnduringEnchantment,500m,1,Dude,
-CriticalProtection,XP,233,CriticalProtection,500m,1,Dude,
-QuickLearner,XP,234,QuickLearner,500m,1,Dude,
-CiandraFortune,XP,235,CiandraFortune,500m,1,Dude,
-CharmedSmith,XP,236,CharmedSmith,500m,1,Dude,
-InnateRenewal,XP,237,InnateRenewal,500m,1,Dude,
-ArchmageEndurance,XP,238,ArchmageEndurance,500m,1,Dude,
-BladeTurner,XP,240,BladeTurner,500m,1,Dude,
-ArrowTurner,XP,241,ArrowTurner,500m,1,Dude,
-MaceTurner,XP,242,MaceTurner,500m,1,Dude,
-CausticEnhancement,XP,243,CausticEnhancement,500m,1,Dude,
-FieryEnchancment,XP,244,FieryEnchancment,500m,1,Dude,
-IcyEnchancement,XP,245,IcyEnchancement,500m,1,Dude,
-LightningEnhancement,XP,246,LightningEnhancement,500m,1,Dude,
-InfusedCreature,XP,294,InfusedCreature,500m,1,Dude,
-InfusedItem,XP,295,InfusedItem,500m,1,Dude,
-InfusedLife,XP,296,InfusedLife,500m,1,Dude,
-InfusedWar,XP,297,InfusedWar,500m,1,Dude,
-EyeRemorseless,XP,298,EyeRemorseless,500m,1,Dude,
-HandRemorseless,XP,299,HandRemorseless,500m,1,Dude,
-MasterSteelCircle,XP,300,MasterSteelCircle,500m,1,Dude,
-MasterFocusedEyed,XP,301,MasterFocusedEyed,500m,1,Dude,
-MasterFiveFoldPath,XP,302,MasterFiveFoldPath,500m,1,Dude,
-FrenzySlayer,XP,309,FrenzySlayer,500m,1,Dude,
-IronSkinInvincible,XP,310,IronSkinInvincible,500m,1,Dude,
-JackOfAllTrades,XP,326,JackOfAllTrades,500m,1,Dude,
-InfusedVoid,XP,328,InfusedVoid,500m,1,Dude,
-UnknownAug1,XP,328,UnknownAug1,500m,1,Dude,
-UnknownAug2,XP,329,UnknownAug2,500m,1,Dude,
-UnknownAug3,XP,330,UnknownAug3,500m,1,Dude,
-UnknownAug4,XP,331,UnknownAug4,500m,1,Dude,
-UnknownAug5,XP,332,UnknownAug5,500m,1,Dude,
+Burden and Pack Slots,XP,,,,,,
+Might of the Seventh Mule,XP,230,+20% burden capacity,1bil,5,Husoon,https://acportalstorm.com/wiki/Might_of_the_Seventh_Mule
+Shadow of the Seventh Mule,XP,229,Eighth pack slot,4bil,1,Dumida bint Ruminre,https://acportalstorm.com/wiki/Shadow_of_the_Seventh_Mule
+Infused War Magic,XP,297,Cast War spells without Foci of Strife,2bil,1,Raphel Detante,https://acportalstorm.com/wiki/Infused_War_Magic
+Infused Life Magic,XP,296,Cast Life spells without Foci of Verdancy,2bil,1,Akemi Fei,https://acportalstorm.com/wiki/Infused_Life_Magic
+Infused Item Magic,XP,295,Cast Item spells without Foci of Artifice,2bil,1,Gan Fo,https://acportalstorm.com/wiki/Infused_Item_Magic
+Infused Creature Magic,XP,294,Cast Creature spells without Foci of Enchantment,2bil,1,Gustuv Lansdown,https://acportalstorm.com/wiki/Infused_Creature_Magic
+Infused Void Magic,XP,328,Cast Void spells without Foci of Shadow,2bil,1,Morathe,https://acportalstorm.com/wiki/Infused_Void_Magic
+Blank,XP,,,,,,
+Death Penalties,XP,,,,,,
+Clutch of the Miser,XP,231,-5 items dropped on death,2biil,3,Rohula bint Ludun,https://acportalstorm.com/wiki/Clutch_of_the_Miser
+Enduring Enchantment,XP,232,Spells not lost on death,4bil,1,Erik Festus,https://acportalstorm.com/wiki/Enduring_Enchantment
+Blank,XP,,,,,,
+Experience Bonus,XP,,,,,,
+Quick Learner,XP,234,+5% experience bonus,4bil,1,Rickard Dumalia,https://acportalstorm.com/wiki/Quick_Learner
+Blank,XP,,,,,,
+Health and Regeneration,XP,,,,,,
+Asheron's Lesser Benediction,XP,328,Health bonus: +10% of base,2bil,1,Donatello Linante,https://acportalstorm.com/wiki/Asheron%2527s_Lesser_Benediction
+Innate Renewal,XP,237,100% bonus to regeneration when lying down,1bil,2,Alison Dulane,https://acportalstorm.com/wiki/Innate_Renewal
+Blank,XP,,,,,,
+Innate Attributes,XP,,,,,,
+Reinforcement of the Lugians,XP,218,+5 Inate Strength,500m,10,Fiun Luunere,https://acportalstorm.com/wiki/Reinforcement_of_the_Lugians
+Bleeargh's Fortitude,XP,219,+5 Inate Endurance,500m,10,Fiun Ruun,https://acportalstorm.com/wiki/Bleeargh%2527s_Fortitude
+Oswald's Enchancement,XP,220,+5 Inate Coordination,500m,10,Fiun Bayaas,https://acportalstorm.com/wiki/Oswald%2527s_Enhancement
+Siraluun's Blessing,XP,221,+5 Inate Quickness,500m,10,Fiun Riish,https://acportalstorm.com/wiki/Siraluun%2527s_Blessing
+Enduring Calm,XP,222,+5 Inate Focus,500m,10,Fiun Vasherr,https://acportalstorm.com/wiki/Enduring_Calm
+Steadfast Will,XP,223,+5 Inate Self,500m,10,Fiun Noress,https://acportalstorm.com/wiki/Steadfast_Will
+Blank,XP,,,,,,
+Innate Resistance,XP,,,,,,
+Enchantment of Mace Turner,XP,242,+10% innate resistance to Bludgeoning,2bil,2,Nawamara Dia,https://acportalstorm.com/wiki/Enhancement_of_the_Mace_Turner
+Enchantment of Blade Turner,XP,240,+10% innate resistance to Slashing,2bil,2,Ilin Wis,https://acportalstorm.com/wiki/Enhancement_of_the_Blade_Turner
+Enchantment of Arrow Turner,XP,241,+10% innate resistance to Piercing,2bil,2,Kyujo Rujen,https://acportalstorm.com/wiki/Enhancement_of_the_Arrow_Turner
+Storm's Enchantment,XP,246,+10% innate resistance to Lightning,2bil,2,Enli Yuo,https://acportalstorm.com/wiki/Storm%2527s_Enhancement
+Fiery Enchantment,XP,244,+10% innate resistance to Fire,2bil,2,Rikshen Ri,https://acportalstorm.com/wiki/Fiery_Enhancement
+Icy Enchantment,XP,245,+10% innate resistance to Frost,2bil,2,Lu Bao,https://acportalstorm.com/wiki/Icy_Enhancement
+Caustic Enchantment,XP,243,+10% innate resistance to Acid,2bil,2,Shujio Milao,https://acportalstorm.com/wiki/Caustic_Enhancement
+Blank,XP,,,,,,
+Rating,XP,,,,,,
+Critical Protection,XP,233,25% negation of critical hits (5% PvP),1bil,1,Piersanti Linante,https://acportalstorm.com/wiki/Critical_Protection
+Frenzy of the Slayer,XP,309,+3 damage rating,2bil,1,Neela Nashua,https://acportalstorm.com/wiki/Frenzy_of_the_Slayer
+Iron Skin of the Invincible,XP,310,+3 damage reduction rating,2bil,1,Emily Yarow,https://acportalstorm.com/wiki/Iron_Skin_of_the_Invincible
+Eye of the Remorseless,XP,298,+1% increased chance of a critical hit,4bil,1,Anfram Mellow,https://acportalstorm.com/wiki/Eye_of_the_Remorseless
+Hand of the Remorseless,XP,299,+3 critical damage rating,4bil,1,Alishia bint Aldan,https://acportalstorm.com/wiki/Hand_of_the_Remorseless
+Blank,XP,,,,,,
+Salvaging and Tinkering,XP,,,,,,
+Ciandra's Fortune,XP,235,25% extra salvage material,1bil,4,Kris Cennis,https://acportalstorm.com/wiki/Ciandra%2527s_Fortune
+Charmed Smith,XP,236,+5% chance of imbue,2bil,1,Lug,https://acportalstorm.com/wiki/Charmed_Smith
+Jibril's Essence,XP,226,Specialize Armor Tinkering,1bil,1,Joshun Felden,https://acportalstorm.com/wiki/Jibril%2527s_Essence
+Yoshi's Essence,XP,225,Specialize Item Tinkering,1bil,1,Brienne Carlus,https://acportalstorm.com/wiki/Yoshi%2527s_Essence
+Celdiseth's Essence,XP,227,Specialize Magic Item Tinkering,1bil,1,Burrell Sammrun,https://acportalstorm.com/wiki/Celdiseth%2527s_Essence
+Koga's Essence,XP,228,Specialize Weapon Tinkering,1bil,1,Lenor Turk,https://acportalstorm.com/wiki/Koga%2527s_Essence
+Ciandra's Fortune,XP,224,Specialize Salvaging,1bil,1,Robert Crow,https://acportalstorm.com/wiki/Ciandra%2527s_Essence
+Blank,XP,,,,,,
+Skills,XP,,,,,,
+Master of the Steel Circle,XP,300,+10 melee base skill with all melee weapons,2bil,1,Carlito Gallo,https://acportalstorm.com/wiki/Master_of_the_Steel_Circle
+Master of the Five Fold Path,XP,302,+10 magic base skill when casting any spell,2bil,1,Rahina bint Zalanis,https://acportalstorm.com/wiki/Master_of_the_Five_Fold_Path
+Master of the Focused Eye,XP,301,+10 missile base skill with all missile weapons,2bil,1,Kilaf,https://acportalstorm.com/wiki/Master_of_the_Focused_Eye
+Jack of All Trades,XP,326,+5 extra to all skills (not base),4bil,1,Arianna the Adept,https://acportalstorm.com/wiki/Jack_of_All_Trades
+Blank,XP,,,,,,
+Spell Duration,XP,,,,,,
+Archmage's Endurance,XP,238,+20% spell duration,1bil,5,Nawamara Ujio,https://acportalstorm.com/wiki/Archmage%2527s_Endurance
 AuraValor,Luminance,333,AuraValor,500m,1,Dude,
 AuraProtection,Luminance,334,AuraProtection,500m,1,Dude,
 AuraGlory,Luminance,335,AuraGlory,500m,1,Dude,

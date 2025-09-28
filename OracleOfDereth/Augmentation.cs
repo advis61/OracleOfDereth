@@ -18,6 +18,9 @@ namespace OracleOfDereth
 {
     public class Augmentation
     {
+        public static readonly int IconComplete = 0x60011F9;   // Green Circle
+        public static readonly int IconNotComplete = 0x60011F8;    // Red Circle
+
         // Collection of Augmentations loaded from augmentations.csv
         public static List<Augmentation> Augmentations = new List<Augmentation>();
 
@@ -39,11 +42,11 @@ namespace OracleOfDereth
 
         public static void LoadAugmentationsCSV()
         {
-            var Augmentations = new List<Augmentation>();
+            var augmentations = new List<Augmentation>();
 
             var assembly = Assembly.GetExecutingAssembly();
 
-            string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n == "augmentations.csv");
+            string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("augmentations.csv", StringComparison.OrdinalIgnoreCase));
             if (resourceName == null) throw new FileNotFoundException("Embedded resource augmentations.csv not found.");
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
@@ -60,23 +63,23 @@ namespace OracleOfDereth
 
                     var fields = line.Split(',');
 
-                    Augmentations.Add(new Augmentation
+                    augmentations.Add(new Augmentation
                     {
                         Name = fields[0].Trim(),
                         Category = fields[1].Trim(),
-                        Id = int.Parse(fields[2].Trim()),
+                        Id = int.TryParse(fields[2].Trim(), out int id) ? id : 0,
                         Effect = fields[3].Trim(),
                         Cost = fields[4].Trim(),
-                        TimesTotal = int.Parse(fields[5].Trim()),
+                        TimesTotal = int.TryParse(fields[5].Trim(), out int times) ? times : 0,
                         Npc = fields[6].Trim(),
                         Url = fields[7].Trim()
                     });
                 }
             }
 
-            Augmentations.AddRange(Augmentations);
+            Augmentations.AddRange(augmentations);
 
-            //Util.Chat($"Loaded {Augmentations.Count} Augmentations from embedded CSV.", 1);
+            Util.Chat($"Loaded {Augmentations.Count} Augmentations from embedded CSV.", 1);
         }
 
         public static List<Augmentation> XPAugmentations() { return GetByCategory("XP"); }
@@ -102,7 +105,7 @@ namespace OracleOfDereth
         }
         public int Times()
         {
-            return 0;
+            return CoreManager.Current.CharacterFilter.GetCharProperty(Id);
         }
 
         public bool IsComplete()

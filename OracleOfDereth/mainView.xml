@@ -40,26 +40,24 @@
 		<control progid="DecalControls.Notebook" name="AugsNotebook">
 			<page label="XP">
 				<control progid="DecalControls.FixedLayout" clipped="">
-				  <control progid="DecalControls.PushButton" name="AugQuestsRefresh" left="327" top="0" width="100" height="24" text="Refresh"/>
-				  <control progid="DecalControls.StaticText" name="Name" left="1" top="33" width="100" height="17" text="Quest Name"/>
-				  <control progid="DecalControls.StaticText" name="Ready" left="315" top="33" width="55" height="17" text="Ready In"/>
-				  <control progid="DecalControls.StaticText" name="Solves" left="380" top="33" width="50" height="17" text="Solves"/>
-				  <control progid="DecalControls.List" name="AugQuestsList" left="0" top="53" width="430" height="72">
+				  <control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="100" height="17" text="Quest Name"/>
+				  <control progid="DecalControls.StaticText" name="Ready" left="540" top="5" width="55" height="17" text="Ready In"/>
+				  <control progid="DecalControls.StaticText" name="Solves" left="600" top="5" width="50" height="17" text="Solves"/>
+				  <control progid="DecalControls.List" name="AugQuestsList" left="0" top="23" width="650" height="110">
 					  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
-					  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="257" />
-					  <column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
+					  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="420" />
+					  <column progid="DecalControls.TextColumn" name="Ready" fixedwidth="140" />
 					  <column progid="DecalControls.TextColumn" name="Solves" fixedwidth="30" />
 					  <column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="100" />
 				  </control>
-				  <control progid="DecalControls.StaticText" name="XPAugName" left="1" top="133" width="100" height="17" text="Quest Name"/>
-				  <control progid="DecalControls.StaticText" name="XPAugReady" left="315" top="133" width="55" height="17" text="Ready In"/>
-				  <control progid="DecalControls.StaticText" name="XPAugSolves" left="380" top="133" width="50" height="17" text="Solves"/>
-					<control progid="DecalControls.List" name="AugXPList" left="0" top="150" width="430" height="2000">
+				  <control progid="DecalControls.StaticText" name="Name" left="1" top="147" width="0" height="17" text="Augmentations"/>
+				  <control progid="DecalControls.PushButton" name="AugQuestsRefresh" left="550" top="137" width="100" height="24" text="Refresh"/>
+					<control progid="DecalControls.List" name="AugXPList" left="0" top="165" width="650" height="2000">
 						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="100" />
-						<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="200" />
-						<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="30" />
-						<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="50" />
+						<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
+						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />
+						<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="320" />
+						<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="50" />
 					</control>
 				</control>
 			</page>
