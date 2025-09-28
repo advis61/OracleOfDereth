@@ -58,15 +58,19 @@
 						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />
 						<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="320" />
 						<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="50" />
+						<column progid="DecalControls.TextColumn" name="Id" fixedwidth="0" />
 					</control>
 				</control>
 			</page>
 			<page label="Luminance">
 				<control progid="DecalControls.FixedLayout" clipped="">
-					<control progid="DecalControls.List" name="AugLuminanceList" left="0" top="0" width="430" height="2000">
+					<control progid="DecalControls.List" name="AugLuminanceList" left="0" top="0" width="650" height="2000">
 						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="200" />
-						<column progid="DecalControls.TextColumn" name="Level" fixedwidth="100" />
+						<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
+						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />
+						<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="320" />
+						<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="50" />
+						<column progid="DecalControls.TextColumn" name="Id" fixedwidth="0" />
 					</control>
 				</control>
 			</page>

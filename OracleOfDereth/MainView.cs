@@ -531,6 +531,7 @@ namespace OracleOfDereth
             if(QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
             UpdateAugQuestsList();
             UpdateAugXPList();
+            UpdateAugLuminanceList();
         }
 
         int AugXPListCount = 0;
@@ -585,6 +586,7 @@ namespace OracleOfDereth
 
                     ((HudStaticText)row[2]).Text = augmentation.Name;
                     ((HudStaticText)row[3]).Text = augmentation.Effect;
+                    ((HudStaticText)row[5]).Text = augmentation.Id.ToString();
                 }
 
                 // Always update
@@ -595,6 +597,117 @@ namespace OracleOfDereth
             AugXPListCompleted = completed;
         }
 
+        void AugXPList_Click(object sender, int row, int col)
+        {
+            string text = ((HudStaticText)AugXPList[row][5]).Text;
+            if(text == null || text == "" || text.IndexOf('-') > 0) { return; }
+
+            int id = int.Parse(text);
+
+            Augmentation augmentation;
+            augmentation = Augmentation.XPAugmentations().FirstOrDefault(x => x.Id == id);
+
+            // Quest URL
+            if (col == 0)
+            {
+                if (augmentation == null || augmentation.Url == "")
+                {
+                    // Nothing to do
+                }
+                else
+                {
+                    Util.Think($"{augmentation.Name}: {augmentation.Url}");
+
+                    try
+                    {
+                        System.Windows.Forms.Clipboard.SetText(augmentation.Url);
+                        Util.Chat("URL copied to clipboard.", Util.ColorPink);
+                    }
+                    catch (Exception ex)
+                    {
+                        Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
+                    }
+                }
+            }
+
+            // Quest Hint
+            if (col > 0)
+            {
+                if (augmentation == null || augmentation.Hint == "")
+                {
+                    // Nothing to do
+                }
+                else
+                {
+                    Util.Think($"{augmentation.Name}: {augmentation.Hint}");
+                }
+            }
+        }
+
+
+        int AugLuminanceListCount = 0;
+        int AugLuminanceListCompleted = 0;
+        private void UpdateAugLuminanceList(bool force = false)
+        {
+            List<Augmentation> augmentations = Augmentation.LuminanceAugmentations();
+            int count = augmentations.Count();
+            int completed = augmentations.Count(x => x.IsComplete());
+
+            // When empty
+            if (AugLuminanceListCount != count) { force = true; }
+            if (AugLuminanceListCompleted != completed) { force = true; }
+
+            // Add or update rows
+            for (int i = 0; i < count; i++)
+            {
+                HudList.HudListRowAccessor row;
+                if (i >= AugLuminanceListCount)
+                {
+                    row = AugLuminanceList.AddRow();
+                    ((HudStaticText)row[1]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
+                    AugLuminanceListCount += 1;
+                }
+                else
+                {
+                    row = AugLuminanceList[i];
+                }
+
+                var augmentation = augmentations[i];
+
+                if (augmentation.Name == "Blank") { continue; }
+
+                if (augmentation.Id == 0)
+                {
+                    ((HudStaticText)row[2]).Text = augmentation.Name;
+                    continue;
+                }
+
+                bool complete = augmentation.IsComplete();
+
+                // Only update this if first time
+                if (force)
+                {
+                    if (complete)
+                    {
+                        ((HudPictureBox)row[0]).Image = Augmentation.IconComplete;
+                    }
+                    else
+                    {
+                        ((HudPictureBox)row[0]).Image = Augmentation.IconNotComplete;
+                    }
+
+                    ((HudStaticText)row[2]).Text = augmentation.Name;
+                    ((HudStaticText)row[3]).Text = augmentation.Effect;
+                    ((HudStaticText)row[5]).Text = augmentation.Id.ToString();
+                }
+
+                // Always update
+                ((HudStaticText)row[1]).Text = augmentation.Text();
+                ((HudStaticText)row[4]).Text = augmentation.CostText();
+            }
+
+            AugLuminanceListCompleted = completed;
+        }
 
         int AugQuestsListCount = 0;
         private void UpdateAugQuestsList(bool force = false)
@@ -723,9 +836,6 @@ namespace OracleOfDereth
                     Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
                 }
             }
-        }
-
-        void AugXPList_Click(object sender, int row, int col) { 
         }
 
         void AugLuminanceList_Click(object sender, int row, int col) { 

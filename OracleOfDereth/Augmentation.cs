@@ -20,6 +20,9 @@ namespace OracleOfDereth
     {
         public static readonly int IconComplete = 0x60011F9;   // Green Circle
         public static readonly int IconNotComplete = 0x60011F8;    // Red Circle
+        public static readonly List<int> InateAttributeIds = new List<int>() { 218, 219, 220, 221, 222, 223 };
+        public static readonly List<int> InateResistanceIds = new List<int>() { 240, 241, 242, 243, 244, 245, 246 };
+        public static readonly List<int> LuminanceSpecializationIds = new List<int>() { -333, -334, -335, -336 };
 
         // Collection of Augmentations loaded from augmentations.csv
         public static List<Augmentation> Augmentations = new List<Augmentation>();
@@ -33,6 +36,7 @@ namespace OracleOfDereth
         public int TimesTotal = 0;
         public string Npc = "";
         public string Url = "";
+        public string Hint = "";
 
         public static void Init()
         {
@@ -72,7 +76,8 @@ namespace OracleOfDereth
                         Cost = fields[4].Trim(),
                         TimesTotal = int.TryParse(fields[5].Trim(), out int times) ? times : 0,
                         Npc = fields[6].Trim(),
-                        Url = fields[7].Trim()
+                        Url = fields[7].Trim(),
+                        Hint = fields[8].Trim()
                     });
                 }
             }
@@ -82,18 +87,8 @@ namespace OracleOfDereth
             Util.Chat($"Loaded {Augmentations.Count} Augmentations from embedded CSV.", 1);
         }
 
-        public static List<Augmentation> XPAugmentations() { return GetByCategory("XP"); }
-        public static List<Augmentation> LuminanceAugmentations() { return GetByCategory("Luminance"); }
-
-        public static List<Augmentation> GetByCategory(string category)
-        {
-            return Augmentations.Where(a => a.Category.Equals(category)).ToList();
-        }
-
-        public static Augmentation Get(int id)
-        {
-            return Augmentations.FirstOrDefault(a => a.Id == id);
-        }
+        public static List<Augmentation> XPAugmentations() { return Augmentations.Where(a => a.Category == "XP").ToList(); }
+        public static List<Augmentation> LuminanceAugmentations() {return Augmentations.Where(a => a.Category == "Luminance").ToList(); }
 
         public new string ToString()
         {
@@ -101,20 +96,62 @@ namespace OracleOfDereth
         }
         public string CostText()
         {
-            return Cost;
+            if (IsXP()) { return Cost; }
+
+            if (Id == 0) { return ""; }
+            if (Times() >= TimesTotal) { return ""; }
+
+            if (Id == 365) // World
+            {
+                return (100 + (Times() * 100)).ToString() + "k";
+            }
+
+            if (Id == 344 || IsLuminanceSpecialization()) // Specialization
+            {
+                return (350 + (Times() * 50)).ToString() + "k";
+            }
+
+            return (100 + (Times() * 50)).ToString() + "k";
         }
+
+        private bool IsInateAttributes() { return Id == -1; }
+        private bool IsInateResistances() { return Id == -2; }
+        private bool IsAsheronsBenediction() { return Id == -3; }
+        private bool IsInateAttribute() { return InateAttributeIds.Contains(Id); }
+        private bool IsInateResistance() { return InateResistanceIds.Contains(Id); }
+        private bool IsLuminanceSpecialization() { return LuminanceSpecializationIds.Contains(Id); }
+        private int InateAttributesTimes() { return InateAttributeIds.Sum(id => CoreManager.Current.CharacterFilter.GetCharProperty(id)); }
+        private int InateResistancesTimes() { return InateResistanceIds.Sum(id => CoreManager.Current.CharacterFilter.GetCharProperty(id)); }
+
+        private int LuminanceSpecializationTimes()
+        {
+            return Math.Max(CoreManager.Current.CharacterFilter.GetCharProperty(Math.Abs(Id)) - 5, 0);
+        }
+
         public int Times()
         {
-            return CoreManager.Current.CharacterFilter.GetCharProperty(Id);
+            if (IsInateAttributes()) { return InateAttributesTimes(); }
+            if (IsInateResistances()) { return InateResistancesTimes(); }
+            if (IsLuminanceSpecialization()) { return LuminanceSpecializationTimes(); }
+            if (IsAsheronsBenediction()) { return CoreManager.Current.WorldFilter.GetByNameSubstring("Asheron's Lesser Benediction").ToList().Count(); }
+
+            int times = CoreManager.Current.CharacterFilter.GetCharProperty(Id);
+            return Math.Min(times, TimesTotal);
         }
 
         public bool IsComplete()
         {
+            if(TimesTotal == 0) { return false; }
+            if(IsInateAttribute()) { return InateAttributesTimes() >= 10; };
+            if(IsInateResistance()) { return InateResistancesTimes() >= 2; };
             return Times() >= TimesTotal;
         }
 
         public string Text()
         {
+            if(TimesTotal == 0) { return Times().ToString(); }
+            if (IsInateAttribute() || IsInateResistance()) { return Times().ToString(); }
+
             return $"{Times()}/{TimesTotal}";
         }
 
