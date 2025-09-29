@@ -84,7 +84,7 @@ namespace OracleOfDereth
 
             Augmentations.AddRange(augmentations);
 
-            Util.Chat($"Loaded {Augmentations.Count} Augmentations from embedded CSV.", 1);
+            // Util.Chat($"Loaded {Augmentations.Count} Augmentations from embedded CSV.", 1);
         }
 
         public static List<Augmentation> XPAugmentations() { return Augmentations.Where(a => a.Category == "XP").ToList(); }
