@@ -79,10 +79,10 @@ namespace OracleOfDereth
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
         {
             { 0, 290 }, // Hud
-            { 1, 810 }, // Augs
+            { 1, 550 }, // Augs
             { 2, 310 }, // Buffs
-            { 3, 380 }, // Cantrips
-            { 4, 810 }, // John (810 for full list or 340)
+            { 3, 490 }, // Cantrips
+            { 4, 490 }, // John (810 for full list or 340)
             { 5, 310 }  // About
         };
 
