@@ -64,7 +64,8 @@
 			</page>
 			<page label="Luminance">
 				<control progid="DecalControls.FixedLayout" clipped="">
-					<control progid="DecalControls.List" name="AugLuminanceList" left="0" top="0" width="650" height="2000">
+					<control progid="DecalControls.StaticText" name="AugLuminanceText" left="5" top="5" width="640" height="20" text="Luminance: 0 spent / 0 total (0% complete, 0 to max)"/>
+					<control progid="DecalControls.List" name="AugLuminanceList" left="0" top="30" width="650" height="2000">
 						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
 						<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
 						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />

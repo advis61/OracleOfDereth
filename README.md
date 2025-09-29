@@ -16,6 +16,14 @@ Buffs List
 
 ![Buffs List](./docs/Buffs.png)
 
+XP Augs
+
+![XP Augmentations](./docs/XPAugs.png)
+
+Luminance Augs
+
+![Luminance Augmentations](./docs/LuminanceAugs.png)
+
 Cantrips List
 
 ![Cantrips List](./docs/Cantrips.png)
@@ -43,7 +51,7 @@ Void Target View
 
 ## Usage
 
-There are 5 main areas: the Status HUD, Buffs List, Cantrips List, John Tracker and Void Target View.
+There are 7 main areas: the Status HUD, Buffs, XP Augs, Luminance Augs, Cantrips, John Tracker and Void Target View.
 
 ### Status HUD
 
@@ -61,6 +69,19 @@ It will:
 ### Buffs List
 
 Displays your buffs and debuffs with time remaining.
+
+### XP Augmentations
+
+- Displays your character's Blank Augmentation Gem quest timers
+- Displays your character's XP Augmentations
+
+- A green icon means you've achieved this augmentation.
+- A red icon means you haven't yet earned this augmentation.
+
+### Luminance Augmentations
+
+Displays your character's Luminance Augmentations
+Displays amount of luminance spent, remaining, and % to max.
 
 ### Cantrips List
 

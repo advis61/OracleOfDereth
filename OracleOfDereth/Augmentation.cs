@@ -88,7 +88,25 @@ namespace OracleOfDereth
         }
 
         public static List<Augmentation> XPAugmentations() { return Augmentations.Where(a => a.Category == "XP").ToList(); }
-        public static List<Augmentation> LuminanceAugmentations() {return Augmentations.Where(a => a.Category == "Luminance").ToList(); }
+        public static List<Augmentation> LuminanceAugmentations() { return Augmentations.Where(a => a.Category == "Luminance").ToList(); }
+
+        public static int TotalLuminanceSpent()
+        {
+            return LuminanceAugmentations().Sum(x => x.LuminanceSpent());
+        }
+        public static int TotalLuminance()
+        {
+            return 19_000_000;
+        }
+
+        public static int TotalLuminanceRemaining()
+        {
+            return TotalLuminance() - TotalLuminanceSpent();
+        }
+        public static int TotalLuminancePercentage()
+        {
+            return (int)(TotalLuminanceSpent() / (float)TotalLuminance() * 100);
+        }
 
         public new string ToString()
         {
@@ -112,6 +130,30 @@ namespace OracleOfDereth
             }
 
             return (100 + (Times() * 50)).ToString() + "k";
+        }
+
+        public int LuminanceSpent()
+        {
+            if (Id <= 0) { return 0; }
+            if(Times() == 0) { return 0; }
+
+            // 1 = 100
+            // 2 = 100 + 200 = 300
+            // 3 = 100 + 200 + 300 = 600
+            // 4 = 100 + 200 + 300 + 400 = 1000
+
+            if (Id == 365)  // World
+            {
+                return (100_000 * Times() * (Times() + 1) / 2);
+            }
+            else if (Id == 344) // Specialization
+            { 
+                return (Times() * (700_000 + (Times() - 1) * 50_000) / 2);
+            }
+            else
+            {
+                return (Times() * (200_000 + (Times() - 1) * 50_000) / 2);
+            }
         }
 
         private bool IsInateAttributes() { return Id == -1; }

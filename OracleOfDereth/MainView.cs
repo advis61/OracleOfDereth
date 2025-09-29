@@ -45,6 +45,7 @@ namespace OracleOfDereth
         public HudList AugXPList { get; private set; }
         public HudList AugLuminanceList { get; private set; }
         public HudButton AugQuestsRefresh { get; private set; }
+        public HudStaticText AugLuminanceText { get; private set; }
 
         // Buffs
         public HudList BuffsList { get; private set; }
@@ -168,6 +169,9 @@ namespace OracleOfDereth
                 JohnListSortSolves.Hit += JohnListSortSolves_Click;
 
                 // Augs Tab
+                AugLuminanceText = (HudStaticText)view["AugLuminanceText"];
+                AugLuminanceText.FontHeight = 10;
+
                 AugQuestsRefresh = (HudButton)view["AugQuestsRefresh"];
                 AugQuestsRefresh.Hit += AugQuestsRefresh_Hit;
 
@@ -182,6 +186,7 @@ namespace OracleOfDereth
                 AugLuminanceList = (HudList)view["AugLuminanceList"];
                 AugLuminanceList.Click += AugLuminanceList_Click;
                 AugLuminanceList.ClearRows();
+
 
                 Update();
             }
@@ -532,6 +537,7 @@ namespace OracleOfDereth
             UpdateAugQuestsList();
             UpdateAugXPList();
             UpdateAugLuminanceList();
+            UpdateAugLuminanceText();
         }
 
         int AugXPListCount = 0;
@@ -707,6 +713,11 @@ namespace OracleOfDereth
             }
 
             AugLuminanceListCompleted = completed;
+        }
+
+        private void UpdateAugLuminanceText()
+        {
+            AugLuminanceText.Text = $"Luminance: {Augmentation.TotalLuminanceSpent():N0} spent / {Augmentation.TotalLuminance():N0} ({Augmentation.TotalLuminancePercentage()}% complete, {Augmentation.TotalLuminanceRemaining():N0} to max)";
         }
 
         int AugQuestsListCount = 0;
