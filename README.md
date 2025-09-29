@@ -1,6 +1,6 @@
 ﻿# Oracle Of Dereth
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.5.1/OracleOfDerethInstaller-1.5.1.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.6.0/OracleOfDerethInstaller-1.6.0.0.exe)
 
 If you crash at the login screen, make sure to upgrade to latest Decal v2.9.8.3
 
