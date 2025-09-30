@@ -25,6 +25,7 @@ namespace OracleOfDereth
         public static readonly List<int> InateAttributeIds = new List<int>() { 218, 219, 220, 221, 222, 223 };
         public static readonly List<int> InateResistanceIds = new List<int>() { 240, 241, 242, 243, 244, 245, 246 };
         public static readonly List<int> LuminanceSpecializationIds = new List<int>() { -333, -334, -335, -336 };
+        public static readonly List<int> LuminanceSeerIds = new List<int>() { -4, -5, -6, -7 };
 
         // Properties
         public string Name = "";
@@ -33,7 +34,7 @@ namespace OracleOfDereth
         public string Effect = "";
         public string Cost = "";
         public int TimesTotal = 0;
-        public string Npc = "";
+        public string Flag = "";
         public string Url = "";
         public string Hint = "";
 
@@ -74,7 +75,7 @@ namespace OracleOfDereth
                         Effect = fields[3].Trim(),
                         Cost = fields[4].Trim(),
                         TimesTotal = int.TryParse(fields[5].Trim(), out int times) ? times : 0,
-                        Npc = fields[6].Trim(),
+                        Flag = fields[6].Trim().ToLower(),
                         Url = fields[7].Trim(),
                         Hint = fields[8].Trim()
                     });
@@ -113,10 +114,12 @@ namespace OracleOfDereth
         }
         public string CostText()
         {
-            if (IsXP()) { return Cost; }
+            if(IsXP()) { return Cost; }
 
-            if (Id == 0) { return ""; }
-            if (Times() >= TimesTotal) { return ""; }
+            if(Id == 0) { return ""; }
+            if(Times() >= TimesTotal) { return ""; }
+            if(IsLuminanceSeer()) { return ""; }
+            if(Flag.Length > 0 && !IsQuestComplete()) { return ""; }
 
             if (Id == 365) // World
             {
@@ -158,6 +161,7 @@ namespace OracleOfDereth
         private bool IsInateAttributes() { return Id == -1; }
         private bool IsInateResistances() { return Id == -2; }
         private bool IsAsheronsBenediction() { return Id == -3; }
+        private bool IsLuminanceSeer() { return LuminanceSeerIds.Contains(Id); }
         private bool IsInateAttribute() { return InateAttributeIds.Contains(Id); }
         private bool IsInateResistance() { return InateResistanceIds.Contains(Id); }
         private bool IsLuminanceSpecialization() { return LuminanceSpecializationIds.Contains(Id); }
@@ -173,6 +177,7 @@ namespace OracleOfDereth
         {
             if (IsInateAttributes()) { return InateAttributesTimes(); }
             if (IsInateResistances()) { return InateResistancesTimes(); }
+            if (Flag.Length > 0 && !IsQuestComplete()) { return 0; }
             if (IsLuminanceSpecialization()) { return LuminanceSpecializationTimes(); }
             if (IsAsheronsBenediction()) { return CoreManager.Current.WorldFilter.GetByNameSubstring("Asheron's Lesser Benediction").ToList().Count(); }
 
@@ -185,6 +190,8 @@ namespace OracleOfDereth
             if(TimesTotal == 0) { return false; }
             if(IsInateAttribute()) { return InateAttributesTimes() >= 10; };
             if(IsInateResistance()) { return InateResistancesTimes() >= 2; };
+            if(IsLuminanceSeer()) { return IsQuestComplete(); }
+
             return Times() >= TimesTotal;
         }
 
@@ -192,6 +199,7 @@ namespace OracleOfDereth
         {
             if(TimesTotal == 0) { return Times().ToString(); }
             if (IsInateAttribute() || IsInateResistance()) { return Times().ToString(); }
+            if(IsLuminanceSeer()) { return ""; }
 
             return $"{Times()}/{TimesTotal}";
         }
@@ -203,6 +211,17 @@ namespace OracleOfDereth
         public bool IsLuminance()
         {
             return Category == "Luminance";
+        }
+
+        // For ones with quest flags
+        public bool IsQuestComplete()
+        {
+            if(Flag.Length == 0) { return false; }
+
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
+            if (questFlag == null) { return false; }
+
+            return questFlag.Solves > 0;
         }
     }
 }

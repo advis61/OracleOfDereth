@@ -1,89 +1,89 @@
-Name,Category,Id,Effect,Cost,Times,NPC,Url,Hint
+Name,Category,Id,Effect,Cost,Times,Flag,Url,Hint
 Burden and Pack Slots,XP,,,,,,,
-Might of the Seventh Mule,XP,230,+20% burden capacity,1bil,5,Husoon,https://acportalstorm.com/wiki/Might_of_the_Seventh_Mule,Zaikhal - Husoon 13.9N 0.6E
-Shadow of the Seventh Mule,XP,229,Eighth pack slot,4bil,1,Dumida bint Ruminre,https://acportalstorm.com/wiki/Shadow_of_the_Seventh_Mule,Zaikhal - Dumida bint Ruminre 13.9N 0.6E
-Infused War Magic,XP,297,Cast War spells without Foci of Strife,2bil,1,Raphel Detante,https://acportalstorm.com/wiki/Infused_War_Magic,Silyun - Raphel Detante 87.4N 70.5W
-Infused Life Magic,XP,296,Cast Life spells without Foci of Verdancy,2bil,1,Akemi Fei,https://acportalstorm.com/wiki/Infused_Life_Magic,Hebian-To - Akemi Fei 38.9S 83.2E
-Infused Item Magic,XP,295,Cast Item spells without Foci of Artifice,2bil,1,Gan Fo,https://acportalstorm.com/wiki/Infused_Item_Magic,Hebian-To - Gan Fo 38.9S 83.2E
-Infused Creature Magic,XP,294,Cast Creature spells without Foci of Enchantment,2bil,1,Gustuv Lansdown,https://acportalstorm.com/wiki/Infused_Creature_Magic,Cragstone - Gustuv Lansdown 24.9N 48.5E
-Infused Void Magic,XP,328,Cast Void spells without Foci of Shadow,2bil,1,Morathe,https://acportalstorm.com/wiki/Infused_Void_Magic,Candeth Keep - Morathe 87.6S 66.8W
+Might of the Seventh Mule,XP,230,+20% burden capacity,1bil,5,,https://acportalstorm.com/wiki/Might_of_the_Seventh_Mule,Zaikhal - Husoon 13.9N 0.6E
+Shadow of the Seventh Mule,XP,229,Eighth pack slot,4bil,1,,https://acportalstorm.com/wiki/Shadow_of_the_Seventh_Mule,Zaikhal - Dumida bint Ruminre 13.9N 0.6E
+Infused War Magic,XP,297,Cast War spells without Foci of Strife,2bil,1,,https://acportalstorm.com/wiki/Infused_War_Magic,Silyun - Raphel Detante 87.4N 70.5W
+Infused Life Magic,XP,296,Cast Life spells without Foci of Verdancy,2bil,1,,https://acportalstorm.com/wiki/Infused_Life_Magic,Hebian-To - Akemi Fei 38.9S 83.2E
+Infused Item Magic,XP,295,Cast Item spells without Foci of Artifice,2bil,1,,https://acportalstorm.com/wiki/Infused_Item_Magic,Hebian-To - Gan Fo 38.9S 83.2E
+Infused Creature Magic,XP,294,Cast Creature spells without Foci of Enchantment,2bil,1,,https://acportalstorm.com/wiki/Infused_Creature_Magic,Cragstone - Gustuv Lansdown 24.9N 48.5E
+Infused Void Magic,XP,328,Cast Void spells without Foci of Shadow,2bil,1,,https://acportalstorm.com/wiki/Infused_Void_Magic,Candeth Keep - Morathe 87.6S 66.8W
 Blank,XP,,,,,,,
 Death Penalties,XP,,,,,,,
-Clutch of the Miser,XP,231,-5 items dropped on death,2bil,3,Rohula bint Ludun,https://acportalstorm.com/wiki/Clutch_of_the_Miser,Ayan Baqur - Rohula bint Ludun 59.8S 87.8W
-Enduring Enchantment,XP,232,Spells not lost on death,4bil,1,Erik Festus,https://acportalstorm.com/wiki/Enduring_Enchantment,Ayan Baqur - Erik Festus 59.8S 87.8W
+Clutch of the Miser,XP,231,-5 items dropped on death,2bil,3,,https://acportalstorm.com/wiki/Clutch_of_the_Miser,Ayan Baqur - Rohula bint Ludun 59.8S 87.8W
+Enduring Enchantment,XP,232,Spells not lost on death,4bil,1,,https://acportalstorm.com/wiki/Enduring_Enchantment,Ayan Baqur - Erik Festus 59.8S 87.8W
 Blank,XP,,,,,,,
 Experience Bonus,XP,,,,,,,
-Quick Learner,XP,234,+5% experience bonus,4bil,1,Rickard Dumalia,https://acportalstorm.com/wiki/Quick_Learner,Silyun - Rickard Dumalia 87.4N 70.6W
+Quick Learner,XP,234,+5% experience bonus,4bil,1,,https://acportalstorm.com/wiki/Quick_Learner,Silyun - Rickard Dumalia 87.4N 70.6W
 Blank,XP,,,,,,,
 Health and Regeneration,XP,,,,,,,
-Asheron's Lesser Benediction,XP,-3,Health bonus: +10% of base,2bil,1,Donatello Linante,https://acportalstorm.com/wiki/Asheron%27s_Lesser_Benediction,Silyun - Donatello Linante 87.4N 70.5W
-Innate Renewal,XP,237,100% bonus to regeneration when lying down,1bil,2,Alison Dulane,https://acportalstorm.com/wiki/Innate_Renewal,Bandit Castle - Alison Dulane 66.4N 49.8E
+Asheron's Lesser Benediction,XP,-3,Health bonus: +10% of base,2bil,1,,https://acportalstorm.com/wiki/Asheron%27s_Lesser_Benediction,Silyun - Donatello Linante 87.4N 70.5W
+Innate Renewal,XP,237,100% bonus to regeneration when lying down,1bil,2,,https://acportalstorm.com/wiki/Innate_Renewal,Bandit Castle - Alison Dulane 66.4N 49.8E
 Blank,XP,,,,,,,
 Innate Attributes,XP,-1,,,10,,,
-Reinforcement of the Lugians,XP,218,+5 Inate Strength,500m,10,Fiun Luunere,https://acportalstorm.com/wiki/Reinforcement_of_the_Lugians,Fiun Outpost - Fiun Luunere 95.7N 57.1W
-Bleeargh's Fortitude,XP,219,+5 Inate Endurance,500m,10,Fiun Ruun,https://acportalstorm.com/wiki/Bleeargh%27s_Fortitude,Fiun Outpost - Fiun Ruun 95.7N 57.1W
-Oswald's Enchancement,XP,220,+5 Inate Coordination,500m,10,Fiun Bayaas,https://acportalstorm.com/wiki/Oswald%27s_Enhancement,Fiun Outpost - Fiun Bayaas 95.7N 57.1W
-Siraluun's Blessing,XP,221,+5 Inate Quickness,500m,10,Fiun Riish,https://acportalstorm.com/wiki/Siraluun%27s_Blessing,Fiun Outpost - Fiun Riish 95.7N 57.1W
-Enduring Calm,XP,222,+5 Inate Focus,500m,10,Fiun Vasherr,https://acportalstorm.com/wiki/Enduring_Calm,Fiun Outpost - Fiun Vasherr 95.7N 57.1W
-Steadfast Will,XP,223,+5 Inate Self,500m,10,Fiun Noress,https://acportalstorm.com/wiki/Steadfast_Will,Fiun Outpost - Fiun Noress 95.7N 57.1W
+Reinforcement of the Lugians,XP,218,+5 Inate Strength,500m,10,,https://acportalstorm.com/wiki/Reinforcement_of_the_Lugians,Fiun Outpost - Fiun Luunere 95.7N 57.1W
+Bleeargh's Fortitude,XP,219,+5 Inate Endurance,500m,10,,https://acportalstorm.com/wiki/Bleeargh%27s_Fortitude,Fiun Outpost - Fiun Ruun 95.7N 57.1W
+Oswald's Enchancement,XP,220,+5 Inate Coordination,500m,10,,https://acportalstorm.com/wiki/Oswald%27s_Enhancement,Fiun Outpost - Fiun Bayaas 95.7N 57.1W
+Siraluun's Blessing,XP,221,+5 Inate Quickness,500m,10,,https://acportalstorm.com/wiki/Siraluun%27s_Blessing,Fiun Outpost - Fiun Riish 95.7N 57.1W
+Enduring Calm,XP,222,+5 Inate Focus,500m,10,,https://acportalstorm.com/wiki/Enduring_Calm,Fiun Outpost - Fiun Vasherr 95.7N 57.1W
+Steadfast Will,XP,223,+5 Inate Self,500m,10,,https://acportalstorm.com/wiki/Steadfast_Will,Fiun Outpost - Fiun Noress 95.7N 57.1W
 Blank,XP,,,,,,,
 Innate Resistance,XP,-2,,,2,,,
-Enchantment of Mace Turner,XP,242,+10% innate resistance to Bludgeoning,2bil,2,Nawamara Dia,https://acportalstorm.com/wiki/Enhancement_of_the_Mace_Turner,Hebian-To - Nawamara Dia 39.3S 83.2E
-Enchantment of Blade Turner,XP,240,+10% innate resistance to Slashing,2bil,2,Ilin Wis,https://acportalstorm.com/wiki/Enhancement_of_the_Blade_Turner,Hebian-To - Ilin Wis 39.5S 83.3E
-Enchantment of Arrow Turner,XP,241,+10% innate resistance to Piercing,2bil,2,Kyujo Rujen,https://acportalstorm.com/wiki/Enhancement_of_the_Arrow_Turner,Hebian-To - Kyujo Rujen 39.3S 83.5E
-Storm's Enchantment,XP,246,+10% innate resistance to Lightning,2bil,2,Enli Yuo,https://acportalstorm.com/wiki/Storm%27s_Enhancement,Hebian-To - Enli Yuo 39.2S 83.4E
-Fiery Enchantment,XP,244,+10% innate resistance to Fire,2bil,2,Rikshen Ri,https://acportalstorm.com/wiki/Fiery_Enhancement,Hebian-To - Rikshen Ri 39.1S 83.4E
-Icy Enchantment,XP,245,+10% innate resistance to Frost,2bil,2,Lu Bao,https://acportalstorm.com/wiki/Icy_Enhancement,Hebian-To - Lu Bao 39.1S 83.4E
-Caustic Enchantment,XP,243,+10% innate resistance to Acid,2bil,2,Shujio Milao,https://acportalstorm.com/wiki/Caustic_Enhancement,Hebian-To - Shujio Milao 38.9S 83.4E
+Enchantment of Mace Turner,XP,242,+10% innate resistance to Bludgeoning,2bil,2,,https://acportalstorm.com/wiki/Enhancement_of_the_Mace_Turner,Hebian-To - Nawamara Dia 39.3S 83.2E
+Enchantment of Blade Turner,XP,240,+10% innate resistance to Slashing,2bil,2,,https://acportalstorm.com/wiki/Enhancement_of_the_Blade_Turner,Hebian-To - Ilin Wis 39.5S 83.3E
+Enchantment of Arrow Turner,XP,241,+10% innate resistance to Piercing,2bil,2,,https://acportalstorm.com/wiki/Enhancement_of_the_Arrow_Turner,Hebian-To - Kyujo Rujen 39.3S 83.5E
+Storm's Enchantment,XP,246,+10% innate resistance to Lightning,2bil,2,,https://acportalstorm.com/wiki/Storm%27s_Enhancement,Hebian-To - Enli Yuo 39.2S 83.4E
+Fiery Enchantment,XP,244,+10% innate resistance to Fire,2bil,2,,https://acportalstorm.com/wiki/Fiery_Enhancement,Hebian-To - Rikshen Ri 39.1S 83.4E
+Icy Enchantment,XP,245,+10% innate resistance to Frost,2bil,2,,https://acportalstorm.com/wiki/Icy_Enhancement,Hebian-To - Lu Bao 39.1S 83.4E
+Caustic Enchantment,XP,243,+10% innate resistance to Acid,2bil,2,,https://acportalstorm.com/wiki/Caustic_Enhancement,Hebian-To - Shujio Milao 38.9S 83.4E
 Blank,XP,,,,,,,
 Rating,XP,,,,,,,
-Critical Protection,XP,233,25% negation of critical hits (5% PvP),1bil,1,Piersanti Linante,https://acportalstorm.com/wiki/Critical_Protection,Sanamar - Piersanti Linante 69.8N 62.2W
-Frenzy of the Slayer,XP,309,+3 damage rating,2bil,1,Neela Nashua,https://acportalstorm.com/wiki/Frenzy_of_the_Slayer,Bandit Castle - Neela Nashua 66.4N 49.8E
-Iron Skin of the Invincible,XP,310,+3 damage reduction rating,2bil,1,Emily Yarow,https://acportalstorm.com/wiki/Iron_Skin_of_the_Invincible,Cragstone - Emily Yarow 24.9N 48.5E
-Eye of the Remorseless,XP,298,+1% increased chance of a critical hit,4bil,1,Anfram Mellow,https://acportalstorm.com/wiki/Eye_of_the_Remorseless,Ayan Baqur - Anfram Mellow 60.0S 87.8W
-Hand of the Remorseless,XP,299,+3 critical damage rating,4bil,1,Alishia bint Aldan,https://acportalstorm.com/wiki/Hand_of_the_Remorseless,Ayan Baqur - Alishia bint Aldan 60.0S 87.8W
+Critical Protection,XP,233,25% negation of critical hits (5% PvP),1bil,1,,https://acportalstorm.com/wiki/Critical_Protection,Sanamar - Piersanti Linante 69.8N 62.2W
+Frenzy of the Slayer,XP,309,+3 damage rating,2bil,1,,https://acportalstorm.com/wiki/Frenzy_of_the_Slayer,Bandit Castle - Neela Nashua 66.4N 49.8E
+Iron Skin of the Invincible,XP,310,+3 damage reduction rating,2bil,1,,https://acportalstorm.com/wiki/Iron_Skin_of_the_Invincible,Cragstone - Emily Yarow 24.9N 48.5E
+Eye of the Remorseless,XP,298,+1% increased chance of a critical hit,4bil,1,,https://acportalstorm.com/wiki/Eye_of_the_Remorseless,Ayan Baqur - Anfram Mellow 60.0S 87.8W
+Hand of the Remorseless,XP,299,+3 critical damage rating,4bil,1,,https://acportalstorm.com/wiki/Hand_of_the_Remorseless,Ayan Baqur - Alishia bint Aldan 60.0S 87.8W
 Blank,XP,,,,,,,
 Salvaging and Tinkering,XP,,,,,,,
-Ciandra's Fortune,XP,235,25% extra salvage material,1bil,4,Kris Cennis,https://acportalstorm.com/wiki/Ciandra%27s_Fortune,Cragstone - Kris Cennis 25.5N 48.4E
-Charmed Smith,XP,236,+5% chance of imbue,2bil,1,Lug,https://acportalstorm.com/wiki/Charmed_Smith,Oolutanga's Refuge - Lug 2.2N 95.2E
-Jibril's Essence,XP,226,Specialize Armor Tinkering,1bil,1,Joshun Felden,https://acportalstorm.com/wiki/Jibril%27s_Essence,Cragstone - Joshun Felden 25.5N 48.4E
-Yoshi's Essence,XP,225,Specialize Item Tinkering,1bil,1,Brienne Carlus,https://acportalstorm.com/wiki/Yoshi%27s_Essence,Cragstone - Brienne Carlus 25.5N 48.4E
-Celdiseth's Essence,XP,227,Specialize Magic Item Tinkering,1bil,1,Burrell Sammrun,https://acportalstorm.com/wiki/Celdiseth%27s_Essence,Cragstone - Burrell Sammrun 25.5N 48.4E
-Koga's Essence,XP,228,Specialize Weapon Tinkering,1bil,1,Lenor Turk,https://acportalstorm.com/wiki/Koga%27s_Essence,Cragstone - Lenor Turk 25.5N 48.4E
-Ciandra's Fortune,XP,224,Specialize Salvaging,1bil,1,Robert Crow,https://acportalstorm.com/wiki/Ciandra%27s_Essence,Cragstone - Robert Crow 25.5N 48.4E
+Ciandra's Fortune,XP,235,25% extra salvage material,1bil,4,,https://acportalstorm.com/wiki/Ciandra%27s_Fortune,Cragstone - Kris Cennis 25.5N 48.4E
+Charmed Smith,XP,236,+5% chance of imbue,2bil,1,,https://acportalstorm.com/wiki/Charmed_Smith,Oolutanga's Refuge - Lug 2.2N 95.2E
+Jibril's Essence,XP,226,Specialize Armor Tinkering,1bil,1,,https://acportalstorm.com/wiki/Jibril%27s_Essence,Cragstone - Joshun Felden 25.5N 48.4E
+Yoshi's Essence,XP,225,Specialize Item Tinkering,1bil,1,,https://acportalstorm.com/wiki/Yoshi%27s_Essence,Cragstone - Brienne Carlus 25.5N 48.4E
+Celdiseth's Essence,XP,227,Specialize Magic Item Tinkering,1bil,1,,https://acportalstorm.com/wiki/Celdiseth%27s_Essence,Cragstone - Burrell Sammrun 25.5N 48.4E
+Koga's Essence,XP,228,Specialize Weapon Tinkering,1bil,1,,https://acportalstorm.com/wiki/Koga%27s_Essence,Cragstone - Lenor Turk 25.5N 48.4E
+Ciandra's Fortune,XP,224,Specialize Salvaging,1bil,1,,https://acportalstorm.com/wiki/Ciandra%27s_Essence,Cragstone - Robert Crow 25.5N 48.4E
 Blank,XP,,,,,,,
 Skills,XP,,,,,,,
-Master of the Steel Circle,XP,300,+10 melee base skill with all melee weapons,2bil,1,Carlito Gallo,https://acportalstorm.com/wiki/Master_of_the_Steel_Circle,Silyun - Carlito Gallo 87.4N 70.5W 
-Master of the Five Fold Path,XP,302,+10 magic base skill when casting any spell,2bil,1,Rahina bint Zalanis,https://acportalstorm.com/wiki/Master_of_the_Five_Fold_Path,Zaikhal - Rahina bint Zalanis 13.7N 0.7E
-Master of the Focused Eye,XP,301,+10 missile base skill with all missile weapons,2bil,1,Kilaf,https://acportalstorm.com/wiki/Master_of_the_Focused_Eye,Zaikhal - Kilaf 13.7N 0.7E
-Jack of All Trades,XP,326,+5 extra to all skills (not base),4bil,1,Arianna the Adept,https://acportalstorm.com/wiki/Jack_of_All_Trades,Bandit Castle - Arianna the Adept 66.5N 49.9E
+Master of the Steel Circle,XP,300,+10 melee base skill with all melee weapons,2bil,1,,https://acportalstorm.com/wiki/Master_of_the_Steel_Circle,Silyun - Carlito Gallo 87.4N 70.5W 
+Master of the Five Fold Path,XP,302,+10 magic base skill when casting any spell,2bil,1,,https://acportalstorm.com/wiki/Master_of_the_Five_Fold_Path,Zaikhal - Rahina bint Zalanis 13.7N 0.7E
+Master of the Focused Eye,XP,301,+10 missile base skill with all missile weapons,2bil,1,,https://acportalstorm.com/wiki/Master_of_the_Focused_Eye,Zaikhal - Kilaf 13.7N 0.7E
+Jack of All Trades,XP,326,+5 extra to all skills (not base),4bil,1,,https://acportalstorm.com/wiki/Jack_of_All_Trades,Bandit Castle - Arianna the Adept 66.5N 49.9E
 Blank,XP,,,,,,,
 Spell Duration,XP,,,,,,,
-Archmage's Endurance,XP,238,+20% spell duration,1bil,5,Nawamara Ujio,https://acportalstorm.com/wiki/Archmage%27s_Endurance,Mayoi - Nawamara Ujio 61.8S 82.0E
+Archmage's Endurance,XP,238,+20% spell duration,1bil,5,,https://acportalstorm.com/wiki/Archmage%27s_Endurance,Mayoi - Nawamara Ujio 61.8S 82.0E
 Nalicana (Asherons Castle),Luminance,,,,,,,
-Aetheric Vision,Luminance,338,Increase chance of aetheria surge,,5,Nalicana,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Aetheric_Vision,
-Glory,Luminance,335,Increase critical damage rating,,5,Nalicana,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Glory,
-Temperance,Luminance,336,Increase critical damage reduction rating,,5,Nalicana,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Temperance,
-Protection,Luminance,334,Increase damage reduction rating,,5,Nalicana,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Protection,
-Valor,Luminance,333,Increase damage rating,,5,Nalicana,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Valor,
-Purity,Luminance,342,Increase healing rating,,5,Nalicana,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Purity,
-Mana Infusion,Luminance,340,Increase the mana provided by mana stones,,5,Nalicana,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Mana_Infusion,
-Mana Flow,Luminance,339,Reduce the mana consumption of your items,,5,Nalicana,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Mana_Flow,
-Craftsman,Luminance,343,Increase crafting and tinkering skills level,,5,Nalicana,https://acportalstorm.com/wiki/Token_of_the_Aura_of_the_Craftsman,
-World,Luminance,365,Increase all skills by 1,,10,Nalicana,https://acportalstorm.com/wiki/Token_of_the_Aura_of_the_World,
+Aetheric Vision,Luminance,338,Increase chance of aetheria surge,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Aetheric_Vision,
+Glory,Luminance,335,Increase critical damage rating,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Glory,
+Temperance,Luminance,336,Increase critical damage reduction rating,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Temperance,
+Protection,Luminance,334,Increase damage reduction rating,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Protection,
+Valor,Luminance,333,Increase damage rating,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Valor,
+Purity,Luminance,342,Increase healing rating,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Purity,
+Mana Infusion,Luminance,340,Increase the mana provided by mana stones,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Mana_Infusion,
+Mana Flow,Luminance,339,Reduce the mana consumption of your items,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Mana_Flow,
+Craftsman,Luminance,343,Increase crafting and tinkering skills level,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_the_Craftsman,
+World,Luminance,365,Increase all skills by 1,,10,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_the_World,
 Blank,Luminance,,,,,,,
-Shade of Lady Adja,Luminance,,,,,,,
-Specialization,Luminance,344,Increase all specialized skills by 2,,5,Shade of Lady Adja,https://acportalstorm.com/wiki/Light_Falatacot_Token_of_the_Aura_of_Specialization,
-Invulnerability,Luminance,-334,Increase damage reduction rating,,5,Shade of Lady Adja,https://acportalstorm.com/wiki/Light_Falatacot_Token_of_the_Aura_of_Invulnerability,
+Seer: Ka'hiri,Luminance,-4,,,1,LoyalToKahiri,https://acportalstorm.com/wiki/Ka'hiri,Sawato - Blackmire Edge Cottages 27.2S 59.9E - Ka'hiri at 27.1S 48.6E
+Specialization,Luminance,344,Increase all specialized skills by 2,,5,LoyalToKahiri,https://acportalstorm.com/wiki/Dark_Falatacot_Token_of_the_Aura_of_Specialization,Sawato - Blackmire Edge Cottages 27.2S 59.9E - Ka'hiri at 27.1S 48.6E
+Destruction,Luminance,-333,Increase damage rating,,5,LoyalToKahiri,https://acportalstorm.com/wiki/Dark_Falatacot_Token_of_the_Aura_of_Destruction,Sawato - Blackmire Edge Cottages 27.2S 59.9E - Ka'hiri at 27.1S 48.6E
 Blank,Luminance,,,,,,,
-Ka'hiri,Luminance,,,,,,,
-Specialization,Luminance,344,Increase all specialized skills by 2,,5,Shade of Lady Adja,https://acportalstorm.com/wiki/Light_Falatacot_Token_of_the_Aura_of_Specialization,
-Destruction,Luminance,-333,Increase damage rating,,5,Ka'hiri,https://acportalstorm.com/wiki/Dark_Falatacot_Token_of_the_Aura_of_Destruction,
+Seer: Liam of Gelid,Luminance,-5,,,1,LoyalToLiamOfGelid,,Crater Village - Inside Mountain Cavern Dungeon 64.1N 13.2E
+Retribution,Luminance,-335,Increase critical damage rating,,5,LoyalToLiamOfGelid,https://acportalstorm.com/wiki/Dericost_Token_of_the_Aura_of_Retribution,Crater Village - Inside Mountain Cavern Dungeon 64.1N 13.2E
+Destruction,Luminance,-333,Increase damage rating,,5,LoyalToLiamOfGelid,https://acportalstorm.com/wiki/Dericost_Token_of_the_Aura_of_Destruction,Crater Village - Inside Mountain Cavern Dungeon 64.1N 13.2E
 Blank,Luminance,,,,,,,
-Liam of Gelid,Luminance,,,,,,,
-Retribution,Luminance,-335,Increase critical damage rating,,5,Liam of Gelid,https://acportalstorm.com/wiki/Dericost_Token_of_the_Aura_of_Retribution,
-Destruction,Luminance,-333,Increase damage rating,,5,Ka'hiri,https://acportalstorm.com/wiki/Dark_Falatacot_Token_of_the_Aura_of_Destruction,
+Seer: Lord Tyragar,Luminance,-6,,,1,LoyalToLordTyragar,,Silyun - 87.4N 70.4W
+Hardening,Luminance,-336,Increase critical damage reduction rating,,5,LoyalToLordTyragar,https://acportalstorm.com/wiki/Haebrean_Token_of_the_Aura_of_Hardening,Silyun - 87.4N 70.4W
+Invulnerability,Luminance,-334,Increase damage reduction rating,,5,LoyalToLordTyragar,https://acportalstorm.com/wiki/Haebrean_Token_of_the_Aura_of_Invulnerability,Silyun - 87.4N 70.4W
 Blank,Luminance,,,,,,,
-Lord Tyragar,Luminance,,,,,,,
-Hardening,Luminance,-336,Increase critical damage reduction rating,,5,Lord Tyragar,https://acportalstorm.com/wiki/Haebrean_Token_of_the_Aura_of_Hardening,
-Invulnerability,Luminance,-334,Increase damage reduction rating,,5,Shade of Lady Adja,https://acportalstorm.com/wiki/Light_Falatacot_Token_of_the_Aura_of_Invulnerability,
+Seer: Shade of Lady Adja,Luminance,-7,,,1,LoyalToShadeOfLadyAdja,,Sanctuary - Shade of Lady Adja
+Specialization,Luminance,344,Increase all specialized skills by 2,,5,LoyalToShadeOfLadyAdja,https://acportalstorm.com/wiki/Light_Falatacot_Token_of_the_Aura_of_Specialization,Sanctuary - Shade of Lady Adja
+Invulnerability,Luminance,-334,Increase damage reduction rating,,5,LoyalToShadeOfLadyAdja,https://acportalstorm.com/wiki/Light_Falatacot_Token_of_the_Aura_of_Invulnerability,Sanctuary - Shade of Lady Adja
