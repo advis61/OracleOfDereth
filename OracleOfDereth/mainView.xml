@@ -55,7 +55,7 @@
 				  <control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="100" height="17" text="Quest Name"/>
 				  <control progid="DecalControls.StaticText" name="Ready" left="540" top="5" width="55" height="17" text="Ready In"/>
 				  <control progid="DecalControls.StaticText" name="Solves" left="600" top="5" width="50" height="17" text="Solves"/>
-				  <control progid="DecalControls.List" name="AugQuestsList" left="0" top="23" width="650" height="110">
+				  <control progid="DecalControls.List" name="AugmentationsQuestsList" left="0" top="23" width="650" height="110">
 					  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 					  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="420" />
 					  <column progid="DecalControls.TextColumn" name="Ready" fixedwidth="140" />
@@ -63,8 +63,8 @@
 					  <column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="100" />
 				  </control>
 				  <control progid="DecalControls.StaticText" name="Name" left="1" top="147" width="0" height="17" text="Augmentations"/>
-				  <control progid="DecalControls.PushButton" name="AugQuestsRefresh" left="550" top="137" width="100" height="24" text="Refresh"/>
-					<control progid="DecalControls.List" name="AugXPList" left="0" top="165" width="650" height="2000">
+				  <control progid="DecalControls.PushButton" name="AugmentationsRefresh" left="550" top="137" width="100" height="24" text="Refresh"/>
+					<control progid="DecalControls.List" name="AugmentationsList" left="0" top="165" width="650" height="2000">
 						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
 						<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
 						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />
@@ -100,8 +100,8 @@
 
 			<page label="Luminance">
 				<control progid="DecalControls.FixedLayout" clipped="">
-					<control progid="DecalControls.StaticText" name="AugLuminanceText" left="5" top="5" width="640" height="20" text="Luminance: 0 spent / 0 total (0% complete, 0 to max)"/>
-					<control progid="DecalControls.List" name="AugLuminanceList" left="0" top="30" width="650" height="2000">
+					<control progid="DecalControls.StaticText" name="LuminanceText" left="5" top="5" width="640" height="20" text="Luminance: 0 spent / 0 total (0% complete, 0 to max)"/>
+					<control progid="DecalControls.List" name="LuminanceList" left="0" top="30" width="650" height="2000">
 						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
 						<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
 						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />

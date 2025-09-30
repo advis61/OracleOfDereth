@@ -24,6 +24,7 @@ namespace OracleOfDereth
         readonly VirindiViewService.ViewProperties properties;
         readonly VirindiViewService.ControlGroup controls;
         readonly VirindiViewService.HudView view;
+
         public HudTabView MainViewNotebook { get; private set; }
         public HudTabView CharacterViewNotebook { get; private set; }
 
@@ -41,20 +42,10 @@ namespace OracleOfDereth
         public HudStaticText RegenText { get; private set; }
         public HudStaticText ProtectionText { get; private set; }
 
-        // Augs
-        public HudList AugQuestsList { get; private set; }
-        public HudList AugXPList { get; private set; }
-        public HudList AugLuminanceList { get; private set; }
-        public HudButton AugQuestsRefresh { get; private set; }
-        public HudStaticText AugLuminanceText { get; private set; }
-
         // Buffs
         public HudList BuffsList { get; private set; }
 
-        // Cantrips
-        public HudList CantripsList { get; private set; }
-
-        // John Tracker
+        // John
         public HudStaticText JohnLabel { get; private set; }
         public HudStaticText JohnText { get; private set; }
 
@@ -65,7 +56,20 @@ namespace OracleOfDereth
         public HudList JohnList { get; private set; }
         public HudButton JohnRefresh { get; private set; }
 
-        public bool wasResized = false; // Ever resized
+        // Character: Augmentations
+        public HudList AugmentationsQuestsList { get; private set; }
+        public HudList AugmentationsList { get; private set; }
+        public HudButton AugmentationsRefresh { get; private set; }
+
+        // Character: Luminance
+        public HudStaticText LuminanceText { get; private set; }
+        public HudList LuminanceList { get; private set; }
+
+        // Character: Cantrips
+        public HudList CantripsList { get; private set; }
+
+        // Resize Tracking
+        public bool wasResized = false;
 
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
         {
@@ -178,33 +182,32 @@ namespace OracleOfDereth
                 JohnListSortSolves = (HudStaticText)view["JohnListSortSolves"];
                 JohnListSortSolves.Hit += JohnListSortSolves_Click;
 
-                // Character Tab
-                // Augmentations
-                AugQuestsRefresh = (HudButton)view["AugQuestsRefresh"];
-                AugQuestsRefresh.Hit += AugQuestsRefresh_Hit;
+                // Character: Augmentations
+                AugmentationsRefresh = (HudButton)view["AugmentationsRefresh"];
+                AugmentationsRefresh.Hit += AugmentationsRefresh_Hit;
 
-                AugQuestsList = (HudList)view["AugQuestsList"];
-                AugQuestsList.Click += AugQuestsList_Click;
-                AugQuestsList.ClearRows();
+                AugmentationsQuestsList = (HudList)view["AugmentationsQuestsList"];
+                AugmentationsQuestsList.Click += AugmentationsQuestsList_Click;
+                AugmentationsQuestsList.ClearRows();
 
-                AugXPList = (HudList)view["AugXPList"];
-                AugXPList.Click += AugXPList_Click;
-                AugXPList.ClearRows();
+                AugmentationsList = (HudList)view["AugmentationsList"];
+                AugmentationsList.Click += AugmentationsList_Click;
+                AugmentationsList.ClearRows();
 
-                // Cantrips
+                // Character :Cantrips
                 CantripsList = (HudList)view["CantripsList"];
                 CantripsList.Click += CantripsList_Click;
                 CantripsList.ClearRows();
 
-                // Credits
+                // Character: Credits
 
-                // Luminance
-                AugLuminanceText = (HudStaticText)view["AugLuminanceText"];
-                AugLuminanceText.FontHeight = 10;
+                // Character: Luminance
+                LuminanceText = (HudStaticText)view["LuminanceText"];
+                LuminanceText.FontHeight = 10;
 
-                AugLuminanceList = (HudList)view["AugLuminanceList"];
-                AugLuminanceList.Click += AugLuminanceList_Click;
-                AugLuminanceList.ClearRows();
+                LuminanceList = (HudList)view["LuminanceList"];
+                LuminanceList.Click += LuminanceList_Click;
+                LuminanceList.ClearRows();
 
                 Update();
             }
@@ -250,12 +253,11 @@ namespace OracleOfDereth
             if (currentTab == 1) { UpdateBuffs(); }
             if (currentTab == 3) { UpdateJohn(); }
 
-            if(currentTab == 200) { UpdateAugs(); }
+            // Character Tab
+            if(currentTab == 200) { UpdateAugmentations(); }
             if(currentTab == 201) { UpdateCantrips(); }
             if(currentTab == 202) { UpdateCredits(); }
             if(currentTab == 203) { UpdateLuminance(); }
-
-            Util.Chat("Current Tab is " + CurrentTab(), Util.ColorPink);
         }
 
         // Quest Flag Changes
@@ -263,7 +265,7 @@ namespace OracleOfDereth
         {
             // Update anything that relies on quest flags
             UpdateJohnList(true);
-            //UpdateAugQuestsList(true);
+            UpdateAugmentationQuestsList(true);
 
             Util.Chat("Quest data updated.", Util.ColorPink);
 
@@ -343,7 +345,7 @@ namespace OracleOfDereth
                 BuffsList.RemoveRow(BuffsListCount);
             }
         }
-        void BuffsList_Click(object sender, int row, int col)
+        void BuffsList_Click(object sender, int row, int col) 
         {
         }
 
@@ -356,9 +358,6 @@ namespace OracleOfDereth
         int CantripsListCount = 0;
         private void UpdateCantripsList(bool force = false)
         {
-            // For each cantrip in Cantrip.Cantrips, add a row to the CantripsList
-            // This function will be called multiple times, so we need to add or update
-
             List<Cantrip> cantrips = Cantrip.Cantrips.Where(x => x.SkillIsKnown()).ToList();
             int count = cantrips.Count();
 
@@ -561,38 +560,38 @@ namespace OracleOfDereth
             UpdateJohnList(true);
         }
 
-        // Augs List
-        public void UpdateAugs() {
+        // Character: Augmentations
+        public void UpdateAugmentations() {
             if(QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
-            UpdateAugQuestsList();
-            UpdateAugXPList();
+            UpdateAugmentationQuestsList();
+            UpdateAugmentationsList();
         }
 
-        int AugXPListCount = 0;
-        int AugXPListCompleted = 0;
-        private void UpdateAugXPList(bool force = false)
+        int AugmentationsListCount = 0;
+        int AugmentationsCompleted = 0;
+        private void UpdateAugmentationsList(bool force = false)
         {
             List<Augmentation> augmentations = Augmentation.XPAugmentations();
             int count = augmentations.Count();
             int completed = augmentations.Count(x => x.IsComplete());
 
             // When empty
-            if (AugXPListCount != count) { force = true; }
-            if (AugXPListCompleted != completed) { force = true; }
+            if (AugmentationsListCount != count) { force = true; }
+            if (AugmentationsCompleted != completed) { force = true; }
 
             // Add or update rows
             for (int i = 0; i < count; i++)
             {
                 HudList.HudListRowAccessor row;
-                if (i >= AugXPListCount)
+                if (i >= AugmentationsListCount)
                 {
-                    row = AugXPList.AddRow();
+                    row = AugmentationsList.AddRow();
                     ((HudStaticText)row[1]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
-                    AugXPListCount += 1;
+                    AugmentationsListCount += 1;
                 }
                 else
                 {
-                    row = AugXPList[i];
+                    row = AugmentationsList[i];
                 }
 
                 var augmentation = augmentations[i];
@@ -628,12 +627,12 @@ namespace OracleOfDereth
                 ((HudStaticText)row[4]).Text = augmentation.CostText();
             }
 
-            AugXPListCompleted = completed;
+            AugmentationsCompleted = completed;
         }
 
-        void AugXPList_Click(object sender, int row, int col)
+        void AugmentationsList_Click(object sender, int row, int col)
         {
-            string text = ((HudStaticText)AugXPList[row][5]).Text;
+            string text = ((HudStaticText)AugmentationsList[row][5]).Text;
             if(text == null || text == "" || text.IndexOf('-') > 0) { return; }
 
             int id = int.Parse(text);
@@ -677,38 +676,39 @@ namespace OracleOfDereth
                 }
             }
         }
+
+        // Character: Luminance
         public void UpdateLuminance()
         {
-            Util.Chat("Updating luminance");
-            UpdateAugLuminanceList();
-            UpdateAugLuminanceText();
+            UpdateLuminanceList();
+            UpdateLuminanceText();
         }
 
-        int AugLuminanceListCount = 0;
-        int AugLuminanceListCompleted = 0;
-        private void UpdateAugLuminanceList(bool force = false)
+        int LuminanceListCount = 0;
+        int LuminanceCompleted = 0;
+        private void UpdateLuminanceList(bool force = false)
         {
             List<Augmentation> augmentations = Augmentation.LuminanceAugmentations();
             int count = augmentations.Count();
             int completed = augmentations.Count(x => x.IsComplete());
 
             // When empty
-            if (AugLuminanceListCount != count) { force = true; }
-            if (AugLuminanceListCompleted != completed) { force = true; }
+            if (LuminanceListCount != count) { force = true; }
+            if (LuminanceCompleted != completed) { force = true; }
 
             // Add or update rows
             for (int i = 0; i < count; i++)
             {
                 HudList.HudListRowAccessor row;
-                if (i >= AugLuminanceListCount)
+                if (i >= LuminanceListCount)
                 {
-                    row = AugLuminanceList.AddRow();
+                    row = LuminanceList.AddRow();
                     ((HudStaticText)row[1]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
-                    AugLuminanceListCount += 1;
+                    LuminanceListCount += 1;
                 }
                 else
                 {
-                    row = AugLuminanceList[i];
+                    row = LuminanceList[i];
                 }
 
                 var augmentation = augmentations[i];
@@ -745,16 +745,16 @@ namespace OracleOfDereth
                 ((HudStaticText)row[4]).Text = augmentation.CostText();
             }
 
-            AugLuminanceListCompleted = completed;
+            LuminanceCompleted = completed;
         }
 
-        private void UpdateAugLuminanceText()
+        private void UpdateLuminanceText()
         {
-            AugLuminanceText.Text = $"Luminance: {Augmentation.TotalLuminanceSpent():N0} spent / {Augmentation.TotalLuminance():N0} ({Augmentation.TotalLuminancePercentage()}% complete, {Augmentation.TotalLuminanceRemaining():N0} to max)";
+            LuminanceText.Text = $"Luminance: {Augmentation.TotalLuminanceSpent():N0} spent / {Augmentation.TotalLuminance():N0} ({Augmentation.TotalLuminancePercentage()}% complete, {Augmentation.TotalLuminanceRemaining():N0} to max)";
         }
 
-        int AugQuestsListCount = 0;
-        private void UpdateAugQuestsList(bool force = false)
+        int AugmentationsQuestsListCount = 0;
+        private void UpdateAugmentationQuestsList(bool force = false)
         {
             // For each quest in AugQuest.AugQuests, add a row to the AugQuestList
             // This function will be called multiple times, so we need to add or update
@@ -762,23 +762,23 @@ namespace OracleOfDereth
             int count = AugQuest.AugQuests.Count;
 
             // When empty
-            if (AugQuestsListCount == 0) { force = true; }
+            if (AugmentationsQuestsListCount == 0) { force = true; }
 
             // Add or update rows
             for (int i = 0; i < count; i++)
             {
                 HudList.HudListRowAccessor row;
-                if (i >= AugQuestsListCount)
+                if (i >= AugmentationsQuestsListCount)
                 {
-                    row = AugQuestsList.AddRow();
+                    row = AugmentationsQuestsList.AddRow();
                     ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
                     ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
 
-                    AugQuestsListCount += 1;
+                    AugmentationsQuestsListCount += 1;
                 }
                 else
                 {
-                    row = AugQuestsList[i];
+                    row = AugmentationsQuestsList[i];
                 }
 
                 var augQuest = AugQuest.AugQuests[i];
@@ -818,13 +818,13 @@ namespace OracleOfDereth
             }
         }
 
-        void AugQuestsRefresh_Hit(object sender, EventArgs e)
+        void AugmentationsRefresh_Hit(object sender, EventArgs e)
         {
             QuestFlag.Refresh();
         }
 
-        void AugQuestsList_Click(object sender, int row, int col) {
-            string flag = ((HudStaticText)AugQuestsList[row][4]).Text;
+        void AugmentationsQuestsList_Click(object sender, int row, int col) {
+            string flag = ((HudStaticText)AugmentationsQuestsList[row][4]).Text;
 
             AugQuest augQuest;
             augQuest = AugQuest.AugQuests.FirstOrDefault(x => x.Flag == flag);
@@ -882,7 +882,7 @@ namespace OracleOfDereth
             }
         }
 
-        void AugLuminanceList_Click(object sender, int row, int col) { 
+        void LuminanceList_Click(object sender, int row, int col) { 
         }
 
         public void UpdateCredits()
@@ -907,18 +907,18 @@ namespace OracleOfDereth
 
                 BuffsList.Click -= BuffsList_Click;
 
-                CantripsList.Click -= CantripsList_Click;
-
                 JohnRefresh.Hit -= JohnRefresh_Hit;
                 JohnList.Click -= JohnList_Click;
                 JohnListSortName.Hit -= JohnListSortName_Click;
                 JohnListSortReady.Hit -= JohnListSortReady_Click;
                 JohnListSortSolves.Hit -= JohnListSortSolves_Click;
 
-                AugQuestsRefresh.Hit -= AugQuestsRefresh_Hit;
-                AugQuestsList.Click -= AugQuestsList_Click;
-                AugXPList.Click -= AugXPList_Click;
-                AugLuminanceList.Click -= AugLuminanceList_Click;
+                AugmentationsRefresh.Hit -= AugmentationsRefresh_Hit;
+                AugmentationsQuestsList.Click -= AugmentationsQuestsList_Click;
+                AugmentationsList.Click -= AugmentationsList_Click;
+
+                CantripsList.Click -= CantripsList_Click;
+                LuminanceList.Click -= LuminanceList_Click;
 
                 view?.Dispose();
             }
