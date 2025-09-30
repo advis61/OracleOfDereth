@@ -104,6 +104,9 @@ namespace OracleOfDereth
             { 2_03, 550 }, // Luminance
         };
 
+        // Assign Images Tracking
+        private Dictionary<HudPictureBox,int> AssignedImages = new Dictionary<HudPictureBox, int>();
+
         public MainView()
         {
             try
@@ -162,7 +165,6 @@ namespace OracleOfDereth
 
                 // Buffs Tab
                 BuffsList = (HudList)view["BuffsList"];
-                BuffsList.Click += BuffsList_Click;
                 BuffsList.ClearRows();
 
                 // John Tab
@@ -199,7 +201,6 @@ namespace OracleOfDereth
 
                 // Character: Cantrips
                 CantripsList = (HudList)view["CantripsList"];
-                CantripsList.Click += CantripsList_Click;
                 CantripsList.ClearRows();
 
                 // Character: Credits
@@ -209,7 +210,6 @@ namespace OracleOfDereth
                 LuminanceText.FontHeight = 10;
 
                 LuminanceList = (HudList)view["LuminanceList"];
-                LuminanceList.Click += LuminanceList_Click;
                 LuminanceList.ClearRows();
 
                 Update();
@@ -244,6 +244,19 @@ namespace OracleOfDereth
             view.Width = MainViewWidths[CurrentTab()];
         }
 
+        private void AssignImage(HudPictureBox row, int icon)
+        {
+            if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
+
+            row.Image = icon;
+            AssignedImages[row] = icon;
+        }
+
+        private void AssignImage(HudPictureBox row, bool completed)
+        {
+            if (completed) { AssignImage(row, IconComplete); } else { AssignImage(row, IconNotComplete); }
+        }
+
         // The Tick
         public void Update()
         {
@@ -269,6 +282,7 @@ namespace OracleOfDereth
             UpdateJohnList();
             UpdateAugmentationQuestsList();
 
+            // Display feedback 
             Util.Chat("Quest data updated.", Util.ColorPink);
 
             // Quests are now unchanged
@@ -296,12 +310,42 @@ namespace OracleOfDereth
         }
 
         // Buffs Tab
-        private void UpdateBuffs()
-        {
-            UpdateBuffsList();
+        public void UpdateBuffs() { 
+            UpdateBuffsList(); 
         }
 
-        int BuffsListCount = 0;
+        // John Tab
+        public void UpdateJohn()
+        {
+            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            UpdateJohnList();
+        }
+
+        // Character: Augmentations
+        public void UpdateAugmentations()
+        {
+            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            UpdateAugmentationQuestsList();
+            UpdateAugmentationsList();
+        }
+
+        // Character: Cantrips
+        public void UpdateCantrips() { 
+            UpdateCantripsList(); 
+        }
+
+        // Character: Credits
+        public void UpdateCredits()
+        {
+            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+        }
+
+        // Character: Luminance
+        public void UpdateLuminance()
+        {
+            UpdateLuminanceList();
+            UpdateLuminanceText();
+        }
 
         private void UpdateBuffsList()
         {
@@ -321,14 +365,9 @@ namespace OracleOfDereth
             for (int x = 0; x < enchantments.Count(); x++)
             {
                 HudList.HudListRowAccessor row;
+                if (x >= BuffsList.RowCount) { row = BuffsList.AddRow(); } else { row = BuffsList[x]; }
 
-                if (x >= BuffsListCount) {
-                    row = BuffsList.AddRow();
-                    BuffsListCount += 1;
-                } else {
-                    row = BuffsList[x];
-                }
-
+                // Update
                 EnchantmentWrapper enchantment = enchantments[x];
                 Decal.Filters.Spell spell = service.SpellTable.GetById(enchantment.SpellId);
 
@@ -341,101 +380,54 @@ namespace OracleOfDereth
                 ((HudStaticText)row[3]).Text = spell.Name;
             }
 
-            while (BuffsListCount > enchantments.Count())
-            {
-                BuffsListCount -= 1;
-                BuffsList.RemoveRow(BuffsListCount);
-            }
-        }
-        void BuffsList_Click(object sender, int row, int col) 
-        {
+            while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount); }
         }
 
-        // Cantrips Tab
-        private void UpdateCantrips()
-        {
-            UpdateCantripsList();
-        }
-
-        int CantripsListCount = 0;
         private void UpdateCantripsList()
         {
             List<Cantrip> cantrips = Cantrip.Cantrips.Where(x => x.SkillIsKnown()).ToList();
 
-            // Add or update rows
-            for (int i = 0; i < cantrips.Count(); i++)
+            for (int x = 0; x < cantrips.Count(); x++)
             {
                 HudList.HudListRowAccessor row;
+                if (x >= CantripsList.RowCount) { row = CantripsList.AddRow(); } else { row = CantripsList[x]; }
 
-                if (i >= CantripsListCount) {
-                    row = CantripsList.AddRow();
-                    CantripsListCount += 1;
-                } else {
-                    row = CantripsList[i];
-                }
-
-                var cantrip = cantrips[i];
-
+                // Update
+                Cantrip cantrip = cantrips[x];
                 if(cantrip.Name == "Blank") { continue; }
 
                 AssignImage((HudPictureBox)row[0], cantrip.Icon());
                 ((HudStaticText)row[1]).Text = cantrip.Name;
                 ((HudStaticText)row[2]).Text = cantrip.Level();
             }
+
+            while (CantripsList.RowCount > cantrips.Count()) { CantripsList.RemoveRow(CantripsList.RowCount); }
         }
 
-        private Dictionary<HudPictureBox,int> AssignedImages = new Dictionary<HudPictureBox, int>();
-
-        private void AssignImage(HudPictureBox row, int icon)
-        {
-            if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
-
-            row.Image = icon;
-            AssignedImages[row] = icon;
-        }
-
-        private void AssignImage(HudPictureBox row, bool completed)
-        {
-            if (completed) { AssignImage(row, IconComplete); } else { AssignImage(row, IconNotComplete); }
-        }
-
-        void CantripsList_Click(object sender, int row, int col) { }
-
-        // John Tab
-        public void UpdateJohn()
-        {
-            if(QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
-            UpdateJohnList();
-        }
-
-        int JohnListCount = 0;
         private void UpdateJohnList()
         {
+            List<JohnQuest> johnQuests = JohnQuest.JohnQuests.ToList();
             int completed = 0;
 
-            for (int i = 0; i < JohnQuest.JohnQuests.Count; i++) 
+            for (int x = 0; x < johnQuests.Count; x++) 
             {
                 HudList.HudListRowAccessor row;
 
-                if (i >= JohnListCount) {
+                if (x >= JohnList.RowCount) {
                     row = JohnList.AddRow();
 
                     ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
                     ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
-
-                    JohnListCount += 1;
                 } else {
-                    row = JohnList[i];
+                    row = JohnList[x];
                 }
 
-                var johnQuest = JohnQuest.JohnQuests[i];
+                // Update
+                JohnQuest johnQuest = johnQuests[x];
+                QuestFlag.QuestFlags.TryGetValue(johnQuest.Flag, out QuestFlag questFlag);
 
                 bool complete = johnQuest.IsComplete();
                 if (complete) { completed += 1; }
-
-                // Update
-                QuestFlag questFlag;
-                QuestFlag.QuestFlags.TryGetValue(johnQuest.Flag, out questFlag);
 
                 AssignImage((HudPictureBox)row[0], complete);
                 ((HudStaticText)row[1]).Text = johnQuest.Name;
@@ -451,45 +443,33 @@ namespace OracleOfDereth
                 ((HudStaticText)row[4]).Text = johnQuest.Flag;
             }
 
-            // Update Top Text
+            // Update Text
             JohnText.Text = $"Legendary John Quests: {completed} completed";
         }
         void JohnList_Click(object sender, int row, int col)
         {
             string flag = ((HudStaticText)JohnList[row][4]).Text;
 
-            JohnQuest johnQuest;
-            johnQuest = JohnQuest.JohnQuests.FirstOrDefault(x => x.Flag == flag);
+            JohnQuest johnQuest = JohnQuest.JohnQuests.FirstOrDefault(x => x.Flag == flag);
+            if(johnQuest == null) { return; }
 
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(flag, out questFlag);
+            QuestFlag.QuestFlags.TryGetValue(flag, out QuestFlag questFlag);
 
             // Quest URL
-            if (col == 0) {
-                if (johnQuest == null || johnQuest.Url == "") {
-                    Util.Chat($"Missing quest wiki url", Util.ColorPink);
-                } else {
-                    Util.Think($"{johnQuest.Name}: {johnQuest.Url}");
+            if (col == 0 && johnQuest.Url.Length > 0) {
+                Util.Think($"{johnQuest.Name}: {johnQuest.Url}");
 
-                    try
-                    {
-                        System.Windows.Forms.Clipboard.SetText(johnQuest.Url);
-                        Util.Chat("Quest URL copied to clipboard.", Util.ColorPink);
-                    }
-                    catch (Exception ex)
-                    {
-                        Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
-                    }
+                try {
+                    System.Windows.Forms.Clipboard.SetText(johnQuest.Url);
+                    Util.Chat("Quest URL copied to clipboard.", Util.ColorPink);
+                } catch (Exception ex) {
+                    Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
                 }
             }
 
             // Quest Hint
-            if (col == 1) {
-                if (johnQuest == null || johnQuest.Hint == "") {
-                    Util.Chat($"Missing quest hint", Util.ColorPink);
-                } else {
-                    Util.Think($"{johnQuest.Name}: {johnQuest.Hint}");
-                }
+            if (col == 1 && johnQuest.Hint.Length > 0) {
+                Util.Think($"{johnQuest.Name}: {johnQuest.Hint}");
             }
 
             // Quest Flag
@@ -520,7 +500,7 @@ namespace OracleOfDereth
 
         void JohnListSortReady_Click(object sender, EventArgs e)
         {
-            if( JohnQuest.CurrentSortType == JohnQuest.SortType.ReadyAscending) {
+            if(JohnQuest.CurrentSortType == JohnQuest.SortType.ReadyAscending) {
                 JohnQuest.Sort(JohnQuest.SortType.ReadyDescending);
             } else {
                 JohnQuest.Sort(JohnQuest.SortType.ReadyAscending);
@@ -540,44 +520,28 @@ namespace OracleOfDereth
             UpdateJohnList();
         }
 
-        // Character: Augmentations
-        public void UpdateAugmentations() {
-            if(QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
-            UpdateAugmentationQuestsList();
-            UpdateAugmentationsList();
-        }
-
-        int AugmentationsListCount = 0;
         private void UpdateAugmentationsList()
         {
-            List<Augmentation> augmentations = Augmentation.XPAugmentations();
-            int count = augmentations.Count();
+            List<Augmentation> augmentations = Augmentation.XPAugmentations().ToList();
 
             // Add or update rows
-            for (int i = 0; i < count; i++)
+            for (int x = 0; x < augmentations.Count(); x++)
             {
                 HudList.HudListRowAccessor row;
 
-                if (i >= AugmentationsListCount) {
+                if (x >= AugmentationsList.RowCount) {
                     row = AugmentationsList.AddRow();
 
                     ((HudStaticText)row[1]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
-
-                    AugmentationsListCount += 1;
                 } else {
-                    row = AugmentationsList[i];
-                }
-
-                var augmentation = augmentations[i];
-
-                if (augmentation.Name == "Blank") { continue; }
-
-                if (augmentation.Id == 0) {
-                    ((HudStaticText)row[2]).Text = augmentation.Name;
-                    continue;
+                    row = AugmentationsList[x];
                 }
 
                 // Update
+                Augmentation augmentation = augmentations[x];
+                if (augmentation.Name == "Blank") { continue; }
+                if (augmentation.Id == 0) { ((HudStaticText)row[2]).Text = augmentation.Name; continue; }
+
                 AssignImage((HudPictureBox)row[0], augmentation.IsComplete());
                 ((HudStaticText)row[1]).Text = augmentation.Text();
                 ((HudStaticText)row[2]).Text = augmentation.Name;
@@ -594,85 +558,48 @@ namespace OracleOfDereth
 
             int id = int.Parse(text);
 
-            Augmentation augmentation;
-            augmentation = Augmentation.XPAugmentations().FirstOrDefault(x => x.Id == id);
+            Augmentation augmentation = Augmentation.XPAugmentations().FirstOrDefault(x => x.Id == id);
+            if(augmentation == null) { return; }
 
             // Quest URL
-            if (col == 0)
-            {
-                if (augmentation == null || augmentation.Url == "")
-                {
-                    // Nothing to do
-                }
-                else
-                {
-                    Util.Think($"{augmentation.Name}: {augmentation.Url}");
+            if (col == 0 && augmentation.Url.Length > 0) {
+                Util.Think($"{augmentation.Name}: {augmentation.Url}");
 
-                    try
-                    {
-                        System.Windows.Forms.Clipboard.SetText(augmentation.Url);
-                        Util.Chat("URL copied to clipboard.", Util.ColorPink);
-                    }
-                    catch (Exception ex)
-                    {
-                        Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
-                    }
+                try {
+                    System.Windows.Forms.Clipboard.SetText(augmentation.Url);
+                    Util.Chat("URL copied to clipboard.", Util.ColorPink);
+                } catch (Exception ex) {
+                    Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
                 }
             }
 
             // Quest Hint
-            if (col > 0)
-            {
-                if (augmentation == null || augmentation.Hint == "")
-                {
-                    // Nothing to do
-                }
-                else
-                {
-                    Util.Think($"{augmentation.Name}: {augmentation.Hint}");
-                }
+            if (col > 0 && augmentation.Hint.Length > 0) {
+                Util.Think($"{augmentation.Name}: {augmentation.Hint}");
             }
         }
 
-        // Character: Luminance
-        public void UpdateLuminance()
-        {
-            UpdateLuminanceList();
-            UpdateLuminanceText();
-        }
-
-        int LuminanceListCount = 0;
         private void UpdateLuminanceList()
         {
             List<Augmentation> augmentations = Augmentation.LuminanceAugmentations();
-            int count = augmentations.Count();
-            int completed = augmentations.Count(x => x.IsComplete());
 
-            // Add or update rows
-            for (int i = 0; i < count; i++)
+            for (int x = 0; x < augmentations.Count(); x++)
             {
                 HudList.HudListRowAccessor row;
 
-                if (i >= LuminanceListCount) {
+                if (x >= LuminanceList.RowCount) {
                     row = LuminanceList.AddRow();
 
                     ((HudStaticText)row[1]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
-
-                    LuminanceListCount += 1;
                 } else {
-                    row = LuminanceList[i];
-                }
-
-                var augmentation = augmentations[i];
-
-                if (augmentation.Name == "Blank") { continue; }
-
-                if (augmentation.Id == 0) {
-                    ((HudStaticText)row[2]).Text = augmentation.Name;
-                    continue;
+                    row = LuminanceList[x];
                 }
 
                 // Update
+                Augmentation augmentation = augmentations[x];
+                if (augmentation.Name == "Blank") { continue; }
+                if (augmentation.Id == 0) { ((HudStaticText)row[2]).Text = augmentation.Name; continue; }
+
                 AssignImage((HudPictureBox)row[0], augmentation.IsComplete());
                 ((HudStaticText)row[1]).Text = augmentation.Text();
                 ((HudStaticText)row[2]).Text = augmentation.Name;
@@ -687,35 +614,29 @@ namespace OracleOfDereth
             LuminanceText.Text = $"Luminance: {Augmentation.TotalLuminanceSpent():N0} spent / {Augmentation.TotalLuminance():N0} ({Augmentation.TotalLuminancePercentage()}% complete, {Augmentation.TotalLuminanceRemaining():N0} to max)";
         }
 
-        int AugmentationsQuestsListCount = 0;
         private void UpdateAugmentationQuestsList()
         {
-            int count = AugQuest.AugQuests.Count;
+            List<AugQuest> augQuests = AugQuest.AugQuests.ToList();
 
-            // Add or update rows
-            for (int i = 0; i < count; i++)
+            for (int x = 0; x < augQuests.Count; x++)
             {
                 HudList.HudListRowAccessor row;
 
-                if (i >= AugmentationsQuestsListCount) {
+                if (x >= AugmentationsQuestsList.RowCount) {
                     row = AugmentationsQuestsList.AddRow();
 
                     ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
                     ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
-
-                    AugmentationsQuestsListCount += 1;
                 } else {
-                    row = AugmentationsQuestsList[i];
+                    row = AugmentationsQuestsList[x];
                 }
 
-                var augQuest = AugQuest.AugQuests[i];
-
                 // Update
+                AugQuest augQuest = augQuests[x];
+                QuestFlag.QuestFlags.TryGetValue(augQuest.Flag, out QuestFlag questFlag);
+
                 AssignImage((HudPictureBox)row[0], augQuest.IsComplete());
                 ((HudStaticText)row[1]).Text = augQuest.Name;
-
-                QuestFlag questFlag;
-                QuestFlag.QuestFlags.TryGetValue(augQuest.Flag, out questFlag);
 
                 if (questFlag == null) {
                     ((HudStaticText)row[2]).Text = "ready";
@@ -729,80 +650,47 @@ namespace OracleOfDereth
             }
         }
 
-        void AugmentationsRefresh_Hit(object sender, EventArgs e)
+        private void AugmentationsRefresh_Hit(object sender, EventArgs e)
         {
             QuestFlag.Refresh();
         }
 
-        void AugmentationsQuestsList_Click(object sender, int row, int col) {
+        private void AugmentationsQuestsList_Click(object sender, int row, int col) {
             string flag = ((HudStaticText)AugmentationsQuestsList[row][4]).Text;
 
-            AugQuest augQuest;
-            augQuest = AugQuest.AugQuests.FirstOrDefault(x => x.Flag == flag);
+            AugQuest augQuest = AugQuest.AugQuests.FirstOrDefault(x => x.Flag == flag);
+            if(augQuest == null) { return; }
 
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(flag, out questFlag);
+            QuestFlag.QuestFlags.TryGetValue(flag, out QuestFlag questFlag);
 
             // Quest URL
-            if (col == 0)
-            {
-                if (augQuest == null || augQuest.Url == "")
-                {
-                    Util.Chat($"Missing quest wiki url", Util.ColorPink);
-                }
-                else
-                {
-                    Util.Think($"{augQuest.Name}: {augQuest.Url}");
+            if (col == 0 && augQuest.Url.Length > 0) {
+                Util.Think($"{augQuest.Name}: {augQuest.Url}");
 
-                    try
-                    {
-                        System.Windows.Forms.Clipboard.SetText(augQuest.Url);
-                        Util.Chat("Quest URL copied to clipboard.", Util.ColorPink);
-                    }
-                    catch (Exception ex)
-                    {
-                        Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
-                    }
+                try {
+                    System.Windows.Forms.Clipboard.SetText(augQuest.Url);
+                    Util.Chat("Quest URL copied to clipboard.", Util.ColorPink);
+                } catch (Exception ex) {
+                    Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
                 }
             }
 
             // Quest Hint
-            if (col == 1)
-            {
-                if (augQuest == null || augQuest.Hint == "")
-                {
-                    Util.Chat($"Missing quest hint", Util.ColorPink);
-                }
-                else
-                {
-                    Util.Think($"{augQuest.Name}: {augQuest.Hint}");
-                }
+            if (col == 1 && augQuest.Hint.Length > 0) {
+                Util.Think($"{augQuest.Name}: {augQuest.Hint}");
             }
 
             // Quest Flag
-            if (col >= 2)
-            {
-                if (questFlag == null)
-                {
+            if (col >= 2) {
+                if (questFlag == null) {
                     Util.Chat($"{flag}: Player has not completed", Util.ColorPink);
-                }
-                else
-                {
+                } else {
                     Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
                 }
             }
         }
 
-        void LuminanceList_Click(object sender, int row, int col) { 
-        }
-
-        public void UpdateCredits()
-        {
-            Util.Chat("Updating credits");
-        }
-
         // Shutdown
-
         public void Dispose()
         {
             Dispose(true);
@@ -816,8 +704,6 @@ namespace OracleOfDereth
                 MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
-                BuffsList.Click -= BuffsList_Click;
-
                 JohnRefresh.Hit -= JohnRefresh_Hit;
                 JohnList.Click -= JohnList_Click;
                 JohnListSortName.Hit -= JohnListSortName_Click;
@@ -827,9 +713,6 @@ namespace OracleOfDereth
                 AugmentationsRefresh.Hit -= AugmentationsRefresh_Hit;
                 AugmentationsQuestsList.Click -= AugmentationsQuestsList_Click;
                 AugmentationsList.Click -= AugmentationsList_Click;
-
-                CantripsList.Click -= CantripsList_Click;
-                LuminanceList.Click -= LuminanceList_Click;
 
                 view?.Dispose();
             }
