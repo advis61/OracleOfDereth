@@ -51,13 +51,13 @@ namespace OracleOfDereth
             var assembly = Assembly.GetExecutingAssembly();
 
             string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("johnquests.csv", StringComparison.OrdinalIgnoreCase));
-            if (resourceName == null) throw new FileNotFoundException("Embedded resource johnquests.csv not found.");
+            if(resourceName == null) throw new FileNotFoundException("Embedded resource johnquests.csv not found.");
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             using (var reader = new StreamReader(stream))
             {
                 string headerLine = reader.ReadLine();
-                if (headerLine == null) throw new InvalidDataException("CSV file is empty.");
+                if(headerLine == null) throw new InvalidDataException("CSV file is empty.");
 
                 // Assume columns: Name,BitMask,LegendaryQuestsFlag,QuestFlag,Url,Hint
                 while (!reader.EndOfStream)
@@ -117,9 +117,7 @@ namespace OracleOfDereth
 
         public bool IsComplete()
         {
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(LegendaryQuestsFlag, out questFlag);
-
+            QuestFlag.QuestFlags.TryGetValue(LegendaryQuestsFlag, out QuestFlag questFlag);
             if (questFlag == null) { return false; }
 
             // Check if the BitMask is set in solves
@@ -128,18 +126,14 @@ namespace OracleOfDereth
 
         public DateTime? CompletedOn()
         {
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
-
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return null; }
 
             return questFlag.CompletedOn;
         }
         public TimeSpan? NextAvailableTime()
         {
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
-
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return null; }
 
             return questFlag.NextAvailableTime();
@@ -147,9 +141,7 @@ namespace OracleOfDereth
 
         public bool Ready()
         {
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
-
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return true; }
 
             return questFlag.Ready();
@@ -157,9 +149,7 @@ namespace OracleOfDereth
 
         public int Solves()
         {
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
-
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return 0; }
 
             return questFlag.Solves;

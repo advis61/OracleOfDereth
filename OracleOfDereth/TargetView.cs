@@ -46,6 +46,9 @@ namespace OracleOfDereth
         public HudPictureBox DestIcon { get; private set; }
         public HudStaticText DestText { get; private set; }
 
+        // Track last target
+        private int LastTargetId = 0;
+
         public TargetView()
         {
             try
@@ -121,8 +124,6 @@ namespace OracleOfDereth
         {
             view.Visible = Target.GetCurrentTarget().IsTarget();
         }
-
-        private int LastTargetId = 0;
 
         public void UpdateSpells()
         {

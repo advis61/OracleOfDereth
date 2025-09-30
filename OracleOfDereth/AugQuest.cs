@@ -81,18 +81,14 @@ namespace OracleOfDereth
 
         public DateTime? CompletedOn()
         {
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
-
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return null; }
 
             return questFlag.CompletedOn;
         }
         public TimeSpan? NextAvailableTime()
         {
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
-
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return null; }
 
             return questFlag.NextAvailableTime();
@@ -100,9 +96,7 @@ namespace OracleOfDereth
 
         public bool Ready()
         {
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
-
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return true; }
 
             return questFlag.Ready();
@@ -110,9 +104,7 @@ namespace OracleOfDereth
 
         public int Solves()
         {
-            QuestFlag questFlag;
-            QuestFlag.QuestFlags.TryGetValue(Flag, out questFlag);
-
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return 0; }
 
             return questFlag.Solves;

@@ -131,12 +131,9 @@ namespace OracleOfDereth
         {
             var difference = NextAvailableTime();
 
-            if (difference.TotalSeconds > 0)
-            {
+            if (difference.TotalSeconds > 0) {
                 return Util.GetFriendlyTimeDifference(difference);
-            }
-            else
-            {
+            } else {
                 return "ready";
             }
         }

@@ -66,8 +66,7 @@ namespace OracleOfDereth
         {
             if(StartedOn == DateTime.MinValue) { return -1; }
 
-            if (TickedOn == DateTime.MinValue)
-            {
+            if (TickedOn == DateTime.MinValue) {
                 return Duration() - (int)(DateTime.Now - StartedOn).TotalSeconds + 2;
             }
 

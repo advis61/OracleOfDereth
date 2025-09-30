@@ -61,8 +61,7 @@ namespace OracleOfDereth
             int value = CharacterFilter.EffectiveSkill[SkillType];
 
             // TODO: Melee / Missile / Magic augs
-            if (SkillType == CharFilterSkillType.LifeMagic)
-            {
+            if (SkillType == CharFilterSkillType.LifeMagic) {
                 value += CharacterFilter.GetCharProperty((int)Augmentations.MasterFiveFoldPath) * 10;
             }
 
@@ -72,8 +71,7 @@ namespace OracleOfDereth
             // Vitae - This isn't quite correct but it's close enough
             int vitae = CharacterFilter.Vitae;
 
-            if (vitae > 0)
-            {
+            if (vitae > 0) {
                 value -= (int)Math.Round(value * (vitae / 100.0f)) - ((int)Math.Ceiling(vitae / 2.0f) + 1);
             }
 
@@ -81,20 +79,17 @@ namespace OracleOfDereth
             value += CharacterFilter.GetCharProperty((int)Augmentations.JackOfAllTrades) * 5;
 
             // Aura of Specialization
-            if (IsSpecialized())
-            {
+            if (IsSpecialized()) {
                 value += CharacterFilter.GetCharProperty((int)Augmentations.AuraSpecialization) * 2;
             }
 
             // Enlightens
-            if (IsTrained() || IsSpecialized())
-            {
+            if (IsTrained() || IsSpecialized()) {
                 value += CharacterFilter.GetCharProperty(390);
             }
 
             // CiS
-            if (IsCloakedInSkill())
-            {
+            if (IsCloakedInSkill()) {
                 value += 20;
             }
 
