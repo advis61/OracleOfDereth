@@ -93,7 +93,7 @@ namespace OracleOfDereth
         {
             { 0, 290 }, // Hud
             { 1, 310 }, // Buffs
-            { 2, 490 }, // Character
+            { 2, 550 }, // Character
             { 3, 490 }, // John
             { 4, 310 }, // About
 
@@ -122,6 +122,7 @@ namespace OracleOfDereth
                 // Make the view resizable
                 view.UserResizeable = true;
                 view.Resize += MainView_Resized;
+                AssignedImages.Clear();
 
                 // Main Notebook
                 MainViewNotebook = (HudTabView)view["MainViewNotebook"];
@@ -380,7 +381,7 @@ namespace OracleOfDereth
                 ((HudStaticText)row[3]).Text = spell.Name;
             }
 
-            while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount); }
+            while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount-1); }
         }
 
         private void UpdateCantripsList()
@@ -401,7 +402,7 @@ namespace OracleOfDereth
                 ((HudStaticText)row[2]).Text = cantrip.Level();
             }
 
-            while (CantripsList.RowCount > cantrips.Count()) { CantripsList.RemoveRow(CantripsList.RowCount); }
+            while (CantripsList.RowCount > cantrips.Count()) { CantripsList.RemoveRow(CantripsList.RowCount-1); }
         }
 
         private void UpdateJohnList()
@@ -475,7 +476,7 @@ namespace OracleOfDereth
             // Quest Flag
             if(col >= 2) {
                 if (questFlag == null) {
-                    Util.Chat($"{flag}: Player has not completed", Util.ColorPink);
+                    Util.Chat($"{flag}: Never completed", Util.ColorPink);
                 } else {
                     Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
                 }
@@ -713,6 +714,8 @@ namespace OracleOfDereth
                 AugmentationsRefresh.Hit -= AugmentationsRefresh_Hit;
                 AugmentationsQuestsList.Click -= AugmentationsQuestsList_Click;
                 AugmentationsList.Click -= AugmentationsList_Click;
+
+                AssignedImages.Clear();
 
                 view?.Dispose();
             }
