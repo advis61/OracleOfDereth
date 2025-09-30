@@ -197,7 +197,7 @@ namespace OracleOfDereth
                 AugmentationsList.Click += AugmentationsList_Click;
                 AugmentationsList.ClearRows();
 
-                // Character :Cantrips
+                // Character: Cantrips
                 CantripsList = (HudList)view["CantripsList"];
                 CantripsList.Click += CantripsList_Click;
                 CantripsList.ClearRows();
@@ -220,12 +220,11 @@ namespace OracleOfDereth
         private int CurrentTab()
         {
             int mainTab = MainViewNotebook.CurrentTab;
-            int characterTab = CharacterViewNotebook.CurrentTab;
 
-            if(mainTab == 2) { // Character Tab
-                return (mainTab * 100) + characterTab;
-            }
+            // Character Tab
+            if(mainTab == 2) { return (mainTab * 100) + CharacterViewNotebook.CurrentTab; }
 
+            // Main Tab
             return mainTab;
         }
 
@@ -267,8 +266,8 @@ namespace OracleOfDereth
         public void UpdateQuestFlags()
         {
             // Update anything that relies on quest flags
-            UpdateJohnList(true);
-            UpdateAugmentationQuestsList(true);
+            UpdateJohnList();
+            UpdateAugmentationQuestsList();
 
             Util.Chat("Quest data updated.", Util.ColorPink);
 
@@ -324,8 +323,8 @@ namespace OracleOfDereth
                 HudList.HudListRowAccessor row;
 
                 if (x >= BuffsListCount) {
-                    BuffsListCount += 1;
                     row = BuffsList.AddRow();
+                    BuffsListCount += 1;
                 } else {
                     row = BuffsList[x];
                 }
@@ -336,7 +335,7 @@ namespace OracleOfDereth
                 double duration = enchantment.TimeRemaining;
                 TimeSpan time = TimeSpan.FromSeconds(duration);
 
-                ((HudPictureBox)row[0]).Image = spell.IconId;
+                AssignImage((HudPictureBox)row[0], spell.IconId);
                 ((HudStaticText)row[1]).Text = enchantment.SpellId.ToString();
                 ((HudStaticText)row[2]).Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
                 ((HudStaticText)row[3]).Text = spell.Name;
@@ -359,18 +358,15 @@ namespace OracleOfDereth
         }
 
         int CantripsListCount = 0;
-        private void UpdateCantripsList(bool force = false)
+        private void UpdateCantripsList()
         {
             List<Cantrip> cantrips = Cantrip.Cantrips.Where(x => x.SkillIsKnown()).ToList();
-            int count = cantrips.Count();
-
-            // When empty
-            if (CantripsListCount != count) { force = true; }
 
             // Add or update rows
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < cantrips.Count(); i++)
             {
                 HudList.HudListRowAccessor row;
+
                 if (i >= CantripsListCount) {
                     row = CantripsList.AddRow();
                     CantripsListCount += 1;
@@ -382,21 +378,28 @@ namespace OracleOfDereth
 
                 if(cantrip.Name == "Blank") { continue; }
 
-                // Only update this if first time
-                if (force)
-                {
-                    ((HudPictureBox)row[0]).Image = cantrip.Icon();
-                    ((HudStaticText)row[1]).Text = cantrip.Name;
-                }
-
-                // Always update
+                AssignImage((HudPictureBox)row[0], cantrip.Icon());
+                ((HudStaticText)row[1]).Text = cantrip.Name;
                 ((HudStaticText)row[2]).Text = cantrip.Level();
             }
         }
 
-        void CantripsList_Click(object sender, int row, int col)
+        private Dictionary<HudPictureBox,int> AssignedImages = new Dictionary<HudPictureBox, int>();
+
+        private void AssignImage(HudPictureBox row, int icon)
         {
+            if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
+
+            row.Image = icon;
+            AssignedImages[row] = icon;
         }
+
+        private void AssignImage(HudPictureBox row, bool completed)
+        {
+            if (completed) { AssignImage(row, IconComplete); } else { AssignImage(row, IconNotComplete); }
+        }
+
+        void CantripsList_Click(object sender, int row, int col) { }
 
         // John Tab
         public void UpdateJohn()
@@ -406,31 +409,22 @@ namespace OracleOfDereth
         }
 
         int JohnListCount = 0;
-        private void UpdateJohnList(bool force = false)
+        private void UpdateJohnList()
         {
-            // For each quest in JohnQuest.Quests, add a row to the JohnList
-            // This function will be called multiple times, so we need to add or update
-
             int completed = 0;
-            int count = JohnQuest.JohnQuests.Count;
 
-            // When empty
-            if (JohnListCount == 0) { force = true; }
-
-            // Add or update rows
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < JohnQuest.JohnQuests.Count; i++) 
             {
                 HudList.HudListRowAccessor row;
-                if (i >= JohnListCount)
-                {
+
+                if (i >= JohnListCount) {
                     row = JohnList.AddRow();
+
                     ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
                     ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
 
                     JohnListCount += 1;
-                }
-                else
-                {
+                } else {
                     row = JohnList[i];
                 }
 
@@ -439,40 +433,26 @@ namespace OracleOfDereth
                 bool complete = johnQuest.IsComplete();
                 if (complete) { completed += 1; }
 
-                // Only update this if the /myquests changes or sort order changes
-                if (force)
-                {
-                    if (complete) {
-                        ((HudPictureBox)row[0]).Image = IconComplete;
-                    } else {
-                        ((HudPictureBox)row[0]).Image = IconNotComplete;
-                    }
-
-                    ((HudStaticText)row[1]).Text = johnQuest.Name;
-                    ((HudStaticText)row[4]).Text = johnQuest.Flag;
-                }
-
-                // Always update this
+                // Update
                 QuestFlag questFlag;
                 QuestFlag.QuestFlags.TryGetValue(johnQuest.Flag, out questFlag);
 
-                if (questFlag == null)
-                {
+                AssignImage((HudPictureBox)row[0], complete);
+                ((HudStaticText)row[1]).Text = johnQuest.Name;
+
+                if (questFlag == null) {
                     ((HudStaticText)row[2]).Text = "ready";
                     ((HudStaticText)row[3]).Text = "";
-                }
-                else
-                {
+                } else {
                     ((HudStaticText)row[2]).Text = questFlag.NextAvailable();
                     ((HudStaticText)row[3]).Text = $"{questFlag.Solves}";
                 }
+
+                ((HudStaticText)row[4]).Text = johnQuest.Flag;
             }
 
             // Update Top Text
-            if (force)
-            {
-                JohnText.Text = $"Legendary John Quests: {completed} completed";
-            }
+            JohnText.Text = $"Legendary John Quests: {completed} completed";
         }
         void JohnList_Click(object sender, int row, int col)
         {
@@ -535,7 +515,7 @@ namespace OracleOfDereth
                 JohnQuest.Sort(JohnQuest.SortType.NameAscending);
             }
 
-            UpdateJohnList(true);
+            UpdateJohnList();
         }
 
         void JohnListSortReady_Click(object sender, EventArgs e)
@@ -546,7 +526,7 @@ namespace OracleOfDereth
                 JohnQuest.Sort(JohnQuest.SortType.ReadyAscending);
             }
 
-            UpdateJohnList(true);
+            UpdateJohnList();
         }
 
         void JohnListSortSolves_Click(object sender, EventArgs e)
@@ -557,7 +537,7 @@ namespace OracleOfDereth
                 JohnQuest.Sort(JohnQuest.SortType.SolvesAscending);
             }
 
-            UpdateJohnList(true);
+            UpdateJohnList();
         }
 
         // Character: Augmentations
@@ -568,29 +548,23 @@ namespace OracleOfDereth
         }
 
         int AugmentationsListCount = 0;
-        int AugmentationsCompleted = 0;
-        private void UpdateAugmentationsList(bool force = false)
+        private void UpdateAugmentationsList()
         {
             List<Augmentation> augmentations = Augmentation.XPAugmentations();
             int count = augmentations.Count();
-            int completed = augmentations.Count(x => x.IsComplete());
-
-            // When empty
-            if (AugmentationsListCount != count) { force = true; }
-            if (AugmentationsCompleted != completed) { force = true; }
 
             // Add or update rows
             for (int i = 0; i < count; i++)
             {
                 HudList.HudListRowAccessor row;
-                if (i >= AugmentationsListCount)
-                {
+
+                if (i >= AugmentationsListCount) {
                     row = AugmentationsList.AddRow();
+
                     ((HudStaticText)row[1]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
+
                     AugmentationsListCount += 1;
-                }
-                else
-                {
+                } else {
                     row = AugmentationsList[i];
                 }
 
@@ -603,28 +577,14 @@ namespace OracleOfDereth
                     continue;
                 }
 
-                bool complete = augmentation.IsComplete();
-
-                // Only update this if first time
-                if (force)
-                {
-                    if (complete) {
-                        ((HudPictureBox)row[0]).Image = IconComplete;
-                    } else {
-                        ((HudPictureBox)row[0]).Image = IconNotComplete;
-                    }
-
-                    ((HudStaticText)row[2]).Text = augmentation.Name;
-                    ((HudStaticText)row[3]).Text = augmentation.Effect;
-                    ((HudStaticText)row[5]).Text = augmentation.Id.ToString();
-                }
-
-                // Always update
+                // Update
+                AssignImage((HudPictureBox)row[0], augmentation.IsComplete());
                 ((HudStaticText)row[1]).Text = augmentation.Text();
+                ((HudStaticText)row[2]).Text = augmentation.Name;
+                ((HudStaticText)row[3]).Text = augmentation.Effect;
                 ((HudStaticText)row[4]).Text = augmentation.CostText();
+                ((HudStaticText)row[5]).Text = augmentation.Id.ToString();
             }
-
-            AugmentationsCompleted = completed;
         }
 
         void AugmentationsList_Click(object sender, int row, int col)
@@ -682,29 +642,24 @@ namespace OracleOfDereth
         }
 
         int LuminanceListCount = 0;
-        int LuminanceCompleted = 0;
-        private void UpdateLuminanceList(bool force = false)
+        private void UpdateLuminanceList()
         {
             List<Augmentation> augmentations = Augmentation.LuminanceAugmentations();
             int count = augmentations.Count();
             int completed = augmentations.Count(x => x.IsComplete());
 
-            // When empty
-            if (LuminanceListCount != count) { force = true; }
-            if (LuminanceCompleted != completed) { force = true; }
-
             // Add or update rows
             for (int i = 0; i < count; i++)
             {
                 HudList.HudListRowAccessor row;
-                if (i >= LuminanceListCount)
-                {
+
+                if (i >= LuminanceListCount) {
                     row = LuminanceList.AddRow();
+
                     ((HudStaticText)row[1]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
+
                     LuminanceListCount += 1;
-                }
-                else
-                {
+                } else {
                     row = LuminanceList[i];
                 }
 
@@ -712,34 +667,19 @@ namespace OracleOfDereth
 
                 if (augmentation.Name == "Blank") { continue; }
 
-                if (augmentation.Id == 0)
-                {
+                if (augmentation.Id == 0) {
                     ((HudStaticText)row[2]).Text = augmentation.Name;
                     continue;
                 }
 
-                bool complete = augmentation.IsComplete();
-
-                // Only update this if first time
-                if (force)
-                {
-                    if (complete) {
-                        ((HudPictureBox)row[0]).Image = IconComplete;
-                    } else {
-                        ((HudPictureBox)row[0]).Image = IconNotComplete;
-                    }
-
-                    ((HudStaticText)row[2]).Text = augmentation.Name;
-                    ((HudStaticText)row[3]).Text = augmentation.Effect;
-                    ((HudStaticText)row[5]).Text = augmentation.Id.ToString();
-                }
-
-                // Always update
+                // Update
+                AssignImage((HudPictureBox)row[0], augmentation.IsComplete());
                 ((HudStaticText)row[1]).Text = augmentation.Text();
+                ((HudStaticText)row[2]).Text = augmentation.Name;
+                ((HudStaticText)row[3]).Text = augmentation.Effect;
                 ((HudStaticText)row[4]).Text = augmentation.CostText();
+                ((HudStaticText)row[5]).Text = augmentation.Id.ToString();
             }
-
-            LuminanceCompleted = completed;
         }
 
         private void UpdateLuminanceText()
@@ -748,64 +688,44 @@ namespace OracleOfDereth
         }
 
         int AugmentationsQuestsListCount = 0;
-        private void UpdateAugmentationQuestsList(bool force = false)
+        private void UpdateAugmentationQuestsList()
         {
-            // For each quest in AugQuest.AugQuests, add a row to the AugQuestList
-            // This function will be called multiple times, so we need to add or update
-
             int count = AugQuest.AugQuests.Count;
-
-            // When empty
-            if (AugmentationsQuestsListCount == 0) { force = true; }
 
             // Add or update rows
             for (int i = 0; i < count; i++)
             {
                 HudList.HudListRowAccessor row;
-                if (i >= AugmentationsQuestsListCount)
-                {
+
+                if (i >= AugmentationsQuestsListCount) {
                     row = AugmentationsQuestsList.AddRow();
+
                     ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
                     ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
 
                     AugmentationsQuestsListCount += 1;
-                }
-                else
-                {
+                } else {
                     row = AugmentationsQuestsList[i];
                 }
 
                 var augQuest = AugQuest.AugQuests[i];
 
-                bool complete = augQuest.IsComplete();
+                // Update
+                AssignImage((HudPictureBox)row[0], augQuest.IsComplete());
+                ((HudStaticText)row[1]).Text = augQuest.Name;
 
-                // Only update this if the /myquests changes or sort order changes
-                if (force)
-                {
-                    if (complete) {
-                        ((HudPictureBox)row[0]).Image = IconComplete;
-                    } else {
-                        ((HudPictureBox)row[0]).Image = IconNotComplete;
-                    }
-
-                    ((HudStaticText)row[1]).Text = augQuest.Name;
-                    ((HudStaticText)row[4]).Text = augQuest.Flag;
-                }
-
-                // Always update this
                 QuestFlag questFlag;
                 QuestFlag.QuestFlags.TryGetValue(augQuest.Flag, out questFlag);
 
-                if (questFlag == null)
-                {
+                if (questFlag == null) {
                     ((HudStaticText)row[2]).Text = "ready";
                     ((HudStaticText)row[3]).Text = "";
-                }
-                else
-                {
+                } else {
                     ((HudStaticText)row[2]).Text = questFlag.NextAvailable();
                     ((HudStaticText)row[3]).Text = $"{questFlag.Solves}";
                 }
+
+                ((HudStaticText)row[4]).Text = augQuest.Flag;
             }
         }
 
