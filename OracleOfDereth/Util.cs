@@ -75,7 +75,20 @@ namespace OracleOfDereth
             CoreManager.Current.Actions.InvokeChatParser(string.Format("/tell {0}, {1}", CoreManager.Current.CharacterFilter.Name, message));
         }
 
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        public static void ClipboardCopy(string message)
+        {
+            try
+            {
+                System.Windows.Forms.Clipboard.SetText(message);
+                Chat("Copied URL to clipboard.", Util.ColorPink);
+            }
+            catch (Exception ex)
+            {
+                Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
+            }
+        }
+
+    public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(unixTimeStamp);

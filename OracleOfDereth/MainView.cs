@@ -479,13 +479,7 @@ namespace OracleOfDereth
             // Quest URL
             if (col == 0 && johnQuest.Url.Length > 0) {
                 Util.Think($"{johnQuest.Name}: {johnQuest.Url}");
-
-                try {
-                    System.Windows.Forms.Clipboard.SetText(johnQuest.Url);
-                    Util.Chat("Quest URL copied to clipboard.", Util.ColorPink);
-                } catch (Exception ex) {
-                    Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
-                }
+                Util.ClipboardCopy(johnQuest.Url);
             }
 
             // Quest Hint
@@ -580,13 +574,7 @@ namespace OracleOfDereth
             // Quest URL
             if (col == 0 && augmentation.Url.Length > 0) {
                 Util.Think($"{augmentation.Name}: {augmentation.Url}");
-
-                try {
-                    System.Windows.Forms.Clipboard.SetText(augmentation.Url);
-                    Util.Chat("URL copied to clipboard.", Util.ColorPink);
-                } catch (Exception ex) {
-                    Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
-                }
+                Util.ClipboardCopy(augmentation.Url);
             }
 
             // Quest Hint
@@ -636,24 +624,13 @@ namespace OracleOfDereth
             if (augmentation == null) { return; }
 
             // Quest URL
-            if (col == 0 && augmentation.Url.Length > 0)
-            {
+            if (col == 0 && augmentation.Url.Length > 0) {
                 Util.Think($"{augmentation.Name}: {augmentation.Url}");
-
-                try
-                {
-                    System.Windows.Forms.Clipboard.SetText(augmentation.Url);
-                    Util.Chat("URL copied to clipboard.", Util.ColorPink);
-                }
-                catch (Exception ex)
-                {
-                    Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
-                }
+                Util.ClipboardCopy(augmentation.Url);
             }
 
             // Quest Hint
-            if (col > 0 && augmentation.Hint.Length > 0)
-            {
+            if (col > 0 && augmentation.Hint.Length > 0) {
                 Util.Think($"{augmentation.Name}: {augmentation.Hint}");
             }
         }
@@ -710,13 +687,7 @@ namespace OracleOfDereth
             // Quest URL
             if (col == 0 && augQuest.Url.Length > 0) {
                 Util.Think($"{augQuest.Name}: {augQuest.Url}");
-
-                try {
-                    System.Windows.Forms.Clipboard.SetText(augQuest.Url);
-                    Util.Chat("Quest URL copied to clipboard.", Util.ColorPink);
-                } catch (Exception ex) {
-                    Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
-                }
+                Util.ClipboardCopy(augQuest.Url);
             }
 
             // Quest Hint
@@ -781,13 +752,7 @@ namespace OracleOfDereth
             // Quest URL
             if (col == 0 && creditQuest.Url.Length > 0) {
                 Util.Think($"{creditQuest.Name}: {creditQuest.Url}");
-
-                try {
-                    System.Windows.Forms.Clipboard.SetText(creditQuest.Url);
-                    Util.Chat("Quest URL copied to clipboard.", Util.ColorPink);
-                } catch (Exception ex) {
-                    Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
-                }
+                Util.ClipboardCopy(creditQuest.Url);
             }
 
             // Quest Hint
