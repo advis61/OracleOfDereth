@@ -60,7 +60,7 @@ Jack of All Trades,XP,326,+5 extra to all skills (not base),4bil,1,,https://acpo
 Blank,XP,,,,,,,
 Spell Duration,XP,,,,,,,
 Archmage's Endurance,XP,238,+20% spell duration,1bil,5,,https://acportalstorm.com/wiki/Archmage%27s_Endurance,Mayoi - Nawamara Ujio 61.8S 82.0E
-Nalicana (Asherons Castle),Luminance,,,,,,,
+Seer: Nalicana,Luminance,-4,,,1,OracleLuminanceRewardsAccess_1110,https://acportalstorm.com/wiki/Nalicana%27s_Test,Eastham - Asheron's Castle - Nalicana 21.1N 69.3E - Frozen Valley - Gurog Ice Cave 84.9N 7.1W
 Aetheric Vision,Luminance,338,Increase chance of aetheria surge,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Aetheric_Vision,
 Glory,Luminance,335,Increase critical damage rating,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Glory,
 Temperance,Luminance,336,Increase critical damage reduction rating,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_Temperance,
@@ -72,18 +72,18 @@ Mana Flow,Luminance,339,Reduce the mana consumption of your items,,5,,https://ac
 Craftsman,Luminance,343,Increase crafting and tinkering skills level,,5,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_the_Craftsman,
 World,Luminance,365,Increase all skills by 1,,10,,https://acportalstorm.com/wiki/Token_of_the_Aura_of_the_World,
 Blank,Luminance,,,,,,,
-Seer: Ka'hiri,Luminance,-4,,,1,LoyalToKahiri,https://acportalstorm.com/wiki/Ka'hiri,Sawato - Blackmire Edge Cottages 27.2S 59.9E - Ka'hiri at 27.1S 48.6E
-Specialization,Luminance,344,Increase all specialized skills by 2,,5,LoyalToKahiri,https://acportalstorm.com/wiki/Dark_Falatacot_Token_of_the_Aura_of_Specialization,Sawato - Blackmire Edge Cottages 27.2S 59.9E - Ka'hiri at 27.1S 48.6E
-Destruction,Luminance,-333,Increase damage rating,,5,LoyalToKahiri,https://acportalstorm.com/wiki/Dark_Falatacot_Token_of_the_Aura_of_Destruction,Sawato - Blackmire Edge Cottages 27.2S 59.9E - Ka'hiri at 27.1S 48.6E
+Seer: Ka'hiri,Luminance,-5,,,1,LoyalToKahiri,https://acportalstorm.com/wiki/Ka'hiri,Sawato - Blackmire Edge Cottages 27.2S 59.9E - Ka'hiri at 27.1S 48.6E
+Specialization,Luminance,344,Increase all specialized skills by 2,,5,LoyalToKahiri,https://acportalstorm.com/wiki/Dark_Falatacot_Token_of_the_Aura_of_Specialization,
+Destruction,Luminance,-333,Increase damage rating,,5,LoyalToKahiri,https://acportalstorm.com/wiki/Dark_Falatacot_Token_of_the_Aura_of_Destruction,
 Blank,Luminance,,,,,,,
-Seer: Liam of Gelid,Luminance,-5,,,1,LoyalToLiamOfGelid,,Crater Village - Inside Mountain Cavern Dungeon 64.1N 13.2E
-Retribution,Luminance,-335,Increase critical damage rating,,5,LoyalToLiamOfGelid,https://acportalstorm.com/wiki/Dericost_Token_of_the_Aura_of_Retribution,Crater Village - Inside Mountain Cavern Dungeon 64.1N 13.2E
-Destruction,Luminance,-333,Increase damage rating,,5,LoyalToLiamOfGelid,https://acportalstorm.com/wiki/Dericost_Token_of_the_Aura_of_Destruction,Crater Village - Inside Mountain Cavern Dungeon 64.1N 13.2E
+Seer: Shade of Lady Adja,Luminance,-6,,,1,LoyalToShadeOfLadyAdja,https://acportalstorm.com/wiki/Shade_of_Lady_Adja,Sanctuary - Shade of Lady Adja
+Specialization,Luminance,344,Increase all specialized skills by 2,,5,LoyalToShadeOfLadyAdja,https://acportalstorm.com/wiki/Light_Falatacot_Token_of_the_Aura_of_Specialization,
+Invulnerability,Luminance,-334,Increase damage reduction rating,,5,LoyalToShadeOfLadyAdja,https://acportalstorm.com/wiki/Light_Falatacot_Token_of_the_Aura_of_Invulnerability,
 Blank,Luminance,,,,,,,
-Seer: Lord Tyragar,Luminance,-6,,,1,LoyalToLordTyragar,,Silyun - 87.4N 70.4W
-Hardening,Luminance,-336,Increase critical damage reduction rating,,5,LoyalToLordTyragar,https://acportalstorm.com/wiki/Haebrean_Token_of_the_Aura_of_Hardening,Silyun - 87.4N 70.4W
-Invulnerability,Luminance,-334,Increase damage reduction rating,,5,LoyalToLordTyragar,https://acportalstorm.com/wiki/Haebrean_Token_of_the_Aura_of_Invulnerability,Silyun - 87.4N 70.4W
+Seer: Liam of Gelid,Luminance,-7,,,1,LoyalToLiamOfGelid,https://acportalstorm.com/wiki/Liam_of_Gelid,Crater Village - Inside Mountain Cavern Dungeon 64.1N 13.2E
+Retribution,Luminance,-335,Increase critical damage rating,,5,LoyalToLiamOfGelid,https://acportalstorm.com/wiki/Dericost_Token_of_the_Aura_of_Retribution,
+Destruction,Luminance,-333,Increase damage rating,,5,LoyalToLiamOfGelid,https://acportalstorm.com/wiki/Dericost_Token_of_the_Aura_of_Destruction,
 Blank,Luminance,,,,,,,
-Seer: Shade of Lady Adja,Luminance,-7,,,1,LoyalToShadeOfLadyAdja,,Sanctuary - Shade of Lady Adja
-Specialization,Luminance,344,Increase all specialized skills by 2,,5,LoyalToShadeOfLadyAdja,https://acportalstorm.com/wiki/Light_Falatacot_Token_of_the_Aura_of_Specialization,Sanctuary - Shade of Lady Adja
-Invulnerability,Luminance,-334,Increase damage reduction rating,,5,LoyalToShadeOfLadyAdja,https://acportalstorm.com/wiki/Light_Falatacot_Token_of_the_Aura_of_Invulnerability,Sanctuary - Shade of Lady Adja
+Seer: Lord Tyragar,Luminance,-8,,,1,LoyalToLordTyragar,https://acportalstorm.com/wiki/Lord_Tyragar,Silyun - 87.4N 70.4W
+Hardening,Luminance,-336,Increase critical damage reduction rating,,5,LoyalToLordTyragar,https://acportalstorm.com/wiki/Haebrean_Token_of_the_Aura_of_Hardening,
+Invulnerability,Luminance,-334,Increase damage reduction rating,,5,LoyalToLordTyragar,https://acportalstorm.com/wiki/Haebrean_Token_of_the_Aura_of_Invulnerability,

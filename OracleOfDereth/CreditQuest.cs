@@ -68,7 +68,7 @@ namespace OracleOfDereth
 
             CreditQuests.AddRange(quests);
 
-            Util.Chat($"Loaded {CreditQuests.Count} Credit Quests from embedded CSV.", 1);
+            // Util.Chat($"Loaded {CreditQuests.Count} Credit Quests from embedded CSV.", 1);
         }
 
         public new string ToString()

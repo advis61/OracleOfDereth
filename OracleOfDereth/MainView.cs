@@ -221,6 +221,7 @@ namespace OracleOfDereth
                 LuminanceText.FontHeight = 10;
 
                 LuminanceList = (HudList)view["LuminanceList"];
+                LuminanceList.Click += LuminanceList_Click;
                 LuminanceList.ClearRows();
 
                 Update();
@@ -298,6 +299,7 @@ namespace OracleOfDereth
             UpdateJohnList();
             UpdateAugmentationQuestsList();
             UpdateCreditsList();
+            UpdateLuminanceList();
 
             // Display feedback 
             Util.Chat("Quest data updated.", Util.ColorPink);
@@ -623,6 +625,39 @@ namespace OracleOfDereth
             }
         }
 
+        void LuminanceList_Click(object sender, int row, int col)
+        {
+            string text = ((HudStaticText)LuminanceList[row][5]).Text;
+            if (text == null || text == "" || text.IndexOf('-') > 0) { return; }
+
+            int id = int.Parse(text);
+
+            Augmentation augmentation = Augmentation.LuminanceAugmentations().FirstOrDefault(x => x.Id == id);
+            if (augmentation == null) { return; }
+
+            // Quest URL
+            if (col == 0 && augmentation.Url.Length > 0)
+            {
+                Util.Think($"{augmentation.Name}: {augmentation.Url}");
+
+                try
+                {
+                    System.Windows.Forms.Clipboard.SetText(augmentation.Url);
+                    Util.Chat("URL copied to clipboard.", Util.ColorPink);
+                }
+                catch (Exception ex)
+                {
+                    Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
+                }
+            }
+
+            // Quest Hint
+            if (col > 0 && augmentation.Hint.Length > 0)
+            {
+                Util.Think($"{augmentation.Name}: {augmentation.Hint}");
+            }
+        }
+
         private void UpdateLuminanceText()
         {
             LuminanceText.Text = $"Luminance: {Augmentation.TotalLuminanceSpent():N0} spent / {Augmentation.TotalLuminance():N0} ({Augmentation.TotalLuminancePercentage()}% complete, {Augmentation.TotalLuminanceRemaining():N0} to max)";
@@ -791,6 +826,7 @@ namespace OracleOfDereth
 
                 AugmentationsQuestsList.Click -= AugmentationsQuestsList_Click;
                 AugmentationsList.Click -= AugmentationsList_Click;
+                LuminanceList.Click -= LuminanceList_Click;
                 CreditsList.Click -= CreditsList_Click;
 
                 // Quest Flag Refresh Buttons

@@ -25,7 +25,7 @@ namespace OracleOfDereth
         public static readonly List<int> InateAttributeIds = new List<int>() { 218, 219, 220, 221, 222, 223 };
         public static readonly List<int> InateResistanceIds = new List<int>() { 240, 241, 242, 243, 244, 245, 246 };
         public static readonly List<int> LuminanceSpecializationIds = new List<int>() { -333, -334, -335, -336 };
-        public static readonly List<int> LuminanceSeerIds = new List<int>() { -4, -5, -6, -7 };
+        public static readonly List<int> LuminanceSeerIds = new List<int>() { -4, -5, -6, -7, -8 };
 
         // Properties
         public string Name = "";
@@ -175,9 +175,9 @@ namespace OracleOfDereth
 
         public int Times()
         {
+
             if (IsInateAttributes()) { return InateAttributesTimes(); }
             if (IsInateResistances()) { return InateResistancesTimes(); }
-            if (Flag.Length > 0 && !IsQuestComplete()) { return 0; }
             if (IsLuminanceSpecialization()) { return LuminanceSpecializationTimes(); }
             if (IsAsheronsBenediction()) { return CoreManager.Current.WorldFilter.GetByNameSubstring("Asheron's Lesser Benediction").ToList().Count(); }
 
@@ -191,6 +191,7 @@ namespace OracleOfDereth
             if(IsInateAttribute()) { return InateAttributesTimes() >= 10; };
             if(IsInateResistance()) { return InateResistancesTimes() >= 2; };
             if(IsLuminanceSeer()) { return IsQuestComplete(); }
+            if(Flag.Length > 0 && !IsQuestComplete()) { return false; }
 
             return Times() >= TimesTotal;
         }
@@ -199,7 +200,9 @@ namespace OracleOfDereth
         {
             if(TimesTotal == 0) { return Times().ToString(); }
             if (IsInateAttribute() || IsInateResistance()) { return Times().ToString(); }
+
             if(IsLuminanceSeer()) { return ""; }
+            if(Flag.Length > 0 && !IsQuestComplete()) { return $"0/{TimesTotal}"; }
 
             return $"{Times()}/{TimesTotal}";
         }
@@ -213,7 +216,7 @@ namespace OracleOfDereth
             return Category == "Luminance";
         }
 
-        // For ones with quest flags
+        // Luminance Seer and Luminance Specialization require quest completion for seer
         public bool IsQuestComplete()
         {
             if(Flag.Length == 0) { return false; }
