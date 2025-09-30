@@ -71,6 +71,10 @@ namespace OracleOfDereth
         // Character: Cantrips
         public HudList CantripsList { get; private set; }
 
+        // Character: Credits
+        public HudList CreditsList { get; private set; }
+        public HudButton CreditsRefresh { get; private set; }
+
         // Resize Tracking
         public bool wasResized = false;
 
@@ -92,15 +96,15 @@ namespace OracleOfDereth
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
         {
             { 0, 290 }, // Hud
-            { 1, 310 }, // Buffs
+            { 1, 545 }, // Buffs
             { 2, 550 }, // Character
-            { 3, 490 }, // John
-            { 4, 310 }, // About
+            { 3, 545 }, // John
+            { 4, 290 }, // About
 
             // Character Tab
             { 2_00, 550 }, // Augmentations
             { 2_01, 550 }, // Cantrips
-            { 2_02, 550 }, // Credits
+            { 2_02, 165 }, // Credits
             { 2_03, 550 }, // Luminance
         };
 
@@ -173,7 +177,7 @@ namespace OracleOfDereth
                 JohnText.FontHeight = 10;
 
                 JohnRefresh = (HudButton)view["JohnRefresh"];
-                JohnRefresh.Hit += JohnRefresh_Hit;
+                JohnRefresh.Hit += QuestFlagsRefresh_Hit;
 
                 JohnList = (HudList)view["JohnList"];
                 JohnList.Click += JohnList_Click;
@@ -190,7 +194,7 @@ namespace OracleOfDereth
 
                 // Character: Augmentations
                 AugmentationsRefresh = (HudButton)view["AugmentationsRefresh"];
-                AugmentationsRefresh.Hit += AugmentationsRefresh_Hit;
+                AugmentationsRefresh.Hit += QuestFlagsRefresh_Hit;
 
                 AugmentationsQuestsList = (HudList)view["AugmentationsQuestsList"];
                 AugmentationsQuestsList.Click += AugmentationsQuestsList_Click;
@@ -205,6 +209,12 @@ namespace OracleOfDereth
                 CantripsList.ClearRows();
 
                 // Character: Credits
+                CreditsRefresh = (HudButton)view["CreditsRefresh"];
+                CreditsRefresh.Hit += QuestFlagsRefresh_Hit;
+
+                CreditsList = (HudList)view["CreditsList"];
+                CreditsList.Click += CreditsList_Click;
+                CreditsList.ClearRows();
 
                 // Character: Luminance
                 LuminanceText = (HudStaticText)view["LuminanceText"];
@@ -245,6 +255,11 @@ namespace OracleOfDereth
             view.Width = MainViewWidths[CurrentTab()];
         }
 
+        private void QuestFlagsRefresh_Hit(object sender, EventArgs e)
+        {
+            QuestFlag.Refresh();
+        }
+
         private void AssignImage(HudPictureBox row, int icon)
         {
             if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
@@ -261,9 +276,9 @@ namespace OracleOfDereth
         // The Tick
         public void Update()
         {
-            int currentTab = CurrentTab();
-
             if(QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
+
+            int currentTab = CurrentTab();
 
             if (currentTab == 0) { UpdateHud(); }
             if (currentTab == 1) { UpdateBuffs(); }
@@ -282,6 +297,7 @@ namespace OracleOfDereth
             // Update anything that relies on quest flags
             UpdateJohnList();
             UpdateAugmentationQuestsList();
+            UpdateCreditsList();
 
             // Display feedback 
             Util.Chat("Quest data updated.", Util.ColorPink);
@@ -339,6 +355,7 @@ namespace OracleOfDereth
         public void UpdateCredits()
         {
             if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            UpdateCreditsList();
         }
 
         // Character: Luminance
@@ -447,6 +464,7 @@ namespace OracleOfDereth
             // Update Text
             JohnText.Text = $"Legendary John Quests: {completed} completed";
         }
+
         void JohnList_Click(object sender, int row, int col)
         {
             string flag = ((HudStaticText)JohnList[row][4]).Text;
@@ -481,11 +499,6 @@ namespace OracleOfDereth
                     Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
                 }
             }
-        }
-
-        void JohnRefresh_Hit(object sender, EventArgs e)
-        {
-            QuestFlag.Refresh();
         }
 
         void JohnListSortName_Click(object sender, EventArgs e)
@@ -651,11 +664,6 @@ namespace OracleOfDereth
             }
         }
 
-        private void AugmentationsRefresh_Hit(object sender, EventArgs e)
-        {
-            QuestFlag.Refresh();
-        }
-
         private void AugmentationsQuestsList_Click(object sender, int row, int col) {
             string flag = ((HudStaticText)AugmentationsQuestsList[row][4]).Text;
 
@@ -684,7 +692,78 @@ namespace OracleOfDereth
             // Quest Flag
             if (col >= 2) {
                 if (questFlag == null) {
-                    Util.Chat($"{flag}: Player has not completed", Util.ColorPink);
+                    Util.Chat($"{flag}: Never completed", Util.ColorPink);
+                } else {
+                    Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
+                }
+            }
+        }
+
+        // Credits
+        private void UpdateCreditsList()
+        {
+            List<CreditQuest> creditQuests = CreditQuest.CreditQuests.ToList();
+
+            for (int x = 0; x < creditQuests.Count; x++)
+            {
+                HudList.HudListRowAccessor row;
+
+                if (x >= CreditsList.RowCount) {
+                    row = CreditsList.AddRow();
+
+                    ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                    ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                } else {
+                    row = CreditsList[x];
+                }
+
+                // Update
+                CreditQuest creditQuest = creditQuests[x];
+                QuestFlag.QuestFlags.TryGetValue(creditQuest.Flag, out QuestFlag questFlag);
+
+                AssignImage((HudPictureBox)row[0], creditQuest.IsComplete());
+                ((HudStaticText)row[1]).Text = creditQuest.Name;
+
+                if(creditQuest.IsComplete()) {
+                    ((HudStaticText)row[2]).Text = "completed";
+                } else {
+                    ((HudStaticText)row[2]).Text = "ready";
+                }
+
+                ((HudStaticText)row[3]).Text = creditQuest.Flag;
+            }
+        }
+
+        private void CreditsList_Click(object sender, int row, int col)
+        {
+            string flag = ((HudStaticText)CreditsList[row][3]).Text;
+
+            CreditQuest creditQuest = CreditQuest.CreditQuests.FirstOrDefault(x => x.Flag == flag);
+            if (creditQuest == null) { return; }
+
+            QuestFlag.QuestFlags.TryGetValue(flag, out QuestFlag questFlag);
+
+            // Quest URL
+            if (col == 0 && creditQuest.Url.Length > 0) {
+                Util.Think($"{creditQuest.Name}: {creditQuest.Url}");
+
+                try {
+                    System.Windows.Forms.Clipboard.SetText(creditQuest.Url);
+                    Util.Chat("Quest URL copied to clipboard.", Util.ColorPink);
+                } catch (Exception ex) {
+                    Util.Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
+                }
+            }
+
+            // Quest Hint
+            if (col == 1 && creditQuest.Hint.Length > 0) {
+                Util.Think($"{creditQuest.Name}: {creditQuest.Hint}");
+            }
+
+            // Quest Flag
+            if (col >= 2) {
+                if (questFlag == null) {
+                    Util.Chat($"{flag}: Never completed", Util.ColorPink);
                 } else {
                     Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
                 }
@@ -705,18 +784,22 @@ namespace OracleOfDereth
                 MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
-                JohnRefresh.Hit -= JohnRefresh_Hit;
                 JohnList.Click -= JohnList_Click;
                 JohnListSortName.Hit -= JohnListSortName_Click;
                 JohnListSortReady.Hit -= JohnListSortReady_Click;
                 JohnListSortSolves.Hit -= JohnListSortSolves_Click;
 
-                AugmentationsRefresh.Hit -= AugmentationsRefresh_Hit;
                 AugmentationsQuestsList.Click -= AugmentationsQuestsList_Click;
                 AugmentationsList.Click -= AugmentationsList_Click;
+                CreditsList.Click -= CreditsList_Click;
 
+                // Quest Flag Refresh Buttons
+                JohnRefresh.Hit -= QuestFlagsRefresh_Hit;
+                AugmentationsRefresh.Hit -= QuestFlagsRefresh_Hit;
+                CreditsRefresh.Hit -= QuestFlagsRefresh_Hit;
+
+                // Other cleanup
                 AssignedImages.Clear();
-
                 view?.Dispose();
             }
         }

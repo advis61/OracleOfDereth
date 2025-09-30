@@ -53,7 +53,7 @@
 			<page label="Augmentations">
 				<control progid="DecalControls.FixedLayout" clipped="">
 				  <control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="100" height="17" text="Quest Name"/>
-				  <control progid="DecalControls.StaticText" name="Ready" left="540" top="5" width="55" height="17" text="Ready In"/>
+				  <control progid="DecalControls.StaticText" name="Ready" left="537" top="5" width="55" height="17" text="Ready In"/>
 				  <control progid="DecalControls.StaticText" name="Solves" left="600" top="5" width="50" height="17" text="Solves"/>
 				  <control progid="DecalControls.List" name="AugmentationsQuestsList" left="0" top="23" width="650" height="110">
 					  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
@@ -62,7 +62,7 @@
 					  <column progid="DecalControls.TextColumn" name="Solves" fixedwidth="30" />
 					  <column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="100" />
 				  </control>
-				  <control progid="DecalControls.StaticText" name="Name" left="1" top="147" width="0" height="17" text="Augmentations"/>
+				  <control progid="DecalControls.StaticText" name="Name" left="1" top="140" width="200" height="17" text="XP Augmentations"/>
 				  <control progid="DecalControls.PushButton" name="AugmentationsRefresh" left="550" top="137" width="100" height="24" text="Refresh"/>
 					<control progid="DecalControls.List" name="AugmentationsList" left="0" top="165" width="650" height="2000">
 						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
@@ -87,14 +87,15 @@
 
 			<page label="Credits">
 				<control progid="DecalControls.FixedLayout" clipped="">
-					<control progid="DecalControls.List" name="SkillQuestsList" left="0" top="30" width="650" height="2000">
-						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-						<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
-						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />
-						<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="320" />
-						<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="50" />
-						<column progid="DecalControls.TextColumn" name="Id" fixedwidth="0" />
+				  <control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="200" height="17" text="Skill Credit Quest Name"/>
+				  <control progid="DecalControls.StaticText" name="Progress" left="280" top="5" width="55" height="17" text="Progress"/>
+					<control progid="DecalControls.List" name="CreditsList" left="0" top="23" width="640" height="80">
+						<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
+						<column progid="DecalControls.TextColumn" name="Status" fixedwidth="70" />
+						<column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="1" />
 					</control>
+					<control progid="DecalControls.PushButton" name="CreditsRefresh" left="248" top="106" width="100" height="24" text="Refresh"/>
 				</control>
 			</page>
 
@@ -133,7 +134,7 @@
 		  </control>
 	  </page>
 
-	<page label="About">
+	<page label="?">
 		  <control progid="DecalControls.FixedLayout" clipped="">
 			  <control progid="DecalControls.StaticText" name="About" left="5" top="5" width="190" height="300" text="Oracle of Dereth made by Advis Eveldan of Levistras Please Enjoy!"/>
 		  </control>

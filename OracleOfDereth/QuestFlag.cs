@@ -21,6 +21,7 @@ namespace OracleOfDereth
             { "legendaryquestsa", "legendaryquestsb", "legendaryquestsc" }
             .Concat(JohnQuest.JohnQuests.Select(q => q.Flag))
             .Concat(AugQuest.AugQuests.Select(q => q.Flag))
+            .Concat(CreditQuest.CreditQuests.Select(q => q.Flag))
             .ToList();
 
         // Collection of Quest Flags data objects

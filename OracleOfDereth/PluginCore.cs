@@ -76,13 +76,10 @@ namespace OracleOfDereth
                 CoreManager.Current.CharacterFilter.SpellCast += CharacterFilter_SpellCast;
 
                 // Initialize
-                if (CoreManager.Current.CharacterFilter.LoginStatus >= 1)
-                {
+                if (CoreManager.Current.CharacterFilter.LoginStatus >= 1) {
                     Util.Chat($"Hot Reloaded", Util.ColorOrange);
                     Init();
-                }
-                else
-                {
+                } else {
                     CoreManager.Current.CharacterFilter.Login += CharacterFilter_Login;
                 }
             }
@@ -118,6 +115,7 @@ namespace OracleOfDereth
             Augmentation.Init();
             AugQuest.Init();
             Cantrip.Init();
+            CreditQuest.Init();
             JohnQuest.Init();
             QuestFlag.Init();
             Target.Init();
