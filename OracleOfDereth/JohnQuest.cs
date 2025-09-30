@@ -16,9 +16,6 @@ namespace OracleOfDereth
 {
     public class JohnQuest
     {
-        public static readonly int IconComplete = 0x60011F9;   // Green Circle
-        public static readonly int IconNotComplete = 0x60011F8;    // Red Circle
-
         // Collection of JohnQuests loaded from quests.csv
         public static List<JohnQuest> JohnQuests = new List<JohnQuest>();
         public static SortType CurrentSortType = SortType.NameAscending;

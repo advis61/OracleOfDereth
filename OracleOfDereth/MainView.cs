@@ -25,6 +25,9 @@ namespace OracleOfDereth
         readonly VirindiViewService.ControlGroup controls;
         readonly VirindiViewService.HudView view;
 
+        readonly int IconComplete = 0x60011F9;   // Green Circle
+        readonly int IconNotComplete = 0x60011F8;    // Red Circle
+
         public HudTabView MainViewNotebook { get; private set; }
         public HudTabView CharacterViewNotebook { get; private set; }
 
@@ -439,13 +442,10 @@ namespace OracleOfDereth
                 // Only update this if the /myquests changes or sort order changes
                 if (force)
                 {
-                    if (complete)
-                    {
-                        ((HudPictureBox)row[0]).Image = JohnQuest.IconComplete;
-                    }
-                    else
-                    {
-                        ((HudPictureBox)row[0]).Image = JohnQuest.IconNotComplete;
+                    if (complete) {
+                        ((HudPictureBox)row[0]).Image = IconComplete;
+                    } else {
+                        ((HudPictureBox)row[0]).Image = IconNotComplete;
                     }
 
                     ((HudStaticText)row[1]).Text = johnQuest.Name;
@@ -608,13 +608,10 @@ namespace OracleOfDereth
                 // Only update this if first time
                 if (force)
                 {
-                    if (complete)
-                    {
-                        ((HudPictureBox)row[0]).Image = Augmentation.IconComplete;
-                    }
-                    else
-                    {
-                        ((HudPictureBox)row[0]).Image = Augmentation.IconNotComplete;
+                    if (complete) {
+                        ((HudPictureBox)row[0]).Image = IconComplete;
+                    } else {
+                        ((HudPictureBox)row[0]).Image = IconNotComplete;
                     }
 
                     ((HudStaticText)row[2]).Text = augmentation.Name;
@@ -726,13 +723,10 @@ namespace OracleOfDereth
                 // Only update this if first time
                 if (force)
                 {
-                    if (complete)
-                    {
-                        ((HudPictureBox)row[0]).Image = Augmentation.IconComplete;
-                    }
-                    else
-                    {
-                        ((HudPictureBox)row[0]).Image = Augmentation.IconNotComplete;
+                    if (complete) {
+                        ((HudPictureBox)row[0]).Image = IconComplete;
+                    } else {
+                        ((HudPictureBox)row[0]).Image = IconNotComplete;
                     }
 
                     ((HudStaticText)row[2]).Text = augmentation.Name;
@@ -788,13 +782,10 @@ namespace OracleOfDereth
                 // Only update this if the /myquests changes or sort order changes
                 if (force)
                 {
-                    if (complete)
-                    {
-                        ((HudPictureBox)row[0]).Image = AugQuest.IconComplete;
-                    }
-                    else
-                    {
-                        ((HudPictureBox)row[0]).Image = AugQuest.IconNotComplete;
+                    if (complete) {
+                        ((HudPictureBox)row[0]).Image = IconComplete;
+                    } else {
+                        ((HudPictureBox)row[0]).Image = IconNotComplete;
                     }
 
                     ((HudStaticText)row[1]).Text = augQuest.Name;

@@ -18,14 +18,13 @@ namespace OracleOfDereth
 {
     public class Augmentation
     {
-        public static readonly int IconComplete = 0x60011F9;   // Green Circle
-        public static readonly int IconNotComplete = 0x60011F8;    // Red Circle
+        // Collection of Augmentations loaded from augmentations.csv
+        public static List<Augmentation> Augmentations = new List<Augmentation>();
+
+        // Tracking special augmentation IDs
         public static readonly List<int> InateAttributeIds = new List<int>() { 218, 219, 220, 221, 222, 223 };
         public static readonly List<int> InateResistanceIds = new List<int>() { 240, 241, 242, 243, 244, 245, 246 };
         public static readonly List<int> LuminanceSpecializationIds = new List<int>() { -333, -334, -335, -336 };
-
-        // Collection of Augmentations loaded from augmentations.csv
-        public static List<Augmentation> Augmentations = new List<Augmentation>();
 
         // Properties
         public string Name = "";
