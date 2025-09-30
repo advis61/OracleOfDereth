@@ -25,6 +25,7 @@ namespace OracleOfDereth
         readonly VirindiViewService.ControlGroup controls;
         readonly VirindiViewService.HudView view;
         public HudTabView MainViewNotebook { get; private set; }
+        public HudTabView CharacterViewNotebook { get; private set; }
 
         // Status HUD
         public HudStaticText SummoningText { get; private set; }
@@ -69,21 +70,31 @@ namespace OracleOfDereth
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
         {
             { 0, 190 }, // Hud
-            { 1, 650 }, // Augs
-            { 2, 460 }, // Buffs
-            { 3, 350 }, // Cantrips
-            { 4, 430 }, // John
-            { 5, 350 }  // About
+            { 1, 460 }, // Buffs
+            { 2, 350 }, // Character
+            { 3, 430 }, // John
+            { 4, 350 }, // About
+
+            // Character Tab
+            { 2_00, 650 }, // Augmentations
+            { 2_01, 350 }, // Cantrips
+            { 2_02, 350 }, // Credits
+            { 2_03, 650 }, // Luminance
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
         {
             { 0, 290 }, // Hud
-            { 1, 550 }, // Augs
-            { 2, 310 }, // Buffs
-            { 3, 490 }, // Cantrips
-            { 4, 490 }, // John (810 for full list or 340)
-            { 5, 310 }  // About
+            { 1, 310 }, // Buffs
+            { 2, 490 }, // Character
+            { 3, 490 }, // John
+            { 4, 310 }, // About
+
+            // Character Tab
+            { 2_00, 550 }, // Augmentations
+            { 2_01, 550 }, // Cantrips
+            { 2_02, 550 }, // Credits
+            { 2_03, 550 }, // Luminance
         };
 
         public MainView()
@@ -102,9 +113,13 @@ namespace OracleOfDereth
                 view.UserResizeable = true;
                 view.Resize += MainView_Resized;
 
-                // The Notebook
+                // Main Notebook
                 MainViewNotebook = (HudTabView)view["MainViewNotebook"];
-                MainViewNotebook.OpenTabChange += MainViewNotebook_OpenTabChange;
+                MainViewNotebook.OpenTabChange += Notebook_OpenTabChange;
+
+                // Character Notebook
+                CharacterViewNotebook = (HudTabView)view["CharacterViewNotebook"];
+                CharacterViewNotebook.OpenTabChange += Notebook_OpenTabChange;
 
                 // HUD Tab
                 BuffsText = (HudStaticText)view["BuffsText"];
@@ -143,11 +158,6 @@ namespace OracleOfDereth
                 BuffsList.Click += BuffsList_Click;
                 BuffsList.ClearRows();
 
-                // Cantrips Tab
-                CantripsList = (HudList)view["CantripsList"];
-                CantripsList.Click += CantripsList_Click;
-                CantripsList.ClearRows();
-
                 // John Tab
                 JohnText = (HudStaticText)view["JohnText"];
                 JohnText.FontHeight = 10;
@@ -168,10 +178,8 @@ namespace OracleOfDereth
                 JohnListSortSolves = (HudStaticText)view["JohnListSortSolves"];
                 JohnListSortSolves.Hit += JohnListSortSolves_Click;
 
-                // Augs Tab
-                AugLuminanceText = (HudStaticText)view["AugLuminanceText"];
-                AugLuminanceText.FontHeight = 10;
-
+                // Character Tab
+                // Augmentations
                 AugQuestsRefresh = (HudButton)view["AugQuestsRefresh"];
                 AugQuestsRefresh.Hit += AugQuestsRefresh_Hit;
 
@@ -183,49 +191,71 @@ namespace OracleOfDereth
                 AugXPList.Click += AugXPList_Click;
                 AugXPList.ClearRows();
 
+                // Cantrips
+                CantripsList = (HudList)view["CantripsList"];
+                CantripsList.Click += CantripsList_Click;
+                CantripsList.ClearRows();
+
+                // Credits
+
+                // Luminance
+                AugLuminanceText = (HudStaticText)view["AugLuminanceText"];
+                AugLuminanceText.FontHeight = 10;
+
                 AugLuminanceList = (HudList)view["AugLuminanceList"];
                 AugLuminanceList.Click += AugLuminanceList_Click;
                 AugLuminanceList.ClearRows();
-
 
                 Update();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        private void MainViewNotebook_OpenTabChange(object sender, EventArgs e)
+        private int CurrentTab()
         {
-            int currentTab = MainViewNotebook.CurrentTab;
+            int mainTab = MainViewNotebook.CurrentTab;
+            int characterTab = CharacterViewNotebook.CurrentTab;
 
-            view.Height = MainViewHeights[currentTab];
-            view.Width = MainViewWidths[currentTab];
+            if(mainTab == 2) { // Character Tab
+                return (mainTab * 100) + characterTab;
+            }
 
+            return mainTab;
+        }
+
+        private void Notebook_OpenTabChange(object sender, EventArgs e)
+        {
+            view.Height = MainViewHeights[CurrentTab()];
+            view.Width = MainViewWidths[CurrentTab()];
             Update();
         }
 
         private void MainView_Resized(object sender, EventArgs e)
         {
-            int currentTab = MainViewNotebook.CurrentTab;
-
             // Save the new view height
-            MainViewHeights[currentTab] = view.Height;
+            MainViewHeights[CurrentTab()] = view.Height;
 
             // Prevent width updates
-            view.Width = MainViewWidths[currentTab];
+            view.Width = MainViewWidths[CurrentTab()];
         }
 
         // The Tick
-
         public void Update()
         {
-            int currentTab = MainViewNotebook.CurrentTab;
+            int currentTab = CurrentTab();
 
             if(QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
+
             if (currentTab == 0) { UpdateHud(); }
-            if (currentTab == 1) { UpdateAugs(); }
-            if (currentTab == 2) { UpdateBuffs(); }
-            if (currentTab == 3) { UpdateCantrips(); }
-            if (currentTab == 4) { UpdateJohn(); }
+            if (currentTab == 1) { UpdateBuffs(); }
+            if (currentTab == 3) { UpdateJohn(); }
+
+            if(currentTab == 200) { UpdateAugs(); }
+            if(currentTab == 201) { UpdateCantrips(); }
+            if(currentTab == 202) { UpdateCredits(); }
+            if(currentTab == 203) { UpdateLuminance(); }
+
+            Util.Chat("Current Tab is " + CurrentTab(), Util.ColorPink);
         }
 
         // Quest Flag Changes
@@ -233,6 +263,7 @@ namespace OracleOfDereth
         {
             // Update anything that relies on quest flags
             UpdateJohnList(true);
+            //UpdateAugQuestsList(true);
 
             Util.Chat("Quest data updated.", Util.ColorPink);
 
@@ -312,7 +343,6 @@ namespace OracleOfDereth
                 BuffsList.RemoveRow(BuffsListCount);
             }
         }
-
         void BuffsList_Click(object sender, int row, int col)
         {
         }
@@ -536,8 +566,6 @@ namespace OracleOfDereth
             if(QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
             UpdateAugQuestsList();
             UpdateAugXPList();
-            UpdateAugLuminanceList();
-            UpdateAugLuminanceText();
         }
 
         int AugXPListCount = 0;
@@ -649,7 +677,12 @@ namespace OracleOfDereth
                 }
             }
         }
-
+        public void UpdateLuminance()
+        {
+            Util.Chat("Updating luminance");
+            UpdateAugLuminanceList();
+            UpdateAugLuminanceText();
+        }
 
         int AugLuminanceListCount = 0;
         int AugLuminanceListCompleted = 0;
@@ -852,6 +885,11 @@ namespace OracleOfDereth
         void AugLuminanceList_Click(object sender, int row, int col) { 
         }
 
+        public void UpdateCredits()
+        {
+            Util.Chat("Updating credits");
+        }
+
         // Shutdown
 
         public void Dispose()
@@ -864,7 +902,8 @@ namespace OracleOfDereth
         {
             if (disposing)
             {
-                MainViewNotebook.OpenTabChange -= MainViewNotebook_OpenTabChange;
+                MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
                 BuffsList.Click -= BuffsList_Click;
 

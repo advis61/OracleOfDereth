@@ -36,9 +36,21 @@
 	  </control>
     </page>
 
-	<page label="Augs">
-		<control progid="DecalControls.Notebook" name="AugsNotebook">
-			<page label="XP">
+	  <page label="Buffs">
+		  <control progid="DecalControls.FixedLayout" clipped="">
+			  <control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="2000">
+				  <column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
+				  <column progid="DecalControls.TextColumn" name="Id" fixedwidth="32" />
+				  <column progid="DecalControls.TextColumn" name="Time" fixedwidth="50" />
+				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="320" />
+			  </control>
+		  </control>
+	  </page>
+
+
+	<page label="Character">
+		<control progid="DecalControls.Notebook" name="CharacterViewNotebook">
+			<page label="Augmentations">
 				<control progid="DecalControls.FixedLayout" clipped="">
 				  <control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="100" height="17" text="Quest Name"/>
 				  <control progid="DecalControls.StaticText" name="Ready" left="540" top="5" width="55" height="17" text="Ready In"/>
@@ -62,6 +74,30 @@
 					</control>
 				</control>
 			</page>
+
+			<page label="Cantrips">
+				<control progid="DecalControls.FixedLayout" clipped="">
+					<control progid="DecalControls.List" name="CantripsList" left="0" top="0" width="640" height="2000">
+						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
+						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="200" />
+						<column progid="DecalControls.TextColumn" name="Level" fixedwidth="100" />
+					</control>
+				</control>
+			</page>
+
+			<page label="Credits">
+				<control progid="DecalControls.FixedLayout" clipped="">
+					<control progid="DecalControls.List" name="SkillQuestsList" left="0" top="30" width="650" height="2000">
+						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
+						<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
+						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />
+						<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="320" />
+						<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="50" />
+						<column progid="DecalControls.TextColumn" name="Id" fixedwidth="0" />
+					</control>
+				</control>
+			</page>
+
 			<page label="Luminance">
 				<control progid="DecalControls.FixedLayout" clipped="">
 					<control progid="DecalControls.StaticText" name="AugLuminanceText" left="5" top="5" width="640" height="20" text="Luminance: 0 spent / 0 total (0% complete, 0 to max)"/>
@@ -77,27 +113,6 @@
 			</page>
 		</control>
 	</page>
-
-	<page label="Buffs">
-		<control progid="DecalControls.FixedLayout" clipped="">
-			  <control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="2000">
-				  <column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-				  <column progid="DecalControls.TextColumn" name="Id" fixedwidth="32" />
-				  <column progid="DecalControls.TextColumn" name="Time" fixedwidth="50" />
-				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="320" />
-			  </control>
-		  </control>
-	  </page>
-
-	  <page label="Cantrips">
-		  <control progid="DecalControls.FixedLayout" clipped="">
-			  <control progid="DecalControls.List" name="CantripsList" left="0" top="0" width="640" height="2000">
-				  <column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="200" />
-				  <column progid="DecalControls.TextColumn" name="Level" fixedwidth="100" />
-			  </control>
-		  </control>
-	  </page>
 
 	  <page label="John">
 		  <control progid="DecalControls.FixedLayout" clipped="">
@@ -117,7 +132,7 @@
 			  </control>
 		  </control>
 	  </page>
-	  
+
 	<page label="About">
 		  <control progid="DecalControls.FixedLayout" clipped="">
 			  <control progid="DecalControls.StaticText" name="About" left="5" top="5" width="190" height="300" text="Oracle of Dereth made by Advis Eveldan of Levistras Please Enjoy!"/>
