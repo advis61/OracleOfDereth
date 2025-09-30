@@ -24,6 +24,7 @@
     <None Remove="mainView.xml" />
     <None Remove="Resources\augquests.csv" />
     <None Remove="Resources\cantrips.csv" />
+    <None Remove="Resources\skillquests.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PluginCore.cs" />
@@ -39,6 +40,7 @@
     <EmbeddedResource Include="Resources\augquests.csv" />
     <EmbeddedResource Include="Resources\augmentations.csv" />
     <EmbeddedResource Include="Resources\cantrips.csv" />
+    <EmbeddedResource Include="Resources\skillquests.csv" />
     <EmbeddedResource Include="targetView.xml" />
     <EmbeddedResource Include="Resources\johnquests.csv" />
   </ItemGroup>
