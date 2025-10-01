@@ -16,7 +16,7 @@ namespace OracleOfDereth
 {
     public class JohnQuest
     {
-        // Collection of JohnQuests loaded from quests.csv
+        // Collection of JohnQuests loaded from johnquests.csv
         public static List<JohnQuest> JohnQuests = new List<JohnQuest>();
         public static SortType CurrentSortType = SortType.NameAscending;
 

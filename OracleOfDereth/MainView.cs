@@ -67,6 +67,7 @@ namespace OracleOfDereth
         // Character: Luminance
         public HudStaticText LuminanceText { get; private set; }
         public HudList LuminanceList { get; private set; }
+        public HudButton LuminanceRefresh { get; private set; }
 
         // Character: Cantrips
         public HudList CantripsList { get; private set; }
@@ -217,6 +218,9 @@ namespace OracleOfDereth
                 CreditsList.ClearRows();
 
                 // Character: Luminance
+                LuminanceRefresh = (HudButton)view["LuminanceRefresh"];
+                LuminanceRefresh.Hit += QuestFlagsRefresh_Hit;
+
                 LuminanceText = (HudStaticText)view["LuminanceText"];
                 LuminanceText.FontHeight = 10;
 
@@ -608,6 +612,7 @@ namespace OracleOfDereth
                 ((HudStaticText)row[1]).Text = augmentation.Text();
                 ((HudStaticText)row[2]).Text = augmentation.Name;
                 ((HudStaticText)row[3]).Text = augmentation.Effect;
+                //((HudStaticText)row[3]).Text = $"{augmentation.LuminanceSpent():N0}";
                 ((HudStaticText)row[4]).Text = augmentation.CostText();
                 ((HudStaticText)row[5]).Text = augmentation.Id.ToString();
             }
@@ -637,7 +642,7 @@ namespace OracleOfDereth
 
         private void UpdateLuminanceText()
         {
-            LuminanceText.Text = $"Luminance: {Augmentation.TotalLuminanceSpent():N0} spent / {Augmentation.TotalLuminance():N0} ({Augmentation.TotalLuminancePercentage()}% complete, {Augmentation.TotalLuminanceRemaining():N0} to max)";
+            LuminanceText.Text = $"{Augmentation.TotalLuminanceSpent():N0} spent / {Augmentation.TotalLuminance():N0} ({Augmentation.TotalLuminancePercentage()}% complete, {Augmentation.TotalLuminanceRemaining():N0} to max)";
         }
 
         private void UpdateAugmentationQuestsList()
@@ -797,6 +802,7 @@ namespace OracleOfDereth
                 // Quest Flag Refresh Buttons
                 JohnRefresh.Hit -= QuestFlagsRefresh_Hit;
                 AugmentationsRefresh.Hit -= QuestFlagsRefresh_Hit;
+                LuminanceRefresh.Hit -= QuestFlagsRefresh_Hit;
                 CreditsRefresh.Hit -= QuestFlagsRefresh_Hit;
 
                 // Other cleanup

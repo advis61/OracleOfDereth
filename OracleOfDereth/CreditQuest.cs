@@ -16,7 +16,7 @@ namespace OracleOfDereth
 {
     public class CreditQuest
     {
-        // Collection of CreditQuests loaded from quests.csv
+        // Collection of CreditQuests loaded from creditquests.csv
         public static List<CreditQuest> CreditQuests = new List<CreditQuest>();
 
         // Properties

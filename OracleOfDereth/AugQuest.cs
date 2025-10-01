@@ -16,7 +16,7 @@ namespace OracleOfDereth
 {
     public class AugQuest
     {
-        // Collection of AugQuests loaded from quests.csv
+        // Collection of AugQuests loaded from augquests.csv
         public static List<AugQuest> AugQuests = new List<AugQuest>();
 
         // Properties

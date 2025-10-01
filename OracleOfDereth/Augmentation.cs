@@ -92,8 +92,10 @@ namespace OracleOfDereth
 
         public static int TotalLuminanceSpent()
         {
-            return LuminanceAugmentations().Sum(x => x.LuminanceSpent());
+            //return LuminanceAugmentations().GroupBy(x => x.Id).Select(x => x.First()).Sum(x => x.LuminanceSpent());
+            return LuminanceAugmentations().GroupBy(x => x.Id).Select(x => x.First()).Sum(x => x.LuminanceSpent());
         }
+
         public static int TotalLuminance()
         {
             return 19_000_000;
@@ -116,10 +118,10 @@ namespace OracleOfDereth
         {
             if(IsXP()) { return Cost; }
 
-            if(Id == 0) { return ""; }
-            if(Times() >= TimesTotal) { return ""; }
-            if(IsLuminanceSeer()) { return ""; }
-            if(Flag.Length > 0 && !IsQuestComplete()) { return ""; }
+            if (Id == 0) { return ""; }
+            if (IsLuminanceSeer()) { return ""; }
+            if (Times() >= TimesTotal) { return ""; }
+            if (Flag.Length > 0 && !IsQuestComplete()) { return ""; }
 
             if (Id == 365) // World
             {
@@ -136,7 +138,6 @@ namespace OracleOfDereth
 
         public int LuminanceSpent()
         {
-            if (Id <= 0) { return 0; }
             if(Times() == 0) { return 0; }
 
             // 1 = 100
@@ -148,7 +149,7 @@ namespace OracleOfDereth
             {
                 return (100_000 * Times() * (Times() + 1) / 2);
             }
-            else if (Id == 344) // Specialization
+            else if (Id == 344 || IsLuminanceSpecialization()) // Specialization
             { 
                 return (Times() * (700_000 + (Times() - 1) * 50_000) / 2);
             }
@@ -167,19 +168,16 @@ namespace OracleOfDereth
         private bool IsLuminanceSpecialization() { return LuminanceSpecializationIds.Contains(Id); }
         private int InateAttributesTimes() { return InateAttributeIds.Sum(id => CoreManager.Current.CharacterFilter.GetCharProperty(id)); }
         private int InateResistancesTimes() { return InateResistanceIds.Sum(id => CoreManager.Current.CharacterFilter.GetCharProperty(id)); }
-
-        private int LuminanceSpecializationTimes()
-        {
-            return Math.Max(CoreManager.Current.CharacterFilter.GetCharProperty(Math.Abs(Id)) - 5, 0);
-        }
+        private int LuminanceSpecializationTimes() { return Math.Max(CoreManager.Current.CharacterFilter.GetCharProperty(Math.Abs(Id)) - 5, 0); }
+        private int AsheronsBenedictionTimes() { return CoreManager.Current.WorldFilter.GetByNameSubstring("Asheron's Lesser Benediction").ToList().Count(); }
 
         public int Times()
         {
-
+            if (Flag.Length > 0 && !IsQuestComplete()) { return 0; }
             if (IsInateAttributes()) { return InateAttributesTimes(); }
             if (IsInateResistances()) { return InateResistancesTimes(); }
+            if (IsAsheronsBenediction()) { return AsheronsBenedictionTimes(); }
             if (IsLuminanceSpecialization()) { return LuminanceSpecializationTimes(); }
-            if (IsAsheronsBenediction()) { return CoreManager.Current.WorldFilter.GetByNameSubstring("Asheron's Lesser Benediction").ToList().Count(); }
 
             int times = CoreManager.Current.CharacterFilter.GetCharProperty(Id);
             return Math.Min(times, TimesTotal);
@@ -191,18 +189,15 @@ namespace OracleOfDereth
             if(IsInateAttribute()) { return InateAttributesTimes() >= 10; };
             if(IsInateResistance()) { return InateResistancesTimes() >= 2; };
             if(IsLuminanceSeer()) { return IsQuestComplete(); }
-            if(Flag.Length > 0 && !IsQuestComplete()) { return false; }
 
             return Times() >= TimesTotal;
         }
 
         public string Text()
         {
-            if(TimesTotal == 0) { return Times().ToString(); }
+            if (TimesTotal == 0) { return Times().ToString(); }
             if (IsInateAttribute() || IsInateResistance()) { return Times().ToString(); }
-
-            if(IsLuminanceSeer()) { return ""; }
-            if(Flag.Length > 0 && !IsQuestComplete()) { return $"0/{TimesTotal}"; }
+            if (IsLuminanceSeer()) { return ""; }
 
             return $"{Times()}/{TimesTotal}";
         }
