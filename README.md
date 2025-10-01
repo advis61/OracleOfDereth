@@ -12,21 +12,25 @@ Status HUD
 
 ![Status HUD](./docs/Status.png)
 
-Buffs List
+Buffs
 
 ![Buffs List](./docs/Buffs.png)
 
-XP Augs
+Augmentations
 
-![XP Augmentations](./docs/XPAugs.png)
+![XP Augmentations](./docs/Augmentations.png)
 
-Luminance Augs
-
-![Luminance Augmentations](./docs/LuminanceAugs.png)
-
-Cantrips List
+Cantrips
 
 ![Cantrips List](./docs/Cantrips.png)
+
+Credits
+
+![Cantrips List](./docs/Credits.png)
+
+Luminance
+
+![Luminance Augmentations](./docs/Luminance.png)
 
 John Tracker
 

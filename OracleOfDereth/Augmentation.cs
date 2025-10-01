@@ -92,8 +92,7 @@ namespace OracleOfDereth
 
         public static int TotalLuminanceSpent()
         {
-            //return LuminanceAugmentations().GroupBy(x => x.Id).Select(x => x.First()).Sum(x => x.LuminanceSpent());
-            return LuminanceAugmentations().GroupBy(x => x.Id).Select(x => x.First()).Sum(x => x.LuminanceSpent());
+            return LuminanceAugmentations().Sum(x => x.LuminanceSpent());
         }
 
         public static int TotalLuminance()
