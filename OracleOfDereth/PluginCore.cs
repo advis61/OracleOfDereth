@@ -117,6 +117,7 @@ namespace OracleOfDereth
             Cantrip.Init();
             CreditQuest.Init();
             JohnQuest.Init();
+            Marker.Init();
             QuestFlag.Init();
             Target.Init();
 

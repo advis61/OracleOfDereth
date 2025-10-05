@@ -59,6 +59,12 @@ namespace OracleOfDereth
         public HudList JohnList { get; private set; }
         public HudButton JohnRefresh { get; private set; }
 
+        // Markers
+        public HudStaticText MarkersText { get; private set; }
+        public HudButton MarkersRefresh { get; private set; }
+        public HudList MarkersList { get; private set; }
+
+
         // Character: Augmentations
         public HudList AugmentationsQuestsList { get; private set; }
         public HudList AugmentationsList { get; private set; }
@@ -85,7 +91,8 @@ namespace OracleOfDereth
             { 1, 460 }, // Buffs
             { 2, 350 }, // Character
             { 3, 430 }, // John
-            { 4, 350 }, // About
+            { 4, 430 }, // Markers
+            { 5, 350 }, // About
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -100,7 +107,8 @@ namespace OracleOfDereth
             { 1, 545 }, // Buffs
             { 2, 550 }, // Character
             { 3, 545 }, // John
-            { 4, 290 }, // About
+            { 4, 545 }, // Markers
+            { 5, 290 }, // About
 
             // Character Tab
             { 2_00, 550 }, // Augmentations
@@ -192,6 +200,17 @@ namespace OracleOfDereth
 
                 JohnListSortSolves = (HudStaticText)view["JohnListSortSolves"];
                 JohnListSortSolves.Hit += JohnListSortSolves_Click;
+
+                // Markers Tab
+                MarkersText = (HudStaticText)view["MarkersText"];
+                MarkersText.FontHeight = 10;
+
+                MarkersRefresh = (HudButton)view["MarkersRefresh"];
+                MarkersRefresh.Hit += QuestFlagsRefresh_Hit;
+
+                MarkersList = (HudList)view["MarkersList"];
+                MarkersList.Click += MarkersList_Click;
+                MarkersList.ClearRows();
 
                 // Character: Augmentations
                 AugmentationsRefresh = (HudButton)view["AugmentationsRefresh"];
@@ -288,6 +307,7 @@ namespace OracleOfDereth
             if (currentTab == 0) { UpdateHud(); }
             if (currentTab == 1) { UpdateBuffs(); }
             if (currentTab == 3) { UpdateJohn(); }
+            if (currentTab == 4) { UpdateMarkers(); }
 
             // Character Tab
             if(currentTab == 200) { UpdateAugmentations(); }
@@ -304,6 +324,7 @@ namespace OracleOfDereth
             UpdateAugmentationQuestsList();
             UpdateCreditsList();
             UpdateLuminanceList();
+            UpdateMarkersList();
 
             // Display feedback 
             Util.Chat("Quest data updated.", Util.ColorPink);
@@ -342,6 +363,13 @@ namespace OracleOfDereth
         {
             if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
             UpdateJohnList();
+        }
+
+        // Markers Tab
+        public void UpdateMarkers()
+        {
+            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            UpdateMarkersList();
         }
 
         // Character: Augmentations
@@ -534,6 +562,53 @@ namespace OracleOfDereth
             UpdateJohnList();
         }
 
+        private void UpdateMarkersList()
+        {
+            List<Marker> markers = Marker.Markers.ToList();
+            int completed = 0;
+
+            for (int x = 0; x < markers.Count; x++)
+            {
+                HudList.HudListRowAccessor row;
+
+                if (x >= MarkersList.RowCount) {
+                    row = MarkersList.AddRow();
+                    ((HudStaticText)row[1]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
+                    ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                } else {
+                    row = MarkersList[x];
+                }
+
+                // Update
+                Marker marker = markers[x];
+
+                bool complete = marker.IsComplete();
+                if (complete) { completed += 1; }
+
+                AssignImage((HudPictureBox)row[0], complete);
+                ((HudStaticText)row[1]).Text = marker.Number.ToString();
+                ((HudStaticText)row[2]).Text = marker.Name;
+                ((HudStaticText)row[3]).Text = marker.Location;
+            }
+
+            // Update Text
+            MarkersText.Text = $"Exploration Markers: {completed} completed";
+        }
+
+        private void MarkersList_Click(object sender, int row, int col)
+        {
+            int number = int.Parse(((HudStaticText)MarkersList[row][1]).Text.Replace("#", ""));
+
+            Marker marker = Marker.Markers.FirstOrDefault(x => x.Number == number);
+            if (marker == null) { return; }
+
+            // Quest Hint
+            if (marker.Hint.Length > 0)
+            {
+                Util.Think($"#{marker.Number} {marker.Name}: {marker.Hint}");
+            }
+        }
+
         private void UpdateAugmentationsList()
         {
             List<Augmentation> augmentations = Augmentation.XPAugmentations().ToList();
@@ -565,7 +640,7 @@ namespace OracleOfDereth
             }
         }
 
-        void AugmentationsList_Click(object sender, int row, int col)
+        private void AugmentationsList_Click(object sender, int row, int col)
         {
             string text = ((HudStaticText)AugmentationsList[row][5]).Text;
             if(text == null || text == "" || text.IndexOf('-') > 0) { return; }
@@ -775,6 +850,7 @@ namespace OracleOfDereth
             }
         }
 
+
         // Shutdown
         public void Dispose()
         {
@@ -799,11 +875,14 @@ namespace OracleOfDereth
                 LuminanceList.Click -= LuminanceList_Click;
                 CreditsList.Click -= CreditsList_Click;
 
+                MarkersList.Click -= MarkersList_Click;
+
                 // Quest Flag Refresh Buttons
                 JohnRefresh.Hit -= QuestFlagsRefresh_Hit;
                 AugmentationsRefresh.Hit -= QuestFlagsRefresh_Hit;
                 LuminanceRefresh.Hit -= QuestFlagsRefresh_Hit;
                 CreditsRefresh.Hit -= QuestFlagsRefresh_Hit;
+                MarkersRefresh.Hit -= QuestFlagsRefresh_Hit;
 
                 // Other cleanup
                 AssignedImages.Clear();
