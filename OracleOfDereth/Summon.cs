@@ -113,8 +113,12 @@ namespace OracleOfDereth
         public bool IsSummon()
         {
             if (Item() == null) return false;
+            if(ObjectClass() != "Misc") { return false; }
 
-            return ObjectClass() == "Misc" && Name().EndsWith("Essence");
+            if(Name().EndsWith("Essence")) { return true; }
+            if(Name().Contains("Essence (")) { return true; }
+
+            return false;
         }
 
         private WorldObject? Item()
