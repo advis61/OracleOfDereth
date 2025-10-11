@@ -1,13 +1,13 @@
 ﻿# Oracle Of Dereth
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.8.0/OracleOfDerethInstaller-1.8.0.0.exe)
+An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-If you crash at the login screen, make sure to upgrade to latest Decal v2.9.8.3 or higher.
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.8.0/OracleOfDerethInstaller-1.8.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
 ## Getting Started
-- This plugin requires the latest [Decal](https://www.decaldev.com/), v2.9.8.3. It will fail to register in previous versions.
+- This plugin requires the latest [Decal](https://www.decaldev.com/), v2.9.8.3
 
 - Download the latest .exe from above. Or check out all [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases).
 
@@ -17,11 +17,11 @@ To upgrade from a previous version, just download and re-run the .exe file.
 
 - Complete the installer.
 
-- It should automatically appear in the Decal list of plugins. You're all done!
+- It will automatically appear in the Decal list of plugins. You're all done!
 
-## About
+- If the game crashes at the login screen, make sure to upgrade to latest Decal v2.9.8.3
 
-An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) v2.9.8.3 plugin.
+## Features
 
 Status HUD
 
