@@ -39,7 +39,11 @@ namespace OracleOfDereth
             if(summon == null || summon.IsSummon() == false) { return; }
 
             // Show damage and defense score
-            Util.Chat($"{summon.Name()}, Damage Score: {Math.Round(summon.DamageScore(), 3)}, Defense Score: {Math.Round(summon.DefenseScore(), 3)}", Util.ColorCyan, "");
+            if (summon.IsRated()) {
+                Util.Chat($"{summon.Name()} [DMG {Math.Round(summon.DamageScore())} | DEF {Math.Round(summon.DefenseScore())}]", Util.ColorCyan, "");
+            } else {
+                Util.Chat($"{summon.Name()}", Util.ColorCyan, "");
+            }
         }
 
         // From an old /mb exec passed around on Discord
@@ -89,6 +93,10 @@ namespace OracleOfDereth
         {
             if (Item() == null) return 0;
             return Item().Values((LongValueKey)375);
+        }
+
+        public bool IsRated() {
+            return (D() > 0 || C() > 0 || CD() > 0 || DR() > 0 || CR() > 0 || CDR() > 0);
         }
 
         public static Summon GetCurrent()
