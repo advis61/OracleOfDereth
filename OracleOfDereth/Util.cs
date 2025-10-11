@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.NetworkInformation;
 
 namespace OracleOfDereth
 {
@@ -54,15 +55,18 @@ namespace OracleOfDereth
 
         public static readonly int ColorGreen = 1;
         public static readonly int ColorWhite = 2;
-        public static readonly int ColorYellow = 4;
+        public static readonly int ColorYellow = 4; // 3 as well
         public static readonly int ColorPink = 5;
         public static readonly int ColorRed = 6;
         public static readonly int ColorBlue = 7;
+        public static readonly int ColorPeach = 8;
+        public static readonly int ColorCyan = 13;
+        public static readonly int ColorLoot = 14; // Same as Magtools
         public static readonly int ColorOrange = 18;
 
-        public static void Chat(string message, int color = 1)
+        public static void Chat(string message, int color = 1, string prefix = "[Oracle of Dereth] ")
         {
-            CoreManager.Current.Actions.AddChatText("[Oracle of Dereth] " + message, color);
+            CoreManager.Current.Actions.AddChatText(prefix + message, color);
         }
 
         public static void Command(string message)

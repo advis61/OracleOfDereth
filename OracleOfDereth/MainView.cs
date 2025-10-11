@@ -100,7 +100,7 @@ namespace OracleOfDereth
 
             // Quesets Tab
             { 3_00, 430 }, // John
-            { 3_01, 450 }, // Markers
+            { 3_01, 430 }, // Markers
 
             // About
             { 4, 350 }, // About
@@ -639,7 +639,7 @@ namespace OracleOfDereth
 
             if(col == 3)
             {
-                Util.Think($"#{marker.Number} {marker.Name}: {marker.Flag} {marker.BitMask}");
+                Util.Chat($"{marker.Flag}: BitMask:{marker.BitMask} Number:{marker.Number} Name:{marker.Name}", Util.ColorPink);
             }
         }
 

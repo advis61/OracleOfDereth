@@ -92,7 +92,7 @@
 				<page label="Credits">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="200" height="17" text="Skill Credit Quest Name"/>
-						<control progid="DecalControls.StaticText" name="Progress" left="276" top="5" width="55" height="17" text="Progress"/>
+						<control progid="DecalControls.StaticText" name="Progress" left="276" top="5" width="0" height="17" text="Progress"/>
 						<control progid="DecalControls.List" name="CreditsList" left="0" top="23" width="640" height="80">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
@@ -151,7 +151,7 @@
 						<control progid="DecalControls.List" name="MarkersList" left="0" top="53" width="450" height="2000">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Number" fixedwidth="24" />
-							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="256" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="236" />
 							<column progid="DecalControls.TextColumn" name="Location" fixedwidth="110" />
 						</control>
 					</control>

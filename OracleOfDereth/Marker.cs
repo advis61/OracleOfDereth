@@ -68,8 +68,6 @@ namespace OracleOfDereth {
             }
 
             Markers.AddRange(markers);
-
-            //Util.Chat($"Loaded {Quests.Count} John Quests from embedded CSV.", 1);
         }
 
         private static int lasta = 0;
@@ -99,16 +97,16 @@ namespace OracleOfDereth {
 
             Util.Think($"{count} Markers A:{a} B:{b} C:{c} D:{d} E:{e} F:{f} G:{g} H:{h} I:{i} J:{j}");
 
-            if(a != 0 && a != lasta) { Util.Think($"A: {lasta}->{a}, #{count}: {a - lasta} explorationmarkersfoundingroupa"); }
-            if(b != 0 && b != lastb) { Util.Think($"B: {lastb}->{b}, #{count}: {b - lastb} explorationmarkersfoundingroupb"); }
-            if(c != 0 && c != lastc) { Util.Think($"C: {lastc}->{c}, #{count}: {c - lastc} explorationmarkersfoundingroupc"); }
-            if(d != 0 && d != lastd) { Util.Think($"D: {lastd}->{d}, #{count}: {d - lastd} explorationmarkersfoundingroupd"); }
-            if(e != 0 && e != laste) { Util.Think($"E: {laste}->{e}, #{count}: {e - laste} explorationmarkersfoundingroupe"); }
-            if(f != 0 && f != lastf) { Util.Think($"F: {lastf}->{f}, #{count}: {f - lastf} explorationmarkersfoundingroupf"); }
-            if(g != 0 && g != lastg) { Util.Think($"G: {lastg}->{g}, #{count}: {g - lastg} explorationmarkersfoundingroupg"); }
-            if(h != 0 && h != lasth) { Util.Think($"H: {lasth}->{h}, #{count}: {h - lasth} explorationmarkersfoundingrouph"); }
-            if(i != 0 && i != lasti) { Util.Think($"I: {lasti}->{i}, #{count}: {i - lasti} explorationmarkersfoundingroupi"); }
-            if(j != 0 && j != lastj) { Util.Think($"J: {lastj}->{j}, #{count}: {j - lastj} explorationmarkersfoundingroupj"); }
+            if (a != 0 && a != lasta) { Util.Think($"A: {lasta}->{a}, #{count}: {a - lasta} explorationmarkersfoundingroupa"); }
+            if (b != 0 && b != lastb) { Util.Think($"B: {lastb}->{b}, #{count}: {b - lastb} explorationmarkersfoundingroupb"); }
+            if (c != 0 && c != lastc) { Util.Think($"C: {lastc}->{c}, #{count}: {c - lastc} explorationmarkersfoundingroupc"); }
+            if (d != 0 && d != lastd) { Util.Think($"D: {lastd}->{d}, #{count}: {d - lastd} explorationmarkersfoundingroupd"); }
+            if (e != 0 && e != laste) { Util.Think($"E: {laste}->{e}, #{count}: {e - laste} explorationmarkersfoundingroupe"); }
+            if (f != 0 && f != lastf) { Util.Think($"F: {lastf}->{f}, #{count}: {f - lastf} explorationmarkersfoundingroupf"); }
+            if (g != 0 && g != lastg) { Util.Think($"G: {lastg}->{g}, #{count}: {g - lastg} explorationmarkersfoundingroupg"); }
+            if (h != 0 && h != lasth) { Util.Think($"H: {lasth}->{h}, #{count}: {h - lasth} explorationmarkersfoundingrouph"); }
+            if (i != 0 && i != lasti) { Util.Think($"I: {lasti}->{i}, #{count}: {i - lasti} explorationmarkersfoundingroupi"); }
+            if (j != 0 && j != lastj) { Util.Think($"J: {lastj}->{j}, #{count}: {j - lastj} explorationmarkersfoundingroupj"); }
 
             lasta = a;
             lastb = b;
@@ -123,7 +121,6 @@ namespace OracleOfDereth {
 
             QuestFlag.Refresh();
         }
-
         public static int GetMarkerInfo(string flag)
         {
             QuestFlag.QuestFlags.TryGetValue(flag, out QuestFlag questFlag);

@@ -15,8 +15,8 @@ using WindowsTimer = System.Windows.Forms.Timer;
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
 // Remember to update installer.nsi to match
-[assembly: AssemblyVersion("1.7.0.0")]
-[assembly: AssemblyFileVersion("1.7.0.0")]
+[assembly: AssemblyVersion("1.8.0.0")]
+[assembly: AssemblyFileVersion("1.8.0.0")]
 
 namespace OracleOfDereth
 {
@@ -194,7 +194,7 @@ namespace OracleOfDereth
                     throw new InvalidOperationException("An error occurred.");
                 }
 
-                if(command == "/od markers" || command == "/od marker" || command == "/markers" || command == "/marker")
+                if(command == "/od markers" || command == "/markers")
                 {
                     Marker.Info();
                     e.Eat = true;
@@ -231,7 +231,8 @@ namespace OracleOfDereth
         {
             try
             {
-                Target.SetCurrentTarget(e.ItemGuid);
+                Target.SetCurrent(e.ItemGuid);
+                Summon.SetCurrent(e.ItemGuid);
                 targetView.Update();
             }
             catch (Exception ex) { Util.Log(ex); }

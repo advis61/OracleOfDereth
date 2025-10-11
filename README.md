@@ -1,6 +1,6 @@
 ﻿# Oracle Of Dereth
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.7.0/OracleOfDerethInstaller-1.7.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.8.0/OracleOfDerethInstaller-1.8.0.0.exe)
 
 If you crash at the login screen, make sure to upgrade to latest Decal v2.9.8.3
 
@@ -36,6 +36,10 @@ John Tracker
 
 ![John Tracker](./docs/John.png)
 
+Exploration Markers
+
+![John Tracker](./docs/Markers.png)
+
 Void Target View
 
 ![Void Target View](./docs/Void.png)
@@ -55,7 +59,7 @@ Void Target View
 
 ## Usage
 
-There are 7 main areas: the Status HUD, Buffs, XP Augs, Luminance Augs, Cantrips, John Tracker and Void Target View.
+There are 8 main areas: the Status HUD, Buffs, XP Augs, Luminance Augs, Cantrips, John Tracker, Exploration Markers and Void Target View.
 
 ### Status HUD
 
@@ -108,6 +112,12 @@ Click the quest icon to /think the wiki url to yourself, and copy it to the Wind
 Click the quest name to /think some handy quest notes to yourself. Use alongside GoArrow to always known the next step.
 
 Click the Refresh button will run /myquests and refresh the quest data.
+
+### Exploration Markers
+
+Have you ever run the [100 Exploration Markers](https://acportalstorm.com/wiki/Dereth_Exploration/Markers_by_Efficiency) only to get to the end and realize you missed one? But which one?!?!
+
+This plugin will display which markers you have completed and guide you to the next one.
 
 ### Void Target View
 

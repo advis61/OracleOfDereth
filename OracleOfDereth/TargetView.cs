@@ -122,12 +122,12 @@ namespace OracleOfDereth
 
         public void UpdateVisibility()
         {
-            view.Visible = Target.GetCurrentTarget().IsTarget();
+            view.Visible = Target.GetCurrent().IsTarget();
         }
 
         public void UpdateSpells()
         {
-            Target target = Target.GetCurrentTarget();
+            Target target = Target.GetCurrent();
 
             // Texts
             CorrosionText.Text = target.CorrosionText();

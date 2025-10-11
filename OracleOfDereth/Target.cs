@@ -52,14 +52,14 @@ namespace OracleOfDereth
             CurrentTargetId = 0;
         }
 
-        public static void SetCurrentTarget(int id)
+        public static void SetCurrent(int id)
         {
             CurrentTargetId = id;
 
-            //Util.Chat($"Targeting {GetCurrentTarget().ToString()}");
+            //Util.Chat($"Targeting {GetCurrent().ToString()}");
         }
 
-        public static Target GetCurrentTarget()
+        public static Target GetCurrent()
         {
             return new() { Id = CurrentTargetId };
         }
@@ -127,6 +127,10 @@ namespace OracleOfDereth
 
             var targetSpells = TargetSpells.Where(s => s.TargetName == targetName && s.IsStarted() && !s.IsTicked());
             foreach(var targetSpell in targetSpells) { targetSpell.SetTicked(); }
+        }
+
+        public new string ToString()         {
+            return $"[{Id}] {Name()} ({ObjectClass()})";
         }
 
         // Instance methods

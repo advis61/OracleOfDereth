@@ -18,7 +18,7 @@ namespace OracleOfDereth
 
         // Quest Flags I care to track
         private static readonly List<string> QuestFlagsToTrack = new List<string> 
-            { "legendaryquestsa", "legendaryquestsb", "legendaryquestsc" }
+            { "legendaryquestsa", "legendaryquestsb", "legendaryquestsc", "explorationmarkersfound" }
             .Concat(Augmentation.Augmentations.Select(q => q.Flag))
             .Concat(AugQuest.AugQuests.Select(q => q.Flag))
             .Concat(CreditQuest.CreditQuests.Select(q => q.Flag))
