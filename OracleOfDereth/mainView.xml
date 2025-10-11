@@ -1,164 +1,171 @@
 ﻿<?xml version="1.0"?>
-<view icon="8894" title="Oracle Of Dereth" width="190" height="310">
-  <control progid="DecalControls.Notebook" name="MainViewNotebook">
-    
-    <page label="Status">
-      <control progid="DecalControls.FixedLayout" clipped="">
-		  <control progid="DecalControls.StaticText" name="BuffsLabel" left="5" top="5" width="200" height="20" text="Buffs"/>
-		  <control progid="DecalControls.StaticText" name="BuffsText" left="70" top="5" width="200" height="20" text="-"/>
-		  <control progid="DecalControls.StaticText" name="HouseLabel" left="5" top="25" width="200" height="20" text="House"/>
-		  <control progid="DecalControls.StaticText" name="HouseText" left="70" top="25" width="200" height="20" text="-" />
-		  
-		  <control progid="DecalControls.StaticText" name="BeersLabel" left="5" top="50" width="200" height="20" text="Beers"/>
-		  <control progid="DecalControls.StaticText" name="BeersText" left="70" top="50" width="200" height="20" text="-" />
-		  <control progid="DecalControls.StaticText" name="PagesLabel" left="5" top="70" width="200" height="20" text="Pages"/>
-		  <control progid="DecalControls.StaticText" name="PagesText" left="70" top="70" width="200" height="20" text="-"/>
+<view icon="8894" title="Oracle Of Dereth" width="200" height="325">
+	<control progid="DecalControls.Notebook" name="MainViewNotebook">
+		<page label="Status">
+			<control progid="DecalControls.Notebook" name="StatusViewNotebook">
+				<page label="HUD">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="BuffsLabel" left="5" top="5" width="200" height="20" text="Buffs"/>
+						<control progid="DecalControls.StaticText" name="BuffsText" left="70" top="5" width="200" height="20" text="-"/>
+						<control progid="DecalControls.StaticText" name="HouseLabel" left="5" top="25" width="200" height="20" text="House"/>
+						<control progid="DecalControls.StaticText" name="HouseText" left="70" top="25" width="200" height="20" text="-" />
 
-		  <control progid="DecalControls.StaticText" name="RareLabel" left="5" top="90" width="200" height="20" text="Rares" />
-		  <control progid="DecalControls.StaticText" name="RareText" left="70" top="90" width="200" height="20" text="-" />
+						<control progid="DecalControls.StaticText" name="BeersLabel" left="5" top="50" width="200" height="20" text="Beers"/>
+						<control progid="DecalControls.StaticText" name="BeersText" left="70" top="50" width="200" height="20" text="-" />
+						<control progid="DecalControls.StaticText" name="PagesLabel" left="5" top="70" width="200" height="20" text="Pages"/>
+						<control progid="DecalControls.StaticText" name="PagesText" left="70" top="70" width="200" height="20" text="-"/>
 
-		  <control progid="DecalControls.StaticText" name="LifeLabel" left="5" top="115" width="200" height="20" text="Life"/>
-		  <control progid="DecalControls.StaticText" name="LifeText" left="70" top="115" width="200" height="20" text="-" />
-		  <control progid="DecalControls.StaticText" name="LockpickLabel" left="5" top="135" width="200" height="20" text="Lockpick"/>
-		  <control progid="DecalControls.StaticText" name="LockpickText" left="70" top="135" width="200" height="20" text="-" />
-		  <control progid="DecalControls.StaticText" name="MeleeDLabel" left="5" top="155" width="200" height="20" text="MeleeD"/>
-		  <control progid="DecalControls.StaticText" name="MeleeDText" left="70" top="155" width="200" height="20" text="-" />
-		  <control progid="DecalControls.StaticText" name="SummoningLabel" left="5" top="175" width="200" height="20" text="Summon"/>
-		  <control progid="DecalControls.StaticText" name="SummoningText" left="70" top="175" width="200" height="20" text="-"/>
+						<control progid="DecalControls.StaticText" name="RareLabel" left="5" top="90" width="200" height="20" text="Rares" />
+						<control progid="DecalControls.StaticText" name="RareText" left="70" top="90" width="200" height="20" text="-" />
 
-		  <control progid="DecalControls.StaticText" name="DestructionLabel" left="5" top="200" width="200" height="20" text="Dest"/>
-		  <control progid="DecalControls.StaticText" name="DestructionText" left="70" top="200" width="200" height="20" text="-" />
-		  <control progid="DecalControls.StaticText" name="ProtectionLabel" left="5" top="220" width="200" height="20" text="Prot"/>
-		  <control progid="DecalControls.StaticText" name="ProtectionText" left="70" top="220" width="200" height="20" text="-" />
-		 <control progid="DecalControls.StaticText" name="RegenLabel" left="5" top="240" width="200" height="20" text="Regen"/>
-		  <control progid="DecalControls.StaticText" name="RegenText" left="70" top="240" width="200" height="20" text="-" />
+						<control progid="DecalControls.StaticText" name="LifeLabel" left="5" top="115" width="200" height="20" text="Life"/>
+						<control progid="DecalControls.StaticText" name="LifeText" left="70" top="115" width="200" height="20" text="-" />
+						<control progid="DecalControls.StaticText" name="LockpickLabel" left="5" top="135" width="200" height="20" text="Lockpick"/>
+						<control progid="DecalControls.StaticText" name="LockpickText" left="70" top="135" width="200" height="20" text="-" />
+						<control progid="DecalControls.StaticText" name="MeleeDLabel" left="5" top="155" width="200" height="20" text="MeleeD"/>
+						<control progid="DecalControls.StaticText" name="MeleeDText" left="70" top="155" width="200" height="20" text="-" />
+						<control progid="DecalControls.StaticText" name="SummoningLabel" left="5" top="175" width="200" height="20" text="Summon"/>
+						<control progid="DecalControls.StaticText" name="SummoningText" left="70" top="175" width="200" height="20" text="-"/>
 
-	  </control>
-    </page>
+						<control progid="DecalControls.StaticText" name="DestructionLabel" left="5" top="200" width="200" height="20" text="Dest"/>
+						<control progid="DecalControls.StaticText" name="DestructionText" left="70" top="200" width="200" height="20" text="-" />
+						<control progid="DecalControls.StaticText" name="ProtectionLabel" left="5" top="220" width="200" height="20" text="Prot"/>
+						<control progid="DecalControls.StaticText" name="ProtectionText" left="70" top="220" width="200" height="20" text="-" />
+						<control progid="DecalControls.StaticText" name="RegenLabel" left="5" top="240" width="200" height="20" text="Regen"/>
+						<control progid="DecalControls.StaticText" name="RegenText" left="70" top="240" width="200" height="20" text="-" />
 
-	  <page label="Buffs">
-		  <control progid="DecalControls.FixedLayout" clipped="">
-			  <control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="2000">
-				  <column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-				  <column progid="DecalControls.TextColumn" name="Id" fixedwidth="32" />
-				  <column progid="DecalControls.TextColumn" name="Time" fixedwidth="50" />
-				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="320" />
-			  </control>
-		  </control>
-	  </page>
-
-
-	<page label="Character">
-		<control progid="DecalControls.Notebook" name="CharacterViewNotebook">
-			<page label="Augmentations">
-				<control progid="DecalControls.FixedLayout" clipped="">
-				  <control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="100" height="17" text="Quest Name"/>
-				  <control progid="DecalControls.StaticText" name="Ready" left="537" top="5" width="55" height="17" text="Ready In"/>
-				  <control progid="DecalControls.StaticText" name="Solves" left="600" top="5" width="50" height="17" text="Solves"/>
-				  <control progid="DecalControls.List" name="AugmentationsQuestsList" left="0" top="23" width="650" height="110">
-					  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
-					  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="420" />
-					  <column progid="DecalControls.TextColumn" name="Ready" fixedwidth="140" />
-					  <column progid="DecalControls.TextColumn" name="Solves" fixedwidth="30" />
-					  <column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="100" />
-				  </control>
-				  <control progid="DecalControls.StaticText" name="Name" left="1" top="140" width="200" height="17" text="XP Augmentations"/>
-				  <control progid="DecalControls.PushButton" name="AugmentationsRefresh" left="548" top="137" width="100" height="24" text="Refresh"/>
-					<control progid="DecalControls.List" name="AugmentationsList" left="0" top="165" width="650" height="2000">
-						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-						<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
-						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />
-						<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="320" />
-						<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="50" />
-						<column progid="DecalControls.TextColumn" name="Id" fixedwidth="0" />
 					</control>
-				</control>
-			</page>
+				</page>
 
-			<page label="Cantrips">
-				<control progid="DecalControls.FixedLayout" clipped="">
-					<control progid="DecalControls.List" name="CantripsList" left="0" top="0" width="640" height="2000">
-						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="200" />
-						<column progid="DecalControls.TextColumn" name="Level" fixedwidth="100" />
+				<page label="Buffs">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.List" name="BuffsList" left="0" top="0" width="640" height="2000">
+							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="32" />
+							<column progid="DecalControls.TextColumn" name="Time" fixedwidth="50" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="320" />
+						</control>
 					</control>
-				</control>
-			</page>
+				</page>
+			</control>
+		</page>
 
-			<page label="Credits">
-				<control progid="DecalControls.FixedLayout" clipped="">
-				  <control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="200" height="17" text="Skill Credit Quest Name"/>
-				  <control progid="DecalControls.StaticText" name="Progress" left="280" top="5" width="55" height="17" text="Progress"/>
-					<control progid="DecalControls.List" name="CreditsList" left="0" top="23" width="640" height="80">
-						<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
-						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
-						<column progid="DecalControls.TextColumn" name="Status" fixedwidth="70" />
-						<column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="1" />
+		<page label="Character">
+			<control progid="DecalControls.Notebook" name="CharacterViewNotebook">
+				<page label="Augmentations">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="100" height="17" text="Quest Name"/>
+						<control progid="DecalControls.StaticText" name="Ready" left="537" top="5" width="55" height="17" text="Ready In"/>
+						<control progid="DecalControls.StaticText" name="Solves" left="600" top="5" width="50" height="17" text="Solves"/>
+						<control progid="DecalControls.List" name="AugmentationsQuestsList" left="0" top="23" width="650" height="110">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="420" />
+							<column progid="DecalControls.TextColumn" name="Ready" fixedwidth="140" />
+							<column progid="DecalControls.TextColumn" name="Solves" fixedwidth="30" />
+							<column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="100" />
+						</control>
+						<control progid="DecalControls.StaticText" name="Name" left="1" top="140" width="200" height="17" text="XP Augmentations"/>
+						<control progid="DecalControls.PushButton" name="AugmentationsRefresh" left="548" top="137" width="100" height="24" text="Refresh"/>
+						<control progid="DecalControls.List" name="AugmentationsList" left="0" top="165" width="650" height="2000">
+							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />
+							<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="320" />
+							<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="50" />
+							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="0" />
+						</control>
 					</control>
-					<control progid="DecalControls.PushButton" name="CreditsRefresh" left="248" top="106" width="100" height="24" text="Refresh"/>
-				</control>
-			</page>
+				</page>
 
-			<page label="Luminance">
-				<control progid="DecalControls.FixedLayout" clipped="">
-					<control progid="DecalControls.StaticText" name="LuminanceText" left="5" top="5" width="640" height="20" text="Luminance: 0 spent / 0 total (0% complete, 0 to max)"/>
-					<control progid="DecalControls.PushButton" name="LuminanceRefresh" left="548" top="3" width="100" height="24" text="Refresh"/>
-					<control progid="DecalControls.List" name="LuminanceList" left="0" top="30" width="650" height="2000">
-						<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-						<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
-						<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />
-						<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="320" />
-						<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="50" />
-						<column progid="DecalControls.TextColumn" name="Id" fixedwidth="0" />
+				<page label="Cantrips">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="CantripName" left="1" top="5" width="200" height="17" text="Cantrip Name"/>
+						<control progid="DecalControls.StaticText" name="CantripLevel" left="233" top="5" width="0" height="17" text="Level"/>
+						<control progid="DecalControls.List" name="CantripsList" left="0" top="23" width="640" height="2000">
+							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="200" />
+							<column progid="DecalControls.TextColumn" name="Level" fixedwidth="100" />
+						</control>
 					</control>
-				</control>
-			</page>
-		</control>
-	</page>
+				</page>
 
-	  <page label="John">
-		  <control progid="DecalControls.FixedLayout" clipped="">
-			  <control progid="DecalControls.StaticText" name="JohnText" left="5" top="5" width="300" height="20" text="Legendary John Quests"/>
-			  <control progid="DecalControls.PushButton" name="JohnRefresh" left="327" top="3" width="100" height="24" text="Refresh"/>
+				<page label="Credits">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="200" height="17" text="Skill Credit Quest Name"/>
+						<control progid="DecalControls.StaticText" name="Progress" left="276" top="5" width="55" height="17" text="Progress"/>
+						<control progid="DecalControls.List" name="CreditsList" left="0" top="23" width="640" height="80">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
+							<column progid="DecalControls.TextColumn" name="Status" fixedwidth="70" />
+							<column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="1" />
+						</control>
+						<control progid="DecalControls.PushButton" name="CreditsRefresh" left="248" top="106" width="100" height="24" text="Refresh"/>
+					</control>
+				</page>
 
-			  <control progid="DecalControls.StaticText" name="JohnListSortName" left="1" top="33" width="100" height="17" text="Quest Name"/>
-			  <control progid="DecalControls.StaticText" name="JohnListSortReady" left="315" top="33" width="55" height="17" text="Ready In"/>
-			  <control progid="DecalControls.StaticText" name="JohnListSortSolves" left="380" top="33" width="50" height="17" text="Solves"/>
+				<page label="Luminance">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="LuminanceText" left="5" top="5" width="640" height="20" text="Luminance: 0 spent / 0 total (0% complete, 0 to max)"/>
+						<control progid="DecalControls.PushButton" name="LuminanceRefresh" left="548" top="3" width="100" height="24" text="Refresh"/>
+						<control progid="DecalControls.List" name="LuminanceList" left="0" top="30" width="650" height="2000">
+							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Progress" fixedwidth="32" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="190" />
+							<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="320" />
+							<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="50" />
+							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="0" />
+						</control>
+					</control>
+				</page>
+			</control>
+		</page>
 
-			  <control progid="DecalControls.List" name="JohnList" left="0" top="53" width="430" height="800">
-				  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
-				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="257" />
-				  <column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
-				  <column progid="DecalControls.TextColumn" name="Solves" fixedwidth="30" />
-				  <column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="100" />
-			  </control>
-		  </control>
-	  </page>
+		<page label="Quests">
+			<control progid="DecalControls.Notebook" name="QuestsViewNotebook">
 
-	  <page label="Markers">
-		  <control progid="DecalControls.FixedLayout" clipped="">
-			  <control progid="DecalControls.StaticText" name="MarkersText" left="5" top="5" width="300" height="20" text="Exploration Markers"/>
-			  <control progid="DecalControls.PushButton" name="MarkersRefresh" left="327" top="3" width="100" height="24" text="Refresh"/>
+				<page label="Legendary John">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="JohnText" left="5" top="5" width="300" height="20" text="Legendary John Quests"/>
+						<control progid="DecalControls.PushButton" name="JohnRefresh" left="327" top="3" width="100" height="24" text="Refresh"/>
 
-			  <control progid="DecalControls.StaticText" name="MarkersName" left="1" top="33" width="200" height="17" text="Exploration Marker"/>
+						<control progid="DecalControls.StaticText" name="JohnListSortName" left="1" top="33" width="100" height="17" text="Quest Name"/>
+						<control progid="DecalControls.StaticText" name="JohnListSortReady" left="315" top="33" width="55" height="17" text="Ready In"/>
+						<control progid="DecalControls.StaticText" name="JohnListSortSolves" left="380" top="33" width="50" height="17" text="Solves"/>
 
-			  <control progid="DecalControls.List" name="MarkersList" left="0" top="53" width="430" height="2000">
-				  <column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
-				  <column progid="DecalControls.TextColumn" name="Number" fixedwidth="24" />
-				  <column progid="DecalControls.TextColumn" name="Name" fixedwidth="246" />
-				  <column progid="DecalControls.TextColumn" name="Location" fixedwidth="100" />
-			  </control>
-		  </control>
-	  </page>
+						<control progid="DecalControls.List" name="JohnList" left="0" top="53" width="430" height="800">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="257" />
+							<column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
+							<column progid="DecalControls.TextColumn" name="Solves" fixedwidth="30" />
+							<column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="100" />
+						</control>
+					</control>
+				</page>
 
-	<page label="?">
-		  <control progid="DecalControls.FixedLayout" clipped="">
-			  <control progid="DecalControls.StaticText" name="About" left="5" top="5" width="340" height="300" text="&quot;Oracle of Dereth&quot; by Advis Eveldan of Levistras" />
-			  <control progid="DecalControls.StaticText" name="Quote1" left="5" top="40" width="340" height="300" text="&quot;Twenty years from now you will be more disappointed by the quests that you didn't do than by the ones you did do. So throw off the bowlines. Sail away from safe portals. Catch the trade winds in your sails. Explore. Dream. Discover.&quot; -- Mark Twain"/>
-			  <control progid="DecalControls.StaticText" name="Quote2" left="5" top="150" width="330" height="300" text="&quot;The world is a scrivener's satchel and those who do not travel read only one scroll.&quot; -- St. Augustine"/>
-			  <control progid="DecalControls.StaticText" name="Quote3" left="5" top="200" width="290" height="300" text="&quot;Not all those who answer the call are lost.&quot; -- J.R.R. Tolkien" />
-		  </control>
- </page>
-    
-  </control>
+				<page label="Exploration Markers">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="MarkersText" left="5" top="5" width="300" height="20" text="Exploration Markers"/>
+						<control progid="DecalControls.PushButton" name="MarkersRefresh" left="327" top="3" width="100" height="24" text="Refresh"/>
+						<control progid="DecalControls.StaticText" name="MarkersName" left="1" top="33" width="300" height="17" text="Markers by Efficiency"/>
+
+						<control progid="DecalControls.List" name="MarkersList" left="0" top="53" width="450" height="2000">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Number" fixedwidth="24" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="256" />
+							<column progid="DecalControls.TextColumn" name="Location" fixedwidth="110" />
+						</control>
+					</control>
+				</page>
+			</control>
+		</page>
+
+		<page label="?">
+			<control progid="DecalControls.FixedLayout" clipped="">
+				<control progid="DecalControls.StaticText" name="About" left="5" top="5" width="340" height="300" text="&quot;Oracle of Dereth&quot; by Advis Eveldan of Levistras" />
+				<control progid="DecalControls.StaticText" name="Quote1" left="5" top="40" width="340" height="300" text="&quot;Twenty years from now you will be more disappointed by the quests that you didn't do than by the ones you did do. So throw off the bowlines. Sail away from safe portals. Catch the trade winds in your sails. Explore. Dream. Discover.&quot; -- Mark Twain"/>
+				<control progid="DecalControls.StaticText" name="Quote2" left="5" top="150" width="330" height="300" text="&quot;The world is a scrivener's satchel and those who do not travel read only one scroll.&quot; -- St. Augustine"/>
+				<control progid="DecalControls.StaticText" name="Quote3" left="5" top="200" width="290" height="300" text="&quot;Not all those who answer the call are lost.&quot; -- J.R.R. Tolkien" />
+			</control>
+		</page>
+	</control>
 </view>

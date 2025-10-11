@@ -193,6 +193,14 @@ namespace OracleOfDereth
                     e.Eat = true;
                     throw new InvalidOperationException("An error occurred.");
                 }
+
+                if(command == "/od markers" || command == "/od marker" || command == "/markers" || command == "/marker")
+                {
+                    Marker.Info();
+                    e.Eat = true;
+                }
+
+
             }
             catch (Exception ex) { Util.Log(ex); }
         }

@@ -72,9 +72,75 @@ namespace OracleOfDereth {
             //Util.Chat($"Loaded {Quests.Count} John Quests from embedded CSV.", 1);
         }
 
+        private static int lasta = 0;
+        private static int lastb = 0;
+        private static int lastc = 0;
+        private static int lastd = 0;
+        private static int laste = 0;
+        private static int lastf = 0;
+        private static int lastg = 0;
+        private static int lasth = 0;
+        private static int lasti = 0;
+        private static int lastj = 0;
+
+        public static void Info()
+        {
+            int count = GetMarkerInfo("explorationmarkersfound");
+            int a = GetMarkerInfo("explorationmarkersfoundingroupa");
+            int b = GetMarkerInfo("explorationmarkersfoundingroupb");
+            int c = GetMarkerInfo("explorationmarkersfoundingroupc");
+            int d = GetMarkerInfo("explorationmarkersfoundingroupd");
+            int e = GetMarkerInfo("explorationmarkersfoundingroupe");
+            int f = GetMarkerInfo("explorationmarkersfoundingroupf");
+            int g = GetMarkerInfo("explorationmarkersfoundingroupg");
+            int h = GetMarkerInfo("explorationmarkersfoundingrouph");
+            int i = GetMarkerInfo("explorationmarkersfoundingroupi");
+            int j = GetMarkerInfo("explorationmarkersfoundingroupj");
+
+            Util.Think($"{count} Markers A:{a} B:{b} C:{c} D:{d} E:{e} F:{f} G:{g} H:{h} I:{i} J:{j}");
+
+            if(a != 0 && a != lasta) { Util.Think($"A: {lasta}->{a}, #{count}: {a - lasta} explorationmarkersfoundingroupa"); }
+            if(b != 0 && b != lastb) { Util.Think($"B: {lastb}->{b}, #{count}: {b - lastb} explorationmarkersfoundingroupb"); }
+            if(c != 0 && c != lastc) { Util.Think($"C: {lastc}->{c}, #{count}: {c - lastc} explorationmarkersfoundingroupc"); }
+            if(d != 0 && d != lastd) { Util.Think($"D: {lastd}->{d}, #{count}: {d - lastd} explorationmarkersfoundingroupd"); }
+            if(e != 0 && e != laste) { Util.Think($"E: {laste}->{e}, #{count}: {e - laste} explorationmarkersfoundingroupe"); }
+            if(f != 0 && f != lastf) { Util.Think($"F: {lastf}->{f}, #{count}: {f - lastf} explorationmarkersfoundingroupf"); }
+            if(g != 0 && g != lastg) { Util.Think($"G: {lastg}->{g}, #{count}: {g - lastg} explorationmarkersfoundingroupg"); }
+            if(h != 0 && h != lasth) { Util.Think($"H: {lasth}->{h}, #{count}: {h - lasth} explorationmarkersfoundingrouph"); }
+            if(i != 0 && i != lasti) { Util.Think($"I: {lasti}->{i}, #{count}: {i - lasti} explorationmarkersfoundingroupi"); }
+            if(j != 0 && j != lastj) { Util.Think($"J: {lastj}->{j}, #{count}: {j - lastj} explorationmarkersfoundingroupj"); }
+
+            lasta = a;
+            lastb = b;
+            lastc = c;
+            lastd = d;
+            laste = e;
+            lastf = f;
+            lastg = g;
+            lasth = h;
+            lasti = i;
+            lastj = j;
+
+            QuestFlag.Refresh();
+        }
+
+        public static int GetMarkerInfo(string flag)
+        {
+            QuestFlag.QuestFlags.TryGetValue(flag, out QuestFlag questFlag);
+            if (questFlag == null) { return 0; }
+
+            return questFlag.Solves;
+        }
+
+
         public new string ToString()
         {
             return $"{Number} {Name}: {Flag} BitMask:{BitMask}";
+        }
+
+        public string Url()
+        {
+            return $"https://acportalstorm.com/wiki/Dereth_Exploration/Markers_by_Efficiency#{Location.Replace(" ", "_")}";
         }
 
         public bool IsComplete()

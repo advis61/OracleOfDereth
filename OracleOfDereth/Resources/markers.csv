@@ -3,99 +3,99 @@ Number,Name,Location,BitMask,QuestFlag,Hint
 2,Dryreach Town Center,Dryreach,128,explorationmarkersfoundingroupa,Dryreach - Run to 7.9S 73.1E - Center of town.
 3,Dryreach Farmer,Dryreach,512,explorationmarkersfoundingroupe,Dryreach - Run to 1.4S 71.9E
 4,Auroch Herd,Rithwic,128,explorationmarkersfoundingroupb,Rithwic - King Pwyll Square Villas at 8.7N 61.0E - Run to 11.5N 37.9E
-5,Festival Stone of Seedsow,Lytelthorpe,0,dunno,Lytelthorpe - Run to 0.6N 46.6E
-6,Outside Olthoi Chasm,Lytelthorpe,0,dunno,Lytlethorpe - Run to 0.7N 44.7E
-7,Outside Stable Rift,Lytelthorpe,0,dunno,Lytelthorpe - North Lytelthorpe Villas at 2.2N 50.4E - Run to 7.9N 50.8E
-8,Kayna bint Iswas' Home,Lytelthorpe,0,dunno,Lytelthorpe - Asbel Domain Settlement Portal at 2.2N 50.4E - Run to 1.7S 36.6E
-9,Festival Stone of Thistledown,Cragstone,0,dunno,Cragstone - Run to 28.4N 43.6E
-10,Fallen Shadow Spire of Cragstone,Cragstone,0,dunno,Cragstone - 22.5N 48.0E - Near the top of the Fallen Shadow Spire
-11,Underground City,Cragstone,0,dunno,Cragstone - Isle of Tears portal at 25.2N 49.9E - Run to 21.4N 54.0E
-12,Peddler's Hut,Cragstone,0,dunno,Cragstone - Ispan Hill 26.2N 46.3E - Run to 53.7N 24.2E
-13,Empyrean Landmark,Eastham,0,dunno,Eastham - Run to 19.0N 61.8E
-14,Asheron's Castle,Eastham,0,dunno,Eastham - Asheron's Island 17.9N 64.3E - Take portal to Asheron's Castle - Run to 21.3N 69.3E
-15,Northeast shore of Wisp Lake,Eastham,0,dunno,Eastham - Midhill Cottages 17.5N 61.5E - Run to 83.3N 0.2E
-16,Plateau Village,Plateau,0,dunno,Plateau - 40.6N 41.3W - In the top of the tower by the 3 Windmills and Ka Ku-To the Tailor
-17,Point Tremblant,Mayoi,0,dunno,Mayoi - Point Tremblant at 60.8S 80.3E - Run to 97.3N 3.6E
-18,Ruschk-Infested Black Spear Temple,Stonehold,0,dunno,Stonehold - Westward Portal 68.6N 23.2W - Run to 74.0N 28.5W
-19,The Pit (Inside Dungeon),Stonehold,0,dunno,Stonehold - The Pit 64.3N 23.4W - Inside dungeon at the bottom of the pit opposite the surface portals
-20,Beach Fort,Stonehold,0,dunno,Stonehold - Beachfort - 75.9N 49.0W - Take portal from inside The Pit
-21,Shadow Breach Crater,Arwic,0,dunno,Arwic - Run to 33.9N 56.6E
-22,Mite Bunker,Arwic,0,dunno,Arwic - Run to 35.9N 59.7E
-23,Northwatch Castle,Arwic,0,dunno,Arwic - Dagger Vale 32.9N 59.6E - Run to 81.4N 24.5E
-24,Olthoi Brood Hive,Arwic,0,dunno,Arwic - Far Claw Villas Settlement Portal at 32.9N 59.4E - Run to 51.8N 59.8E
-25,Empyrean Landmark,Al-Jalima,0,dunno,Al-Jalima - Run to 6.9N 2.9E
-26,Olthoi North,Olthoi North,0,dunno,Olthoi North - Cross mountain at 43.2N 58.0E - Run to 42.6N 57.4E - This marker must be approached from the north
-27,Paradox-touched Valley,Olthoi North,0,dunno,Olthoi North - Run to 44.5N 57.4E - Just inside the cave containing the Paradox-Touched Olthoi Queen's Lair shortcut portal
-28,Black Death Catacombs,Olthoi North,0,dunno,Arwic - Jeweled Thorn Estates portal 32.9N 59.4E - Run to 59.9N 71.2E - Inside Deeper Catacombs dungeon next to portal to Catacombs of Opposition
-29,Forger's Hideout,Northern Osteth,0,dunno,Bandit Castle - Quest Flag: Do the Counterfeit Writ Quest. C-note required to give to the Forger. 76.0S 67.1W
-30,South Tumerok Vanguard Outpost,Xarabydun,0,dunno,Xarabydun - Run to 45.6S 14.0E
-31,Cactus Stand,Yaraq,0,dunno,Yaraq - Wi Badlands 22.4S 0.2E - Run to 21.6S 9.7E
-32,Inner Sea Gear Knight Invasion Area,Yaraq,0,dunno,Yaraq - Ijaniya 22.4S 0.2E - Run to 36.6S 6.9E
-33,Linvak Tukal,Linvak Tukal,0,dunno,Linvak Tukal - Run to 78.5S 28.2E - It's outside the city so get up the walls and jump off to the South
-34,Empty Lifestone Brackets,Samsur,0,dunno,Samsur - Run to 2.7S 20.4E
-35,Lightning Elemental Crystal,Khayyaban,0,dunno,Khayyaban - Ardent Realm 49.4S 26.0E - Run to 38.3S 34.5E
-36,Crater Rim,Crater Village,0,dunno,Crater Village - Run to 65.9N 15.1E - Cross over with a small jump at 66.9N 11.1E then run counter-clockwise around the rim
-37,Mount Esper Crater,Crater Village,0,dunno,Crater Village - Run to 66.0N 12.6E
-38,Banderling Castle,Yanshi,0,dunno,Crater Village - Anadil portal - Run to 66.2N 2.3W
-39,Blackmire Shadow Spire Crater,Yanshi,0,dunno,Facility Hub - Banderling Conquest Dungeon Portal - Run to 26.7S 51.0E
-40,Harbinger's Lair,Yanshi,0,dunno,Yanshi - Quest Flag: Hand a Harbinger Item to Vincadi or Issk 12.6S 46.7E - Inside Dungeon Inside Harbinger's lair Hard version
-41,Obsidian Span,Yanshi,0,dunno,Fort Tethana - Hilltop Portal 1.7N 71.5W - Run to 34.6N 41.6E - On top of the East Ring
-42,Archmage's House,Sawato,0,dunno,Sawato - Run to 25.6S 57.6E
-43,Festival Stone of Coldeve,Kara,0,dunno,Kara - Run to 83.0S 49.2E
-44,Tou-Tou Lighthouse,Tou-Tou,0,dunno,Tou-Tou - Run to 26.4S 97.0E - Ontop of lighthouse
-45,Lake Lithanen,Tou-Tou,0,dunno,Tou-Tou - Dame Tolani Settlement Portal 27.17S 96.04E - Run to 45.3N 26.7W
-46,Nanto North Outpost,Nanto,0,dunno,Nanto - Run to 48.9S 81.7E - Ontop of Advocate Spire
-47,Festival Stone of Morntide,Nanto,0,dunno,Nanto - Run to 53.1S 78.6E
-48,Saadia's Retreat,Nanto,0,dunno,Nanto - Run to 53.6S 76.6E - Run from last marker
-49,Gotrok Camp,Qalaba'r,0,dunno,Qalaba'r - Brigands Bay Settlement 74.8S 17.8E - Run to 88.3S 34.0E
-50,South Osteth Peak,Baishi,0,dunno,Baishi - South Osteth Peak 52.8S 67.3E - Cross mountain at 53.2S 67.1E Look up the mountain and see the portal to the top - Run to 52.3S 67.9E
-51,Ulgrim's Island,Baishi,0,dunno, -
-52,Aerlinthe Center,Aerlinthe,0,dunno,Aerlinthe - Run to 89.9N 46.4E - The central Aerlinthe caldera. 
-53,Western Aerlinthe Lighthouse,Aerlinthe,0,dunno,Aerlinthe - Run to 84.4N 45.7E - Top of lighthouse
-54,Tusker Island,Aphus Lassel,0,dunno,Aphus Lassel - Run to 2.6N 95.2E
-55,Tusker Gauntlet,Aphus Lassel,0,dunno,Aphus Lassel - Run to 9.9S 86.3E - Just south of Bobo's waterfall - Use the Dangerous Portal Device at your mansion until it drops you on the Tusker Island or run from town
-56,Caulcano,Caul,0,dunno,Caul - Run to 94.8S 94.8W
-57,Statue of Bael'Zharon,Caul,0,dunno,Caul - Run to 90.4S 97.4W
-58,Nightmare Gate (Inside Dungeon),Caul,0,dunno,Caul - Assemble Vestibule Lock (See Sepulcher of Nightmares quest) to gain access: kill the bosses at 96.5S 95.0W and 94.3S 93.4W and 95.0S 98.2W - Nightmare Gate 89.7S 93.3W - At the end next to the BM chest
-59,Vaeshok's Cave,Dark Isle,0,dunno,Dark Isle - Run to 86.9N 59.8E
-60,Ruschk Ice Tower,Dark Isle,0,dunno,Dark Isle - Run to 96.3N 54.6E - Top of ice tower
-61,Karlun's Fort,Silyun,0,dunno,Silyun - Run to 88.8N 67.6W - Immediately go thru portal and speak to Sir Ganzio above for next marker
-62,Eater Pit (Inside Dungeon),Silyun,0,dunno,Silyun - Eater's Pit at 88.8N 72.6W - At the bottom in the room with the sword Swallower. Quest Flag: Speak to Sir Ginazio in Karlun's Fort at 88.8N 67.8W
-63,Small Empyrean Vault,Silyun,0,dunno,Silyun or Westwatch - Run to 80.4N 74.0W
-64,Ruschk Iceberg,Fiun Outpost,0,dunno,Fiun Outpost - Run to 96.2N 60.0W - Outside the Ruschk Iceberg dungeon
-65,Augmentation Realm Upper Level,Eastwatch,0,dunno,Eastwatch - Run to 95.0N 47.1W - Head down the valley then loop up and back for this portal atop the mountain
-66,Thrungus Hole,Eastwatch,0,dunno,Eastwatch - Run to 94.2N 43.0W - Head back down the hill from Aug marker and you can see the Thrungus Bunker in the distance to the east and south
-67,Egg Orchard (Inside Dungeon),Eastwatch,0,dunno,Eastwatch - Egg Orchard 96.2N 48.1W - In Egg room (room closest to the exit portal at bottom)
-68,Marae Lassel,Marae Lassel,0,dunno,Danby's Outpost - Central Tuatara Plains 23.9N 28.0W - Run to 55.7N 74.8W - Take the Karab Delta Portal nearby at 56.0N 75.0W
-69,Tumerok Camp,Bluespire,0,dunno,Bluespire - Run to 40.5N 78.2W
-70,North Fork Dam,Timaru,0,dunno,Timaru - North Fork Dam 51.2N 76.3W - Just outside the room with The Great Machine
-71,Greenspire Lighthouse,Greenspire,0,dunno,Greenspire - Run to 42.9N 66.9W - Ontop of lighthouse
-72,Moarsmen Hideout,Vesayen Islands,0,dunno,Freehold - Run to 69.9S 89.9E - Outside the Moarsmen Hideout dungeon
-73,Camp of the Latzimestal,Vesayen Islands,0,dunno,Sanctuary Recall - Run to 83.0S 93.2E - By the tents where the undead were 
-74,Shadow-Infested Black Spear Temple,Vesayen Islands,0,dunno,Sanctuary Recall - Run to 76.8S 93.9E - By the Shadow-Infested Black Spear Temple
-75,Western Xi Ru Lighthouse,Vesayen Islands,0,dunno,Ayan Baqur - Talk to the Ghost behind the smith to portal to island - Run Counterclockwise to 89.3S 86.7E - Ontop lighthouse
-76,Freebooter Keep,Vesayen Islands,0,dunno,Freebooter Island - Run to 64.2S 97.9E - In the K'nath valley to the East. Must be a Knight (Rank 3) in your society. 
-77,Stone Pillars,Candeth Keep,0,dunno,Candeth Keep - Run to 83.5S 67.8W
-78,Tumerok Bunker,Candeth Keep,0,dunno,Candeth Keep - Run to 84.8S 65.4W
-79,Withered Atoll,Candeth Keep,0,dunno,Candeth Keep - Run to 85.9S 79.1W
-80,The Pit of Heretics,Candeth Keep,0,dunno,Candeth Keep - The Pit of Heretics 87.9S 55.2W - Lord Test or Deru Tree quest
-81,Moarsman City,Candeth Keep,0,dunno,Candeth Keep - Use statue in your society stronghold if Master in your society. Use statue at 87.9S 55.9W or the statue at 87.9S 54.5W if Lord in your society
-82,South Direlands Craters,South Direlands,0,dunno,Candeth Keep - South Direlands Portal 88.5S 66.8W - West into crater at 78.0S 45.5W - Run to 78.1S 48.7W
-83,Assassin's Roost,South Direlands,0,dunno,Candeth Keep - South Direlands Portal 88.5S 66.8W - Run to 73.8S 43.9W
-84,Slaughterhouse,South Direlands,0,dunno,Candeth Keep - South Direlands Portal 88.5S 66.8W - Slaughterhouse 80.6S 37.5W - Run to 0.2N 80.3W - The marker is up in one of the towers close to you
-85,Festival Stone of Gloaming,Fort Teth,0,dunno,Fort Teth - Run to 3.6S 70.0W
-86,Teth Golem Mountain,Fort Teth,0,dunno,Fort Teth - Run to 9.4S 72.0W
-87,Fort Tethana,Fort Teth,0,dunno,Fort Teth - Run to 3.2N 71.2W - Approach from the west side - From portal drop cross at 2.3N 71.8W and 2.5N 71.9W and 2.8N 72.0W and 3.1N 71.8W. (The run up is located in the valley with the Teth Lighthouse portal). Once you hit the Marker jump off the mountain to the North
-88,Shadow March,Fort Teth,0,dunno,Fort Teth - Run to 15.3N 68.7W -  It's on the ground on the south side of the mountain
-89,Most Northwestern Point of Direlands,Fort Teth,0,dunno,Aerlinthe - Immediately back through the Direlands portal behind you - Run to 18.4N 86.3W. Or use your mansion's Black Spawn Den Portal Device until you arrive at the Teth BSD and then run from there
-90,Izji Qo's Temple,Mid Direlands,0,dunno,Use the Portal to Izji Qo's Temple at your mansion OR Baishi - Give Sake to Drunken Madman 53.0S 61.0E - Take Outside Accursed Halls portal - Run to 12.8S 58.9W - At top of temple.
-91,Crystalline Crag (Inside Dungeon),Mid Direlands,0,dunno,Run to 17.0S 61.2W - Near the end of the 110+ dungeon in the room with the ramp in the lava pool that leads to the Progenitor's Lair portal
-92,South of Crystalline Crag,Mid Direlands,0,dunno,Run to 20.9S 60.9W
-93,East Direlands Lighthouse,East Direlands,0,dunno,Use the Portal to Kivik Lir's Temple at your mansion - Run to 25.8S 46.9W
-94,Malignant Tabernacle,East Direlands,0,dunno,Use the  Portal to Kivik Lir's Temple at your mansion - Run to 23.2S 46.1W - Outside dungeon
-95,Western Power Forge,East Direlands,0,dunno,Use the Portal to Kivik Lir's Temple at your mansion - Run to 21.9S 43.8W - Outside dungeon
-96,Center of Obsidian Plains,Obsidian Plains,0,dunno,Use the Dangerous Portal Device at your mansion to Obsidian Plains - Run to 64.0S 63.8W
-97,Aerbax's Citadel (Inside Dungeon),Obsidian Plains,0,dunno,Use the Dangerous Portal Device at your mansion to Obsidian Plains - Southgate at 65.0S 63.8W - Must do Aerbax's Citadel quest
-98,Chakron Gate,Obsidian Plains,0,dunno,Use the Dangerous Portal Device at your mansion to Obsidian Plains - Run to 52.6S 62.6W - Long run and must be approached from the south and west
-99,White Rabbit Cave,Ayan Baqur,0,dunno,Ayan Baqur - Run to 45.6S 87.0W - The rabbit will NOT attack unless you ID or attack it
-100,Mukkir Infested Black Spear Temple,Other,0,dunno,Use the Dangerous Portal Device at your mansion to Valley of Death - Run to 37.3S 67.0W - Outside dungeon
+5,Festival Stone of Seedsow,Lytelthorpe,16,explorationmarkersfoundingroupc,Lytelthorpe - Run to 0.6N 46.6E
+6,Outside Olthoi Chasm,Lytelthorpe,512,explorationmarkersfoundingrouph,Lytlethorpe - Run to 0.7N 44.7E
+7,Outside Stable Rift,Lytelthorpe,256,explorationmarkersfoundingroupb,Lytelthorpe - North Lytelthorpe Villas at 2.2N 50.4E - Run to 7.9N 50.8E
+8,Kayna bint Iswas' Home,Lytelthorpe,256,explorationmarkersfoundingroupd,Lytelthorpe - Asbel Domain Settlement Portal at 2.2N 50.4E - Run to 1.7S 36.6E
+9,Festival Stone of Thistledown,Cragstone,32,explorationmarkersfoundingroupc,Cragstone - Run to 28.4N 43.6E
+10,Fallen Shadow Spire of Cragstone,Cragstone,4,explorationmarkersfoundingroupg,Cragstone - 22.5N 48.0E - Near the top of the Fallen Shadow Spire
+11,Underground City,Cragstone,4,explorationmarkersfoundingrouph,Cragstone - Isle of Tears portal at 25.2N 49.9E - Run to 21.4N 54.0E
+12,Peddler's Hut,Cragstone,64,explorationmarkersfoundingroupi,Cragstone - Ispan Hill 26.2N 46.3E - Run to 53.7N 24.2E
+13,Empyrean Landmark,Eastham,256,explorationmarkersfoundingroupc,Eastham - Run to 19.0N 61.8E
+14,Asheron's Castle,Eastham,4,explorationmarkersfoundingroupf,Eastham - Asheron's Island 17.9N 64.3E - Take portal to Asheron's Castle - Run to 21.3N 69.3E
+15,Northeast shore of Wisp Lake,Eastham,256,explorationmarkersfoundingroupj,Eastham - Midhill Cottages 17.5N 61.5E - Run to 83.3N 0.2E
+16,Plateau Village,Plateau Village,1,explorationmarkersfoundingroupb,Plateau - 40.6N 41.3W - In the top of the tower by the 3 Windmills and Ka Ku-To the Tailor
+17,Point Tremblant,Mayoi,1,explorationmarkersfoundingrouph,Mayoi - Point Tremblant at 60.8S 80.3E - Run to 97.3N 3.6E
+18,Ruschk-Infested Black Spear Temple,Stonehold,16,explorationmarkersfoundingroupd,Stonehold - Westward Portal 68.6N 23.2W - Run to 74.0N 28.5W
+19,The Pit (Inside),Stonehold,64,explorationmarkersfoundingroupg,Stonehold - The Pit 64.3N 23.4W - Inside dungeon at the bottom of the pit opposite the surface portals
+20,Beach Fort,Stonehold,128,explorationmarkersfoundingroupe,Stonehold - Beachfort - 75.9N 49.0W - Take portal from inside The Pit
+21,Shadow Breach Crater,Arwic,1,explorationmarkersfoundingroupe,Arwic - Run to 33.9N 56.6E
+22,Mite Bunker,Arwic,128,explorationmarkersfoundingroupj,Arwic - Run to 35.9N 59.7E
+23,Northwatch Castle,Arwic,2,explorationmarkersfoundingroupd,Arwic - Dagger Vale 32.9N 59.6E - Run to 81.4N 24.5E
+24,Olthoi Brood Hive,Arwic,16,explorationmarkersfoundingroupb,Arwic - Far Claw Villas Settlement Portal at 32.9N 59.4E - Run to 51.8N 59.8E
+25,Empyrean Landmark,Al-Jalima,4,explorationmarkersfoundingroupc,Al-Jalima - Run to 6.9N 2.9E
+26,Olthoi North,Olthoi North,2,explorationmarkersfoundingroupa,Olthoi North - Cross mountain at 43.2N 58.0E - Run to 42.6N 57.4E - This marker must be approached from the north
+27,Paradox-touched Valley,Olthoi North,1,explorationmarkersfoundingroupg,Olthoi North - Run to 44.5N 57.4E - Just inside the cave containing the Paradox-Touched Olthoi Queen's Lair shortcut portal
+28,Black Death Catacombs (Inside),Olthoi North,128,explorationmarkersfoundingroupg,Arwic - Jeweled Thorn Estates portal 32.9N 59.4E - Run to 59.9N 71.2E - Black Death Catacombs - Lower Corridor - Deeper Catacombs - Next to portal to Catacombs of Opposition
+29,Forger's Hideout,Northern Osteth,64,explorationmarkersfoundingrouph,Bandit Castle - Counterfeit Writ Quest: Give C-note to Shanrek at 66.5N 49.9E - Use Blue Coral Reef at 75.6N 46.9E kill and loot Blue Coral - Recall and give to Shanrek - Give pearl to Agent of Arcanum - Give notice to Shanrek - Keep Out  66.6N 49.9E
+30,South Tumerok Vanguard Outpost,Xarabydun,512,explorationmarkersfoundingroupb,Xarabydun - Run to 45.6S 14.0E
+31,Cactus Stand,Yaraq,512,explorationmarkersfoundingroupf,Yaraq - Wi Badlands 22.4S 0.2E - Run to 21.6S 9.7E
+32,Inner Sea Gear Knight Invasion Area,Yaraq,1,explorationmarkersfoundingroupj,Yaraq - Ijaniya 22.4S 0.2E - Run to 36.6S 6.9E
+33,Linvak Tukal,Linvak Tukal,256,explorationmarkersfoundingroupa,Linvak Tukal - Run to 78.5S 28.2E - It's outside the city so get up the walls and jump off to the South
+34,Empty Lifestone Brackets,Samsur,512,explorationmarkersfoundingroupj,Samsur - Run to 2.7S 20.4E
+35,Lightning Elemental Crystal,Khayyaban,2,explorationmarkersfoundingroupf,Khayyaban - Ardent Realm 49.4S 26.0E - Run to 38.3S 34.5E
+36,Crater Rim,Crater Village,64,explorationmarkersfoundingroupa,Crater Village - Up rim at 66.9N 11.1E then run counter-clockwise around - Run to 65.9N 15.1E
+37,Mount Esper Crater,Crater Village,4,explorationmarkersfoundingroupe,Crater Village - Run to 66.0N 12.6E
+38,Banderling Castle,Crater Village,2,explorationmarkersfoundingroupc,Crater Village - Anadil 66.5N 14.1E - Run to 66.2N 2.3W
+39,Blackmire Shadow Spire Crater,From Yanshi,128,explorationmarkersfoundingroupf,Facility Hub - Banderling Conquest Dungeon Portal Level 25 room center door left side - Run to 26.7S 51.0E
+40,Harbinger's Lair,From Yanshi,4,explorationmarkersfoundingroupj,Yanshi - Quest Flag: Hand a Harbinger Item to Vincadi or Issk 12.6S 46.7E - Inside Empowered Harbinger's Lair (Hard version) - Use Harbinger's Lair portal at bottom
+41,Obsidian Span,From Yanshi,4,explorationmarkersfoundingroupa,Fort Tethana - Hilltop Portal 1.7N 71.5W - Run to 34.6N 41.6E - On top of the East Ring
+42,Archmage's House,Sawato,16,explorationmarkersfoundingrouph,Sawato - Run to 25.6S 57.6E
+43,Festival Stone of Coldeve,Kara,64,explorationmarkersfoundingroupc,Kara - Run to 83.0S 49.2E
+44,Tou-Tou Lighthouse,Tou-Tou,1,explorationmarkersfoundingroupi,Tou-Tou - Run to 26.4S 97.0E - Ontop of lighthouse
+45,Lake Lithanen,Tou-Tou,32,explorationmarkersfoundingroupa,Tou-Tou - Dame Tolani Settlement Portal 27.17S 96.04E - Run to 45.3N 26.7W
+46,Nanto North Outpost,Nanto,512,explorationmarkersfoundingroupd,Nanto - Run to 48.9S 81.7E - Ontop of Advocate Spire
+47,Festival Stone of Morntide,Nanto,128,explorationmarkersfoundingroupc,Nanto - Run to 53.1S 78.6E
+48,Saadia's Retreat,Nanto,8,explorationmarkersfoundingroupb,Nanto - Run to 53.6S 76.6E - Run from last marker
+49,Gotrok Camp,Qalaba'r,2,explorationmarkersfoundingrouph,Qalaba'r - Brigands Bay Settlement 74.8S 17.8E - Run to 88.3S 34.0E
+50,South Osteth Peak,Baishi,16,explorationmarkersfoundingroupa,Baishi - South Osteth Peak 52.8S 67.3E - Cross mountain at 53.2S 67.1E Look up the mountain and see the portal to the top - Run to 52.3S 67.9E
+51,Ulgrim's Island,Baishi,64,explorationmarkersfoundingroupf,Baishi - Drunken Madman 53.0S 61.0E - Give a Mug of Winter Lager (purchased at Nanto bar)
+52,Aerlinthe Center,Aerlinthe,32,explorationmarkersfoundingroupe,Aerlinthe - Run to 89.9N 46.4E - The central Aerlinthe caldera. 
+53,Western Aerlinthe Lighthouse,Aerlinthe,4,explorationmarkersfoundingroupi,Aerlinthe - Run to 84.4N 45.7E - Top of lighthouse
+54,Tusker Island,Aphus Lassel,64,explorationmarkersfoundingroupd,Aphus Lassel - Run to 2.6N 95.2E
+55,Tusker Gauntlet,Aphus Lassel,64,explorationmarkersfoundingroupb,Aphus Lassel - Run to 9.9S 86.3E - Just south of Bobo's waterfall - Use the Dangerous Portal Device at your mansion until it drops you on the Tusker Island or run from town
+56,Caulcano,Caul,16,explorationmarkersfoundingroupe,Caul - Run to 94.8S 94.8W
+57,Statue of Bael'Zharon,Caul,32,explorationmarkersfoundingroupj,Caul - Run to 90.4S 97.4W
+58,Nightmare Gate (Inside),Caul,32,explorationmarkersfoundingroupg,Caul - Assemble Vestibule Lock (See Sepulcher of Nightmares quest) to gain access: kill the bosses at 96.5S 95.0W and 94.3S 93.4W and 95.0S 98.2W - Nightmare Gate 89.7S 93.3W - At the end next to the BM chest
+59,Vaeshok's Cave,Dark Isle,1,explorationmarkersfoundingroupd,Dark Isle - Run to 86.9N 59.8E
+60,Ruschk Ice Tower,Dark Isle,8,explorationmarkersfoundingroupg,Dark Isle - Run to 96.3N 54.6E - Top of ice tower
+61,Karlun's Fort,Silyun,32,explorationmarkersfoundingroupi,Silyun - Run to 88.8N 67.6W - Immediately go thru portal and speak to Sir Ganzio above for next marker
+62,Eater Pit (Inside),Silyun,256,explorationmarkersfoundingroupg,Silyun - Eater's Pit at 88.8N 72.6W - At the bottom in the room with the sword Swallower. Quest Flag: Speak to Sir Ginazio in Karlun's Fort at 88.8N 67.8W
+63,Small Empyrean Vault,Silyun,32,explorationmarkersfoundingrouph,Silyun or Westwatch - Run to 80.4N 74.0W
+64,Ruschk Iceberg,Fiun Outpost,8,explorationmarkersfoundingrouph,Fiun Outpost - Run to 96.2N 60.0W - Outside the Ruschk Iceberg dungeon
+65,Augmentation Realm Upper Level,Eastwatch,32,explorationmarkersfoundingroupf,Eastwatch - Run to 95.0N 47.1W - Head down the valley then loop up and back for this portal atop the mountain
+66,Thrungus Hole,Eastwatch,16,explorationmarkersfoundingroupf,Eastwatch - Run to 94.2N 43.0W - Head back down the hill from Aug marker and you can see the Thrungus Bunker in the distance to the east and south
+67,Egg Orchard (Inside),Eastwatch,2,explorationmarkersfoundingroupj,Eastwatch - Egg Orchard 96.2N 48.1W - In Egg room (room closest to the exit portal at bottom)
+68,Marae Lassel,Marae Lassel,32,explorationmarkersfoundingroupd,Danby's Outpost - Central Tuatara Plains 23.9N 28.0W - Run to 55.7N 74.8W - Take the Karab Delta Portal nearby at 56.0N 75.0W
+69,Tumerok Camp,Bluespire,512,explorationmarkersfoundingroupc,Bluespire - Run to 40.5N 78.2W
+70,North Fork Dam,Timaru,8,explorationmarkersfoundingroupf,Timaru - North Fork Dam 51.2N 76.3W - Just outside the room with The Great Machine
+71,Greenspire Lighthouse,Greenspire,2,explorationmarkersfoundingroupi,Greenspire - Run to 42.9N 66.9W - Ontop of lighthouse
+72,Moarsmen Hideout,Vesayen Islands,128,explorationmarkersfoundingroupd,Freehold - Run to 69.9S 89.9E - Outside the Moarsmen Hideout dungeon
+73,Camp of the Latzimestal,Vesayen Islands,1,explorationmarkersfoundingroupc,Sanctuary Recall - Run to 83.0S 93.2E - By the tents where the undead were 
+74,Shadow-Infested Black Spear Temple,Vesayen Islands,8,explorationmarkersfoundingroupd,Sanctuary Recall - Run to 76.8S 93.9E - By the Shadow-Infested Black Spear Temple
+75,Western Xi Ru Lighthouse,Vesayen Islands,16,explorationmarkersfoundingroupi,Ayan Baqur - Talk to the Ghost behind the smith to portal to island 60.1S 88.1W - Run Counterclockwise to 89.3S 86.7E - Ontop lighthouse
+76,Freebooter Keep,Vesayen Islands,64,explorationmarkersfoundingroupe,Freebooter Island - Run to 64.2S 97.9E - In the K'nath valley to the East. Must be a Knight (Rank 3) in your society. 
+77,Stone Pillars,Candeth Keep,256,explorationmarkersfoundingroupf,Candeth Keep - Run to 83.5S 67.8W
+78,Tumerok Bunker,Candeth Keep,256,explorationmarkersfoundingroupi,Candeth Keep - Run to 84.8S 65.4W
+79,Withered Atoll,Candeth Keep,512,explorationmarkersfoundingroupa,Candeth Keep - Run to 85.9S 79.1W
+80,The Pit of Heretics,Candeth Keep,16,explorationmarkersfoundingroupj,Candeth Keep - The Pit of Heretics 87.9S 55.2W - Lord Test or Deru Tree quest
+81,Moarsman City,Candeth Keep,1,explorationmarkersfoundingroupf,Candeth Keep - Use statue in your society stronghold if Master in your society. Use statue at 87.9S 55.9W or the statue at 87.9S 54.5W if Lord in your society
+82,South Direlands Craters,South Direlands,32,explorationmarkersfoundingroupb,Candeth Keep - South Direlands Portal 88.5S 66.8W - West into crater at 78.0S 45.5W - Run to 78.1S 48.7W
+83,Assassin's Roost,South Direlands,128,explorationmarkersfoundingrouph,Candeth Keep - South Direlands Portal 88.5S 66.8W - Run to 73.8S 43.9W
+84,Slaughterhouse,South Direlands,4,explorationmarkersfoundingroupb,Candeth Keep - South Direlands Portal 88.5S 66.8W - Slaughterhouse 80.6S 37.5W - Run to 0.2N 80.3W - The marker is up in one of the towers close to you
+85,Festival Stone of Gloaming,Fort Tethana,8,explorationmarkersfoundingroupc,Fort Teth - Run to 3.6S 70.0W
+86,Teth Golem Mountain,Fort Tethana,128,explorationmarkersfoundingroupi,Fort Teth - Run to 9.4S 72.0W
+87,Fort Tethana,Fort Tethana,8,explorationmarkersfoundingroupa,Fort Teth - Run to 3.2N 71.2W - Approach from the west side - From portal drop cross at 2.3N 71.8W and 2.5N 71.9W and 2.8N 72.0W and 3.1N 71.8W. (The run up is located in the valley with the Teth Lighthouse portal). Once you hit the Marker jump off the mountain to the North
+88,Shadow March,Fort Tethana,2,explorationmarkersfoundingroupe,Fort Teth - Run to 15.3N 68.7W -  It's on the ground on the south side of the mountain
+89,Most Northwestern Point of Direlands,Fort Tethana,512,explorationmarkersfoundingroupi,Aerlinthe - Immediately back through the Direlands portal behind you - Run to 18.4N 86.3W. Or use your mansion's Black Spawn Den Portal Device until you arrive at the Teth BSD and then run from there
+90,Izji Qo's Temple,Mid Dires,2,explorationmarkersfoundingroupb,Use the Portal to Izji Qo's Temple at your mansion OR Baishi - Give Sake to Drunken Madman 53.0S 61.0E - Take Outside Accursed Halls portal - Run to 12.8S 58.9W - At top of temple.
+91,Crystalline Crag (Inside),Mid Dires,16,explorationmarkersfoundingroupg,Run to 17.0S 61.2W - Near the end of the 110+ dungeon in the room with the ramp in the lava pool that leads to the Progenitor's Lair portal
+92,South of Crystalline Crag,Mid Dires,2,explorationmarkersfoundingroupg,Run to 20.9S 60.9W
+93,East Direlands Lighthouse,East Direlands Swamp,8,explorationmarkersfoundingroupi,Use the Portal to Kivik Lir's Temple at your mansion - Run to 25.8S 46.9W
+94,Malignant Tabernacle,East Direlands Swamp,256,explorationmarkersfoundingroupe,Use the  Portal to Kivik Lir's Temple at your mansion - Run to 23.2S 46.1W - Outside dungeon
+95,Western Power Forge,East Direlands Swamp,256,explorationmarkersfoundingrouph,Use the Portal to Kivik Lir's Temple at your mansion - Run to 21.9S 43.8W - Outside dungeon
+96,Center of Obsidian Plains,Obsidian Plains,8,explorationmarkersfoundingroupe,Use the Dangerous Portal Device at your mansion to Obsidian Plains - Run to 64.0S 63.8W
+97,Aerbax's Citadel (Inside),Obsidian Plains,8,explorationmarkersfoundingroupj,Use the Dangerous Portal Device at your mansion to Obsidian Plains - Southgate at 65.0S 63.8W - Must do Aerbax's Citadel quest
+98,Chakron Gate,Obsidian Plains,512,explorationmarkersfoundingroupg,Use the Dangerous Portal Device at your mansion to Obsidian Plains - Run to 52.6S 62.6W - Long run and must be approached from the south and west
+99,White Rabbit Cave,Ayan Baqur,64,explorationmarkersfoundingroupj,Ayan Baqur - Run to 45.6S 87.0W - The rabbit will not attack unless you ID or attack it
+100,Mukkir Infested Black Spear Temple,Other,4,explorationmarkersfoundingroupd,Use the Dangerous Portal Device at your mansion to Valley of Death - Run to 37.3S 67.0W - Outside dungeon

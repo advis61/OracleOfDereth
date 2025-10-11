@@ -29,7 +29,9 @@ namespace OracleOfDereth
         readonly int IconNotComplete = 0x60011F8;    // Red Circle
 
         public HudTabView MainViewNotebook { get; private set; }
+        public HudTabView StatusViewNotebook { get; private set; }
         public HudTabView CharacterViewNotebook { get; private set; }
+        public HudTabView QuestsViewNotebook { get; private set; }
 
         // Status HUD
         public HudStaticText SummoningText { get; private set; }
@@ -64,7 +66,6 @@ namespace OracleOfDereth
         public HudButton MarkersRefresh { get; private set; }
         public HudList MarkersList { get; private set; }
 
-
         // Character: Augmentations
         public HudList AugmentationsQuestsList { get; private set; }
         public HudList AugmentationsList { get; private set; }
@@ -87,34 +88,43 @@ namespace OracleOfDereth
 
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
         {
-            { 0, 190 }, // Hud
-            { 1, 460 }, // Buffs
-            { 2, 350 }, // Character
-            { 3, 430 }, // John
-            { 4, 430 }, // Markers
-            { 5, 350 }, // About
+            // Status Tab
+            { 1_00, 200 }, // HUD
+            { 1_01, 460 }, // Buffs
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
             { 2_01, 350 }, // Cantrips
             { 2_02, 350 }, // Credits
             { 2_03, 650 }, // Luminance
+
+            // Quesets Tab
+            { 3_00, 430 }, // John
+            { 3_01, 450 }, // Markers
+
+            // About
+            { 4, 350 }, // About
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
         {
-            { 0, 290 }, // Hud
-            { 1, 545 }, // Buffs
-            { 2, 550 }, // Character
-            { 3, 545 }, // John
-            { 4, 545 }, // Markers
-            { 5, 290 }, // About
+
+            // Status Tab
+            { 1_00, 300 }, // HUD
+            { 1_01, 545 }, // Buffs
 
             // Character Tab
             { 2_00, 550 }, // Augmentations
             { 2_01, 550 }, // Cantrips
             { 2_02, 165 }, // Credits
             { 2_03, 550 }, // Luminance
+
+            // Quests Tab
+            { 3_00, 545}, // John
+            { 3_01, 545 }, // Markers
+
+            // About
+            { 4, 270 }, // About
         };
 
         // Assign Images Tracking
@@ -141,9 +151,17 @@ namespace OracleOfDereth
                 MainViewNotebook = (HudTabView)view["MainViewNotebook"];
                 MainViewNotebook.OpenTabChange += Notebook_OpenTabChange;
 
+                // Hud Notebook
+                StatusViewNotebook = (HudTabView)view["StatusViewNotebook"];
+                StatusViewNotebook.OpenTabChange += Notebook_OpenTabChange;
+
                 // Character Notebook
                 CharacterViewNotebook = (HudTabView)view["CharacterViewNotebook"];
                 CharacterViewNotebook.OpenTabChange += Notebook_OpenTabChange;
+
+                // Quests Notebook
+                QuestsViewNotebook = (HudTabView)view["QuestsViewNotebook"];
+                QuestsViewNotebook.OpenTabChange += Notebook_OpenTabChange;
 
                 // HUD Tab
                 BuffsText = (HudStaticText)view["BuffsText"];
@@ -254,10 +272,11 @@ namespace OracleOfDereth
 
         private int CurrentTab()
         {
-            int mainTab = MainViewNotebook.CurrentTab;
+            int mainTab = MainViewNotebook.CurrentTab + 1;
 
-            // Character Tab
+            if(mainTab == 1) { return (mainTab * 100) + StatusViewNotebook.CurrentTab; }
             if(mainTab == 2) { return (mainTab * 100) + CharacterViewNotebook.CurrentTab; }
+            if(mainTab == 3) { return (mainTab * 100) + QuestsViewNotebook.CurrentTab; }
 
             // Main Tab
             return mainTab;
@@ -284,6 +303,7 @@ namespace OracleOfDereth
             QuestFlag.Refresh();
         }
 
+
         private void AssignImage(HudPictureBox row, int icon)
         {
             if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
@@ -304,16 +324,19 @@ namespace OracleOfDereth
 
             int currentTab = CurrentTab();
 
-            if (currentTab == 0) { UpdateHud(); }
-            if (currentTab == 1) { UpdateBuffs(); }
-            if (currentTab == 3) { UpdateJohn(); }
-            if (currentTab == 4) { UpdateMarkers(); }
+            // Status Tab
+            if (currentTab == 1_00) { UpdateHud(); }
+            if (currentTab == 1_01) { UpdateBuffs(); }
 
             // Character Tab
-            if(currentTab == 200) { UpdateAugmentations(); }
-            if(currentTab == 201) { UpdateCantrips(); }
-            if(currentTab == 202) { UpdateCredits(); }
-            if(currentTab == 203) { UpdateLuminance(); }
+            if (currentTab == 2_00) { UpdateAugmentations(); }
+            if (currentTab == 2_01) { UpdateCantrips(); }
+            if (currentTab == 2_02) { UpdateCredits(); }
+            if (currentTab == 2_03) { UpdateLuminance(); }
+
+            // Quests Tab
+            if (currentTab == 3_00) { UpdateJohn(); }
+            if (currentTab == 3_01) { UpdateMarkers(); }
         }
 
         // Quest Flag Changes
@@ -602,10 +625,21 @@ namespace OracleOfDereth
             Marker marker = Marker.Markers.FirstOrDefault(x => x.Number == number);
             if (marker == null) { return; }
 
+            if(col == 0)
+            {
+                Util.Think($"#{marker.Number} {marker.Name}: {marker.Url()}");
+                Util.ClipboardCopy(marker.Url());
+            }
+
             // Quest Hint
-            if (marker.Hint.Length > 0)
+            if (col > 0 && col < 3 && marker.Hint.Length > 0)
             {
                 Util.Think($"#{marker.Number} {marker.Name}: {marker.Hint}");
+            }
+
+            if(col == 3)
+            {
+                Util.Think($"#{marker.Number} {marker.Name}: {marker.Flag} {marker.BitMask}");
             }
         }
 
