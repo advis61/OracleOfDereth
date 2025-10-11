@@ -2,12 +2,12 @@
 
 Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.8.0/OracleOfDerethInstaller-1.8.0.0.exe)
 
-If you crash at the login screen, make sure to upgrade to latest Decal v2.9.8.3
+If you crash at the login screen, make sure to upgrade to latest Decal v2.9.8.3 or higher.
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
 ## Getting Started
-- This plugin requires the latest Decal, v2.9.8.3. It will fail to register in previous versions.
+- This plugin requires the latest [Decal](https://www.decaldev.com/), v2.9.8.3. It will fail to register in previous versions.
 
 - Download the latest .exe from above. Or check out all [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases).
 
