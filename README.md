@@ -4,6 +4,21 @@ Download the latest version: [Download Oracle of Dereth](https://github.com/advi
 
 If you crash at the login screen, make sure to upgrade to latest Decal v2.9.8.3
 
+To upgrade from a previous version, just download and re-run the .exe file.
+
+## Getting Started
+- This plugin requires the latest Decal, v2.9.8.3. It will fail to register in previous versions.
+
+- Download the latest .exe from above. Or check out all [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases).
+
+- Run the .exe program.
+
+- If the `Windows protected your PC` message appears, click on `More info` near the top-left corner of the window and select `Run anyway`.
+
+- Complete the installer.
+
+- It should automatically appear in the Decal list of plugins. You're all done!
+
 ## About
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) v2.9.8.3 plugin.
@@ -44,18 +59,6 @@ Void Target View
 
 ![Void Target View](./docs/Void.png)
 
-## Getting Started
-- This plugin requires the latest Decal, v2.9.8.3. It will fail to register in previous versions.
-
-- Download the latest .exe from above. Or check out all [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases).
-
-- Run the .exe program.
-
-- If the "Windows protected your PC" message appears, click on More info near the top-left corner of the window and select Run anyway.
-
-- Complete the installer.
-
-- It should automatically appear in the Decal list of plugins. You're all done!
 
 ## Usage
 
