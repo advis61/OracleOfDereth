@@ -83,6 +83,9 @@ namespace OracleOfDereth
         public HudList CreditsList { get; private set; }
         public HudButton CreditsRefresh { get; private set; }
 
+        // Character: Recalls
+        public HudList RecallsList { get; private set; }
+
         // Resize Tracking
         public bool wasResized = false;
 
@@ -97,8 +100,9 @@ namespace OracleOfDereth
             { 2_01, 350 }, // Cantrips
             { 2_02, 350 }, // Credits
             { 2_03, 650 }, // Luminance
+            { 2_04, 350 }, // Recalls
 
-            // Quesets Tab
+            // Quests Tab
             { 3_00, 430 }, // John
             { 3_01, 430 }, // Markers
 
@@ -118,6 +122,7 @@ namespace OracleOfDereth
             { 2_01, 550 }, // Cantrips
             { 2_02, 165 }, // Credits
             { 2_03, 550 }, // Luminance
+            { 2_04, 435 }, // Recalls
 
             // Quests Tab
             { 3_00, 545}, // John
@@ -254,6 +259,11 @@ namespace OracleOfDereth
                 CreditsList.Click += CreditsList_Click;
                 CreditsList.ClearRows();
 
+                // Character: Recalls
+                RecallsList = (HudList)view["RecallsList"];
+                RecallsList.Click += RecallsList_Click;
+                RecallsList.ClearRows();
+
                 // Character: Luminance
                 LuminanceRefresh = (HudButton)view["LuminanceRefresh"];
                 LuminanceRefresh.Hit += QuestFlagsRefresh_Hit;
@@ -333,6 +343,7 @@ namespace OracleOfDereth
             if (currentTab == 2_01) { UpdateCantrips(); }
             if (currentTab == 2_02) { UpdateCredits(); }
             if (currentTab == 2_03) { UpdateLuminance(); }
+            if (currentTab == 2_04) { UpdateRecalls(); }
 
             // Quests Tab
             if (currentTab == 3_00) { UpdateJohn(); }
@@ -420,6 +431,11 @@ namespace OracleOfDereth
         {
             UpdateLuminanceList();
             UpdateLuminanceText();
+        }
+
+        public void UpdateRecalls()
+        {
+            UpdateRecallsList();
         }
 
         private void UpdateBuffsList()
@@ -884,6 +900,73 @@ namespace OracleOfDereth
             }
         }
 
+        // Recalls
+
+        private void UpdateRecallsList()
+        {
+            List<Recall> recalls = Recall.Recalls.ToList();
+
+            for (int x = 0; x < recalls.Count; x++)
+            {
+                HudList.HudListRowAccessor row;
+
+                if (x >= RecallsList.RowCount)
+                {
+                    row = RecallsList.AddRow();
+
+                    ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                    ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                }
+                else
+                {
+                    row = RecallsList[x];
+                }
+
+                // Update
+                Recall recall = recalls[x];
+                AssignImage((HudPictureBox)row[0], recall.IsComplete());
+                ((HudStaticText)row[1]).Text = recall.Name;
+
+                if (recall.IsComplete())
+                {
+                    ((HudStaticText)row[2]).Text = "completed";
+                }
+                else
+                {
+                    ((HudStaticText)row[2]).Text = "-";
+                }
+
+                ((HudStaticText)row[3]).Text = recall.SpellId.ToString();
+            }
+        }
+
+        private void RecallsList_Click(object sender, int row, int col)
+        {
+            int spellId = int.Parse(((HudStaticText)RecallsList[row][3]).Text);
+
+            Recall recall = Recall.Recalls.FirstOrDefault(x => x.SpellId == spellId);
+            if (recall == null) { return; }
+
+            // Quest URL
+            if (col == 0 && recall.Url.Length > 0)
+            {
+                Util.Think($"{recall.Name}: {recall.Url}");
+                Util.ClipboardCopy(recall.Url);
+            }
+
+            // Quest Hint
+            if (col == 1 && recall.Hint.Length > 0)
+            {
+                Util.Think($"{recall.Name} Recall: {recall.Hint}");
+            }
+
+            // Debug
+            if (col >= 2)
+            {
+                Util.Chat($"Name:{recall.Name} SpellId{recall.SpellId}", Util.ColorPink);
+            }
+        }
+
 
         // Shutdown
         public void Dispose()
@@ -908,8 +991,8 @@ namespace OracleOfDereth
                 AugmentationsList.Click -= AugmentationsList_Click;
                 LuminanceList.Click -= LuminanceList_Click;
                 CreditsList.Click -= CreditsList_Click;
-
                 MarkersList.Click -= MarkersList_Click;
+                RecallsList.Click -= RecallsList_Click;
 
                 // Quest Flag Refresh Buttons
                 JohnRefresh.Hit -= QuestFlagsRefresh_Hit;

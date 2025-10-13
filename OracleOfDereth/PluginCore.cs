@@ -119,6 +119,7 @@ namespace OracleOfDereth
             JohnQuest.Init();
             Marker.Init();
             QuestFlag.Init();
+            Recall.Init();
             Target.Init();
 
             // Initialize Views
@@ -199,8 +200,6 @@ namespace OracleOfDereth
                     Marker.Info();
                     e.Eat = true;
                 }
-
-
             }
             catch (Exception ex) { Util.Log(ex); }
         }
