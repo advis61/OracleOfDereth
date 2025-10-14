@@ -26,6 +26,7 @@
     <None Remove="Resources\cantrips.csv" />
     <None Remove="Resources\markers.csv" />
     <None Remove="Resources\recalls.csv" />
+    <None Remove="Resources\titles.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PluginCore.cs" />
@@ -44,6 +45,7 @@
     <EmbeddedResource Include="Resources\creditquests.csv" />
     <EmbeddedResource Include="Resources\markers.csv" />
     <EmbeddedResource Include="Resources\recalls.csv" />
+    <EmbeddedResource Include="Resources\titles.csv" />
     <EmbeddedResource Include="targetView.xml" />
     <EmbeddedResource Include="Resources\johnquests.csv" />
   </ItemGroup>

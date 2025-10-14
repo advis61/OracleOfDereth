@@ -74,6 +74,8 @@ namespace OracleOfDereth
                 CoreManager.Current.ItemSelected += Current_ItemSelected;
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete; // Not run on hot reload
                 CoreManager.Current.CharacterFilter.SpellCast += CharacterFilter_SpellCast;
+                CoreManager.Current.EchoFilter.ServerDispatch += EchoFilter_ServerDispatch;
+
 
                 // Initialize
                 if (CoreManager.Current.CharacterFilter.LoginStatus >= 1) {
@@ -121,6 +123,7 @@ namespace OracleOfDereth
             QuestFlag.Init();
             Recall.Init();
             Target.Init();
+            Title.Init();
 
             // Initialize Views
             mainView = new MainView();
@@ -157,6 +160,7 @@ namespace OracleOfDereth
                 CoreManager.Current.ItemSelected -= Current_ItemSelected;
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
                 CoreManager.Current.CharacterFilter.SpellCast -= CharacterFilter_SpellCast;
+                CoreManager.Current.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch;
 
                 // Shutdown timer
                 if (timer != null)
@@ -242,6 +246,26 @@ namespace OracleOfDereth
             try
             {
                 Target.SpellCast(e.TargetId, e.SpellId);
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        // https://github.com/ACEmulator/ACE/blob/master/Source/ACE.Server/Network/GameEvent/GameEventType.cs
+        private void EchoFilter_ServerDispatch(object sender, NetworkMessageEventArgs e)
+        {
+            try {
+
+                if (e.Message.Type != 0xF7B0) { return; } // Game Event
+
+                if ((int)e.Message["event"] == 0x0029) // Titles list
+                {
+                    Title.Parse(e.Message.Struct("titles"));
+                }
+
+                if ((int)e.Message["event"] == 0x002B) // Update titles
+                {
+                    Title.ParseUpdate(e.Message.Value<Int32>("title"));
+                }
             }
             catch (Exception ex) { Util.Log(ex); }
         }

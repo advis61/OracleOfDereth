@@ -61,6 +61,10 @@ namespace OracleOfDereth
         public HudList JohnList { get; private set; }
         public HudButton JohnRefresh { get; private set; }
 
+        // Titles
+        public HudList TitlesList { get; private set; }
+        public HudStaticText TitlesText { get; private set; }
+
         // Markers
         public HudStaticText MarkersText { get; private set; }
         public HudButton MarkersRefresh { get; private set; }
@@ -105,6 +109,7 @@ namespace OracleOfDereth
             // Quests Tab
             { 3_00, 430 }, // John
             { 3_01, 430 }, // Markers
+            { 3_02, 530 }, // Titles
 
             // About
             { 4, 350 }, // About
@@ -127,6 +132,7 @@ namespace OracleOfDereth
             // Quests Tab
             { 3_00, 545}, // John
             { 3_01, 545 }, // Markers
+            { 3_02, 545 }, // Titles
 
             // About
             { 4, 270 }, // About
@@ -234,6 +240,14 @@ namespace OracleOfDereth
                 MarkersList = (HudList)view["MarkersList"];
                 MarkersList.Click += MarkersList_Click;
                 MarkersList.ClearRows();
+
+                // Titles
+                TitlesText = (HudStaticText)view["TitlesText"];
+                TitlesText.FontHeight = 10;
+
+                TitlesList = (HudList)view["TitlesList"];
+                TitlesList.Click += TitlesList_Click;
+                TitlesList.ClearRows();
 
                 // Character: Augmentations
                 AugmentationsRefresh = (HudButton)view["AugmentationsRefresh"];
@@ -348,6 +362,7 @@ namespace OracleOfDereth
             // Quests Tab
             if (currentTab == 3_00) { UpdateJohn(); }
             if (currentTab == 3_01) { UpdateMarkers(); }
+            if (currentTab == 3_02) { UpdateTitles(); }
         }
 
         // Quest Flag Changes
@@ -436,6 +451,11 @@ namespace OracleOfDereth
         public void UpdateRecalls()
         {
             UpdateRecallsList();
+        }
+
+        public void UpdateTitles()
+        {
+            UpdateTitlesList();
         }
 
         private void UpdateBuffsList()
@@ -963,7 +983,64 @@ namespace OracleOfDereth
             // Debug
             if (col >= 2)
             {
-                Util.Chat($"Name:{recall.Name} SpellId{recall.SpellId}", Util.ColorPink);
+                Util.Chat($"Name:{recall.Name} SpellId:{recall.SpellId}", Util.ColorPink);
+            }
+        }
+
+        // Titles
+
+        private void UpdateTitlesList()
+        {
+            List<Title> titles = Title.Titles.ToList();
+
+            for (int x = 0; x < titles.Count; x++) {
+                HudList.HudListRowAccessor row;
+
+                if (x >= TitlesList.RowCount) {
+                    row = TitlesList.AddRow();
+
+                    ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                    ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                } else {
+                    row = TitlesList[x];
+                }
+
+                // Update
+                Title title = titles[x];
+                if (title.Name == "Blank") { continue; }
+
+                ((HudStaticText)row[1]).Text = title.Name;
+                if (title.TitleId == 0) { continue; }
+
+                AssignImage((HudPictureBox)row[0], title.IsComplete());
+                ((HudStaticText)row[2]).Text = title.Category;
+                ((HudStaticText)row[3]).Text = title.TitleId.ToString();
+            }
+
+            TitlesText.Text = $"Titles: {Title.KnownTitleIds.Count} completed";
+        }
+
+        private void TitlesList_Click(object sender, int row, int col)
+        {
+            string text = ((HudStaticText)TitlesList[row][3]).Text;
+            if (text == null || text == "" || text.IndexOf('-') > 0) { return; }
+
+            int titleId = int.Parse(text);
+
+            Title title = Title.Titles.FirstOrDefault(x => x.TitleId == titleId);
+            if (title == null) { return; }
+
+            // Quest URL
+            if ((col == 0 || col == 1) && title.Url.Length > 0)
+            {
+                Util.Think($"{title.Name}: {title.Url}");
+                Util.ClipboardCopy(title.Url);
+            }
+
+            // Debug
+            if (col >= 2)
+            {
+                Util.Chat($"Name:{title.Name} TitleId:{title.TitleId}", Util.ColorPink);
             }
         }
 
@@ -993,6 +1070,7 @@ namespace OracleOfDereth
                 CreditsList.Click -= CreditsList_Click;
                 MarkersList.Click -= MarkersList_Click;
                 RecallsList.Click -= RecallsList_Click;
+                TitlesList.Click -= TitlesList_Click;
 
                 // Quest Flag Refresh Buttons
                 JohnRefresh.Hit -= QuestFlagsRefresh_Hit;
