@@ -173,9 +173,9 @@
 						<page label="Available">
 							<control progid="DecalControls.FixedLayout" clipped="">
 								<control progid="DecalControls.StaticText" name="TitlesText" left="5" top="5" width="300" height="20" text="Titles"/>
-								<control progid="DecalControls.StaticText" name="Name" left="1" top="33" width="200" height="17" text="Title Name"/>
 
-								<control progid="DecalControls.StaticText" name="TitlesListSortName" left="1" top="33" width="210" height="17" text="Title Name"/>
+								<control progid="DecalControls.FixedLayout" name="TitlesListSortComplete" left="1" top="37" width="16" height="16"/>
+								<control progid="DecalControls.StaticText" name="TitlesListSortName" left="25" top="33" width="210" height="17" text="Title Name"/>
 								<control progid="DecalControls.StaticText" name="TitlesListSortLevel" left="235" top="33" width="35" height="17" text="Level"/>
 								<control progid="DecalControls.StaticText" name="TitlesListSortCategory" left="277" top="33" width="300" height="17" text="Category"/>
 

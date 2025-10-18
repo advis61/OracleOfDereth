@@ -7,6 +7,7 @@ using MyClasses.MetaViewWrappers.VirindiViewServiceHudControls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Security.Authentication.ExtendedProtection.Configuration;
 using System.Text;
@@ -27,6 +28,7 @@ namespace OracleOfDereth
 
         readonly int IconComplete = 0x60011F9;   // Green Circle
         readonly int IconNotComplete = 0x60011F8;    // Red Circle
+        readonly int IconSort = 0x60011F7;    // Sort Icon 6D76
 
         public HudTabView MainViewNotebook { get; private set; }
         public HudTabView StatusViewNotebook { get; private set; }
@@ -64,6 +66,10 @@ namespace OracleOfDereth
         // Titles
         public HudList TitlesList { get; private set; }
         public HudStaticText TitlesText { get; private set; }
+
+
+        public HudFixedLayout TitlesListSortComplete { get; private set; }
+        public HudPictureBox TitlesListSortCompleteIcon { get; private set; }
 
         public HudStaticText TitlesListSortName { get; private set; }
         public HudStaticText TitlesListSortLevel { get; private set; }
@@ -255,6 +261,12 @@ namespace OracleOfDereth
                 TitlesList = (HudList)view["TitlesList"];
                 TitlesList.Click += TitlesList_Click;
                 TitlesList.ClearRows();
+
+                TitlesListSortCompleteIcon = new HudPictureBox();
+                TitlesListSortCompleteIcon.Image = IconSort;
+                TitlesListSortComplete = (HudFixedLayout)view["TitlesListSortComplete"];
+                TitlesListSortComplete.AddControl(TitlesListSortCompleteIcon, new Rectangle(0, 0, 16, 16));
+                TitlesListSortCompleteIcon.Hit += TitlesListSortComplete_Click;
 
                 TitlesListSortName = (HudStaticText)view["TitlesListSortName"];
                 TitlesListSortName.Hit += TitlesListSortName_Click;
@@ -1110,6 +1122,20 @@ namespace OracleOfDereth
             UpdateTitlesList();
         }
 
+        void TitlesListSortComplete_Click(object sender, EventArgs e)
+        {
+            if (Title.CurrentSortType == Title.SortType.CompleteAscending)
+            {
+                Title.Sort(Title.SortType.CompleteDescending);
+            }
+            else
+            {
+                Title.Sort(Title.SortType.CompleteAscending);
+            }
+
+            UpdateTitlesList();
+        }
+
         // Titles
         private void UpdateUnavailableTitlesList()
         {
@@ -1203,6 +1229,7 @@ namespace OracleOfDereth
                 UnavailableTitlesList.Click -= UnavailableTitlesList_Click;
 
                 TitlesList.Click -= TitlesList_Click;
+                TitlesListSortCompleteIcon.Hit -= TitlesListSortComplete_Click;
                 TitlesListSortName.Hit -= TitlesListSortName_Click;
                 TitlesListSortLevel.Hit -= TitlesListSortLevel_Click;
                 TitlesListSortCategory.Hit -= TitlesListSortCategory_Click;

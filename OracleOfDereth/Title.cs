@@ -21,10 +21,12 @@ namespace OracleOfDereth
         public static List<Title> Titles = new List<Title>();
         public static List<int> KnownTitleIds = new List<int>();
 
-        public static SortType CurrentSortType = SortType.NameAscending;
+        public static SortType CurrentSortType = SortType.CategoryAscending;
 
         public enum SortType
         {
+            CompleteAscending,
+            CompleteDescending,
             NameAscending,
             NameDescending,
             LevelAscending,
@@ -69,6 +71,12 @@ namespace OracleOfDereth
             CurrentSortType = sortType;
             switch (sortType)
             {
+                case SortType.CompleteAscending:
+                    Titles = Titles.OrderBy(q => q.IsComplete()).ThenBy(q => q.Name).ToList();
+                    break;
+                case SortType.CompleteDescending:
+                    Titles = Titles.OrderByDescending(q => q.IsComplete()).ThenBy(q => q.Name).ToList();
+                    break;
                 case SortType.NameAscending:
                     Titles = Titles.OrderBy(q => q.Name).ToList();
                     break;
