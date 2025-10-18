@@ -125,10 +125,12 @@ namespace OracleOfDereth
             // Quests Tab
             { 3_00, 430 }, // John
             { 3_01, 430 }, // Markers
-            { 3_02, 570 }, // Titles
+
+            // Titles
+            { 4_00, 530 }, // Available and Unavailable
 
             // About
-            { 4, 350 }, // About
+            { 5_00, 350 }, // About
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
@@ -148,10 +150,12 @@ namespace OracleOfDereth
             // Quests Tab
             { 3_00, 545}, // John
             { 3_01, 545 }, // Markers
-            { 3_02, 545 }, // Titles
+
+            // Titles
+            { 4_00, 545 }, // Available
 
             // About
-            { 4, 270 }, // About
+            { 5_00, 270 }, // About
         };
 
         // Assign Images Tracking
@@ -348,7 +352,7 @@ namespace OracleOfDereth
             if(mainTab == 3) { return (mainTab * 100) + QuestsViewNotebook.CurrentTab; }
 
             // Main Tab
-            return mainTab;
+            return mainTab * 100;
         }
 
         private void Notebook_OpenTabChange(object sender, EventArgs e)
@@ -407,7 +411,13 @@ namespace OracleOfDereth
             // Quests Tab
             if (currentTab == 3_00) { UpdateJohn(); }
             if (currentTab == 3_01) { UpdateMarkers(); }
-            if (currentTab == 3_02) { UpdateTitles(); }
+
+            // Titles Tab
+            if (currentTab == 4_00) { UpdateTitles(); }
+            if (currentTab == 4_01) { UpdateTitles(); }
+
+            // About
+            if (currentTab == 5_00) { ; }
         }
 
         // Quest Flag Changes
