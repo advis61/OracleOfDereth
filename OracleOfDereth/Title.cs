@@ -46,8 +46,8 @@ namespace OracleOfDereth
 
         public static void Init()
         {
+            Util.Chat("Clearing known titles data.", Util.ColorPink);
             Titles.Clear();
-            KnownTitleIds.Clear();
             LoadTitlesCSV();
         }
         public static List<Title> Available() { return Titles.Where(a => a.Category != "Unavailable").ToList(); }
@@ -55,10 +55,14 @@ namespace OracleOfDereth
 
         public static void Parse(MessageStruct titles)
         {
+            KnownTitleIds.Clear();
+
             for (int i = 0; i < titles.Count; i++) {
                 Int32 titleId = titles.Struct(i).Value<Int32>("title");
                 if (!KnownTitleIds.Contains(titleId)) { KnownTitleIds.Add(titleId); }
             }
+            
+            Util.Chat($"Titles data updated. {KnownTitleIds.Count} titles completed.", Util.ColorPink);
         }
 
         public static void ParseUpdate(int titleId)
@@ -72,10 +76,10 @@ namespace OracleOfDereth
             switch (sortType)
             {
                 case SortType.CompleteAscending:
-                    Titles = Titles.OrderBy(q => q.IsComplete()).ThenBy(q => q.Name).ToList();
+                    Titles = Titles.OrderBy(q => q.IsComplete()).ThenBy(q => q.Number).ToList();
                     break;
                 case SortType.CompleteDescending:
-                    Titles = Titles.OrderByDescending(q => q.IsComplete()).ThenBy(q => q.Name).ToList();
+                    Titles = Titles.OrderByDescending(q => q.IsComplete()).ThenBy(q => q.Number).ToList();
                     break;
                 case SortType.NameAscending:
                     Titles = Titles.OrderBy(q => q.Name).ToList();

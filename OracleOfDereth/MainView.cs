@@ -1066,17 +1066,17 @@ namespace OracleOfDereth
             if (title == null) { return; }
 
             // Quest URL
-            if ((col == 0 || col == 1) && title.Url.Length > 0) {
+            if (col == 0 && title.Url.Length > 0) {
                 Util.Think($"{title.Name}: {title.Url}");
                 Util.ClipboardCopy(title.Url);
             }
 
-            if(col == 1 && title.Hint.Length > 0) {
+            if((col == 1 || col == 2 || col == 3) && title.Hint.Length > 0) {
                 Util.Think($"{title.Name}: {title.Hint}");
             }
 
             // Debug
-            if (col >= 2) {
+            if (col > 3) {
                 Util.Chat($"Name:{title.Name} TitleId:{title.TitleId}", Util.ColorPink);
             }
         }
