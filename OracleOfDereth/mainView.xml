@@ -169,15 +169,37 @@
 					</control>
 				</page>
 				<page label="Titles">
-					<control progid="DecalControls.FixedLayout" clipped="">
-						<control progid="DecalControls.StaticText" name="TitlesText" left="5" top="5" width="300" height="20" text="Titles"/>
-						<control progid="DecalControls.StaticText" name="Name" left="1" top="33" width="200" height="17" text="Title Name"/>
-						<control progid="DecalControls.List" name="TitlesList" left="0" top="53" width="640" height="2000">
-							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
-							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="205" />
-							<column progid="DecalControls.TextColumn" name="Category" fixedwidth="285" />
-							<column progid="DecalControls.TextColumn" name="TitleId" fixedwidth="1" />
-						</control>
+					<control progid="DecalControls.Notebook" name="TitlesViewNotebook">
+						<page label="Available">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="TitlesText" left="5" top="5" width="300" height="20" text="Titles"/>
+								<control progid="DecalControls.StaticText" name="Name" left="1" top="33" width="200" height="17" text="Title Name"/>
+
+								<control progid="DecalControls.StaticText" name="TitlesListSortName" left="1" top="33" width="210" height="17" text="Title Name"/>
+								<control progid="DecalControls.StaticText" name="TitlesListSortLevel" left="235" top="33" width="35" height="17" text="Level"/>
+								<control progid="DecalControls.StaticText" name="TitlesListSortCategory" left="277" top="33" width="300" height="17" text="Category"/>
+
+								<control progid="DecalControls.List" name="TitlesList" left="0" top="53" width="640" height="2000">
+									<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="205" />
+									<column progid="DecalControls.TextColumn" name="Level" fixedwidth="32" />
+									<column progid="DecalControls.TextColumn" name="Category" fixedwidth="285" />
+									<column progid="DecalControls.TextColumn" name="TitleId" fixedwidth="1" />
+								</control>
+							</control>
+						</page>
+						<page label="Unavailable">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="UnavailableTitlesText" left="5" top="5" width="300" height="20" text="Titles"/>
+								<control progid="DecalControls.StaticText" name="Name" left="1" top="33" width="200" height="17" text="Title Name"/>
+								<control progid="DecalControls.List" name="UnavailableTitlesList" left="0" top="53" width="640" height="2000">
+									<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="205" />
+									<column progid="DecalControls.TextColumn" name="Category" fixedwidth="285" />
+									<column progid="DecalControls.TextColumn" name="TitleId" fixedwidth="1" />
+								</control>
+							</control>
+						</page>
 					</control>
 				</page>
 			</control>

@@ -21,11 +21,26 @@ namespace OracleOfDereth
         public static List<Title> Titles = new List<Title>();
         public static List<int> KnownTitleIds = new List<int>();
 
+        public static SortType CurrentSortType = SortType.NameAscending;
+
+        public enum SortType
+        {
+            NameAscending,
+            NameDescending,
+            LevelAscending,
+            LevelDescending,
+            CategoryAscending,
+            CategoryDescending,
+        }
+
         // Properties
+        public int Number = 0;
         public string Name = "";
         public int TitleId = 0;
         public string Category = "";
+        public int Level = 0;
         public string Url = "";
+        public string Hint = "";
 
         public static void Init()
         {
@@ -33,6 +48,8 @@ namespace OracleOfDereth
             KnownTitleIds.Clear();
             LoadTitlesCSV();
         }
+        public static List<Title> Available() { return Titles.Where(a => a.Category != "Unavailable").ToList(); }
+        public static List<Title> Unavailable() { return Titles.Where(a => a.Category == "Unavailable").ToList(); }
 
         public static void Parse(MessageStruct titles)
         {
@@ -45,6 +62,32 @@ namespace OracleOfDereth
         public static void ParseUpdate(int titleId)
         {
             if (!KnownTitleIds.Contains(titleId)) { KnownTitleIds.Add(titleId); }
+        }
+
+        public static void Sort(SortType sortType)
+        {
+            CurrentSortType = sortType;
+            switch (sortType)
+            {
+                case SortType.NameAscending:
+                    Titles = Titles.OrderBy(q => q.Name).ToList();
+                    break;
+                case SortType.NameDescending:
+                    Titles = Titles.OrderByDescending(q => q.Name).ToList();
+                    break;
+                case SortType.LevelAscending:
+                    Titles = Titles.OrderBy(q => q.Level).ThenBy(q => q.Number).ToList();
+                    break;
+                case SortType.LevelDescending:
+                    Titles = Titles.OrderByDescending(q => q.Level).ThenByDescending(q => q.Number).ToList();
+                    break;
+                case SortType.CategoryAscending:
+                    Titles = Titles.OrderBy(q => q.Category).ThenBy(q => q.Number).ToList();
+                    break;
+                case SortType.CategoryDescending:
+                    Titles = Titles.OrderByDescending(q => q.Category).ThenByDescending(q => q.Number).ToList();
+                    break;
+            }
         }
 
         public static void LoadTitlesCSV()
@@ -72,10 +115,13 @@ namespace OracleOfDereth
 
                     titles.Add(new Title
                     {
-                        Name = fields[0].Trim(),
-                        TitleId = int.Parse(fields[1].Trim()),
-                        Category = fields[2].Trim(),
-                        Url = fields[3].Trim()
+                        Number = int.Parse(fields[0].Trim()),
+                        Name = fields[1].Trim(),
+                        TitleId = int.Parse(fields[2].Trim()),
+                        Category = fields[3].Trim(),
+                        Level = int.Parse(fields[4].Trim()),
+                        Url = fields[5].Trim(),
+                        Hint = fields[6].Trim()
                     });
                 }
             }

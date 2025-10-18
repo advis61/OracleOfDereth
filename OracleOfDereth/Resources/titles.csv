@@ -1,858 +1,832 @@
-Name,Id,Category,Url
-Any Level,0,,
-Adventurer,1,Character Creation,https://acportalstorm.com/wiki/Character_Creation
-Bow Hunter,9,Character Creation,https://acportalstorm.com/wiki/Character_Creation
-Life Caster,10,Character Creation,https://acportalstorm.com/wiki/Character_Creation
-Soldier,11,Character Creation,https://acportalstorm.com/wiki/Character_Creation
-Swashbuckler,12,Character Creation,https://acportalstorm.com/wiki/Character_Creation
-War Mage,13,Character Creation,https://acportalstorm.com/wiki/Character_Creation
-Wayfarer,14,Character Creation,https://acportalstorm.com/wiki/Character_Creation
-Obviously Bored,433,Cow Tipping,https://acportalstorm.com/wiki/Cow_Tipping
-Fisherman,52,Fishing,https://acportalstorm.com/wiki/Fishing
-Guppy Master,65,Fishing,https://acportalstorm.com/wiki/Fishing
-Lakeman,84,Fishing,https://acportalstorm.com/wiki/Fishing
-Pond Scum,106,Fishing,https://acportalstorm.com/wiki/Fishing
-Pro Fisherman,107,Fishing,https://acportalstorm.com/wiki/Fishing
-Skipper,128,Fishing,https://acportalstorm.com/wiki/Fishing
-Holiday Hero,861,Package Delivery,https://acportalstorm.com/wiki/Package_Delivery
-April's Fool,408,Spring Cleaner Title Token,https://acportalstorm.com/wiki/Spring_Cleaner_Title_Token
-Spring Cleaner,135,Spring Cleaner Title Token,https://acportalstorm.com/wiki/Spring_Cleaner_Title_Token
-Derethian Newbie,765,Stipends,https://acportalstorm.com/wiki/Stipends
-Novice Wanderer,766,Stipends,https://acportalstorm.com/wiki/Stipends
-Notable Citizen,767,Stipends,https://acportalstorm.com/wiki/Stipends
-Adept Adventurer,768,Stipends,https://acportalstorm.com/wiki/Stipends
-Intrepid Explorer,769,Stipends,https://acportalstorm.com/wiki/Stipends
-Supreme Soldier,770,Stipends,https://acportalstorm.com/wiki/Stipends
-Epic Warrior,771,Stipends,https://acportalstorm.com/wiki/Stipends
-Paragon of New Aluvia,772,Stipends,https://acportalstorm.com/wiki/Stipends
-An Auberean Legend,773,Stipends,https://acportalstorm.com/wiki/Stipends
-Epic Fail,832,Varinia,https://acportalstorm.com/wiki/Varinia
-Epic Win,831,Varinia,https://acportalstorm.com/wiki/Varinia
-Follower of Asheron,805,Varinia,https://acportalstorm.com/wiki/Varinia
-Fowl Follower,804,Varinia,https://acportalstorm.com/wiki/Varinia
-Harbinger of Madness,822,Varinia,https://acportalstorm.com/wiki/Varinia
-Haunts Your Dreams,817,Varinia,https://acportalstorm.com/wiki/Varinia
-Likes Asheron,808,Varinia,https://acportalstorm.com/wiki/Varinia
-Likes Getting Titles,809,Varinia,https://acportalstorm.com/wiki/Varinia
-The Cool Kids Club,830,Varinia,https://acportalstorm.com/wiki/Varinia
-Thriller,816,Varinia,https://acportalstorm.com/wiki/Varinia
-Blank,0,,
-Level 10 to 19,0,,
-Blood Shreth Butcher,25,Blood Shreth Kill Task,https://acportalstorm.com/wiki/Blood_Shreth_Kill_Task
-Honorary Windreave,71,Copper Golem Kingpin Kill Task,https://acportalstorm.com/wiki/Copper_Golem_Kingpin_Kill_Task
-Friend of Sanamar,55,Dericost Ruin Quest,https://acportalstorm.com/wiki/Dericost_Ruin_Quest
-Friend of Silyun,56,Eleonora's Heart Quest,https://acportalstorm.com/wiki/Eleonora's_Heart_Quest
-Resistance Recruit,117,Female Tusker Tusk Quest,https://acportalstorm.com/wiki/Female_Tusker_Tusk_Quest
-Resistance Fighter,116,Male Tusker Tusk Quest,https://acportalstorm.com/wiki/Male_Tusker_Tusk_Quest
-Mud Slinger,97,Mud Golem Sludge Lord Kill Task,https://acportalstorm.com/wiki/Mud_Golem_Sludge_Lord_Kill_Task
-Pest Control,162,Olthoi Drone Kill Task,https://acportalstorm.com/wiki/Olthoi_Drone_Kill_Task
-Perforated Knight,160,Olthoi Nettler Kill Task,https://acportalstorm.com/wiki/Olthoi_Nettler_Kill_Task
-Nymph Maniac,164,Olthoi Nymph Kill Task,https://acportalstorm.com/wiki/Olthoi_Nymph_Kill_Task
-Polardillo Pummeler,105,Polardillo Kill Task,https://acportalstorm.com/wiki/Polardillo_Kill_Task
-Small Mukkir Squasher,425,Small Fledgling Mukkir Kill Task,https://acportalstorm.com/wiki/Small_Fledgling_Mukkir_Kill_Task
-Blank,0,,
-Level 20 to 29,0,,
-Initiate of the Hunt,550,Carenzi Plague,https://acportalstorm.com/wiki/Carenzi_Plague
-Deathcap Defeater,41,Deathcap Thrungus Kill Task,https://acportalstorm.com/wiki/Deathcap_Thrungus_Kill_Task
-Drudge Doom,515,Drudge Lurker Kill Task,https://acportalstorm.com/wiki/Drudge_Lurker_Kill_Task
-Gardener Weeder,58,Gardener Pincer Quest,https://acportalstorm.com/wiki/Gardener_Pincer_Quest
-Golden God,61,Goldenback Tusker Tusk Quest,https://acportalstorm.com/wiki/Goldenback_Tusker_Tusk_Quest
-Bugstomper,30,Harvester Pincer Quest,https://acportalstorm.com/wiki/Harvester_Pincer_Quest
-Bunny Master,31,Larry's Ruined Garden,https://acportalstorm.com/wiki/Larry's_Ruined_Garden
-Ulgrim's Eep,409,Larry's Ruined Garden,https://acportalstorm.com/wiki/Larry's_Ruined_Garden
-Siraluun Slasher,127,Littoral Siraluun Kill Task,https://acportalstorm.com/wiki/Littoral_Siraluun_Kill_Task
-Red Fury,112,Tusker Crimsonback Tusk Quest,https://acportalstorm.com/wiki/Tusker_Crimsonback_Tusk_Quest
-Deliverer,43,Tusker Liberator Tusk Quest,https://acportalstorm.com/wiki/Tusker_Liberator_Tusk_Quest
-Lightbringer,86,Tusker Redeemer Tusk Quest,https://acportalstorm.com/wiki/Tusker_Redeemer_Tusk_Quest
-Worker Obliterator,157,Worker Pincer Quest,https://acportalstorm.com/wiki/Worker_Pincer_Quest
-Blank,0,,
-Level 30 to 39,0,,
-Apothecary,18,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Axe Warrior,22,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Ballisteer,23,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Chef,37,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Creature Adept,38,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Dagger Fighter,39,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Fletcher,53,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Item Adept,78,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Life Adept,85,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Mace Warrior,87,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Sharpshooter,122,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Sniper,132,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Spear Warrior,134,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Staff Warrior,136,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Swordfighter,139,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Unarmed Brawler,146,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-War Adept,150,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Apprentice of the Hunt,551,Carenzi Plague,https://acportalstorm.com/wiki/Carenzi_Plague
-Dire Mattekar Dispatcher,45,Dire Mattekar Kill Task,https://acportalstorm.com/wiki/Dire_Mattekar_Kill_Task
-Cragstone Militia,500,Drudge Plan,https://acportalstorm.com/wiki/Drudge_Plan
-Stalker Stalker,511,Drudge Stalker Kill Task,https://acportalstorm.com/wiki/Drudge_Stalker_Kill_Task
-Ebon Gromnie Eradicator,47,Ebon Gromnie Kill Task,https://acportalstorm.com/wiki/Ebon_Gromnie_Kill_Task
-Ruuk Ally,471,Falatacot Medallion (Low),https://acportalstorm.com/wiki/Falatacot_Medallion_(Low)
-Gaerlan Slayer,57,Gaerlan's Citadel (Low),https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Low)
-Windreave Stalker,156,Hea Windreave Kill Task,https://acportalstorm.com/wiki/Hea_Windreave_Kill_Task
-Zefir Zapper,434,Kilif Zefir Kill Task,https://acportalstorm.com/wiki/Kilif_Zefir_Kill_Task
-Dedicated,672,Machinist's Gloves Quest,https://acportalstorm.com/wiki/Machinist's_Gloves_Quest
-Rat Reaper,163,Rat Catcher,https://acportalstorm.com/wiki/Rat_Catcher
-Novice of the Sea,585,Ritual of the Blight,https://acportalstorm.com/wiki/Ritual_of_the_Blight
-Soldier Slaughterer,133,Soldier Pincer Quest,https://acportalstorm.com/wiki/Soldier_Pincer_Quest
-Chain Breaker,33,Tusker Slave Tusk Quest,https://acportalstorm.com/wiki/Tusker_Slave_Tusk_Quest
-Blank,0,,
-Level 40 to 49,0,,
-Alchemist,16,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Artifex,21,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Deadeye,40,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Duelist,46,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Evoker,49,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Impaler,73,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Iron Chef,76,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Master Fletcher,89,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Master of Staves,91,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Projectilist,108,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Pugilist,109,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Skullcrusher,129,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Skullsplitter,130,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Slicer,131,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Sureshot,138,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Theurgist,140,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Warlock,152,Bestowers' Guild of Dereth,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth
-Arena Custodian,462,Colosseum Arena,https://acportalstorm.com/wiki/Colosseum_Arena
-Arena Rat,463,Colosseum Arena,https://acportalstorm.com/wiki/Colosseum_Arena
-Contender,460,Colosseum Arena,https://acportalstorm.com/wiki/Colosseum_Arena
-Drudge Dread,461,Colosseum Arena,https://acportalstorm.com/wiki/Colosseum_Arena
-Scrapper,464,Colosseum Arena,https://acportalstorm.com/wiki/Colosseum_Arena
-Ravenous,512,Drudge Ravener Kill Task,https://acportalstorm.com/wiki/Drudge_Ravener_Kill_Task
-Engorged Scourge,48,Engorged Eater Jaw Quest,https://acportalstorm.com/wiki/Engorged_Eater_Jaw_Quest
-Gifted,651,Hidden Presents,https://acportalstorm.com/wiki/Hidden_Presents
-Seasonal Seeker,652,Hidden Presents,https://acportalstorm.com/wiki/Hidden_Presents
-Champion of Sanamar,35,Knights of Karlun Quest,https://acportalstorm.com/wiki/Knights_of_Karlun_Quest
-Champion of Silyun,36,Knights of Karlun Quest,https://acportalstorm.com/wiki/Knights_of_Karlun_Quest
-Hero of Silyun,69,Marauder's Lair Quest,https://acportalstorm.com/wiki/Marauder's_Lair_Quest
-Exterminator,51,Legionary Pincer Quest,https://acportalstorm.com/wiki/Legionary_Pincer_Quest
-Honorary Snowman,70,Snowman Village,https://acportalstorm.com/wiki/Snowman_Village
-Dryreach Militia,158,Tumerok Gladiator Kill Task,https://acportalstorm.com/wiki/Tumerok_Gladiator_Kill_Task
-Tusker Blight,435,Tusker Guard Kill Task,https://acportalstorm.com/wiki/Tusker_Guard_Kill_Task
-Morale Smasher,94,Tusker Guard Tusk Quest,https://acportalstorm.com/wiki/Tusker_Guard_Tusk_Quest
-Altered Hunter,513,Altered Drudge Kill Task,https://acportalstorm.com/wiki/Altered_Drudge_Kill_Task
-Augmented Hunter,514,Augmented Drudge Kill Task,https://acportalstorm.com/wiki/Augmented_Drudge_Kill_Task
-Silver Serf,126,Silver Tusker Tusk Quest,https://acportalstorm.com/wiki/Silver_Tusker_Tusk_Quest
-Blank,0,,
-Level 50 to 59,0,,
-Shredder,125,Armored Tusker Tusk Quest,https://acportalstorm.com/wiki/Armored_Tusker_Tusk_Quest
-Expert Banished Hunter,437,Banished Creature Kill Task,https://acportalstorm.com/wiki/Banished_Creature_Kill_Task
-Disciple of the Hunt,552,Carenzi Plague,https://acportalstorm.com/wiki/Carenzi_Plague
-Champion of Stone,465,Colosseum Bosses,https://acportalstorm.com/wiki/Colosseum_Bosses
-Reef Breaker,534,Coral Golem Kill Task,https://acportalstorm.com/wiki/Coral_Golem_Kill_Task
-Reef Builder,533,Coral Golem Kill Task,https://acportalstorm.com/wiki/Coral_Golem_Kill_Task
-Avalanche Avoider,777,Crystal Core Quest,https://acportalstorm.com/wiki/Crystal_Core_Quest
-Bug Butcher,29,Eviscerator Pincer Quest,https://acportalstorm.com/wiki/Eviscerator_Pincer_Quest
-Fungal Farmer,483,Furgal,https://acportalstorm.com/wiki/Furgal
-Fungi,485,Furgal,https://acportalstorm.com/wiki/Furgal
-Mushroom Collector,482,Furgal,https://acportalstorm.com/wiki/Furgal
-Mushroom King,486,Furgal,https://acportalstorm.com/wiki/Furgal
-Mushroom Man,484,Furgal,https://acportalstorm.com/wiki/Furgal
-Thrungamandius,487,Furgal,https://acportalstorm.com/wiki/Furgal
-All for One,687,Gearknight Lesser Lords,https://acportalstorm.com/wiki/Gearknight_Lesser_Lords
-Arctic Adventurer,19,Glacial Golem Margrave Kill Task,https://acportalstorm.com/wiki/Glacial_Golem_Margrave_Kill_Task
-Philanthropist,101,Gold Hill Ruins Quest,https://acportalstorm.com/wiki/Gold_Hill_Ruins_Quest
-Hunter,72,Magma Golem Exarch Kill Task,https://acportalstorm.com/wiki/Magma_Golem_Exarch_Kill_Task
-Timeless Adventurer,684,Portal Space Time Travel,https://acportalstorm.com/wiki/Portal_Space_Time_Travel
-Virindi Informer,685,Portal Space Time Travel,https://acportalstorm.com/wiki/Portal_Space_Time_Travel
-Elite Head Hunter,439,Rare Game Kill Task,https://acportalstorm.com/wiki/Rare_Game_Kill_Task
-Hero of Sanamar,68,Red Bull of Sanamar Quest,https://acportalstorm.com/wiki/Red_Bull_of_Sanamar_Quest
-Acolyte of the Sea,586,Ritual of the Blight,https://acportalstorm.com/wiki/Ritual_of_the_Blight
-Explorer,50,Undead Mechanic Quest,https://acportalstorm.com/wiki/Undead_Mechanic_Quest
-Gaerlan Slayer,57,Gaerlan's Citadel (Mid),https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Mid)
-Blank,0,,
-Level 60 to 69,0,,
-Arctic Mattekar Annihilator,20,Arctic Mattekar Kill Task,https://acportalstorm.com/wiki/Arctic_Mattekar_Kill_Task
-Broodu Killer,27,Clutch of Kings (Broodu),https://acportalstorm.com/wiki/Clutch_of_Kings_(Broodu)
-Kiree Killer,82,Clutch of Kings (Kiree),https://acportalstorm.com/wiki/Clutch_of_Kings_(Kiree)
-Reeshan Killer,113,Clutch of Kings (Reeshan),https://acportalstorm.com/wiki/Clutch_of_Kings_(Reeshan)
-Floeshark Flogger,54,Floeshark Kill Task,https://acportalstorm.com/wiki/Floeshark_Kill_Task
-Glenden Wood Militia,60,Glenden Wood Invaders,https://acportalstorm.com/wiki/Glenden_Wood_Invaders
-Ranger Ruuk,475,Guruk Marauder Kill Task,https://acportalstorm.com/wiki/Guruk_Marauder_Kill_Task
-Plate Armoredillo Punisher,102,Plate Armoredillo Kill Task,https://acportalstorm.com/wiki/Plate_Armoredillo_Kill_Task
-Carenzi Slayer,32,Raeta's Necklace Quest,https://acportalstorm.com/wiki/Raeta's_Necklace_Quest
-Heart Ripper,66,Rampager Tusk Quest,https://acportalstorm.com/wiki/Rampager_Tusk_Quest
-Champion of Dereth,34,Weakened Harbinger Quest,https://acportalstorm.com/wiki/Weakened_Harbinger_Quest
-Seeker of the Hunt,553,Carenzi Plague,https://acportalstorm.com/wiki/Carenzi_Plague
-Champion of Sickles,466,Colosseum Bosses,https://acportalstorm.com/wiki/Colosseum_Bosses
-Ruuk Ally,471,Falatacot Medallion (Mid),https://acportalstorm.com/wiki/Falatacot_Medallion_(Mid)
-Gaerlan Slayer,57,Gaerlan's Citadel (High),https://acportalstorm.com/wiki/Gaerlan's_Citadel_(High)
-Minister of the Sea,587,Ritual of the Blight,https://acportalstorm.com/wiki/Ritual_of_the_Blight
-Blank,0,,
-Level 70 to 79,0,,
-Gumshoe,64,Noir Assassination Investigation,https://acportalstorm.com/wiki/Noir_Assassination_Investigation
-Queenslayer,110,Olthoi Queen Quest,https://acportalstorm.com/wiki/Olthoi_Queen_Quest
-Stonebreaker,137,Olthoi Queen Quest,https://acportalstorm.com/wiki/Olthoi_Queen_Quest
-Bloodletter,26,Plated Tusker Tusk Quest,https://acportalstorm.com/wiki/Plated_Tusker_Tusk_Quest
-Grave Robber,62,Resting Place,https://acportalstorm.com/wiki/Resting_Place
-Voracious Flayer,148,Voracious Eater Jaw Quest,https://acportalstorm.com/wiki/Voracious_Eater_Jaw_Quest
-Voracious Hunter,149,Voracious Eater Kill Task,https://acportalstorm.com/wiki/Voracious_Eater_Kill_Task
-Warrior Vanquisher,154,Warrior Pincer Quest,https://acportalstorm.com/wiki/Warrior_Pincer_Quest
-Cragstone Firefighter,509,Aerbax's Prodigal Drudge,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Drudge
-Cragstone Knight,501,Aerbax's Prodigal Drudge,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Drudge
-Guardian of Cragstone,502,Aerbax's Prodigal Drudge,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Drudge
-Slithis Slayer,529,Sishalti Slithis Kill Task,https://acportalstorm.com/wiki/Sishalti_Slithis_Kill_Task
-Initiate of the Blade,488,Tanada Hunting Parties,https://acportalstorm.com/wiki/Tanada_Hunting_Parties
-Blank,0,,
-Level 80 to 89,0,,
-Colosseum Champion,447,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Colossus,449,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Fearless,451,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Gladiator,459,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Hostile Combatant,456,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Lord of the Arena,452,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Master Gladiator,450,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Myrmidon,455,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Pit Fighter,454,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Ring Master,453,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Survivalist,457,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Titan,448,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Warrior of the Seventh Circle,458,Advanced Colosseum Arena,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena
-Friend of Rheaga,557,Aerbax's Prodigal Tumerok,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Tumerok
-Slayer of Rheaga,558,Aerbax's Prodigal Tumerok,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Tumerok
-Master of Slaughter,90,Assailer Tusk Quest,https://acportalstorm.com/wiki/Assailer_Tusk_Quest
-Assassin,673,Assassin's Roost Quest,https://acportalstorm.com/wiki/Assassin's_Roost_Quest
-Bridge Jumper,675,Assassin's Roost Quest,https://acportalstorm.com/wiki/Assassin's_Roost_Quest
-Death Dealer,674,Assassin's Roost Quest,https://acportalstorm.com/wiki/Assassin's_Roost_Quest
-Sure Step,676,Assassin's Roost Quest,https://acportalstorm.com/wiki/Assassin's_Roost_Quest
-Contract Killer,721,Broker Contracts,https://acportalstorm.com/wiki/Broker_Contracts
-Champion of the Hunt,554,Carenzi Plague,https://acportalstorm.com/wiki/Carenzi_Plague
-Champion of the Wild,467,Colosseum Bosses,https://acportalstorm.com/wiki/Colosseum_Bosses
-Ally of the Gold Primus,702,Gear Knight Construction,https://acportalstorm.com/wiki/Gear_Knight_Construction
-Shield of Glenden,124,Glenden Wood Invasion (Low),https://acportalstorm.com/wiki/Glenden_Wood_Invasion_(Low)
-Basher Slasher,476,Guruk Basher Kill Task,https://acportalstorm.com/wiki/Guruk_Basher_Kill_Task
-Annihilator,17,Mutilator Pincer Quest,https://acportalstorm.com/wiki/Mutilator_Pincer_Quest
-Polar Ursuin Pounder,104,Polar Ursuin Kill Task,https://acportalstorm.com/wiki/Polar_Ursuin_Kill_Task
-Moar Hunter,495,Putrid Moar Kill Task,https://acportalstorm.com/wiki/Putrid_Moar_Kill_Task
-Spiketooth Slayer,496,Putrid Moar Kill Task,https://acportalstorm.com/wiki/Putrid_Moar_Kill_Task
-Defender of the Sea,588,Ritual of the Blight,https://acportalstorm.com/wiki/Ritual_of_the_Blight
-Master of the Mystical Mug,446,Ulgrim's Drinking Contest,https://acportalstorm.com/wiki/Ulgrim's_Drinking_Contest
-Master of the Porcelain Altar,445,Ulgrim's Drinking Contest,https://acportalstorm.com/wiki/Ulgrim's_Drinking_Contest
-Ulgrim's Drinking Buddy,444,Ulgrim's Drinking Contest,https://acportalstorm.com/wiki/Ulgrim's_Drinking_Contest
-Assistant's Assistant,708,Menhir Research,https://acportalstorm.com/wiki/Menhir_Research
-Mana Field Finder,707,Menhir Research,https://acportalstorm.com/wiki/Menhir_Research
-Blank,0,,
-Level 90 to 125,0,,
-Abhorrent Warrior,15,Abhorrent Eater Jaw Quest,https://acportalstorm.com/wiki/Abhorrent_Eater_Jaw_Quest
-Wisp Whipper,669,Crystalline Killer,https://acportalstorm.com/wiki/Crystalline_Killer
-Elemental Eradicator,436,Elemental Kill Task,https://acportalstorm.com/wiki/Elemental_Kill_Task
-Champion of Daemal,429,Ruschk Aspect of Grael Quest,https://acportalstorm.com/wiki/Ruschk_Aspect_of_Grael_Quest
-Arcanum Adventurer,709,Menhir Research,https://acportalstorm.com/wiki/Menhir_Research
-Defender of Kryst,516,Aerbax's Prodigal Mosswart,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Mosswart
-Guardian of the Dark,407,Dark Monolith Quest,https://acportalstorm.com/wiki/Dark_Monolith_Quest
-Paragon of Death,100,Devastator Tusk Quest,https://acportalstorm.com/wiki/Devastator_Tusk_Quest
-Anthropologist,561,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Banderling Bully,566,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Dire Drudge Decapitator,564,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Dire Huntsman,569,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Game Warden,570,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Gold Farmer,562,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Honorary Rea of the Aun,571,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Renegade Hunter,565,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Shadow Sunderer,568,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Third Eye Blinder,563,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Xenophobic,567,Dire Champions,https://acportalstorm.com/wiki/Dire_Champions
-Master of the Elements,412,Empowered Harbinger Quest,https://acportalstorm.com/wiki/Empowered_Harbinger_Quest
-Harbinger's Bane,411,Essenceless Harbinger Quest,https://acportalstorm.com/wiki/Essenceless_Harbinger_Quest
-Ruuk Ally,471,Falatacot Medallion (High),https://acportalstorm.com/wiki/Falatacot_Medallion_(High)
-Expert Fallen Hunter,438,Fallen Creature Kill Task,https://acportalstorm.com/wiki/Fallen_Creature_Kill_Task
-Fuzzy Bunny Slayer,494,Fuzzy Bunny Slayer Quest,https://acportalstorm.com/wiki/Fuzzy_Bunny_Slayer_Quest
-Glenden Wood Knight,59,Glenden Wood Invasion (Mid),https://acportalstorm.com/wiki/Glenden_Wood_Invasion_(Mid)
-Dead Eye for the Colossi,478,Guruk Colossus Kill Task,https://acportalstorm.com/wiki/Guruk_Colossus_Kill_Task
-Fiendish Huntsman,479,Guruk Fiend Kill Task,https://acportalstorm.com/wiki/Guruk_Fiend_Kill_Task
-Guruk Hunter,477,Guruk Smasher Kill Task,https://acportalstorm.com/wiki/Guruk_Smasher_Kill_Task
-Follower of the Vine,540,Harvest Reaper Kill Task,https://acportalstorm.com/wiki/Harvest_Reaper_Kill_Task
-Harvester,541,Harvest Reaper Kill Task,https://acportalstorm.com/wiki/Harvest_Reaper_Kill_Task
-Harvester Harvester,542,Harvest Reaper Kill Task,https://acportalstorm.com/wiki/Harvest_Reaper_Kill_Task
-Harvester Harvester Harvester,543,Harvest Reaper Kill Task,https://acportalstorm.com/wiki/Harvest_Reaper_Kill_Task
-Iron-Spined Chittick Immolator,77,Iron Spined Chittick Kill Task,https://acportalstorm.com/wiki/Iron_Spined_Chittick_Kill_Task
-K'nath An'dras Assassinator,83,K'nath An'dras Kill Task,https://acportalstorm.com/wiki/K'nath_An'dras_Kill_Task
-Gift Gopher,860,Package Delivery,https://acportalstorm.com/wiki/Package_Delivery
-Repugnant Eater Ripper,115,Repugnant Eater Kill Task,https://acportalstorm.com/wiki/Repugnant_Eater_Kill_Task
-No Cage Can Hold Me,686,Ries Woron's Story,https://acportalstorm.com/wiki/Ries_Woron's_Story
-Sezzherei Slayer,119,Sezzherei's Lair Quest,https://acportalstorm.com/wiki/Sezzherei's_Lair_Quest
-Supreme Bunny Master,406,Son of Pooky Quest,https://acportalstorm.com/wiki/Son_of_Pooky_Quest
-Fire of the Tanada,667,Tanada House of Fire Quest,https://acportalstorm.com/wiki/Tanada_House_of_Fire_Quest
-Chosen of the Rift,530,Tenebrous Rift Kill Task,https://acportalstorm.com/wiki/Tenebrous_Rift_Kill_Task
-Miner,92,Town Founder,https://acportalstorm.com/wiki/Town_Founder
-Timberman,142,Town Founder,https://acportalstorm.com/wiki/Town_Founder
-Trapper,144,Town Founder,https://acportalstorm.com/wiki/Town_Founder
-Rift Walker,532,Umbral Rift Kill Task,https://acportalstorm.com/wiki/Umbral_Rift_Kill_Task
-Man-At-Arms Thrasher,88,Viamontian Man-at-Arms Kill Task,https://acportalstorm.com/wiki/Viamontian_Man-at-Arms_Kill_Task
-Master of the Hunt,549,Carenzi Plague,https://acportalstorm.com/wiki/Carenzi_Plague
-Kingslayer,81,Clutch of Kings,https://acportalstorm.com/wiki/Clutch_of_Kings
-Browerk Killer,28,Clutch of Kings (Browerk),https://acportalstorm.com/wiki/Clutch_of_Kings_(Browerk)
-Keerik Killer,80,Clutch of Kings (Keerik),https://acportalstorm.com/wiki/Clutch_of_Kings_(Keerik)
-Rehir Killer,114,Clutch of Kings (Rehir),https://acportalstorm.com/wiki/Clutch_of_Kings_(Rehir)
-Champion of the Sea,589,Ritual of the Blight,https://acportalstorm.com/wiki/Ritual_of_the_Blight
-Champion of the Hive,468,Colosseum Bosses,https://acportalstorm.com/wiki/Colosseum_Bosses
-Ravenous Killer,111,Ravenous Eater Jaw Quest,https://acportalstorm.com/wiki/Ravenous_Eater_Jaw_Quest
-Servant of The Deep,118,The Deep (Vissidal),https://acportalstorm.com/wiki/The_Deep_(Vissidal)
-Tukora Lieutenant Trouncer,145,Tukora Lieutenant Kill Task,https://acportalstorm.com/wiki/Tukora_Lieutenant_Kill_Task
-Ruuk Ally,471,Falatacot Medallion (Extreme),https://acportalstorm.com/wiki/Falatacot_Medallion_(Extreme)
-Crystalline Adventurer,668,Crystalline Adventurer,https://acportalstorm.com/wiki/Crystalline_Adventurer
-Master of the Sea,590,Ritual of the Blight,https://acportalstorm.com/wiki/Ritual_of_the_Blight
-Honorary Shadow Hunter,159,Shadowfire Stone Quest,https://acportalstorm.com/wiki/Shadowfire_Stone_Quest
-Insatiable Slayer,74,Upper Insatiable Eater Jaw Quest,https://acportalstorm.com/wiki/Upper_Insatiable_Eater_Jaw_Quest
-Blank,0,,
-Level 126 to 150,0,,
-Prodigal Tusker Slayer,519,Aerbax's Prodigal Tusker,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Tusker
-Warrior of the Past,560,Black Death Catacombs Quiddity Seed Quest,https://acportalstorm.com/wiki/Black_Death_Catacombs_Quiddity_Seed_Quest
-Beginning's End,681,Crystalline Adventurer,https://acportalstorm.com/wiki/Crystalline_Adventurer
-Burning Soul,670,Crystalline Adventurer,https://acportalstorm.com/wiki/Crystalline_Adventurer
-Frozen Fighter,671,Crystalline Adventurer,https://acportalstorm.com/wiki/Crystalline_Adventurer
-Gaerlan Slayer,57,Gaerlan's Citadel (Extreme),https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Extreme)
-Invader's Bane,75,Glenden Wood Invasion (High),https://acportalstorm.com/wiki/Glenden_Wood_Invasion_(High)
-Hope of the Past,572,Ithaenc Quiddity Seed Quest,https://acportalstorm.com/wiki/Ithaenc_Quiddity_Seed_Quest
-Naughty Skeleton Snuffer,98,Naughty Skeleton Kill Task,https://acportalstorm.com/wiki/Naughty_Skeleton_Kill_Task
-Friend of the Frostglaive,440,The Black Spear Ice Totem,https://acportalstorm.com/wiki/The_Black_Spear_Ice_Totem
-Squire of New Viamont,441,The Black Spear Ice Totem,https://acportalstorm.com/wiki/The_Black_Spear_Ice_Totem
-Shadow Stalker,120,The Temple of Xik Minru,https://acportalstorm.com/wiki/The_Temple_of_Xik_Minru
-Wicked Skeleton Walloper,155,Wicked Skeleton Kill Task,https://acportalstorm.com/wiki/Wicked_Skeleton_Kill_Task
-Grave Stalker,536,DeathTail Quest,https://acportalstorm.com/wiki/DeathTail_Quest
-Crypt Rat,535,Grave Rat Kill Task,https://acportalstorm.com/wiki/Grave_Rat_Kill_Task
-Rift Shifter,531,Umbral Rift Kill Task,https://acportalstorm.com/wiki/Umbral_Rift_Kill_Task
-Hoogan's Hero,508,Aerbax's Prodigal Drudge,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Drudge
-Protector of the Past,559,Knorr Quiddity Seed Quest,https://acportalstorm.com/wiki/Knorr_Quiddity_Seed_Quest
-Meddler,526,Aerbax's Prodigal Harbinger,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger
-Prodigal Harbinger Slayer,523,Aerbax's Prodigal Harbinger,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger
-Spy,528,Aerbax's Prodigal Harbinger,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger
-Vile Betrayer,527,Aerbax's Prodigal Harbinger,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger
-Paradox-touched Queenslayer,517,Aerbax's Prodigal Olthoi,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Olthoi
-One for All,688,Aetherium Power Core Collection,https://acportalstorm.com/wiki/Aetherium_Power_Core_Collection
-Amelia's Caretaker,518,Amelia's Lost Toys,https://acportalstorm.com/wiki/Amelia's_Lost_Toys
-Gear Knight Assassin,703,Atamarr Tasks,https://acportalstorm.com/wiki/Atamarr_Tasks
-Gear Knight Defender,710,Atamarr Tasks,https://acportalstorm.com/wiki/Atamarr_Tasks
-Gear Knight Emissary,705,Atamarr Tasks,https://acportalstorm.com/wiki/Atamarr_Tasks
-Gear Knight Recruiter,704,Atamarr Tasks,https://acportalstorm.com/wiki/Atamarr_Tasks
-Shellfish Hater,123,Benek Niffis Kill Task,https://acportalstorm.com/wiki/Benek_Niffis_Kill_Task
-Burun Liberator,490,Burun Liberator,https://acportalstorm.com/wiki/Burun_Liberator
-Mad Cow Slayer,293,Colosseum Bosses,https://acportalstorm.com/wiki/Colosseum_Bosses
-Pumpkin Throne Usurper,544,Colosseum Bosses,https://acportalstorm.com/wiki/Colosseum_Bosses
-Thunder Chicken Slayer,380,Colosseum Bosses,https://acportalstorm.com/wiki/Colosseum_Bosses
-Tracker,143,Coral Golem Viceroy Kill Task,https://acportalstorm.com/wiki/Coral_Golem_Viceroy_Kill_Task
-Loss Prevention,859,Drudge Present Raids,https://acportalstorm.com/wiki/Drudge_Present_Raids
-Plucker of Eyes,600,Eye of T'thuun Quest,https://acportalstorm.com/wiki/Eye_of_T'thuun_Quest
-Gaerlan Slayer,57,Gaerlan's Citadel (Uber),https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Uber)
-Present Protector,857,Gurog Present Raids,https://acportalstorm.com/wiki/Gurog_Present_Raids
-Monster Killer,480,Guruk Monstrosity Kill Task,https://acportalstorm.com/wiki/Guruk_Monstrosity_Kill_Task
-Bosh Bosh Kibosh,481,Killing Bosh Bosh,https://acportalstorm.com/wiki/Killing_Bosh_Bosh
-Lady Tairla's Champion,505,Lady Mhoire Quest,https://acportalstorm.com/wiki/Lady_Mhoire_Quest
-Mosswart Worshipper Whipper,95,Mosswart Worshipper Kill Task,https://acportalstorm.com/wiki/Mosswart_Worshipper_Kill_Task
-Mottled Carenzi Mauler,96,Mottled Carenzi Kill Task,https://acportalstorm.com/wiki/Mottled_Carenzi_Kill_Task
-Moarsman Defiler,93,Mucky Moarsman Kill Task,https://acportalstorm.com/wiki/Mucky_Moarsman_Kill_Task
-Mukkir Masher,410,Mukkir Nest Quest,https://acportalstorm.com/wiki/Mukkir_Nest_Quest
-Olthoi Ripper Reducer,99,Olthoi Ripper Kill Task,https://acportalstorm.com/wiki/Olthoi_Ripper_Kill_Task
-Platinum Prowler,103,Platinum Golem Mountain King Kill Task,https://acportalstorm.com/wiki/Platinum_Golem_Mountain_King_Kill_Task
-Pet Savior,776,Protecting Picketed Pets,https://acportalstorm.com/wiki/Protecting_Picketed_Pets
-Warden of the Burning Wood,601,Ranger Lord Mhoire,https://acportalstorm.com/wiki/Ranger_Lord_Mhoire
-Bane of the Remoran,24,Remoran Sea Raptor Kill Task,https://acportalstorm.com/wiki/Remoran_Sea_Raptor_Kill_Task
-Healer Ritualist,763,Researching the Lost Rituals,https://acportalstorm.com/wiki/Researching_the_Lost_Rituals
-Hero of the Golden Flame,430,Shadow Aspect of Grael Quest,https://acportalstorm.com/wiki/Shadow_Aspect_of_Grael_Quest
-Shallows Shark Nemesis,121,Shallows Gorger Kill Task,https://acportalstorm.com/wiki/Shallows_Gorger_Kill_Task
-Arwic Noble,624,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Champion Immemorial,619,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Colier Miner,620,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Has way too much time,618,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Hilltop Defender,623,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Legionnaire,621,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Rock Hound,616,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Rock Star,615,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Samurai,626,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Volcanologist,622,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Warrior of Woe,617,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Royal Investigator,506,The Archivist Quest,https://acportalstorm.com/wiki/The_Archivist_Quest
-Death Knight,545,Undead Attack on Al-Jalima,https://acportalstorm.com/wiki/Undead_Attack_on_Al-Jalima
-Blank,0,,
-Level 151 to 179,0,,
-Aerbax's Bane,574,Aerbax's Citadel,https://acportalstorm.com/wiki/Aerbax's_Citadel
-Dojiro Sangi's Savior,548,Aerbax's Prodigal Human,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Human
-Prodigal Shadow Slayer,522,Aerbax's Prodigal Shadow,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Shadow
-Guardian of the Tower,499,Asheron's Tower Guardian,https://acportalstorm.com/wiki/Asheron's_Tower_Guardian
-Tower Guardian Architect,497,Asheron's Tower Guardian,https://acportalstorm.com/wiki/Asheron's_Tower_Guardian
-Champion of Assassins,469,Colosseum Bosses,https://acportalstorm.com/wiki/Colosseum_Bosses
-Adept Explorer,655,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Amateur Explorer,653,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Crater Crasher,663,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Daredevil,659,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Elite Explorer,657,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Experienced Explorer,654,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Master Explorer,656,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Mountain Climber,658,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Party-Goer,662,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Sky Diver,660,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Spelunker,661,Dereth Exploration,https://acportalstorm.com/wiki/Dereth_Exploration
-Golden Gear Crafter,701,Gear Knight Construction,https://acportalstorm.com/wiki/Gear_Knight_Construction
-Violator Grievver Vetoer,147,Grievver Violator Kill Task,https://acportalstorm.com/wiki/Grievver_Violator_Kill_Task
-Jester's Accomplice,578,Jester Released,https://acportalstorm.com/wiki/Jester_Released
-Marble Wrangler,580,Jester's Lost Marbles,https://acportalstorm.com/wiki/Jester's_Lost_Marbles
-Secret Keeper,581,Jester's Lost Marbles,https://acportalstorm.com/wiki/Jester's_Lost_Marbles
-Slayer of the Black Spear,431,Mukkir Aspect of Grael Quest,https://acportalstorm.com/wiki/Mukkir_Aspect_of_Grael_Quest
-Nexus Crawler,682,Nexus Crawl,https://acportalstorm.com/wiki/Nexus_Crawl
-Jester's Emancipator,576,Releasing Jester,https://acportalstorm.com/wiki/Releasing_Jester
-Jester's Fool,577,Releasing Jester,https://acportalstorm.com/wiki/Releasing_Jester
-Asheron's Defender,492,Saving Asheron,https://acportalstorm.com/wiki/Saving_Asheron
-Archaeologist,603,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Arwician,611,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Asheron's Militia,638,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Defender of Silyun,605,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Dereth's Elite,646,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Desert Warrior,612,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Guardian of the Keep,608,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Hero of Woe,604,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Mayoi Protector,613,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Memorial Champion,606,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Stone Collector,614,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Thane of Colier,607,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Tough Tough,602,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Warrior of the Crater Lake,609,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Zharalim,625,Summoning T'thuun,https://acportalstorm.com/wiki/Summoning_T'thuun
-Zombie Incursion Survivor,443,Undead Attack of Al-Jalima,https://acportalstorm.com/wiki/Undead_Attack_on_Al-Jalima
-Blank,0,,
-Level 180 to 275,0,,
-Bloodthirsty,879,Gauntlet,https://acportalstorm.com/wiki/Gauntlet
-Brutal Barbarian,885,Gauntlet,https://acportalstorm.com/wiki/Gauntlet
-Coin Collector,884,Gauntlet,https://acportalstorm.com/wiki/Gauntlet
-Gauntlet Champion,878,Gauntlet,https://acportalstorm.com/wiki/Gauntlet
-Gauntlet Gladiator,880,Gauntlet,https://acportalstorm.com/wiki/Gauntlet
-Society Savage,883,Gauntlet,https://acportalstorm.com/wiki/Gauntlet
-Soldier of Fortune,882,Gauntlet,https://acportalstorm.com/wiki/Gauntlet
-Wily Warrior,881,Gauntlet,https://acportalstorm.com/wiki/Gauntlet
-Idolized,886,Gauntlet Bosses,https://acportalstorm.com/wiki/Gauntlet_Bosses
-Master of Puppets,887,Gauntlet Bosses,https://acportalstorm.com/wiki/Gauntlet_Bosses
-Titan Slayer,888,Gauntlet Bosses,https://acportalstorm.com/wiki/Gauntlet_Bosses
-Hard to Kill,583,Harlune's Diplomacy,https://acportalstorm.com/wiki/Harlune's_Diplomacy
-Hive Queenslayer,780,Hive Queen Assault,https://acportalstorm.com/wiki/Hive_Queen_Assault
-Out of Tune,779,Hive Queen Assault,https://acportalstorm.com/wiki/Hive_Queen_Assault
-Holly Jolly Helper,858,Holly Jolly Helper Quest,https://acportalstorm.com/wiki/Holly_Jolly_Helper_Quest
-Night Owl,797,Kill: Empowered Wisps,https://acportalstorm.com/wiki/Kill:_Empowered_Wisps
-Minion Marauder,792,Kill: Rynthid Minions,https://acportalstorm.com/wiki/Kill:_Rynthid_Minions
-Rage Quitter,795,Kill: Rynthid Ragers,https://acportalstorm.com/wiki/Kill:_Rynthid_Ragers
-Mender of the Rift,794,Kill: Rynthid Rifts,https://acportalstorm.com/wiki/Kill:_Rynthid_Rifts
-Rynthid Wrecker,793,Kill: Rynthid Slayers,https://acportalstorm.com/wiki/Kill:_Rynthid_Slayers
-Sorcerer Slayer,796,Kill: Rynthid Sorcerers,https://acportalstorm.com/wiki/Kill:_Rynthid_Sorcerers
-Liberator of Uziz,778,Liberation of Uziz,https://acportalstorm.com/wiki/Liberation_of_Uziz
-Menhir Seeker,706,Menhir Research,https://acportalstorm.com/wiki/Menhir_Research
-Bane of the Blessed,648,Rare Island Trophies,https://acportalstorm.com/wiki/Rare_Island_Trophies
-Bane of the Blight,650,Rare Island Trophies,https://acportalstorm.com/wiki/Rare_Island_Trophies
-Defender of the Deru,647,Rare Island Trophies,https://acportalstorm.com/wiki/Rare_Island_Trophies
-Negotiator,649,Rare Island Trophies,https://acportalstorm.com/wiki/Rare_Island_Trophies
-Emotional Wreck,791,Rynthid Foothold,https://acportalstorm.com/wiki/Rynthid_Foothold
-Well Trained,849,Rynthid Training,https://acportalstorm.com/wiki/Rynthid_Training
-Blood Seeker,524,Aerbax's Prodigal Harbinger,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger
-Storm Rider,525,Aerbax's Prodigal Harbinger,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger
-Guardian of Linvak Tukal,555,Aerbax's Prodigal Lugian,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Lugian
-Bloodstone Hunter,713,Bloodstone Investigation,https://acportalstorm.com/wiki/Bloodstone_Investigation
-Knight of the Northwest Tower,691,Castle of Lord Mhoire Quest,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest
-Knight of the Southeast Tower,692,Castle of Lord Mhoire Quest,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest
-Knight of the Southwest Tower,693,Castle of Lord Mhoire Quest,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest
-Crown of the Deru,862,Climbing the Viridian Deru Tree,https://acportalstorm.com/wiki/Climbing_the_Viridian_Deru_Tree
-In The Dark,724,Dark Recordings,https://acportalstorm.com/wiki/Dark_Recordings
-Searching the Shadows,726,Dark Recordings,https://acportalstorm.com/wiki/Dark_Recordings
-Thrungus Reaper,141,Death's Allure,https://acportalstorm.com/wiki/Death's_Allure
-Hopebringer,723,Fate of Bael'Zharon,https://acportalstorm.com/wiki/Fate_of_Bael'Zharon
-Shadow Puppet,722,Fate of Bael'Zharon,https://acportalstorm.com/wiki/Fate_of_Bael'Zharon
-Acidic Soul,757,Geraine's Hosts,https://acportalstorm.com/wiki/Geraine's_Hosts
-Darkened Heart,759,Geraine's Hosts,https://acportalstorm.com/wiki/Geraine's_Hosts
-Fiery Spirit,754,Geraine's Hosts,https://acportalstorm.com/wiki/Geraine's_Hosts
-Grounded Morals,758,Geraine's Hosts,https://acportalstorm.com/wiki/Geraine's_Hosts
-Icy Veins,755,Geraine's Hosts,https://acportalstorm.com/wiki/Geraine's_Hosts
-Shocking Disposition,756,Geraine's Hosts,https://acportalstorm.com/wiki/Geraine's_Hosts
-The True Emperor,760,Geraine's Hosts,https://acportalstorm.com/wiki/Geraine's_Hosts
-Eviscerator Decimator,781,Hive Eviscerator Pincer Quest,https://acportalstorm.com/wiki/Hive_Eviscerator_Pincer_Quest
-Ultimate Warrior,782,Hive Warrior Pincer Quest,https://acportalstorm.com/wiki/Hive_Warrior_Pincer_Quest
-Captain,775,Hoshino Fortress Infiltration,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration
-Heretic,651,Hoshino Fortress Infiltration,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration
-Vanquisher of the Titan,764,Hoshino Fortress Infiltration,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration
-Jester's Little Helper,582,Jester Focuses,https://acportalstorm.com/wiki/Jester_Focuses
-Hero of House Mhoire,504,Lord Mhoire Quest,https://acportalstorm.com/wiki/Lord_Mhoire_Quest
-Master of the Oubliette,751,Oubliette of Mhoire Castle Quest,https://acportalstorm.com/wiki/Oubliette_of_Mhoire_Castle_Quest
-Purifier,798,Rynthid Artifact Collection,https://acportalstorm.com/wiki/Rynthid_Artifact_Collection
-Bearer of Darkness,761,Sealing Away the Book of Eibhil,https://acportalstorm.com/wiki/Sealing_Away_the_Book_of_Eibhil
-Bright Knight,728,Shadow Assault,https://acportalstorm.com/wiki/Shadow_Assault
-Shadow Soldier,727,Shadow Assault,https://acportalstorm.com/wiki/Shadow_Assault
-Clouded Soul,715,Shadow Communication,https://acportalstorm.com/wiki/Shadow_Communication
-Guiding Light,714,Shadow Communication,https://acportalstorm.com/wiki/Shadow_Communication
-Stone Cold Killer,783,Snow Tusker Leader Tusk Quest,https://acportalstorm.com/wiki/Snow_Tusker_Leader_Tusk_Quest
-Exploring Archaeologist,720,Stone Tablet Collecting,https://acportalstorm.com/wiki/Stone_Tablet_Collecting
-Conspirator,735,Stop the Rebuilding,https://acportalstorm.com/wiki/Stop_the_Rebuilding
-Creature of Chaos,734,Stop the Rebuilding,https://acportalstorm.com/wiki/Stop_the_Rebuilding
-Double Agent,732,Stop the Rebuilding,https://acportalstorm.com/wiki/Stop_the_Rebuilding
-Duleing with the Dark,733,Stop the Rebuilding,https://acportalstorm.com/wiki/Stop_the_Rebuilding
-Hero of the Night,736,Stop the Rebuilding,https://acportalstorm.com/wiki/Stop_the_Rebuilding
-The Tou-Tou Terror,731,Stop the Rebuilding,https://acportalstorm.com/wiki/Stop_the_Rebuilding
-Illuminating the Shadows,719,Strange Crystal Quest,https://acportalstorm.com/wiki/Strange_Crystal_Quest
-Undercover of Darkness,716,Strange Crystal Quest,https://acportalstorm.com/wiki/Strange_Crystal_Quest
-Merciful Killer,729,Tou-Tou Blockade,https://acportalstorm.com/wiki/Tou-Tou_Blockade
-Soul Siphon,730,Tou-Tou Blockade,https://acportalstorm.com/wiki/Tou-Tou_Blockade
-Champion of House Mhoire,696,Castle of Lord Mhoire Quest,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest
-Immortal Champion,470,Colosseum Bosses,https://acportalstorm.com/wiki/Colosseum_Bosses
-Expendable,584,Harlune's Diplomacy,https://acportalstorm.com/wiki/Harlune's_Diplomacy
-Awakened,889,Enlightenment,https://acportalstorm.com/wiki/Enlightenment
-Enlightened,890,Enlightenment,https://acportalstorm.com/wiki/Enlightenment
-Illuminated,891,Enlightenment,https://acportalstorm.com/wiki/Enlightenment
-Transcended,892,Enlightenment,https://acportalstorm.com/wiki/Enlightenment
-Cosmic Conscious,893,Enlightenment,https://acportalstorm.com/wiki/Enlightenment
-Blank,0,,
-Unobtainable Titles,0,,
-2nd Place Lore- Quiz Night,166,Unobtainable,
-99 Problems Olthoi Ate,1836,Unobtainable,
-AC Veteran,167,Unobtainable,
-Accursed,854,Unobtainable,
-Aerbax Slayer,575,Unobtainable,
-Ain't afraid of no ghost,169,Unobtainable,
-Ain't afraid of no ghost!,168,Unobtainable,
-Ain't afraid of no ghost..mwahaha!,170,Unobtainable,
-Ally of the Council,790,Unobtainable,
-Ally of the Lothus,789,Unobtainable,
-Always Picked First,833,Unobtainable,
-Always Picked Last,834,Unobtainable,
-Ankle Biter,171,Unobtainable,
-Annoying Furry Talking Animal,172,Unobtainable,
-Apprentice Shadow Hunter,414,Unobtainable,
-Archer,2,Unobtainable,
-Archer Assassin,173,Unobtainable,
-Archmage,174,Unobtainable,
-Archmage of House Mhoire,698,Unobtainable,
-Artisan of the Flame and Light,498,Unobtainable,
-Asheron's #1 Fan,800,Unobtainable,
-Asheron's Call God,175,Unobtainable,
-Asheron's Collect Caller,818,Unobtainable,
-Asheron's Savior,491,Unobtainable,
-Avatar of Kain,176,Unobtainable,
-Azure Assailant,177,Unobtainable,
-Baby Bunny Master,178,Unobtainable,
-Baron Oddity,179,Unobtainable,
-Bathed in Blood,678,Unobtainable,
-Beacon of Hope,573,Unobtainable,
-Beginning of the End,180,Unobtainable,
-Best Melee in DT,181,Unobtainable,
-Big Block,182,Unobtainable,
-Big Rocx,183,Unobtainable,
-Blademaster,3,Unobtainable,
-Blood,184,Unobtainable,
-Blood Warrior,426,Unobtainable,
-Bounty Hunter,185,Unobtainable,
-British Tootsie,186,Unobtainable,
-Bug Bait,187,Unobtainable,
-Bunny Killer,188,Unobtainable,
-Can't Follow Directions,807,Unobtainable,
-Captivating,813,Unobtainable,
-Carebear Stare,189,Unobtainable,
-Carraida's Avenger,420,Unobtainable,
-Cathedrals Champion,637,Unobtainable,
-Certified Ganksta,190,Unobtainable,
-Chimaera's Champion,193,Unobtainable,
-Chosen of Elysa,424,Unobtainable,
-Chosen of Varicci,423,Unobtainable,
-Co-Monarch of TheChosen,194,Unobtainable,
-Cold Turkey,855,Unobtainable,
-Containment Unit,195,Unobtainable,
-Controller of Emotions,786,Unobtainable,
-Coolest Title Ever!,196,Unobtainable,
-Corrosive Soul,197,Unobtainable,
-Corruptor Of The Root,874,Unobtainable,
-Cow Killer,198,Unobtainable,
-Cowboy,199,Unobtainable,
-Cruel Summer,845,Unobtainable,
-Crypt Creeper,538,Unobtainable,
-Crystal Lord King,200,Unobtainable,
-Cuddly Kitten >^..^<,201,Unobtainable,
-Curmudgeon's Friend,202,Unobtainable,
-Cursed Adventurer,203,Unobtainable,
-Dagger Master,204,Unobtainable,
-Dark Sword Lady,205,Unobtainable,
-Darktides Finest,206,Unobtainable,
-Darktides Most Wanted,207,Unobtainable,
-Dead Meat,208,Unobtainable,
-Deadly Eggburt,209,Unobtainable,
-Death by Default,210,Unobtainable,
-Death by Pumpkin,211,Unobtainable,
-Death by Sappho,212,Unobtainable,
-Death Specialist,213,Unobtainable,
-Defender of Mr. P,214,Unobtainable,
-Dereth Recruiter,803,Unobtainable,
-Dereth's Gladiator,215,Unobtainable,
-Dereth's Master Dodger,216,Unobtainable,
-Dev Evader,217,Unobtainable,
-Dev Killer,218,Unobtainable,
-Dev Slayer,219,Unobtainable,
-Diplomat,44,Unobtainable,
-Dude of DOOM!,223,Unobtainable,
-Double Fashion King,220,Unobtainable,
-Double Golem Killer,221,Unobtainable,
-Double Survival Champion,222,Unobtainable,
-Ecto Cooler,224,Unobtainable,
-Ecto-Cooler,225,Unobtainable,
-Enchanter,4,Unobtainable,
-Envoy Slayer,226,Unobtainable,
-Escapee Killer,227,Unobtainable,
-Evil Toothfairy,228,Unobtainable,
-Fan of Asheron,799,Unobtainable,
-Fancy Title,229,Unobtainable,
-Fashion King,230,Unobtainable,
-Fashion Penguin King,231,Unobtainable,
-Fashion Queen,232,Unobtainable,
-Fashion Victim,233,Unobtainable,
-Fearless Fighter,234,Unobtainable,
-Flag Boy,235,Unobtainable,
-Flower Sniffer,842,Unobtainable,
-Follows Directions,806,Unobtainable,
-Forever Alone,835,Unobtainable,
-Frelorn Slayer,236,Unobtainable,
-Friend to Mr. P,237,Unobtainable,
-Gangsta Style,238,Unobtainable,
-Gangster,239,Unobtainable,
-Ghostbuster,240,Unobtainable,
-Gimp,241,Unobtainable,
-GIMP,404,Unobtainable,
-Gimp Goddess,242,Unobtainable,
-Gimpy Mage of Might,243,Unobtainable,
-Gladiator Champion,244,Unobtainable,
-Glowing Archer,245,Unobtainable,
-God of the Swordsman,246,Unobtainable,
-Golem Killer,247,Unobtainable,
-Golem Slayer,248,Unobtainable,
-Great Pookie Slayer,249,Unobtainable,
-Guardian Angel,250,Unobtainable,
-Guardian of Arwic,251,Unobtainable,
-Guardian in the Patriarch Raids,627,Unobtainable,
-Guardian of Dereth,63,Unobtainable,
-Hamster Herder,252,Unobtainable,
-Hamster Vitae,253,Unobtainable,
-Have Bunnie's Will Travel,254,Unobtainable,
-Have Trike Will Babble,255,Unobtainable,
-Hide and Seek Specialist,256,Unobtainable,
-Historian of the Mhoire Throne,695,Unobtainable,
-Hollywood Bud,257,Unobtainable,
-Holtburg Survival Champion,258,Unobtainable,
-Holtburg's Survivor Champion,259,Unobtainable,
-Honorary Burun Scout,579,Unobtainable,
-Honorary Pink Eep,260,Unobtainable,
-Hungry for Moar,837,Unobtainable,
-Hungry Hungry Hippo,261,Unobtainable,
-Husband of Lynnie,262,Unobtainable,
-Husbands Healer,263,Unobtainable,
-I am Big []D [] []/[] []D [] [][],264,Unobtainable,
-I Am Darktide,679,Unobtainable,
-I Can Haz Title Nao,838,Unobtainable,
-I liked dying!,265,Unobtainable,
-Jessica <3,266,Unobtainable,
-Kazyk Ri's Bane,640,Unobtainable,
-Kazyk Ri's Nemesis,643,Unobtainable,
-Keeper of Dereth,79,Unobtainable,
-Killcrane's Ally,413,Unobtainable,
-Killer Among Shadows,875,Unobtainable,
-King of all that is Pumpkin,267,Unobtainable,
-King of Caul,268,Unobtainable,
-King of Darktide,269,Unobtainable,
-King of Pierce Diggys,270,Unobtainable,
-Knight of the Golden Flame,416,Unobtainable,
-Knight of the Mhoire Throne,694,Unobtainable,
-Knight of the Northeast Tower,690,Unobtainable,
-Knight of the Whispering Blade,417,Unobtainable,
-Knight of the Windmill,503,Unobtainable,
-Knight Of Thorns,869,Unobtainable,
-Knight Rider,271,Unobtainable,
-Lady of the Four Towers,272,Unobtainable,
-Lange Gang,273,Unobtainable,
-Last Man Standing,894,Unobtainable,
-Level Master,274,Unobtainable,
-Leviathan,275,Unobtainable,
-Leviathan Slayer,276,Unobtainable,
-Libe Events Manager,277,Unobtainable,
-Life Mage,5,Unobtainable,
-Life Preserver,278,Unobtainable,
-Likable,812,Unobtainable,
-Likes Ulgrim,811,Unobtainable,
-Likes Where This Is Going,810,Unobtainable,
-Live Event Coordinator,279,Unobtainable,
-Live Events Manager,280,Unobtainable,
-Live Op Coordinator,281,Unobtainable,
-Lord of Dark Dreams,741,Unobtainable,
-Lore 2nd Place Quiz Night,283,Unobtainable,
-Lore Champion - Quiz Night,284,Unobtainable,
-Lore Champion Quiz Night,285,Unobtainable,
-Lore Master,286,Unobtainable,
-Lore Master - Quiz Night,288,Unobtainable,
-Lore Master 2nd Place,289,Unobtainable,
-Lore Master of Staves,290,Unobtainable,
-Lore Master Quiz Night,287,Unobtainable,
-Lore- 2nd Place,282,Unobtainable,
-Lothus Servitor,788,Unobtainable,
-Lots of Vitae,291,Unobtainable,
-Lucky Lady,292,Unobtainable,
-Mage Of Thorns,871,Unobtainable,
-Mages Assitant,294,Unobtainable,
-Marked by Bacon,827,Unobtainable,
-Marked by Fame,825,Unobtainable,
-Marked by Fate,824,Unobtainable,
-Marked by Glamour,826,Unobtainable,
-Marked by Luck,823,Unobtainable,
-Marked by the Patriarchs,630,Unobtainable,
-Master of Ceremony,814,Unobtainable,
-Master Tinkerer,295,Unobtainable,
-Mayor of Ayan Baqur,296,Unobtainable,
-Minty Fresh,297,Unobtainable,
-Misunderstood Pengy,298,Unobtainable,
-Mom,299,Unobtainable,
-Mommy Pengy,300,Unobtainable,
-Mosswart Ally,301,Unobtainable,
-Mr. Nice Guy,302,Unobtainable,
-Murderer,303,Unobtainable,
-Murderer !,304,Unobtainable,
-Newby Title,305,Unobtainable,
-Nice Blue Lady,306,Unobtainable,
-Nivinizk's Bane,641,Unobtainable,
-Nivinizk's Nemesis,644,Unobtainable,
-Null Title,546,Unobtainable,
-Number one draft pick,307,Unobtainable,
-Old School,308,Unobtainable,
-Oolutanga's Bane,521,Unobtainable,
-Paradox Slayer,309,Unobtainable,
-Patron Saint of the Lifestone,310,Unobtainable,
-Peacebear,311,Unobtainable,
-Penguin Killer,312,Unobtainable,
-Penguin Plunge,841,Unobtainable,
-PK Queen,318,Unobtainable,
-Playa Killa King,319,Unobtainable,
-Player Slayer,677,Unobtainable,
-Pokemon Slayer,320,Unobtainable,
-Portal Ritualist,474,Unobtainable,
-Portal Stormer,820,Unobtainable,
-Possessed,852,Unobtainable,
-Pretty Pumpkin,321,Unobtainable,
-Prisoner,322,Unobtainable,
-Protector of the Cheese,323,Unobtainable,
-Proton Pack,324,Unobtainable,
-Pumpkin Lord,850,Unobtainable,
-Pumpkin Slayer,325,Unobtainable,
-Pumpkin Stalker,326,Unobtainable,
-Purple Pengy,327,Unobtainable,
-Puzzlemaster,828,Unobtainable,
-Pwner of Newbs,328,Unobtainable,
-Queen of Brats,329,Unobtainable,
-Queen's Crafter,331,Unobtainable,
-Queen's Pack Rat,332,Unobtainable,
-Queen's Packrat,333,Unobtainable,
-Queen's Tinker,334,Unobtainable,
-Queens Crafter,330,Unobtainable,
-Rawr!,335,Unobtainable,
-Rayne's Mage Pet,336,Unobtainable,
-Reanimator,442,Unobtainable,
-Reggae Renegade,337,Unobtainable,
-Riddle Ravager,829,Unobtainable,
-Ring Bearer,338,Unobtainable,
-Ring ring ring.....Bananaphone,339,Unobtainable,
-Road Kill,340,Unobtainable,
-Road Warrior,815,Unobtainable,
-Rolling Death Destroyer,341,Unobtainable,
-Royal Chef,342,Unobtainable,
-Royal Cook,343,Unobtainable,
-Rugged,344,Unobtainable,
-Runs Through Sprinklers,847,Unobtainable,
-Rynthid Ravager,787,Unobtainable,
-Sanitation Engineer,345,Unobtainable,
-Scarecrow Slayer,346,Unobtainable,
-Scary Pumkpkin Dominator,347,Unobtainable,
-Scary Pumpkin Slayer,348,Unobtainable,
-Seeker of Asheron,472,Unobtainable,
-Seeker of Castle Mhoire,699,Unobtainable,
-Seeker of Torgluuk,473,Unobtainable,
-Selfless Soul,683,Unobtainable,
-Sentinal,349,Unobtainable,
-Sentry,350,Unobtainable,
-Shadow Child,351,Unobtainable,
-Shadow Hunter,352,Unobtainable,
-Shadow Slayer,353,Unobtainable,
-Slayer of the Great Pookie,354,Unobtainable,
-Slimer,355,Unobtainable,
-Snazzy Dresser,356,Unobtainable,
-Snowbunny,839,Unobtainable,
-Soul Man,357,Unobtainable,
-Sorcerer,6,Unobtainable,
-Spooky Title,358,Unobtainable,
-Springs Into Action,843,Unobtainable,
-Squire of the Golden Flame,415,Unobtainable,
-Staff Masta,359,Unobtainable,
-Staypuffed Mallow Girl,360,Unobtainable,
-Steward of Castle Mhoire,700,Unobtainable,
-Super Gimped Adventurer,361,Unobtainable,
-Supercalifragilisticexpialidocious,362,Unobtainable,
-Superman,363,Unobtainable,
-Survivor Champion,364,Unobtainable,
-Sword Scholar,365,Unobtainable,
-Swordbearer of House Mhoire,697,Unobtainable,
-Tactical Aid,664,Unobtainable,
-Tactical Fantastical,666,Unobtainable,
-Teh Newb,366,Unobtainable,
-Teh Saint,367,Unobtainable,
-Testing Guy,368,Unobtainable,
-The Bait,369,Unobtainable,
-The Black Spear,418,Unobtainable,
-The Chosen King,370,Unobtainable,
-The Come Back Kid,371,Unobtainable,
-The Dark Dreamwalker,743,Unobtainable,
-The Dreamslayer,745,Unobtainable,
-The Focused,802,Unobtainable,
-The Forgotten,372,Unobtainable,
-The Gimped,373,Unobtainable,
-The Great and Powerful,374,Unobtainable,
-The Half-Fox,375,Unobtainable,
-The Inquisitive,819,Unobtainable,
-The Knowledgeable,848,Unobtainable,
-The Nightmare Lord,738,Unobtainable,
-The Nightmare Mage,739,Unobtainable,
-The Nightmare Stalker,746,Unobtainable,
-The Noob,376,Unobtainable,
-The Purple Fez,377,Unobtainable,
-The Pwnerer,378,Unobtainable,
-The Restless,753,Unobtainable,
-The Thought Spiral,748,Unobtainable,
-The Twisted Weaver,740,Unobtainable,
-The Unknown Pk,379,Unobtainable,
-Tomb Raider,539,Unobtainable,
-Torgluuk's Liberator,489,Unobtainable,
-Tough Guy,382,Unobtainable,
-Tracker Guardian,547,Unobtainable,
-Tradesman of Auberean,383,Unobtainable,
-Treasure Hunter,384,Unobtainable,
-Tremendous Monouga Master,385,Unobtainable,
-Triple Golem Killer,386,Unobtainable,
-True Tactician,665,Unobtainable,
-Turbine Slayer,387,Unobtainable,
-Twins of Terror,388,Unobtainable,
-Uberest Noob on Frostfell,389,Unobtainable,
-Ulgrim's Happy Hundredth,599,Unobtainable,
-Underworld-Thugg,390,Unobtainable,
-Unwitting Participant,556,Unobtainable,
-Vagabond,7,Unobtainable,
-Viamontian Slayer,391,Unobtainable,
-Viridian Dreamer,863,Unobtainable,
-Viridian Knight,865,Unobtainable,
-Viridian Lord,864,Unobtainable,
-Viridian Purifier,868,Unobtainable,
-Viridian Slayer,867,Unobtainable,
-Viridian Stalker,866,Unobtainable,
-Vitae King,392,Unobtainable,
-Vitae Vixen,393,Unobtainable,
-Vixen of Vitae,394,Unobtainable,
-Wabbit Bait,395,Unobtainable,
-Wabbit Killer,396,Unobtainable,
-Wandering Fool,397,Unobtainable,
-Wanga Fighter,507,Unobtainable,
-Warden in the Patriarch Raids,628,Unobtainable,
-Warden of Dereth,151,Unobtainable,
-Warden's Assistant,398,Unobtainable,
-Wardens Assistant,405,Unobtainable,
-Wardens Thug,399,Unobtainable,
-Warlord of Dereth,153,Unobtainable,
-Warrior,8,Unobtainable,
-Wimp,400,Unobtainable,
-Wolfpack Crafter,401,Unobtainable,
-Wonder Woman,402,Unobtainable,
-Ya got served,403,Unobtainable,
+Number,Name,Id,Category,Level,Url,Hint
+1,Adventurer,1,Character Creation,1,https://acportalstorm.com/wiki/Character_Creation,Choose a custom character during character creation
+2,Bow Hunter,9,Character Creation,1,https://acportalstorm.com/wiki/Character_Creation,Choose Bow Hunter during character creation
+3,Life Caster,10,Character Creation,1,https://acportalstorm.com/wiki/Character_Creation,Choose Life Caster during character creation
+4,Soldier,11,Character Creation,1,https://acportalstorm.com/wiki/Character_Creation,Choose Soldier during character creation
+5,Swashbuckler,12,Character Creation,1,https://acportalstorm.com/wiki/Character_Creation,Choose Swashbuckler during character creation
+6,War Mage,13,Character Creation,1,https://acportalstorm.com/wiki/Character_Creation,Choose War Mage during character creation
+7,Wayfarer,14,Character Creation,1,https://acportalstorm.com/wiki/Character_Creation,Choose Wayfarer during character creation
+8,Obviously Bored,433,Cow Tipping,1,https://acportalstorm.com/wiki/Cow_Tipping,Holtburg - Dwennon 42.6N 33.6E - Tip the cow 300 times
+9,Pond Scum,106,Fishing,1,https://acportalstorm.com/wiki/Fishing,Catch 400 Minnows
+10,Skipper,128,Fishing,1,https://acportalstorm.com/wiki/Fishing,Catch 600 Minnows
+11,Guppy Master,65,Fishing,1,https://acportalstorm.com/wiki/Fishing,Catch 100 Guppies
+12,Lakeman,84,Fishing,1,https://acportalstorm.com/wiki/Fishing,Catch 100 Mollies
+13,Fisherman,52,Fishing,1,https://acportalstorm.com/wiki/Fishing,Catch 100 Fish
+14,Pro Fisherman,107,Fishing,1,https://acportalstorm.com/wiki/Fishing,Catch 300 Large Fish
+15,Gift Gopher,860,Package Delivery,1,https://acportalstorm.com/wiki/Package_Delivery,Seasonal only - Fiun Outpost - Raymond 95.7N 56.6W (#1) Bluespire Marcia 39.0N 75.3W - Glenden Wood Joanne 29.4N 27.2E - Yaraq Kim 21.8S 1.6W - Rithwic Jenny 10.3N 58.3E (#2) Greenspire Jan 43.0N 66.7W - Qalaba'r Natalie 74.4S 19.2E - Holtburg Michelle 41.5N 34.5E - Eastham Chrissy - 17.9N 64.3E (#3) Redspire Cindy - 40.8N 83.3W - Mayoi Blair 61.3S 82.1E - Shoushi Stephanie 33.2S 72.7E - Cragstone Janet 25.3N 49.2E. 
+16,Holiday Hero,861,Package Delivery,1,https://acportalstorm.com/wiki/Package_Delivery,Seasonal only - Complete all 3 lists - Fiun Outpost - Raymond 95.7N 56.6W (#1) Bluespire Marcia 39.0N 75.3W - Glenden Wood Joanne 29.4N 27.2E - Yaraq Kim 21.8S 1.6W - Rithwic Jenny 10.3N 58.3E (#2) Greenspire Jan 43.0N 66.7W - Qalaba'r Natalie 74.4S 19.2E - Holtburg Michelle 41.5N 34.5E - Eastham Chrissy - 17.9N 64.3E (#3) Redspire Cindy - 40.8N 83.3W - Mayoi Blair 61.3S 82.1E - Shoushi Stephanie 33.2S 72.7E - Cragstone Janet 25.3N 49.2E. 
+17,April's Fool,408,Spring Cleaner Title Token,1,https://acportalstorm.com/wiki/Spring_Cleaner_Title_Token,Seasonal only - Kill baby creatures and loot title token - Give to an Agent of Arcanum
+18,Spring Cleaner,135,Spring Cleaner Title Token,1,https://acportalstorm.com/wiki/Spring_Cleaner_Title_Token,Seasonal only - Kill baby creatures and loot title token - Ayan Baqur - Give to Ulgrim the Unpleasant 59.7S 88.0W
+19,Derethian Newbie,765,Stipends,1,https://acportalstorm.com/wiki/Stipends,Arwic - Acquire 1 Stipend from Monroe 33.6N 56.8E 
+20,Novice Wanderer,766,Stipends,1,https://acportalstorm.com/wiki/Stipends,Arwic - Acquire 2 Stipends from Monroe 33.6N 56.8E 
+21,Notable Citizen,767,Stipends,1,https://acportalstorm.com/wiki/Stipends,Arwic - Acquire 5 Stipends from Monroe 33.6N 56.8E 
+22,Adept Adventurer,768,Stipends,1,https://acportalstorm.com/wiki/Stipends,Arwic - Acquire 9 Stipends from Monroe 33.6N 56.8E 
+23,Intrepid Explorer,769,Stipends,1,https://acportalstorm.com/wiki/Stipends,Arwic - Acquire 13 Stipends from Monroe 33.6N 56.8E 
+24,Supreme Soldier,770,Stipends,1,https://acportalstorm.com/wiki/Stipends,Arwic - Acquire 17 Stipends from Monroe 33.6N 56.8E 
+25,Epic Warrior,771,Stipends,1,https://acportalstorm.com/wiki/Stipends,Arwic - Acquire 21 Stipends from Monroe 33.6N 56.8E 
+26,Paragon of New Aluvia,772,Stipends,1,https://acportalstorm.com/wiki/Stipends,Arwic - Acquire 25 Stipends from Monroe 33.6N 56.8E 
+27,An Auberean Legend,773,Stipends,1,https://acportalstorm.com/wiki/Stipends,Arwic - Acquire 50 Stipends from Monroe 33.6N 56.8E 
+28,Epic Fail,832,Varinia,1,https://acportalstorm.com/wiki/Varinia,Arwic - /tell Varinia: You Suck
+29,Epic Win,831,Varinia,1,https://acportalstorm.com/wiki/Varinia,Arwic - /tell Varinia: You're a really nice person!
+30,Follower of Asheron,805,Varinia,1,https://acportalstorm.com/wiki/Varinia,Arwic - /tell Varinia: A lil birdy told me about you
+31,Fowl Follower,804,Varinia,1,https://acportalstorm.com/wiki/Varinia,Arwic - /tell Varinia: Hey Varinia! Tweet tweet tweet!
+32,Harbinger of Madness,822,Varinia,1,https://acportalstorm.com/wiki/Varinia,Arwic - /tell Varinia: There is no blue<comma> only PENGUINS!
+33,Haunts Your Dreams,817,Varinia,1,https://acportalstorm.com/wiki/Varinia,Arwic - /tell Varinia: What's seen can't be unseen.
+34,Likes Asheron,808,Varinia,1,https://acportalstorm.com/wiki/Varinia,Arwic - /tell Varinia: Asheron is the bestest mage!
+35,Likes Getting Titles,809,Varinia,1,https://acportalstorm.com/wiki/Varinia,Arwic - /tell Varinia: Can I have a title too?
+36,The Cool Kids Club,830,Varinia,1,https://acportalstorm.com/wiki/Varinia,Arwic - /tell Varinia: The password is <quote>Cute<quote>
+37,Thriller,816,Varinia,1,https://acportalstorm.com/wiki/Varinia,Arwic - /tell Varinia: Grisly ghouls from every tomb
+39,Blood Shreth Butcher,25,Blood Shreth Kill Task,15,https://acportalstorm.com/wiki/Blood_Shreth_Kill_Task,Shoushi - San Ming 33.5S 72.8E - Kill 10 Blood Shreth - Static spawn of 6 at 39.2S 63.5E
+40,Honorary Windreave,71,Copper Golem Kingpin Kill Task,15,https://acportalstorm.com/wiki/Copper_Golem_Kingpin_Kill_Task,Eastham - Aun Tiulerea 16.5N 63.6E - Kill 5 Golem Kingpin - Talk with NPC for item - Start task again - Kill 5 more Golem Kingpin - Talk with NPC for title
+41,Friend of Sanamar,55,Dericost Ruin Quest,15,https://acportalstorm.com/wiki/Dericost_Ruin_Quest,Sanamar - Grand Knight 70.0N 62.4W - Westwatch - Dericost Ruin 74.2N 74.2W
+42,Friend of Silyun,56,Eleonora's Heart Quest,15,https://acportalstorm.com/wiki/Eleonora's_Heart_Quest,Silyun - Grand Mother 87.4N 70.5W - Sanamar - Viamontian Torture Chamber 69.6N 62.6W
+43,Resistance Recruit,117,Female Tusker Tusk Quest,15,https://acportalstorm.com/wiki/Female_Tusker_Tusk_Quest,Facility Hub - Tusker Burrow 2.0N 97.9E - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
+44,Resistance Fighter,116,Male Tusker Tusk Quest,15,https://acportalstorm.com/wiki/Male_Tusker_Tusk_Quest,Facility Hub - Tusker Lodge 0.1N 98.1E - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
+45,Mud Slinger,97,Mud Golem Sludge Lord Kill Task,15,https://acportalstorm.com/wiki/Mud_Golem_Sludge_Lord_Kill_Task,Samsur - Aun Akuarea 2.6S 20.0E - Kill 5 Golem Kingpin - Talk with NPC for item - Start task again - Kill 5 more Golem Kingpin - Talk with NPC for title
+46,Pest Control,162,Olthoi Drone Kill Task,15,https://acportalstorm.com/wiki/Olthoi_Drone_Kill_Task,Arwic - Olthoi Hunter 30.9N 56.3E - Redspire - Olthoi Arcade 39.1N 81.2W - Kill 20 Olthoi Drone
+47,Perforated Knight,160,Olthoi Nettler Kill Task,15,https://acportalstorm.com/wiki/Olthoi_Nettler_Kill_Task,Arwic - Olthoi Hunter 30.9N 56.3E - Sanamar - Run north - Kill 10 Olthoi Nettler
+48,Nymph Maniac,164,Olthoi Nymph Kill Task,15,https://acportalstorm.com/wiki/Olthoi_Nymph_Kill_Task,Arwic - Olthoi Hunter 30.9N 56.3E - Arwic - Mountain Shortcut 35.0N 56.0E - Lair of Death 42.0N 58.1E - Kill 20 Olthoi Nymph
+49,Polardillo Pummeler,105,Polardillo Kill Task,15,https://acportalstorm.com/wiki/Polardillo_Kill_Task,Sanamar - Alessandro Mardor 72.0N 61.2W - Sanamar - Run north - Kill 10 Polardillo
+50,Small Mukkir Squasher,425,Small Fledgling Mukkir Kill Task,15,https://acportalstorm.com/wiki/Small_Fledgling_Mukkir_Kill_Task,Holtburg - Royal Guard 41.6N 34.2E - Small Fledgling Mukkir Nest 43.5N 36.1E - Kill 15 Small Fledgling Mukkirs
+52,Initiate of the Hunt,550,Carenzi Plague,20,https://acportalstorm.com/wiki/Carenzi_Plague,Bluespire - Aun Teriona 41.3N 75.3W - Sanamar - Run north - Kill Polar Carenzi until they drop a liver - Use 4 livers within 2 hours
+53,Deathcap Defeater,41,Deathcap Thrungus Kill Task,20,https://acportalstorm.com/wiki/Deathcap_Thrungus_Kill_Task,Westwatch - Jiang Li 72.7N 73.3W - Head north through forest - Kill 25 Deathcap Thrungus
+54,Drudge Doom,515,Drudge Lurker Kill Task,20,https://acportalstorm.com/wiki/Drudge_Lurker_Kill_Task,Cragstone - Jarvis Hammerstone 25.6N 49.4E - Kill 100 Drudge Lurker
+55,Gardener Weeder,58,Gardener Pincer Quest,20,https://acportalstorm.com/wiki/Gardener_Pincer_Quest,Facility Hub - The Dark Lair 43.8N 68.4W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
+56,Golden God,61,Goldenback Tusker Tusk Quest,25,https://acportalstorm.com/wiki/Goldenback_Tusker_Tusk_Quest,Facility Hub - Tusker Cavern 1.0N 96.9E - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
+57,Bugstomper,30,Harvester Pincer Quest,25,https://acportalstorm.com/wiki/Harvester_Pincer_Quest,Facility Hub - Abandoned Tumerok Site 42.0N 82.2W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
+58,Bunny Master,31,Larry's Ruined Garden,25,https://acportalstorm.com/wiki/Larry's_Ruined_Garden,Lytelthorpe - Asbel Domain Settlement Portal at 2.1N 50.5E - Larry the Rabbit Master 1.9N 41.6E - Give Larry a Pyreal - Kill Bleached Boss Rabbit and loot Lucky Rabbit Foot - Give to Larry
+59,Ulgrim's Eep,409,Larry's Ruined Garden,25,https://acportalstorm.com/wiki/Larry's_Ruined_Garden,Lytelthorpe - Asbel Domain Settlement Portal at 2.1N 50.5E - Larry the Rabbit Master 1.9N 41.6E - Give Larry a Pyreal - Kill Grimacing Rabbits and loot Purple Marshmallow Eep - Give to Larry
+60,Siraluun Slasher,127,Littoral Siraluun Kill Task,25,https://acportalstorm.com/wiki/Littoral_Siraluun_Kill_Task,Greenspire - Rico Cellini 43.2N 67.1W - Head north east - Kill 25 Littoral Siraluun
+61,Red Fury,112,Tusker Crimsonback Tusk Quest,25,https://acportalstorm.com/wiki/Tusker_Crimsonback_Tusk_Quest,Facility Hub - Tusker Cave 0.4N 97.4E - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
+62,Deliverer,43,Tusker Liberator Tusk Quest,25,https://acportalstorm.com/wiki/Tusker_Liberator_Tusk_Quest,Facility Hub - Tusker Habitat 0.5S 95.9E - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
+63,Lightbringer,86,Tusker Redeemer Tusk Quest,25,https://acportalstorm.com/wiki/Tusker_Redeemer_Tusk_Quest,Facility Hub - Tusker Abode 3.2S 94.9E - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
+64,Worker Obliterator,157,Worker Pincer Quest,25,https://acportalstorm.com/wiki/Worker_Pincer_Quest,Facility Hub - Crumbling Empyrean Mansion 46.8N 67.8W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
+66,Apothecary,18,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Alchemy)
+67,Axe Warrior,22,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+68,Ballisteer,23,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
+69,Chef,37,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Cooking)
+70,Creature Adept,38,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Creature Magic)
+71,Dagger Fighter,39,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Finesse Weapons)
+72,Fletcher,53,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Fletching)
+73,Item Adept,78,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Item Magic)
+74,Life Adept,85,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Life Magic)
+75,Mace Warrior,87,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+76,Sharpshooter,122,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
+77,Sniper,132,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
+78,Spear Warrior,134,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+79,Staff Warrior,136,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+80,Swordfighter,139,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Heavy Weapons)
+81,Unarmed Brawler,146,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+82,War Adept,150,Bestowers' Guild of Dereth,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (War Magic)
+83,Apprentice of the Hunt,551,Carenzi Plague,30,https://acportalstorm.com/wiki/Carenzi_Plague,Bluespire - Aun Teriona 41.3N 75.3W - Timaru - Marae Lassel - Kill Carenzi Stalker until they drop a liver - Use 35 livers within 2 hours
+84,Dire Mattekar Dispatcher,45,Dire Mattekar Kill Task,30,https://acportalstorm.com/wiki/Dire_Mattekar_Kill_Task,Baishi - Fergal the Dire 49.4S 62.4E - Kill 10 Dire Mattekar
+85,Cragstone Militia,500,Drudge Plan,30,https://acportalstorm.com/wiki/Drudge_Plan,Cragstone - Jarvis Hammerstone 25.6N 49.4E - Kill low level Drudges to collect and combine 18 unique pieces of The Plan
+86,Stalker Stalker,511,Drudge Stalker Kill Task,30,https://acportalstorm.com/wiki/Drudge_Stalker_Kill_Task,Cragstone - Jarvis Hammerstone 25.6N 49.4E - Kill 100 Drudge Stalker
+87,Ebon Gromnie Eradicator,47,Ebon Gromnie Kill Task,30,https://acportalstorm.com/wiki/Ebon_Gromnie_Kill_Task,Redspire - Afra bint Abbas 40.8N 83.0W - Bandit Castle - Small Ice Cave 67.5N 50.3E - Kill 25 Ebon Gromnies
+88,Ruuk Ally,471,Falatacot Medallion (Low),30,https://acportalstorm.com/wiki/Falatacot_Medallion_(Low),Bur - Gruuk'lar - Muggy Guruk Caverns - Kill boss and loot Decorated Falatacot Medallion
+89,Gaerlan Slayer,57,Gaerlan's Citadel (Low),30,https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Low),Arwic - Sennon Valley Retreat 32.9N 59.4E - Frost Guardian Lair 52.8N 62.4E - Speak with Asheron's Platinum Golem 57.8N 48.4E - Lightning Zigguratat 57.1N 47.8E - Proving Grounds - Citadel Library - Gaerlan's Inner Sanctum - Defeat Gaerlan
+90,Windreave Stalker,156,Hea Windreave Kill Task,30,https://acportalstorm.com/wiki/Hea_Windreave_Kill_Task,Redspire - Susana du Loc 40.7N 83.2W - Southeast and Southwest Marae Lassel - Kill 25 Hea Windreaves
+91,Zefir Zapper,434,Kilif Zefir Kill Task,30,https://acportalstorm.com/wiki/Kilif_Zefir_Kill_Task,Shoushi - Hadiya bint Anan 33.7S 73.1E - Facility Hub - Mountain Sewer 60.9S 82.0E - Kill 35 Kilif Zefirs
+92,Dedicated,672,Machinist's Gloves Quest,30,https://acportalstorm.com/wiki/Machinist's_Gloves_Quest,Xarabydun - Mar'uun 10.6S 17.1E - You must either be finished with or at least on week 3 of the Time Warp portion of the Portal Space Research quest to complete this quest. Kaywin will not be present in Mar'uun until the third week.
+93,Rat Reaper,163,Rat Catcher,35,https://acportalstorm.com/wiki/Rat_Catcher,Do Blood Shreth / Polardillo / Dire Mattekar / Littoral Siraluun / Olthoi Nettler / Olthoi Nymph / Olthoi Drone KTs - Shoushi - Lo Raen 33.5S 72.4E - Rat King's Cave 32.9S 70.5E
+94,Novice of the Sea,585,Ritual of the Blight,35,https://acportalstorm.com/wiki/Ritual_of_the_Blight,Mayoi - Captain Warner 61.4S 82.5E - Redspire - Blighted Rank Moarsman Tunnels 40.7N 86.5W - Kill boss and loot Tattered Moarseman Rituation - Give to Captain Warner
+95,Soldier Slaughterer,133,Soldier Pincer Quest,35,https://acportalstorm.com/wiki/Soldier_Pincer_Quest,Facility Hub - An Olthoi Soldier Nest 45.2N 76.3W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
+96,Chain Breaker,33,Tusker Slave Tusk Quest,35,https://acportalstorm.com/wiki/Tusker_Slave_Tusk_Quest,Facility Hub - Tusker Quarters 2.3S 95.6E - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
+98,Alchemist,16,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Alchemy)
+99,Artifex,21,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Item Magic)
+100,Deadeye,40,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
+101,Duelist,46,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Heavy Weapons)
+102,Evoker,49,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Creature Magic)
+103,Impaler,73,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+104,Iron Chef,76,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Cooking)
+105,Master Fletcher,89,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Fletching)
+106,Master of Staves,91,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+107,Projectilist,108,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
+108,Pugilist,109,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+109,Skullcrusher,129,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+110,Skullsplitter,130,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+111,Slicer,131,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Finesse Weapons)
+112,Sureshot,138,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
+113,Theurgist,140,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Life Magic)
+114,Warlock,152,Bestowers' Guild of Dereth,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (War Magic)
+115,Scrapper,464,Colosseum Arena,40,https://acportalstorm.com/wiki/Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 1
+116,Arena Rat,463,Colosseum Arena,40,https://acportalstorm.com/wiki/Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 2
+117,Arena Custodian,462,Colosseum Arena,40,https://acportalstorm.com/wiki/Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 3
+118,Drudge Dread,461,Colosseum Arena,40,https://acportalstorm.com/wiki/Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 4
+119,Contender,460,Colosseum Arena,40,https://acportalstorm.com/wiki/Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 5
+120,Ravenous,512,Drudge Ravener Kill Task,40,https://acportalstorm.com/wiki/Drudge_Ravener_Kill_Task,Cragstone - Jarvis Hammerstone 25.6N 49.4E - Kill 50 Drudge Ravener
+121,Engorged Scourge,48,Engorged Eater Jaw Quest,40,https://acportalstorm.com/wiki/Engorged_Eater_Jaw_Quest,Westwatch - Clemenza 72.7N 73.4W - Remote Empyrean Vault 81.7N 71.2W - Loot Engorged Eater Jaw near end of dungeon
+122,Gifted,651,Hidden Presents,40,https://acportalstorm.com/wiki/Hidden_Presents,Seasonal only - Find 12 hidden gift boxes
+123,Seasonal Seeker,652,Hidden Presents,40,https://acportalstorm.com/wiki/Hidden_Presents,Seasonal only - Use 12 hidden gift boxes
+124,Champion of Sanamar,35,Knights of Karlun Quest,40,https://acportalstorm.com/wiki/Knights_of_Karlun_Quest,Sanamar - Grand Knight 70.0N 62.4W - Silyun - Karlun's Fort 89.0N 67.6W - Speak to Sir Ginazio - Eater Pit 88.8N 72.6W - Silyun - Heart of Madness 84.8N 68.6W - Hall of Karlun 88.9N 67.8W
+125,Champion of Silyun,36,Knights of Karlun Quest,40,https://acportalstorm.com/wiki/Knights_of_Karlun_Quest,Silyun - Grand Mother 87.4N 70.5W - Karlun's Fort 89.0N 67.6W - Speak to Sir Ginazio - Eater Pit 88.8N 72.6W - Silyun - Heart of Madness 84.8N 68.6W - Hall of Karlun 88.9N 67.8W
+126,Hero of Silyun,69,Marauder's Lair Quest,40,https://acportalstorm.com/wiki/Marauder's_Lair_Quest,Silyun - Grand Mother 87.4N 70.5W - Marauder's Lair 83.9N 66.4W
+127,Exterminator,51,Legionary Pincer Quest,40,https://acportalstorm.com/wiki/Legionary_Pincer_Quest,Facility Hub - Ancient Empyrean Grotto 52.6N 73.1W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
+128,Honorary Snowman,70,Snowman Village,40,https://acportalstorm.com/wiki/Snowman_Village,Qalaba'r - Qalabar Oasis Settlement 74.8S 17.8E - Frost Haven 68.4S 25.4E - Mount Ingot 67.7S 25.5E - Loot Scold's Heart - Give Scold's Heart to The Mayor
+129,Dryreach Militia,158,Tumerok Gladiator Kill Task,40,https://acportalstorm.com/wiki/Tumerok_Gladiator_Kill_Task,Dryreach - Lieutenant Rothe 8.2S 73.1E - Kill 25 Tumerok Gladiator
+130,Tusker Blight,435,Tusker Guard Kill Task,40,https://acportalstorm.com/wiki/Tusker_Guard_Kill_Task,Lin - Shoichi 54.4S 72.9E - Facility Hub - Tusker Barracks 0.3S 90.8E - Kill 500 Tusker Guards
+131,Morale Smasher,94,Tusker Guard Tusk Quest,40,https://acportalstorm.com/wiki/Tusker_Guard_Tusk_Quest,Facility Hub - Tusker Barracks 0.3S 90.8E - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
+132,Altered Hunter,513,Altered Drudge Kill Task,45,https://acportalstorm.com/wiki/Altered_Drudge_Kill_Task,Cragstone - Jarvis Hammerstone 25.6N 49.4E - Kill 40 Altered Drudge
+133,Augmented Hunter,514,Augmented Drudge Kill Task,45,https://acportalstorm.com/wiki/Augmented_Drudge_Kill_Task,Cragstone - Jarvis Hammerstone 25.6N 49.4E - Kill 40 Augmented Drudge
+134,Silver Serf,126,Silver Tusker Tusk Quest,45,https://acportalstorm.com/wiki/Silver_Tusker_Tusk_Quest,Facility Hub - Run from Tusker Barracks - Tusker Pits 1.3N 91.8E - Brighteyes the Tailor 2.2N 95.6E
+136,Shredder,125,Armored Tusker Tusk Quest,50,https://acportalstorm.com/wiki/Armored_Tusker_Tusk_Quest,Facility Hub - Run from Tusker Barracks - Tusker Armory 0.0N 89.4E - Loot tusk near end of dungeon - Brighteyes the Tailor 2.2N 95.6E
+137,Expert Banished Hunter,437,Banished Creature Kill Task,50,https://acportalstorm.com/wiki/Banished_Creature_Kill_Task,Stonehold - Belinda du Loc 68.9N 21.6W - Kill 10 Banished creatures
+138,Disciple of the Hunt,552,Carenzi Plague,50,https://acportalstorm.com/wiki/Carenzi_Plague,Bluespire - Aun Teriona 41.3N 75.3W - Timaru - Marae Lassel - Kill Feral Carenzi until they drop a liver - Use 29 livers within 2 hours
+139,Champion of Stone,465,Colosseum Bosses,50,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete Arena 3 or higher - Use Stone Fists statue - Kill boss
+140,Reef Breaker,534,Coral Golem Kill Task,50,https://acportalstorm.com/wiki/Coral_Golem_Kill_Task,Sanamar - Malrin 71.8N 60.8W - Kill 50 Coral Golems - Rare title
+141,Reef Builder,533,Coral Golem Kill Task,50,https://acportalstorm.com/wiki/Coral_Golem_Kill_Task,Sanamar - Malrin 71.8N 60.8W - Kill 50 Coral Golems - Common title
+142,Avalanche Avoider,777,Crystal Core Quest,50,https://acportalstorm.com/wiki/Crystal_Core_Quest,Qalaba'r - Qalabar Oasis Settlement 74.8S 17.8E - Frost Haven 68.4S 25.4E - David 68.6S 25.4E - Crystal Core 66.6S 25.9E - Kill boss and loot Blazing Shard
+143,Bug Butcher,29,Eviscerator Pincer Quest,50,https://acportalstorm.com/wiki/Eviscerator_Pincer_Quest,Timaru - Lair of the Eviscerators 53.7N 76.6W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
+144,Mushroom Collector,482,Furgal,50,https://acportalstorm.com/wiki/Furgal,Bur - Collect 25 Mushrooms - Give to Furgal
+145,Fungal Farmer,483,Furgal,50,https://acportalstorm.com/wiki/Furgal,Bur - Collect 50 Mushrooms - Give to Furgal
+146,Mushroom Man,484,Furgal,50,https://acportalstorm.com/wiki/Furgal,Bur - Collect 75 Mushrooms - Give to Furgal
+147,Fungi,485,Furgal,50,https://acportalstorm.com/wiki/Furgal,Bur - Collect 100 Mushrooms - Give to Furgal
+148,Mushroom King,486,Furgal,50,https://acportalstorm.com/wiki/Furgal,Bur - Collect 150 Mushrooms - Give to Furgal
+149,Thrungamandius,487,Furgal,50,https://acportalstorm.com/wiki/Furgal,Bur - Collect 200 Mushrooms - Give to Furgal
+150,All for One,687,Gearknight Lesser Lords,50,https://acportalstorm.com/wiki/Gearknight_Lesser_Lords,Yaraq - Ijaniya 22.4S 0.2E - Speak with Dame Alistra 33.4S 6.3E - Gearknight Invasion Area at 36.7S 7.3E - Kill 6 Gear Knight Guardians at Head Statues - Take portal - Kill Gold Gear Lesser Lords
+151,Arctic Adventurer,19,Glacial Golem Margrave Kill Task,50,https://acportalstorm.com/wiki/Glacial_Golem_Margrave_Kill_Task,Qalaba'r - Aun Maerirea 74.5S 19.3E - Kill 5 Golem Margraves - Talk with NPC for item - Start task again - Kill 5 more Golem Margraves - Talk with NPC for title
+152,Philanthropist,101,Gold Hill Ruins Quest,50,https://acportalstorm.com/wiki/Gold_Hill_Ruins_Quest,Gold Hill Ruins Portal Gem (Dropped by Chomu Sclavus and Faisi Sclavus or buy from Colosseum) - Loot Large Golden Coin 21.0N 12.7W - Dryreach - Give coin to Binthura the Beggar 8.0S 73.1E - Eastham - Bestower Tent 17.0N 63.3E - Give to Brewers
+153,Hunter,72,Magma Golem Exarch Kill Task,50,https://acportalstorm.com/wiki/Magma_Golem_Exarch_Kill_Task,Candeth Keep - Aun Autuorea 87.5S 67.0W - Kill 5 Magma Golems - Talk with NPC for item - Start task again - Kill 5 more Magma Golems - Talk with NPC for title
+154,Timeless Adventurer,684,Portal Space Time Travel,50,https://acportalstorm.com/wiki/Portal_Space_Time_Travel,Samsur - Mar'uun 10.6S 17.1E
+155,Virindi Informer,685,Portal Space Time Travel,50,https://acportalstorm.com/wiki/Portal_Space_Time_Travel,Samsur - Mar'uun 10.6S 17.1E
+156,Elite Head Hunter,439,Rare Game Kill Task,50,https://acportalstorm.com/wiki/Rare_Game_Kill_Task,Stonehold - Belinda du Loc 68.9N 21.6W - Hunt down 50 of the Rare Game creatures from the list
+157,Hero of Sanamar,68,Red Bull of Sanamar Quest,50,https://acportalstorm.com/wiki/Red_Bull_of_Sanamar_Quest,Sanamar - Grand Knight 70.0N 62.5W - Silyun - Plains of Ruin 87.7N 69.7W - Old Lascare 87.9N 55.4W - Cannibal Caverns 88.0N 58.5W
+158,Acolyte of the Sea,586,Ritual of the Blight,50,https://acportalstorm.com/wiki/Ritual_of_the_Blight,Mayoi - Captain Warner 61.4S 82.5E - Mayoi - Blighted Disgusting Moarsman Tunnels 60.7S 83.0E - Kill boss and loot Tattered Moarseman Rituation - Give to Captain Warner
+159,Explorer,50,Undead Mechanic Quest,50,https://acportalstorm.com/wiki/Undead_Mechanic_Quest,Redspire - Undead Mechanic 42.1N 79.0W - Retrieve 20 items from 20 dungeons - Combine into Blue Vellum Binder and give to Undead Mechanic
+160,Gaerlan Slayer,57,Gaerlan's Citadel (Mid),59,https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Mid),Arwic - Sennon Valley Retreat 32.9N 59.4E - Frost Guardian Lair 52.8N 62.4E - Speak with Asheron's Platinum Golem 57.8N 48.4E - Lightning Zigguratat 57.1N 47.8E - Proving Grounds - Citadel Library - Gaerlan's Inner Sanctum - Defeat Gaerlan
+162,Arctic Mattekar Annihilator,20,Arctic Mattekar Kill Task,60,https://acportalstorm.com/wiki/Arctic_Mattekar_Kill_Task,Silyun - Enzo Ilario 87.4N 70.5W - North of Silyun - Kill 25 Arctic Mattekar
+163,Broodu Killer,27,Clutch of Kings (Broodu),60,https://acportalstorm.com/wiki/Clutch_of_Kings_(Broodu),Xarabydun - Watcher of the Dead 40.8S 11.9E - Jump down take North exit and hug left - Kill boss and loot hide from ground - Cragstone - Guard Hamdyn at 25.7N 48.8E
+164,Kiree Killer,82,Clutch of Kings (Kiree),60,https://acportalstorm.com/wiki/Clutch_of_Kings_(Kiree),Facility Hub - Blackmire Temple - Watcher of the Dead 21.7S 47.6E - Jump down take South exit and hug left - Kill boss and loot hide from ground - Cragstone - Guard Fassel 25.7N 48.8E
+165,Reeshan Killer,113,Clutch of Kings (Reeshan),60,https://acportalstorm.com/wiki/Clutch_of_Kings_(Reeshan),Mansion - Portal to Izji Qo's Temple - Watcher of the Dead 12.8S 58.9W - Jump down take East exit and hug left - Kill boss and loot hide from ground - Cragstone - Guard Ellyon 25.7N 48.8E
+166,Floeshark Flogger,54,Floeshark Kill Task,60,https://acportalstorm.com/wiki/Floeshark_Kill_Task,Eastwatch - Ryuichi Tai 90.3N 43.0W - Kill 50 Floesharks that spawn all around the Isle of Ruin
+167,Glenden Wood Militia,60,Glenden Wood Invaders,60,https://acportalstorm.com/wiki/Glenden_Wood_Invaders,Glenden Wood - Londigul Ellic the Armorer 29.9N 27.1E - Kill 20 invaders and 1 guard at each camp - East 29.2N 29.3E - North 31.7N 27.9E - West 30.3N 25.5E
+168,Ranger Ruuk,475,Guruk Marauder Kill Task,60,https://acportalstorm.com/wiki/Guruk_Marauder_Kill_Task,Bur - Kurket - Kill 40 Guruk Marauders
+169,Plate Armoredillo Punisher,102,Plate Armoredillo Kill Task,60,https://acportalstorm.com/wiki/Plate_Armoredillo_Kill_Task,Fort Tethana - Saqr 1.5N 71.8W - Kill 25 Plate Armoredillos
+170,Carenzi Slayer,32,Raeta's Necklace Quest,60,https://acportalstorm.com/wiki/Raeta's_Necklace_Quest,Bluespire - Aun Papileona 39.8N 76.4W - Shrine 38.9N 76.3W - Loot necklace and return
+171,Heart Ripper,66,Rampager Tusk Quest,60,https://acportalstorm.com/wiki/Rampager_Tusk_Quest,Facility Hub - Run from Tusker Barracks - Tusker Holding 3.5S 85.3E - Loot tusk near end of dungeon - Brighteyes the Tailor 2.2N 95.6E
+172,Champion of Dereth,34,Weakened Harbinger Quest,60,https://acportalstorm.com/wiki/Weakened_Harbinger_Quest,Yanshi - Beldin the Gem Dealer 12.8S 46.0E - Buy a Decanter of Nullified Essence - Give to  Stone of Yanshi -  Loot a Reflective Shard from ground after boss - Give harbinger item to Issk or Vincadi - Do Harbinger's Lair dungeon - No portal at bottom just keep jumping down
+173,Seeker of the Hunt,553,Carenzi Plague,65,https://acportalstorm.com/wiki/Carenzi_Plague,Bluespire - Aun Teriona 41.3N 75.3W - Timaru - Marae Lassel - Kill Carnivorous Carenzi until they drop a liver - Use 15 livers within 2 hours
+174,Champion of Sickles,466,Colosseum Bosses,65,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete Arena 5 or higher - Use Azaxis statue - Kill boss
+175,Ruuk Ally,471,Falatacot Medallion (Mid),65,https://acportalstorm.com/wiki/Falatacot_Medallion_(Mid),Bur - Gruuk'lar - Northern Catacombs - Humid Guruk Caverns - Kill boss and loot Falatacot Medallion
+176,Gaerlan Slayer,57,Gaerlan's Citadel (High),65,https://acportalstorm.com/wiki/Gaerlan's_Citadel_(High),Arwic - Sennon Valley Retreat 32.9N 59.4E - Frost Guardian Lair 52.8N 62.4E - Speak with Asheron's Platinum Golem 57.8N 48.4E - Lightning Zigguratat 57.1N 47.8E - Proving Grounds - Citadel Library - Gaerlan's Inner Sanctum - Defeat Gaerlan
+177,Minister of the Sea,587,Ritual of the Blight,65,https://acportalstorm.com/wiki/Ritual_of_the_Blight,Mayoi - Captain Warner 61.4S 82.5E - Danby's Outpost - Blighted Putrid Moarsman Tunnels 22.5N 30.4W - Kill boss and loot Tattered Moarseman Rituation - Give to Captain Warner
+179,Gumshoe,64,Noir Assassination Investigation,70,https://acportalstorm.com/wiki/Noir_Assassination_Investigation,Lytelthorpe - Guard Chandler Hammett 0.9N 51.1E - Read sign Cragstone 25.4N 49.2E - Lytelthorpe - Dame Brinna O'Shea 1.0N 51.1E - Tree Portals 47.3S 83.4E - Gentleman Jake Hawkins 74.5S 92.3E - Use portal gem
+180,Queenslayer,110,Olthoi Queen Quest,70,https://acportalstorm.com/wiki/Olthoi_Queen_Quest,Timaru - Get 5 pieces from each of 3 dungeons (need lockpick): East Fork Dam Hive 48.5N 76.4W - Olthoi Dam Structure 48.8N 80.6W - North Fork Dam Hive 51.4N 76.0W - Drop Bells: (#1) 53.0N 73.3W (#2) 49.2N 74.6W (#3) 46.5N 75.8W (#4) 44.7N 80.9W (#5) 50.1N 80.4W - Mount Elyrii Hive 48.5N 81.7W - Royal Hive
+181,Stonebreaker,137,Olthoi Queen Quest,70,https://acportalstorm.com/wiki/Olthoi_Queen_Quest,Timaru - Get 5 pieces from each of 3 dungeons (need lockpick): East Fork Dam Hive 48.5N 76.4W - Olthoi Dam Structure 48.8N 80.6W - North Fork Dam Hive 51.4N 76.0W - Drop Bells: (#1) 53.0N 73.3W (#2) 49.2N 74.6W (#3) 46.5N 75.8W (#4) 44.7N 80.9W (#5) 50.1N 80.4W - Mount Elyrii Hive 48.5N 81.7W - Royal Hive
+182,Bloodletter,26,Plated Tusker Tusk Quest,70,https://acportalstorm.com/wiki/Plated_Tusker_Tusk_Quest,Oolutanga's Refuge - Tusker Tunnels at 0.4N 86.4E - Loot tusk near end of dungeon - Brighteyes the Tailor 2.2N 95.6E
+183,Grave Robber,62,Resting Place,70,https://acportalstorm.com/wiki/Resting_Place,Resting Place Portal Gem (Dropped by Phantasms or buy from Colosseum) - Eastham - Bestower Tent 17.0N 63.3E - Give to Brewers
+184,Voracious Flayer,148,Voracious Eater Jaw Quest,70,https://acportalstorm.com/wiki/Voracious_Eater_Jaw_Quest,Westwatch - Clemenza 72.7N 73.4W - Sanamar - Beacon Tower portal 71.7N 61.0W - Jump down - Ruined Empyrean Vault at 85.9N 59.0W
+185,Voracious Hunter,149,Voracious Eater Kill Task,70,https://acportalstorm.com/wiki/Voracious_Eater_Kill_Task,Timaru - Aun Ruperea - 44.3N 77.9W - Kill 50 Voracious Eaters
+186,Warrior Vanquisher,154,Warrior Pincer Quest,70,https://acportalstorm.com/wiki/Warrior_Pincer_Quest,Timaru - Olthoi Warrior Nest 46.9N 81.2W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
+187,Cragstone Firefighter,509,Aerbax's Prodigal Drudge,75,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Drudge,Cragstone - Jarvis Hammerstone 25.6N 49.4E - Drudge Fort 25.4N 45.9E - Kill Bonecrunch - One of 3 random titles
+188,Cragstone Knight,501,Aerbax's Prodigal Drudge,75,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Drudge,Cragstone - Jarvis Hammerstone 25.6N 49.4E - Drudge Fort 25.4N 45.9E - Kill Bonecrunch - One of 3 random titles
+189,Guardian of Cragstone,502,Aerbax's Prodigal Drudge,75,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Drudge,Cragstone - Jarvis Hammerstone 25.6N 49.4E - Drudge Fort 25.4N 45.9E - Kill Bonecrunch - One of 3 random titles
+190,Slithis Slayer,529,Sishalti Slithis Kill Task,75,https://acportalstorm.com/wiki/Sishalti_Slithis_Kill_Task,Zaikhal - Zava bint Laurma 13.9N 0.6E - Kill 150 Sishalti Slithis
+191,Initiate of the Blade,488,Tanada Hunting Parties,75,https://acportalstorm.com/wiki/Tanada_Hunting_Parties,Shoushi - Sayuji Jina 33.3S 72.8E - Kara - Kill spawns of 1 Acolyte of Breath 1 Acolyte of Wind and 1 Acolyte of Storms - Loot medallions
+193,Gladiator,459,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 6
+194,Warrior of the Seventh Circle,458,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 7
+195,Survivalist,457,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 8
+196,Hostile Combatant,456,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 9
+197,Myrmidon,455,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 10
+198,Pit Fighter,454,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 11
+199,Ring Master,453,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 12
+200,Lord of the Arena,452,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 13
+201,Fearless,451,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 14
+202,Master Gladiator,450,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 15
+203,Colossus,449,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 16
+204,Titan,448,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 17
+205,Colosseum Champion,447,Advanced Colosseum Arena,80,https://acportalstorm.com/wiki/Advanced_Colosseum_Arena,Colosseum - Yanshi 11.3S 37.6E - Complete Room 18
+206,Friend of Rheaga,557,Aerbax's Prodigal Tumerok,80,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Tumerok,Qalaba'r - Nomea ibn Makar 74.3S 19.1E - Ayan Baqur - Lonely Fortress at 56.7S 88.5W - Spare him and pickup letter
+207,Slayer of Rheaga,558,Aerbax's Prodigal Tumerok,80,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Tumerok,Qalaba'r - Nomea ibn Makar 74.3S 19.1E - Ayan Baqur - Lonely Fortress at 56.7S 88.5W - Kill him and loot head
+208,Master of Slaughter,90,Assailer Tusk Quest,80,https://acportalstorm.com/wiki/Assailer_Tusk_Quest,Oolutanga's Refuge - Tusker Honeycombs 1.3S 86.9E - Loot tusk near end of dungeon - Brighteyes the Tailor 2.2N 95.6E
+209,Assassin,673,Assassin's Roost Quest,80,https://acportalstorm.com/wiki/Assassin's_Roost_Quest,Kill Human Bandits and Viamontians and loot Contact Instructions
+210,Bridge Jumper,675,Assassin's Roost Quest,80,https://acportalstorm.com/wiki/Assassin's_Roost_Quest,Kill Human Bandits and Viamontians and loot Contact Instructions
+211,Death Dealer,674,Assassin's Roost Quest,80,https://acportalstorm.com/wiki/Assassin's_Roost_Quest,Kill Human Bandits and Viamontians and loot Contact Instructions
+212,Sure Step,676,Assassin's Roost Quest,80,https://acportalstorm.com/wiki/Assassin's_Roost_Quest,Kill Human Bandits and Viamontians and loot Contact Instructions
+213,Contract Killer,721,Broker Contracts,80,https://acportalstorm.com/wiki/Broker_Contracts,Buy Contract for Broker Contracts from starter town Contract Brokers - Complete 35 Contract Quests
+214,Champion of the Hunt,554,Carenzi Plague,80,https://acportalstorm.com/wiki/Carenzi_Plague,Bluespire - Aun Teriona 41.3N 75.3W - Singularity Caul - Kill Mangy Carenzi until they drop a liver - Use 19 livers within 2 hours
+215,Champion of the Wild,467,Colosseum Bosses,80,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete Arena 7 or higher - Use Killagurg statue - Kill boss
+216,Ally of the Gold Primus,702,Gear Knight Construction,80,https://acportalstorm.com/wiki/Gear_Knight_Construction,Xarabydun - Kaytin 41.7S 15.8E - Turn in 200 points worth of items to Kaytin
+217,Shield of Glenden,124,Glenden Wood Invasion (Low),80,https://acportalstorm.com/wiki/Glenden_Wood_Invasion_(Low),Glenden Wood - Kill 3 Portal Pillars 32.2N 29.5E - Take Red Portal - Glenden Wood - Captain Nyino 29.9N 27.3E 
+218,Basher Slasher,476,Guruk Basher Kill Task,80,https://acportalstorm.com/wiki/Guruk_Basher_Kill_Task,Bur - Shiruuk - Kill 40 Guruk Bashers
+219,Annihilator,17,Mutilator Pincer Quest,80,https://acportalstorm.com/wiki/Mutilator_Pincer_Quest,Timaru - Mutilator Pincer Quest 52.8N 78.1W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
+220,Polar Ursuin Pounder,104,Polar Ursuin Kill Task,80,https://acportalstorm.com/wiki/Polar_Ursuin_Kill_Task,Fiun Outpost - Mariabella Varanese 95.6N 56.3W - Kill 25 Polar Ursuin
+221,Moar Hunter,495,Putrid Moar Kill Task,80,https://acportalstorm.com/wiki/Putrid_Moar_Kill_Task,Bur - Tibik - Swamp Cavern - Kill 25 Putrid Moar
+222,Spiketooth Slayer,496,Putrid Moar Kill Task,80,https://acportalstorm.com/wiki/Putrid_Moar_Kill_Task,Bur - Tibik - Swamp Cavern - Kill Spiketooth
+223,Defender of the Sea,588,Ritual of the Blight,80,https://acportalstorm.com/wiki/Ritual_of_the_Blight,Mayoi - Captain Warner 61.4S 82.5E - Stonehold - The Pit 64.3N 23.4W - Beach Fort - Blighted Desolation Moarsman Tunnels 75.1N 49.7W - Kill boss and loot Tattered Moarseman Rituation - Give to Captain Warner
+224,Master of the Mystical Mug,446,Ulgrim's Drinking Contest,80,https://acportalstorm.com/wiki/Ulgrim's_Drinking_Contest,Nanto - Buy Wah Chon's Winter Lager from Wah Chon the Barkeep 52.4S 82.0E - Baishi - Drunken Madman 53.0S 61.0E - Give Lager - Kill small Golems on adjacent island and loot 12 Ulgrim's Contest Mug - Ayan Baqur - Win 10 rounds
+225,Master of the Porcelain Altar,445,Ulgrim's Drinking Contest,80,https://acportalstorm.com/wiki/Ulgrim's_Drinking_Contest,Nanto - Buy Wah Chon's Winter Lager from Wah Chon the Barkeep 52.4S 82.0E - Baishi - Drunken Madman 53.0S 61.0E - Give Lager - Kill small Golems on adjacent island and loot 12 Ulgrim's Contest Mug - Ayan Baqur - Lose 1 round
+226,Ulgrim's Drinking Buddy,444,Ulgrim's Drinking Contest,80,https://acportalstorm.com/wiki/Ulgrim's_Drinking_Contest,Nanto - Buy Wah Chon's Winter Lager from Wah Chon the Barkeep 52.4S 82.0E - Baishi - Drunken Madman 53.0S 61.0E - Give Lager - Kill small Golems on adjacent island and loot 12 Ulgrim's Contest Mug - Ayan Baqur - Win 1 round
+227,Assistant's Assistant,708,Menhir Research,85,https://acportalstorm.com/wiki/Menhir_Research,Xarabydun - Cara the Apprentice 41.7S 15.8E - Find 5 Menhir Fields
+228,Mana Field Finder,707,Menhir Research,85,https://acportalstorm.com/wiki/Menhir_Research,Xarabydun - Cara the Apprentice 41.7S 15.8E - Find 10 Menhir Fields
+230,Abhorrent Warrior,15,Abhorrent Eater Jaw Quest,90,https://acportalstorm.com/wiki/Abhorrent_Eater_Jaw_Quest,Westwatch - Clemenza 72.7N 73.4W - Eastwatch - Abhorrent Vault 88.5N 50.4W
+231,Wisp Whipper,669,Crystalline Killer,90,https://acportalstorm.com/wiki/Crystalline_Killer,Crystalline Crag - Oorjit 14.6S 62.0W - Kill 100 of any variation of Crystalline Wisp on the plateau
+232,Elemental Eradicator,436,Elemental Kill Task,90,https://acportalstorm.com/wiki/Elemental_Kill_Task,Stonehold - Zahir 68.7N 21.5W - Kill 25 of any Elementals: Caustics or Synnasts or Infernos or Hyems
+233,Champion of Daemal,429,Ruschk Aspect of Grael Quest,90,https://acportalstorm.com/wiki/Ruschk_Aspect_of_Grael_Quest,Stonehold - Lord Pyrovor 72.8N 25.0W - Dericost Vault at 74.7N 24.6W - Black Spear Temple 74.0N 28.6W
+234,Arcanum Adventurer,709,Menhir Research,95,https://acportalstorm.com/wiki/Menhir_Research,Xarabydun - Cara the Apprentice 41.7S 15.8E - Find 15 Menhir Fields
+235,Defender of Kryst,516,Aerbax's Prodigal Mosswart,100,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Mosswart,Kryst - Sergeant Brigitta 74.3S 84.6E - Mosswart Holding 78.2S 86.7E
+236,Guardian of the Dark,407,Dark Monolith Quest,100,https://acportalstorm.com/wiki/Dark_Monolith_Quest,Dark Monolith Caverns Portal Gem (Dropped by Virindi Consul or Desecrator or Abjudicator or buy from Colosseum) - Ayan Baqur - Give to Ulgrim the Unpleasant 59.7S 88.0W
+237,Paragon of Death,100,Devastator Tusk Quest,100,https://acportalstorm.com/wiki/Devastator_Tusk_Quest,Oolutanga's Refuge - Tusker Lacuna at 9.9S 90.7E - Loot tusk near end of dungeon - Brighteyes the Tailor 2.2N 95.6E
+238,Anthropologist,561,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Kill Skeleton Dire Champion - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+239,Banderling Bully,566,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Kill Banderling Dire Champion - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+240,Dire Drudge Decapitator,564,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Kill Drudge Dire Champion - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+241,Dire Huntsman,569,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Loot 8 Dire Champion Tokens - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+242,Game Warden,570,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Loot 50 Dire Champion Tokens - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+243,Gold Farmer,562,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Kill Golem Dire Champion - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+244,Honorary Rea of the Aun,571,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Loot 100 Dire Champion Tokens - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+245,Renegade Hunter,565,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Kill Lugian Dire Champion - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+246,Shadow Sunderer,568,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Kill Shadow Dire Champion - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+247,Third Eye Blinder,563,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Kill Monouga Dire Champion - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+248,Xenophobic,567,Dire Champions,100,https://acportalstorm.com/wiki/Dire_Champions,Kill Virindi Dire Champion - Ayan Baqur - Aun Javhalrea 60.7S 88.0W
+249,Master of the Elements,412,Empowered Harbinger Quest,100,https://acportalstorm.com/wiki/Empowered_Harbinger_Quest,Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Give Harbinger item - Do Harbinger's Lair dungeon - Use Essence Chamber at bottom.
+250,Harbinger's Bane,411,Essenceless Harbinger Quest,100,https://acportalstorm.com/wiki/Essenceless_Harbinger_Quest,Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Give Harbinger item - Do Harbinger's Lair dungeon - Use Harbinger's Portal at bottom.
+251,Ruuk Ally,471,Falatacot Medallion (High),100,https://acportalstorm.com/wiki/Falatacot_Medallion_(High),Bur - Gruuk'lar - East Catacombs - Steamy Guruk Caverns - Kill boss and loot Falatacot Medallion
+252,Expert Fallen Hunter,438,Fallen Creature Kill Task,100,https://acportalstorm.com/wiki/Fallen_Creature_Kill_Task,Stonehold - Belinda du Loc 68.9N 21.6W - Kill 10 Fallen creatures
+253,Fuzzy Bunny Slayer,494,Fuzzy Bunny Slayer Quest,100,https://acportalstorm.com/wiki/Fuzzy_Bunny_Slayer_Quest,Seasonal only - Eastham - Asheron's Island 17.9N 64.3E - Kill Black Bunnies until the Hulking Bunny or White Rabbit appears - Loot title token - Lytelthorpe - Asbel Domain 2.1N 50.5E - Give to Larry the Rabbit Master 1.9N 41.6E
+254,Glenden Wood Knight,59,Glenden Wood Invasion (Mid),100,https://acportalstorm.com/wiki/Glenden_Wood_Invasion_(Mid),Glenden Wood - Kill 3 Portal Pillars 31.4N 25.8E - Take Red Portal - Glenden Wood - Captain Sovano 29.9N 27.3E 
+255,Dead Eye for the Colossi,478,Guruk Colossus Kill Task,100,https://acportalstorm.com/wiki/Guruk_Colossus_Kill_Task,Bur - Brogosh - Kill 30 Guruk Colossi
+256,Fiendish Huntsman,479,Guruk Fiend Kill Task,100,https://acportalstorm.com/wiki/Guruk_Fiend_Kill_Task,Bur - Mohor - Kill 30 Guruk Fiend
+257,Guruk Hunter,477,Guruk Smasher Kill Task,100,https://acportalstorm.com/wiki/Guruk_Smasher_Kill_Task,Bur - Kushuk - Kill 40 Guruk Smasher
+258,Follower of the Vine,540,Harvest Reaper Kill Task,100,https://acportalstorm.com/wiki/Harvest_Reaper_Kill_Task,Seasonal only - Glenden Wood - Majestic Pumpkin 30.7N 27.8E - Kill 10 Harvest Reapers 1 time
+259,Harvester,541,Harvest Reaper Kill Task,100,https://acportalstorm.com/wiki/Harvest_Reaper_Kill_Task,Seasonal only - Glenden Wood - Majestic Pumpkin 30.7N 27.8E - Kill 10 Harvest Reapers 10 times
+260,Harvester Harvester,542,Harvest Reaper Kill Task,100,https://acportalstorm.com/wiki/Harvest_Reaper_Kill_Task,Seasonal only - Glenden Wood - Majestic Pumpkin 30.7N 27.8E - Kill 10 Harvest Reapers 20 times
+261,Harvester Harvester Harvester,543,Harvest Reaper Kill Task,100,https://acportalstorm.com/wiki/Harvest_Reaper_Kill_Task,Seasonal only - Glenden Wood - Majestic Pumpkin 30.7N 27.8E - Kill 10 Harvest Reapers 40 times
+262,Iron-Spined Chittick Immolator,77,Iron Spined Chittick Kill Task,100,https://acportalstorm.com/wiki/Iron_Spined_Chittick_Kill_Task,Oolatanga's Refuge - Aidene 2.0N 95.6E - Kill 50 Iron Spined Chitticks
+263,K'nath An'dras Assassinator,83,K'nath An'dras Kill Task,100,https://acportalstorm.com/wiki/K'nath_An'dras_Kill_Task,Wai Jhou - Nona 61.8S 51.3W - Kill 25 K'nath An'dras
+264,Gift Gopher,860,Package Delivery,100,https://acportalstorm.com/wiki/Package_Delivery,Seasonal only - Fiun Outpost - Raymond 95.7N 56.6W (#1) Bluespire Marcia 39.0N 75.3W - Glenden Wood Joanne 29.4N 27.2E - Yaraq Kim 21.8S 1.6W - Rithwic Jenny 10.3N 58.3E (#2) Greenspire Jan 43.0N 66.7W - Qalaba'r Natalie 74.4S 19.2E - Holtburg Michelle 41.5N 34.5E - Eastham Chrissy - 17.9N 64.3E (#3) Redspire Cindy - 40.8N 83.3W - Mayoi Blair 61.3S 82.1E - Shoushi Stephanie 33.2S 72.7E - Cragstone Janet 25.3N 49.2E. 
+265,Repugnant Eater Ripper,115,Repugnant Eater Kill Task,100,https://acportalstorm.com/wiki/Repugnant_Eater_Kill_Task,Eastwatch - Xun Yu 90.2N 43.1W - Kill 50 Repugnant Eaters
+266,No Cage Can Hold Me,686,Ries Woron's Story,100,https://acportalstorm.com/wiki/Ries_Woron's_Story,Baishi - Ries Woron 49.5S 62.7E - Free a Trapped Townsperson
+267,Sezzherei Slayer,119,Sezzherei's Lair Quest,100,https://acportalstorm.com/wiki/Sezzherei's_Lair_Quest,Kill Fallen creatures on Singularity Caul - Loot a Sezzherei's Lair Portal Gem - Kill Sezzherei and loot token - Give to any Agent of the Arcanum
+268,Supreme Bunny Master,406,Son of Pooky Quest,100,https://acportalstorm.com/wiki/Son_of_Pooky_Quest,Ayan Baqur - White Rabbit Cave 45.6S 87.0W - Kill the White Rabbit and loot a Son of Pooky's Den Portal Gem - Use Gem - Kill Son of Pooky - Loot White Rabbit's Foot from chest (lowish droprate) - Lytelthorpe - Asbel Domain 2.1N 50.5E - Give to Larry the Rabbit Master 1.9N 41.6E
+269,Fire of the Tanada,667,Tanada House of Fire Quest,100,https://acportalstorm.com/wiki/Tanada_House_of_Fire_Quest,Hebian-To - Tanada Sajo 38.9S 83.3E - Baishi - Chamber of Scrolls 52.2S 63.2E
+270,Chosen of the Rift,530,Tenebrous Rift Kill Task,100,https://acportalstorm.com/wiki/Tenebrous_Rift_Kill_Task,Singularity Caul - Solange 97.4S 94.6W - Kill 350 Tenebrous Rift
+271,Miner,92,Town Founder,100,https://acportalstorm.com/wiki/Town_Founder,Wai Jhou - Kreavon 62.3S 51.4W - Give 200 bags of salvage to Kreavon
+272,Timberman,142,Town Founder,100,https://acportalstorm.com/wiki/Town_Founder,Wai Jhou - Caelis Renning 62.3S 51.4W - Give 200 bags of salvage to Caelis Renning
+273,Trapper,144,Town Founder,100,https://acportalstorm.com/wiki/Town_Founder,Wai Jhou - Aun Teverea 62.3S 51.4W - Give 200 bags of salvage to Aun Teverea
+274,Man-At-Arms Thrasher,88,Viamontian Man-at-Arms Kill Task,100,https://acportalstorm.com/wiki/Viamontian_Man-at-Arms_Kill_Task,Marae Lassel - Robert Gutsmasher 43.9N 73.9W - Kill 50 Viamontian Man-at-Arms
+275,Master of the Hunt,549,Carenzi Plague,105,https://acportalstorm.com/wiki/Carenzi_Plague,Bluespire - Aun Teriona 41.3N 75.3W - Singularity Caul - Kill Tainted Carenzi until they drop a liver - Use 13 livers within 2 hours
+276,Kingslayer,81,Clutch of Kings,105,https://acportalstorm.com/wiki/Clutch_of_Kings,Cragstone - Guard Devon 25.7N 48.9E - Defeat all 6 of the Burun Kings
+277,Browerk Killer,28,Clutch of Kings (Browerk),105,https://acportalstorm.com/wiki/Clutch_of_Kings_(Browerk),Ayan Baqur - Watcher of the Dead 60.1S 88.1W - Setup: Steamy Font 91.1S 89.6E - Balmy Font 91.5S 89.7E - Humid Font 91.3S 89.8E - Muggy Font 91.5S 89.4E. Group: Font Tower 91.3S 89.5E - Kill boss and loot hide from ground - Cragstone - Guard Haigh 25.7N 48.9E
+278,Keerik Killer,80,Clutch of Kings (Keerik),105,https://acportalstorm.com/wiki/Clutch_of_Kings_(Keerik),Obsidian Rim - Watcher of the Dead 51.4S 67.9W - Jump down and take Northeast exit - Kill boss and loot hide from ground - Cragstone - Guard Sorchia 25.7N 48.9E
+279,Rehir Killer,114,Clutch of Kings (Rehir),105,https://acportalstorm.com/wiki/Clutch_of_Kings_(Rehir),Mansion to Portal to Kivik Lir's Temple - Watcher of the Dead 38.1S 47.3W - Jump down and take West ramp down - Kill boss and loot hide from ground - Cragstone - Guard Lo Pan 25.7N 48.8E
+280,Champion of the Sea,589,Ritual of the Blight,105,https://acportalstorm.com/wiki/Ritual_of_the_Blight,Mayoi - Captain Warner 61.4S 82.5E - Ayan Baqur - Blighted Grimy Moarsman Tunnels 60.9S 89.8W - Kill boss and loot Tattered Moarseman Rituation - Give to Captain Warner
+281,Champion of the Hive,468,Colosseum Bosses,110,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete Arena 8 or higher - Use Demon Swarm Matron statue - Kill boss
+282,Ravenous Killer,111,Ravenous Eater Jaw Quest,110,https://acportalstorm.com/wiki/Ravenous_Eater_Jaw_Quest,Westwatch - Clemenza 72.7N 73.4W - Eastwatch - Ravenous Vault 92.8N 48.9W
+283,Servant of The Deep,118,The Deep (Vissidal),120,https://acportalstorm.com/wiki/The_Deep_(Vissidal),Vissidal - Amorphous Haze 77.8N 67.1E - Hand a Gold Shallows Shredder Fin to The Deep
+284,Tukora Lieutenant Trouncer,145,Tukora Lieutenant Kill Task,120,https://acportalstorm.com/wiki/Tukora_Lieutenant_Kill_Task,Eastwatch - Claire Artmad 90.2N 43.1W - Kill 250 Tukora Lieutenants
+285,Ruuk Ally,471,Falatacot Medallion (Extreme),121,https://acportalstorm.com/wiki/Falatacot_Medallion_(Extreme),Bur - Gruuk'lar - Southern Catacombs - Deep Guruk Caverns - Kill boss and loot Falatacot Medallion
+286,Master of the Sea,590,Ritual of the Blight,125,https://acportalstorm.com/wiki/Ritual_of_the_Blight,Mayoi - Captain Warner 61.4S 82.5E - Eastwatch - Blighted Verdant Moarsman Tunnels 92.7N 42.3W - Kill boss and loot Tattered Moarseman Rituation - Give to Captain Warner
+287,Honorary Shadow Hunter,159,Shadowfire Stone Quest,125,https://acportalstorm.com/wiki/Shadowfire_Stone_Quest,Xarabydun - Ciandra Arcanum Alchemist 41.8S 15.8E - Nedysia Castle - Empyrean Workshop at 66.9N 15.9E - Cragstone - Haliana portal 26.2N 46.3E - Shade of Farelaith at 74.3N 58.6E - Obtain Shadowfire stone - Wai Jhou - Give stone to Sarkin Killcrane 61.9S 51.5W
+288,Insatiable Slayer,74,Insatiable Eater Jaw Quest,125,https://acportalstorm.com/wiki/Insatiable_Eater_Jaw_Quest,Westwatch - Clemenza 72.7N 73.4W - Fiun Outpost - Insatiable Vault at 97.6N 48.0W - Loot jaw near end of dungeon
+290,Prodigal Tusker Slayer,519,Aerbax's Prodigal Tusker,130,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Tusker,Oolutanga's Refuge - Whispering Caverns 14.9S 86.0E - Kill Dark Bobo and loot title token - Oolatanga's Refuge - Jilna Fullgood 2.0N 95.6E
+291,Warrior of the Past,560,Black Death Catacombs Quiddity Seed Quest,130,https://acportalstorm.com/wiki/Black_Death_Catacombs_Quiddity_Seed_Quest,Eastham - Asheron's Island 17.9N 64.3E - Emissary of Asheron - (#1) Strange Device 21.9N 19.0E - (#2) Cragstone - Isle of Tears 25.2N 49.9E - Underground City 21.3N 53.9E (#3) Strange Device 21.2N 69.2E (#4) Underground City Again (#5) Hebian-To - Arrowdale Cottages portal 41.4S 82.1E - Black Death Catacombs 59.9N 71.2E
+292,Crystalline Adventurer,668,Crystalline Adventurer,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Crystalline Dungeon 70+ - Kill Aggregate Crystalline Wisp - Give Aggregate Crystalline Shard to Tokashi Ando 14.6S 62.0W 
+293,Frozen Fighter,671,Crystalline Adventurer,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Icy Crystalline Dungeon 90+ - Kill Intense Aggregate Crystalline Wisp - Give Large Aggregate Crystalline Shard to Tokashi Ando 14.6S 62.0W 
+294,Burning Soul,670,Crystalline Adventurer,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Fiery Crystalline Dungeon 110+ - Kill Intense Aggregate Crystalline Wisp - Give Giant Aggregate Crystalline Shard to Tokashi Ando 14.6S 62.0W 
+295,Beginning's End,681,Crystalline Adventurer,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Progenitors Lair 130+ - Kill 3 Progenitors - Give Progenitor Ingot to Tokashi Ando 14.6S 62.0W 
+296,Gaerlan Slayer,57,Gaerlan's Citadel (Extreme),130,https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Extreme),Arwic - Sennon Valley Retreat 32.9N 59.4E - Frost Guardian Lair 52.8N 62.4E - Speak with Asheron's Platinum Golem 57.8N 48.4E - Lightning Zigguratat 57.1N 47.8E - Proving Grounds - Citadel Library - Gaerlan's Inner Sanctum - Defeat Gaerlan
+297,Invader's Bane,75,Glenden Wood Invasion (High),130,https://acportalstorm.com/wiki/Glenden_Wood_Invasion_(High),Glenden Wood - Kill 3 Portal Pillars 27.2N 27.9E - Take Red Portal - Glenden Wood - Captain Anrayl 29.9N 27.3E 
+298,Hope of the Past,572,Ithaenc Quiddity Seed Quest,130,https://acportalstorm.com/wiki/Ithaenc_Quiddity_Seed_Quest,Eastham - Asheron's Island 17.9N 64.3E - Emissary of Asheron - Fort Tethana - Aun Aemaua 1.6N 71.7W - MacNiall's Freehold - Ithaenc Quiddity Seed 82.7S 93.4E
+299,Naughty Skeleton Snuffer,98,Naughty Skeleton Kill Task,130,https://acportalstorm.com/wiki/Naughty_Skeleton_Kill_Task,Eastwatch - Taku Yukio 90.3N 43.1W - Kill 100 Naughty Skeletons
+300,Friend of the Frostglaive,440,The Black Spear Ice Totem,130,https://acportalstorm.com/wiki/The_Black_Spear_Ice_Totem,Shattered Outlands - Kalakh 94.0N 45.9W - Temple of the Black Spear 95.3N 52.2W - Give Black Spear Ice Totem to Kalakh
+301,Squire of New Viamont,441,The Black Spear Ice Totem,130,https://acportalstorm.com/wiki/The_Black_Spear_Ice_Totem,Shattered Outlands - Arialle du Bellenesse 93.2N 48.2W - Temple of the Black Spear 95.3N 52.2W - Give Black Spear Ice Totem to Arialle du Bellenesse
+302,Shadow Stalker,120,The Temple of Xik Minru,130,https://acportalstorm.com/wiki/The_Temple_of_Xik_Minru,Holtburg - Buy Amber Gem from Monyra the Jeweler 42.6N 33.9E - Arwic - Branwyn 29.1N 57.9E - Vissidal Island - Temple of Xik Minru 73.3N 69.0E - Give Amber Gem to Causeway Sentinel - Wai Jhou - Give Book of Xik Minru to Sarkin Killcrane 61.9S 51.5W
+303,Wicked Skeleton Walloper,155,Wicked Skeleton Kill Task,130,https://acportalstorm.com/wiki/Wicked_Skeleton_Kill_Task,Eastwatch - Ruqaya al Mubarak 90.3N 43.1W - Kill 100 Wicked Skeletons
+304,Grave Stalker,536,DeathTail Quest,135,https://acportalstorm.com/wiki/DeathTail_Quest,Graveyard - Lo Shoen 65.3S 43.4W - Give Lo Shoen's Rat Bait to Rat Burrow - Kill DeathTail
+305,Crypt Rat,535,Grave Rat Kill Task,135,https://acportalstorm.com/wiki/Grave_Rat_Kill_Task,Graveyard - Lo Shoen 65.3S 43.4W - Kill 100 Grave Rats during daytime
+306,Rift Shifter,531,Umbral Rift Kill Task,140,https://acportalstorm.com/wiki/Umbral_Rift_Kill_Task,Singularity Caul - Solange 97.4S 94.6W - Kill 30 Umbral Rifts - Rare title 10% chance
+307,Rift Walker,532,Umbral Rift Kill Task,140,https://acportalstorm.com/wiki/Umbral_Rift_Kill_Task,Singularity Caul - Solange 97.4S 94.6W - Kill 30 Umbral Rifts
+308,Hoogan's Hero,508,Aerbax's Prodigal Drudge,145,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Drudge,Glenden Wood - Firedew 27.8N 29.6E - Farmer Kao 51.4N 7.5E - Fazenda Caves 49.8N 7.7E - Get Farmer Kao's Shovel - Cragstone - Jarvis Hammerstone 25.6N 49.4E - Drudge Fort 25.4N 45.9E - Give Farmer Kao's Shovel to Hoogan
+309,Protector of the Past,559,Knorr Quiddity Seed Quest,145,https://acportalstorm.com/wiki/Knorr_Quiddity_Seed_Quest,Stonehold - Give an M note to Olcris Nuhmudira's Student 68.7N 21.6W - Use Gem - Eastham - Asheron's Island 17.9N 64.3E - Hand in Empyrean Spherule to Emissary of Asheron
+310,Meddler,526,Aerbax's Prodigal Harbinger,150,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Show Corrupted Harbinger Blood to Vincadi
+311,Prodigal Harbinger Slayer,523,Aerbax's Prodigal Harbinger,150,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Hand in Corrupted Harbinger Blood to Issk - Prodigal Harbinger Slayer (If you got the killin shot) 
+312,Spy,528,Aerbax's Prodigal Harbinger,150,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Show Corrupted Harbinger Blood to Vincadi
+313,Vile Betrayer,527,Aerbax's Prodigal Harbinger,150,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Show Corrupted Harbinger Blood to Vincadi
+314,Paradox-touched Queenslayer,517,Aerbax's Prodigal Olthoi,150,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Olthoi,
+315,One for All,688,Aetherium Power Core Collection,150,https://acportalstorm.com/wiki/Aetherium_Power_Core_Collection,
+316,Amelia's Caretaker,518,Amelia's Lost Toys,150,https://acportalstorm.com/wiki/Amelia's_Lost_Toys,
+317,Gear Knight Assassin,703,Atamarr Tasks,150,https://acportalstorm.com/wiki/Atamarr_Tasks,
+318,Gear Knight Defender,710,Atamarr Tasks,150,https://acportalstorm.com/wiki/Atamarr_Tasks,
+319,Gear Knight Emissary,705,Atamarr Tasks,150,https://acportalstorm.com/wiki/Atamarr_Tasks,
+320,Gear Knight Recruiter,704,Atamarr Tasks,150,https://acportalstorm.com/wiki/Atamarr_Tasks,
+321,Shellfish Hater,123,Benek Niffis Kill Task,150,https://acportalstorm.com/wiki/Benek_Niffis_Kill_Task,
+322,Burun Liberator,490,Burun Liberator,150,https://acportalstorm.com/wiki/Burun_Liberator,
+323,Mad Cow Slayer,293,Colosseum Bosses,150,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Give Colosseum Master a Tipped Pack Cow - Use Very Mad Cow statue - Kill boss
+324,Pumpkin Throne Usurper,544,Colosseum Bosses,150,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Give Colosseum Master a Blue Blanket - Use Pumpkin King statue - Kill boss
+325,Thunder Chicken Slayer,380,Colosseum Bosses,150,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Give Colosseum Master an Egg - Use Thunder Chicken statue - Kill boss
+326,Tracker,143,Coral Golem Viceroy Kill Task,150,https://acportalstorm.com/wiki/Coral_Golem_Viceroy_Kill_Task,
+327,Loss Prevention,859,Drudge Present Raids,150,https://acportalstorm.com/wiki/Drudge_Present_Raids,
+328,Plucker of Eyes,600,Eye of T'thuun Quest,150,https://acportalstorm.com/wiki/Eye_of_T'thuun_Quest,
+329,Gaerlan Slayer,57,Gaerlan's Citadel (Uber),150,https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Uber),Arwic - Sennon Valley Retreat 32.9N 59.4E - Frost Guardian Lair 52.8N 62.4E - Speak with Asheron's Platinum Golem 57.8N 48.4E - Lightning Zigguratat 57.1N 47.8E - Proving Grounds - Citadel Library - Gaerlan's Inner Sanctum - Defeat Gaerlan
+330,Present Protector,857,Gurog Present Raids,150,https://acportalstorm.com/wiki/Gurog_Present_Raids,
+331,Monster Killer,480,Guruk Monstrosity Kill Task,150,https://acportalstorm.com/wiki/Guruk_Monstrosity_Kill_Task,
+332,Bosh Bosh Kibosh,481,Killing Bosh Bosh,150,https://acportalstorm.com/wiki/Killing_Bosh_Bosh,
+333,Lady Tairla's Champion,505,Lady Mhoire Quest,150,https://acportalstorm.com/wiki/Lady_Mhoire_Quest,
+334,Mosswart Worshipper Whipper,95,Mosswart Worshipper Kill Task,150,https://acportalstorm.com/wiki/Mosswart_Worshipper_Kill_Task,
+335,Mottled Carenzi Mauler,96,Mottled Carenzi Kill Task,150,https://acportalstorm.com/wiki/Mottled_Carenzi_Kill_Task,
+336,Moarsman Defiler,93,Mucky Moarsman Kill Task,150,https://acportalstorm.com/wiki/Mucky_Moarsman_Kill_Task,
+337,Mukkir Masher,410,Mukkir Nest Quest,150,https://acportalstorm.com/wiki/Mukkir_Nest_Quest,
+338,Olthoi Ripper Reducer,99,Olthoi Ripper Kill Task,150,https://acportalstorm.com/wiki/Olthoi_Ripper_Kill_Task,
+339,Platinum Prowler,103,Platinum Golem Mountain King Kill Task,150,https://acportalstorm.com/wiki/Platinum_Golem_Mountain_King_Kill_Task,
+340,Pet Savior,776,Protecting Picketed Pets,150,https://acportalstorm.com/wiki/Protecting_Picketed_Pets,
+341,Warden of the Burning Wood,601,Ranger Lord Mhoire,150,https://acportalstorm.com/wiki/Ranger_Lord_Mhoire,
+342,Bane of the Remoran,24,Remoran Sea Raptor Kill Task,150,https://acportalstorm.com/wiki/Remoran_Sea_Raptor_Kill_Task,
+343,Healer Ritualist,763,Researching the Lost Rituals,150,https://acportalstorm.com/wiki/Researching_the_Lost_Rituals,
+344,Hero of the Golden Flame,430,Shadow Aspect of Grael Quest,150,https://acportalstorm.com/wiki/Shadow_Aspect_of_Grael_Quest,
+345,Shallows Shark Nemesis,121,Shallows Gorger Kill Task,150,https://acportalstorm.com/wiki/Shallows_Gorger_Kill_Task,
+346,Arwic Noble,624,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+347,Champion Immemorial,619,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+348,Colier Miner,620,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+349,Has way too much time,618,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+350,Hilltop Defender,623,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+351,Legionnaire,621,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+352,Rock Hound,616,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+353,Rock Star,615,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+354,Samurai,626,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+355,Volcanologist,622,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+356,Warrior of Woe,617,Summoning T'thuun,150,https://acportalstorm.com/wiki/Summoning_T'thuun,
+357,Royal Investigator,506,The Archivist Quest,150,https://acportalstorm.com/wiki/The_Archivist_Quest,
+358,Death Knight,545,Undead Attack on Al-Jalima,150,https://acportalstorm.com/wiki/Undead_Attack_on_Al-Jalima,
+359,Zombie Incursion Survivor,443,Undead Attack of Al-Jalima,150,https://acportalstorm.com/wiki/Undead_Attack_on_Al-Jalima,
+361,Aerbax's Bane,574,Aerbax's Citadel,160,https://acportalstorm.com/wiki/Aerbax's_Citadel,
+362,Dojiro Sangi's Savior,548,Aerbax's Prodigal Human,160,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Human,
+363,Prodigal Shadow Slayer,522,Aerbax's Prodigal Shadow,160,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Shadow,
+364,Guardian of the Tower,499,Asheron's Tower Guardian,160,https://acportalstorm.com/wiki/Asheron's_Tower_Guardian,
+365,Tower Guardian Architect,497,Asheron's Tower Guardian,160,https://acportalstorm.com/wiki/Asheron's_Tower_Guardian,
+366,Champion of Assassins,469,Colosseum Bosses,160,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete Arena 18 or higher (full win) - Use The Master statue - Kill boss
+367,Adept Explorer,655,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+368,Amateur Explorer,653,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+369,Crater Crasher,663,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+370,Daredevil,659,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+371,Elite Explorer,657,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+372,Experienced Explorer,654,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+373,Master Explorer,656,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+374,Mountain Climber,658,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+375,Party-Goer,662,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+376,Sky Diver,660,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+377,Spelunker,661,Dereth Exploration,160,https://acportalstorm.com/wiki/Dereth_Exploration,
+378,Golden Gear Crafter,701,Gear Knight Construction,160,https://acportalstorm.com/wiki/Gear_Knight_Construction,Xarabydun - Master Craftsman Takahume 41.7S 15.8E - Turn in 200 points worth of items to Takahume
+379,Violator Grievver Vetoer,147,Grievver Violator Kill Task,160,https://acportalstorm.com/wiki/Grievver_Violator_Kill_Task,
+380,Jester's Accomplice,578,Jester Released,160,https://acportalstorm.com/wiki/Jester_Released,
+381,Marble Wrangler,580,Jester's Lost Marbles,160,https://acportalstorm.com/wiki/Jester's_Lost_Marbles,
+382,Secret Keeper,581,Jester's Lost Marbles,160,https://acportalstorm.com/wiki/Jester's_Lost_Marbles,
+383,Slayer of the Black Spear,431,Mukkir Aspect of Grael Quest,160,https://acportalstorm.com/wiki/Mukkir_Aspect_of_Grael_Quest,
+384,Nexus Crawler,682,Nexus Crawl,160,https://acportalstorm.com/wiki/Nexus_Crawl,
+385,Jester's Emancipator,576,Releasing Jester,160,https://acportalstorm.com/wiki/Releasing_Jester,
+386,Jester's Fool,577,Releasing Jester,160,https://acportalstorm.com/wiki/Releasing_Jester,
+387,Asheron's Defender,492,Saving Asheron,160,https://acportalstorm.com/wiki/Saving_Asheron,
+388,Archaeologist,603,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+389,Arwician,611,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+390,Asheron's Militia,638,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+391,Defender of Silyun,605,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+392,Dereth's Elite,646,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+393,Desert Warrior,612,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+394,Guardian of the Keep,608,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+395,Hero of Woe,604,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+396,Mayoi Protector,613,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+397,Memorial Champion,606,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+398,Stone Collector,614,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+399,Thane of Colier,607,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+400,Tough Tough,602,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+401,Warrior of the Crater Lake,609,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+402,Zharalim,625,Summoning T'thuun,160,https://acportalstorm.com/wiki/Summoning_T'thuun,
+404,Bloodthirsty,879,Gauntlet,180,https://acportalstorm.com/wiki/Gauntlet,
+405,Brutal Barbarian,885,Gauntlet,180,https://acportalstorm.com/wiki/Gauntlet,
+406,Coin Collector,884,Gauntlet,180,https://acportalstorm.com/wiki/Gauntlet,
+407,Gauntlet Champion,878,Gauntlet,180,https://acportalstorm.com/wiki/Gauntlet,
+408,Gauntlet Gladiator,880,Gauntlet,180,https://acportalstorm.com/wiki/Gauntlet,
+409,Society Savage,883,Gauntlet,180,https://acportalstorm.com/wiki/Gauntlet,
+410,Soldier of Fortune,882,Gauntlet,180,https://acportalstorm.com/wiki/Gauntlet,
+411,Wily Warrior,881,Gauntlet,180,https://acportalstorm.com/wiki/Gauntlet,
+412,Idolized,886,Gauntlet Bosses,180,https://acportalstorm.com/wiki/Gauntlet_Bosses,
+413,Master of Puppets,887,Gauntlet Bosses,180,https://acportalstorm.com/wiki/Gauntlet_Bosses,
+414,Titan Slayer,888,Gauntlet Bosses,180,https://acportalstorm.com/wiki/Gauntlet_Bosses,
+415,Hard to Kill,583,Harlune's Diplomacy,180,https://acportalstorm.com/wiki/Harlune's_Diplomacy,
+416,Hive Queenslayer,780,Hive Queen Assault,180,https://acportalstorm.com/wiki/Hive_Queen_Assault,
+417,Out of Tune,779,Hive Queen Assault,180,https://acportalstorm.com/wiki/Hive_Queen_Assault,
+418,Holly Jolly Helper,858,Holly Jolly Helper Quest,180,https://acportalstorm.com/wiki/Holly_Jolly_Helper_Quest,
+419,Night Owl,797,Kill: Empowered Wisps,180,https://acportalstorm.com/wiki/Kill:_Empowered_Wisps,
+420,Minion Marauder,792,Kill: Rynthid Minions,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Minions,
+421,Rage Quitter,795,Kill: Rynthid Ragers,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Ragers,
+422,Mender of the Rift,794,Kill: Rynthid Rifts,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Rifts,
+423,Rynthid Wrecker,793,Kill: Rynthid Slayers,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Slayers,
+424,Sorcerer Slayer,796,Kill: Rynthid Sorcerers,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Sorcerers,
+425,Liberator of Uziz,778,Liberation of Uziz,180,https://acportalstorm.com/wiki/Liberation_of_Uziz,
+426,Menhir Seeker,706,Menhir Research,180,https://acportalstorm.com/wiki/Menhir_Research,Xarabydun - Cara the Apprentice 41.7S 15.8E - Find 20 Menhir Fields
+427,Bane of the Blessed,648,Rare Island Trophies,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,
+428,Bane of the Blight,650,Rare Island Trophies,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,
+429,Defender of the Deru,647,Rare Island Trophies,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,
+430,Negotiator,649,Rare Island Trophies,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,
+431,Emotional Wreck,791,Rynthid Foothold,180,https://acportalstorm.com/wiki/Rynthid_Foothold,
+432,Well Trained,849,Rynthid Training,180,https://acportalstorm.com/wiki/Rynthid_Training,
+433,Blood Seeker,524,Aerbax's Prodigal Harbinger,195,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Hand in Corrupted Harbinger Blood to Issk
+434,Storm Rider,525,Aerbax's Prodigal Harbinger,195,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Hand in Corrupted Harbinger Blood to Emissary of Asheron
+435,Guardian of Linvak Tukal,555,Aerbax's Prodigal Lugian,200,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Lugian,
+436,Bloodstone Hunter,713,Bloodstone Investigation,200,https://acportalstorm.com/wiki/Bloodstone_Investigation,
+437,Knight of the Northwest Tower,691,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,
+438,Knight of the Southeast Tower,692,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,
+439,Knight of the Southwest Tower,693,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,
+440,Crown of the Deru,862,Climbing the Viridian Deru Tree,200,https://acportalstorm.com/wiki/Climbing_the_Viridian_Deru_Tree,
+441,In The Dark,724,Dark Recordings,200,https://acportalstorm.com/wiki/Dark_Recordings,
+442,Searching the Shadows,726,Dark Recordings,200,https://acportalstorm.com/wiki/Dark_Recordings,
+443,Thrungus Reaper,141,Death's Allure,200,https://acportalstorm.com/wiki/Death's_Allure,
+444,Hopebringer,723,Fate of Bael'Zharon,200,https://acportalstorm.com/wiki/Fate_of_Bael'Zharon,
+445,Shadow Puppet,722,Fate of Bael'Zharon,200,https://acportalstorm.com/wiki/Fate_of_Bael'Zharon,
+446,Acidic Soul,757,Geraine's Hosts,200,https://acportalstorm.com/wiki/Geraine's_Hosts,
+447,Darkened Heart,759,Geraine's Hosts,200,https://acportalstorm.com/wiki/Geraine's_Hosts,
+448,Fiery Spirit,754,Geraine's Hosts,200,https://acportalstorm.com/wiki/Geraine's_Hosts,
+449,Grounded Morals,758,Geraine's Hosts,200,https://acportalstorm.com/wiki/Geraine's_Hosts,
+450,Icy Veins,755,Geraine's Hosts,200,https://acportalstorm.com/wiki/Geraine's_Hosts,
+451,Shocking Disposition,756,Geraine's Hosts,200,https://acportalstorm.com/wiki/Geraine's_Hosts,
+452,The True Emperor,760,Geraine's Hosts,200,https://acportalstorm.com/wiki/Geraine's_Hosts,
+453,Eviscerator Decimator,781,Hive Eviscerator Pincer Quest,200,https://acportalstorm.com/wiki/Hive_Eviscerator_Pincer_Quest,
+454,Ultimate Warrior,782,Hive Warrior Pincer Quest,200,https://acportalstorm.com/wiki/Hive_Warrior_Pincer_Quest,
+455,Captain,775,Hoshino Fortress Infiltration,200,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration,
+456,Heretic,651,Hoshino Fortress Infiltration,200,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration,
+457,Vanquisher of the Titan,764,Hoshino Fortress Infiltration,200,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration,
+458,Jester's Little Helper,582,Jester Focuses,200,https://acportalstorm.com/wiki/Jester_Focuses,
+459,Hero of House Mhoire,504,Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Lord_Mhoire_Quest,
+460,Master of the Oubliette,751,Oubliette of Mhoire Castle Quest,200,https://acportalstorm.com/wiki/Oubliette_of_Mhoire_Castle_Quest,
+461,Purifier,798,Rynthid Artifact Collection,200,https://acportalstorm.com/wiki/Rynthid_Artifact_Collection,
+462,Bearer of Darkness,761,Sealing Away the Book of Eibhil,200,https://acportalstorm.com/wiki/Sealing_Away_the_Book_of_Eibhil,
+463,Bright Knight,728,Shadow Assault,200,https://acportalstorm.com/wiki/Shadow_Assault,
+464,Shadow Soldier,727,Shadow Assault,200,https://acportalstorm.com/wiki/Shadow_Assault,
+465,Clouded Soul,715,Shadow Communication,200,https://acportalstorm.com/wiki/Shadow_Communication,
+466,Guiding Light,714,Shadow Communication,200,https://acportalstorm.com/wiki/Shadow_Communication,
+467,Stone Cold Killer,783,Snow Tusker Leader Tusk Quest,200,https://acportalstorm.com/wiki/Snow_Tusker_Leader_Tusk_Quest,
+468,Exploring Archaeologist,720,Stone Tablet Collecting,200,https://acportalstorm.com/wiki/Stone_Tablet_Collecting,
+469,Conspirator,735,Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,
+470,Creature of Chaos,734,Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,
+471,Double Agent,732,Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,
+472,Duleing with the Dark,733,Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,
+473,Hero of the Night,736,Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,
+474,The Tou-Tou Terror,731,Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,
+475,Illuminating the Shadows,719,Strange Crystal Quest,200,https://acportalstorm.com/wiki/Strange_Crystal_Quest,
+476,Undercover of Darkness,716,Strange Crystal Quest,200,https://acportalstorm.com/wiki/Strange_Crystal_Quest,
+477,Merciful Killer,729,Tou-Tou Blockade,200,https://acportalstorm.com/wiki/Tou-Tou_Blockade,
+478,Soul Siphon,730,Tou-Tou Blockade,200,https://acportalstorm.com/wiki/Tou-Tou_Blockade,
+479,Champion of House Mhoire,696,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,Graveyard - Use west statue 64.6S 44.1W - Mhoire Castle - Complete 3 Trials - Mhoire Castle Great Hall - Kill Shade of Lord Rytheran
+480,Immortal Champion,470,Colosseum Bosses,200,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete 10 full Colosseum wins - Complete Diemos Flagging - Use The Gladiator Diemos statue - Kill boss
+481,Expendable,584,Harlune's Diplomacy,180,https://acportalstorm.com/wiki/Harlune's_Diplomacy,Facility Hub - Mite Maze 41.1N 57.3E - Speak with Roderick - Bur - Southern Catacombs 67.4N 30.5E - Upper Catacombs - Falatacot Visitor's Alcove
+482,Awakened,889,Enlightenment,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 1 time
+483,Enlightened,890,Enlightenment,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 2 times
+484,Illuminated,891,Enlightenment,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 3 times
+485,Transcended,892,Enlightenment,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 4 times
+486,Cosmic Conscious,893,Enlightenment,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 5 times
+487,2nd Place Lore- Quiz Night,166,Unavailable,0,,
+488,99 Problems Olthoi Ate,1836,Unavailable,0,,
+489,AC Veteran,167,Unavailable,0,,
+490,Accursed,854,Unavailable,0,,
+491,Aerbax Slayer,575,Unavailable,0,,
+492,Ain't afraid of no ghost,169,Unavailable,0,,
+493,Ain't afraid of no ghost!,168,Unavailable,0,,
+494,Ain't afraid of no ghost..mwahaha!,170,Unavailable,0,,
+495,Ally of the Council,790,Unavailable,0,,
+496,Ally of the Lothus,789,Unavailable,0,,
+497,Always Picked First,833,Unavailable,0,,
+498,Always Picked Last,834,Unavailable,0,,
+499,Ankle Biter,171,Unavailable,0,,
+500,Annoying Furry Talking Animal,172,Unavailable,0,,
+501,Apprentice Shadow Hunter,414,Unavailable,0,,
+502,Archer,2,Unavailable,0,,
+503,Archer Assassin,173,Unavailable,0,,
+504,Archmage,174,Unavailable,0,,
+505,Archmage of House Mhoire,698,Unavailable,0,,
+506,Artisan of the Flame and Light,498,Unavailable,0,,
+507,Asheron's #1 Fan,800,Unavailable,0,,
+508,Asheron's Call God,175,Unavailable,0,,
+509,Asheron's Collect Caller,818,Unavailable,0,,
+510,Asheron's Savior,491,Unavailable,0,,
+511,Avatar of Kain,176,Unavailable,0,,
+512,Azure Assailant,177,Unavailable,0,,
+513,Baby Bunny Master,178,Unavailable,0,,
+514,Baron Oddity,179,Unavailable,0,,
+515,Bathed in Blood,678,Unavailable,0,,
+516,Beacon of Hope,573,Unavailable,0,,
+517,Beginning of the End,180,Unavailable,0,,
+518,Best Melee in DT,181,Unavailable,0,,
+519,Big Block,182,Unavailable,0,,
+520,Big Rocx,183,Unavailable,0,,
+521,Blademaster,3,Unavailable,0,,
+522,Blood,184,Unavailable,0,,
+523,Blood Warrior,426,Unavailable,0,,
+524,Bounty Hunter,185,Unavailable,0,,
+525,British Tootsie,186,Unavailable,0,,
+526,Bug Bait,187,Unavailable,0,,
+527,Bunny Killer,188,Unavailable,0,,
+528,Can't Follow Directions,807,Unavailable,0,,
+529,Captivating,813,Unavailable,0,,
+530,Carebear Stare,189,Unavailable,0,,
+531,Carraida's Avenger,420,Unavailable,0,,
+532,Cathedrals Champion,637,Unavailable,0,,
+533,Certified Ganksta,190,Unavailable,0,,
+534,Chimaera's Champion,193,Unavailable,0,,
+535,Chosen of Elysa,424,Unavailable,0,,
+536,Chosen of Varicci,423,Unavailable,0,,
+537,Co-Monarch of TheChosen,194,Unavailable,0,,
+538,Cold Turkey,855,Unavailable,0,,
+539,Containment Unit,195,Unavailable,0,,
+540,Controller of Emotions,786,Unavailable,0,,
+541,Coolest Title Ever!,196,Unavailable,0,,
+542,Corrosive Soul,197,Unavailable,0,,
+543,Corruptor Of The Root,874,Unavailable,0,,
+544,Cow Killer,198,Unavailable,0,,
+545,Cowboy,199,Unavailable,0,,
+546,Cruel Summer,845,Unavailable,0,,
+547,Crypt Creeper,538,Unavailable,0,,
+548,Crystal Lord King,200,Unavailable,0,,
+549,Cuddly Kitten >^..^<,201,Unavailable,0,,
+550,Curmudgeon's Friend,202,Unavailable,0,,
+551,Cursed Adventurer,203,Unavailable,0,,
+552,Dagger Master,204,Unavailable,0,,
+553,Dark Sword Lady,205,Unavailable,0,,
+554,Darktides Finest,206,Unavailable,0,,
+555,Darktides Most Wanted,207,Unavailable,0,,
+556,Dead Meat,208,Unavailable,0,,
+557,Deadly Eggburt,209,Unavailable,0,,
+558,Death by Default,210,Unavailable,0,,
+559,Death by Pumpkin,211,Unavailable,0,,
+560,Death by Sappho,212,Unavailable,0,,
+561,Death Specialist,213,Unavailable,0,,
+562,Defender of Mr. P,214,Unavailable,0,,
+563,Dereth Recruiter,803,Unavailable,0,,
+564,Dereth's Gladiator,215,Unavailable,0,,
+565,Dereth's Master Dodger,216,Unavailable,0,,
+566,Dev Evader,217,Unavailable,0,,
+567,Dev Killer,218,Unavailable,0,,
+568,Dev Slayer,219,Unavailable,0,,
+569,Diplomat,44,Unavailable,0,,
+570,Dude of DOOM!,223,Unavailable,0,,
+571,Double Fashion King,220,Unavailable,0,,
+572,Double Golem Killer,221,Unavailable,0,,
+573,Double Survival Champion,222,Unavailable,0,,
+574,Ecto Cooler,224,Unavailable,0,,
+575,Ecto-Cooler,225,Unavailable,0,,
+576,Enchanter,4,Unavailable,0,,
+577,Envoy Slayer,226,Unavailable,0,,
+578,Escapee Killer,227,Unavailable,0,,
+579,Evil Toothfairy,228,Unavailable,0,,
+580,Fan of Asheron,799,Unavailable,0,,
+581,Fancy Title,229,Unavailable,0,,
+582,Fashion King,230,Unavailable,0,,
+583,Fashion Penguin King,231,Unavailable,0,,
+584,Fashion Queen,232,Unavailable,0,,
+585,Fashion Victim,233,Unavailable,0,,
+586,Fearless Fighter,234,Unavailable,0,,
+587,Flag Boy,235,Unavailable,0,,
+588,Flower Sniffer,842,Unavailable,0,,
+589,Follows Directions,806,Unavailable,0,,
+590,Forever Alone,835,Unavailable,0,,
+591,Frelorn Slayer,236,Unavailable,0,,
+592,Friend to Mr. P,237,Unavailable,0,,
+593,Gangsta Style,238,Unavailable,0,,
+594,Gangster,239,Unavailable,0,,
+595,Ghostbuster,240,Unavailable,0,,
+596,Gimp,241,Unavailable,0,,
+597,GIMP,404,Unavailable,0,,
+598,Gimp Goddess,242,Unavailable,0,,
+599,Gimpy Mage of Might,243,Unavailable,0,,
+600,Gladiator Champion,244,Unavailable,0,,
+601,Glowing Archer,245,Unavailable,0,,
+602,God of the Swordsman,246,Unavailable,0,,
+603,Golem Killer,247,Unavailable,0,,
+604,Golem Slayer,248,Unavailable,0,,
+605,Great Pookie Slayer,249,Unavailable,0,,
+606,Guardian Angel,250,Unavailable,0,,
+607,Guardian of Arwic,251,Unavailable,0,,
+608,Guardian in the Patriarch Raids,627,Unavailable,0,,
+609,Guardian of Dereth,63,Unavailable,0,,
+610,Hamster Herder,252,Unavailable,0,,
+611,Hamster Vitae,253,Unavailable,0,,
+612,Have Bunnie's Will Travel,254,Unavailable,0,,
+613,Have Trike Will Babble,255,Unavailable,0,,
+614,Hide and Seek Specialist,256,Unavailable,0,,
+615,Historian of the Mhoire Throne,695,Unavailable,0,,
+616,Hollywood Bud,257,Unavailable,0,,
+617,Holtburg Survival Champion,258,Unavailable,0,,
+618,Holtburg's Survivor Champion,259,Unavailable,0,,
+619,Honorary Burun Scout,579,Unavailable,0,,
+620,Honorary Pink Eep,260,Unavailable,0,,
+621,Hungry for Moar,837,Unavailable,0,,
+622,Hungry Hungry Hippo,261,Unavailable,0,,
+623,Husband of Lynnie,262,Unavailable,0,,
+624,Husbands Healer,263,Unavailable,0,,
+625,I am Big []D [] []/[] []D [] [][],264,Unavailable,0,,
+626,I Am Darktide,679,Unavailable,0,,
+627,I Can Haz Title Nao,838,Unavailable,0,,
+628,I liked dying!,265,Unavailable,0,,
+629,Jessica <3,266,Unavailable,0,,
+630,Kazyk Ri's Bane,640,Unavailable,0,,
+631,Kazyk Ri's Nemesis,643,Unavailable,0,,
+632,Keeper of Dereth,79,Unavailable,0,,
+633,Killcrane's Ally,413,Unavailable,0,,
+634,Killer Among Shadows,875,Unavailable,0,,
+635,King of all that is Pumpkin,267,Unavailable,0,,
+636,King of Caul,268,Unavailable,0,,
+637,King of Darktide,269,Unavailable,0,,
+638,King of Pierce Diggys,270,Unavailable,0,,
+639,Knight of the Golden Flame,416,Unavailable,0,,
+640,Knight of the Mhoire Throne,694,Unavailable,0,,
+641,Knight of the Northeast Tower,690,Unavailable,0,,
+642,Knight of the Whispering Blade,417,Unavailable,0,,
+643,Knight of the Windmill,503,Unavailable,0,,
+644,Knight Of Thorns,869,Unavailable,0,,
+645,Knight Rider,271,Unavailable,0,,
+646,Lady of the Four Towers,272,Unavailable,0,,
+647,Lange Gang,273,Unavailable,0,,
+648,Last Man Standing,894,Unavailable,0,,
+649,Level Master,274,Unavailable,0,,
+650,Leviathan,275,Unavailable,0,,
+651,Leviathan Slayer,276,Unavailable,0,,
+652,Libe Events Manager,277,Unavailable,0,,
+653,Life Mage,5,Unavailable,0,,
+654,Life Preserver,278,Unavailable,0,,
+655,Likable,812,Unavailable,0,,
+656,Likes Ulgrim,811,Unavailable,0,,
+657,Likes Where This Is Going,810,Unavailable,0,,
+658,Live Event Coordinator,279,Unavailable,0,,
+659,Live Events Manager,280,Unavailable,0,,
+660,Live Op Coordinator,281,Unavailable,0,,
+661,Lord of Dark Dreams,741,Unavailable,0,,
+662,Lore 2nd Place Quiz Night,283,Unavailable,0,,
+663,Lore Champion - Quiz Night,284,Unavailable,0,,
+664,Lore Champion Quiz Night,285,Unavailable,0,,
+665,Lore Master,286,Unavailable,0,,
+666,Lore Master - Quiz Night,288,Unavailable,0,,
+667,Lore Master 2nd Place,289,Unavailable,0,,
+668,Lore Master of Staves,290,Unavailable,0,,
+669,Lore Master Quiz Night,287,Unavailable,0,,
+670,Lore- 2nd Place,282,Unavailable,0,,
+671,Lothus Servitor,788,Unavailable,0,,
+672,Lots of Vitae,291,Unavailable,0,,
+673,Lucky Lady,292,Unavailable,0,,
+674,Mage Of Thorns,871,Unavailable,0,,
+675,Mages Assitant,294,Unavailable,0,,
+676,Marked by Bacon,827,Unavailable,0,,
+677,Marked by Fame,825,Unavailable,0,,
+678,Marked by Fate,824,Unavailable,0,,
+679,Marked by Glamour,826,Unavailable,0,,
+680,Marked by Luck,823,Unavailable,0,,
+681,Marked by the Patriarchs,630,Unavailable,0,,
+682,Master of Ceremony,814,Unavailable,0,,
+683,Master Tinkerer,295,Unavailable,0,,
+684,Mayor of Ayan Baqur,296,Unavailable,0,,
+685,Minty Fresh,297,Unavailable,0,,
+686,Misunderstood Pengy,298,Unavailable,0,,
+687,Mom,299,Unavailable,0,,
+688,Mommy Pengy,300,Unavailable,0,,
+689,Mosswart Ally,301,Unavailable,0,,
+690,Mr. Nice Guy,302,Unavailable,0,,
+691,Murderer,303,Unavailable,0,,
+692,Murderer !,304,Unavailable,0,,
+693,Newby Title,305,Unavailable,0,,
+694,Nice Blue Lady,306,Unavailable,0,,
+695,Nivinizk's Bane,641,Unavailable,0,,
+696,Nivinizk's Nemesis,644,Unavailable,0,,
+697,Null Title,546,Unavailable,0,,
+698,Number one draft pick,307,Unavailable,0,,
+699,Old School,308,Unavailable,0,,
+700,Oolutanga's Bane,521,Unavailable,0,,
+701,Paradox Slayer,309,Unavailable,0,,
+702,Patron Saint of the Lifestone,310,Unavailable,0,,
+703,Peacebear,311,Unavailable,0,,
+704,Penguin Killer,312,Unavailable,0,,
+705,Penguin Plunge,841,Unavailable,0,,
+706,PK Queen,318,Unavailable,0,,
+707,Playa Killa King,319,Unavailable,0,,
+708,Player Slayer,677,Unavailable,0,,
+709,Pokemon Slayer,320,Unavailable,0,,
+710,Portal Ritualist,474,Unavailable,0,,
+711,Portal Stormer,820,Unavailable,0,,
+712,Possessed,852,Unavailable,0,,
+713,Pretty Pumpkin,321,Unavailable,0,,
+714,Prisoner,322,Unavailable,0,,
+715,Protector of the Cheese,323,Unavailable,0,,
+716,Proton Pack,324,Unavailable,0,,
+717,Pumpkin Lord,850,Unavailable,0,,
+718,Pumpkin Slayer,325,Unavailable,0,,
+719,Pumpkin Stalker,326,Unavailable,0,,
+720,Purple Pengy,327,Unavailable,0,,
+721,Puzzlemaster,828,Unavailable,0,,
+722,Pwner of Newbs,328,Unavailable,0,,
+723,Queen of Brats,329,Unavailable,0,,
+724,Queen's Crafter,331,Unavailable,0,,
+725,Queen's Pack Rat,332,Unavailable,0,,
+726,Queen's Packrat,333,Unavailable,0,,
+727,Queen's Tinker,334,Unavailable,0,,
+728,Queens Crafter,330,Unavailable,0,,
+729,Rawr!,335,Unavailable,0,,
+730,Rayne's Mage Pet,336,Unavailable,0,,
+731,Reanimator,442,Unavailable,0,,
+732,Reggae Renegade,337,Unavailable,0,,
+733,Riddle Ravager,829,Unavailable,0,,
+734,Ring Bearer,338,Unavailable,0,,
+735,Ring ring ring.....Bananaphone,339,Unavailable,0,,
+736,Road Kill,340,Unavailable,0,,
+737,Road Warrior,815,Unavailable,0,,
+738,Rolling Death Destroyer,341,Unavailable,0,,
+739,Royal Chef,342,Unavailable,0,,
+740,Royal Cook,343,Unavailable,0,,
+741,Rugged,344,Unavailable,0,,
+742,Runs Through Sprinklers,847,Unavailable,0,,
+743,Rynthid Ravager,787,Unavailable,0,,
+744,Sanitation Engineer,345,Unavailable,0,,
+745,Scarecrow Slayer,346,Unavailable,0,,
+746,Scary Pumkpkin Dominator,347,Unavailable,0,,
+747,Scary Pumpkin Slayer,348,Unavailable,0,,
+748,Seeker of Asheron,472,Unavailable,0,,
+749,Seeker of Castle Mhoire,699,Unavailable,0,,
+750,Seeker of Torgluuk,473,Unavailable,0,,
+751,Selfless Soul,683,Unavailable,0,,
+752,Sentinal,349,Unavailable,0,,
+753,Sentry,350,Unavailable,0,,
+754,Shadow Child,351,Unavailable,0,,
+755,Shadow Hunter,352,Unavailable,0,,
+756,Shadow Slayer,353,Unavailable,0,,
+757,Slayer of the Great Pookie,354,Unavailable,0,,
+758,Slimer,355,Unavailable,0,,
+759,Snazzy Dresser,356,Unavailable,0,,
+760,Snowbunny,839,Unavailable,0,,
+761,Soul Man,357,Unavailable,0,,
+762,Sorcerer,6,Unavailable,0,,
+763,Spooky Title,358,Unavailable,0,,
+764,Springs Into Action,843,Unavailable,0,,
+765,Squire of the Golden Flame,415,Unavailable,0,,
+766,Staff Masta,359,Unavailable,0,,
+767,Staypuffed Mallow Girl,360,Unavailable,0,,
+768,Steward of Castle Mhoire,700,Unavailable,0,,
+769,Super Gimped Adventurer,361,Unavailable,0,,
+770,Supercalifragilisticexpialidocious,362,Unavailable,0,,
+771,Superman,363,Unavailable,0,,
+772,Survivor Champion,364,Unavailable,0,,
+773,Sword Scholar,365,Unavailable,0,,
+774,Swordbearer of House Mhoire,697,Unavailable,0,,
+775,Tactical Aid,664,Unavailable,0,,
+776,Tactical Fantastical,666,Unavailable,0,,
+777,Teh Newb,366,Unavailable,0,,
+778,Teh Saint,367,Unavailable,0,,
+779,Testing Guy,368,Unavailable,0,,
+780,The Bait,369,Unavailable,0,,
+781,The Black Spear,418,Unavailable,0,,
+782,The Chosen King,370,Unavailable,0,,
+783,The Come Back Kid,371,Unavailable,0,,
+784,The Dark Dreamwalker,743,Unavailable,0,,
+785,The Dreamslayer,745,Unavailable,0,,
+786,The Focused,802,Unavailable,0,,
+787,The Forgotten,372,Unavailable,0,,
+788,The Gimped,373,Unavailable,0,,
+789,The Great and Powerful,374,Unavailable,0,,
+790,The Half-Fox,375,Unavailable,0,,
+791,The Inquisitive,819,Unavailable,0,,
+792,The Knowledgeable,848,Unavailable,0,,
+793,The Nightmare Lord,738,Unavailable,0,,
+794,The Nightmare Mage,739,Unavailable,0,,
+795,The Nightmare Stalker,746,Unavailable,0,,
+796,The Noob,376,Unavailable,0,,
+797,The Purple Fez,377,Unavailable,0,,
+798,The Pwnerer,378,Unavailable,0,,
+799,The Restless,753,Unavailable,0,,
+800,The Thought Spiral,748,Unavailable,0,,
+801,The Twisted Weaver,740,Unavailable,0,,
+802,The Unknown Pk,379,Unavailable,0,,
+803,Tomb Raider,539,Unavailable,0,,
+804,Torgluuk's Liberator,489,Unavailable,0,,
+805,Tough Guy,382,Unavailable,0,,
+806,Tracker Guardian,547,Unavailable,0,,
+807,Tradesman of Auberean,383,Unavailable,0,,
+808,Treasure Hunter,384,Unavailable,0,,
+809,Tremendous Monouga Master,385,Unavailable,0,,
+810,Triple Golem Killer,386,Unavailable,0,,
+811,True Tactician,665,Unavailable,0,,
+812,Turbine Slayer,387,Unavailable,0,,
+813,Twins of Terror,388,Unavailable,0,,
+814,Uberest Noob on Frostfell,389,Unavailable,0,,
+815,Ulgrim's Happy Hundredth,599,Unavailable,0,,
+816,Underworld-Thugg,390,Unavailable,0,,
+817,Unwitting Participant,556,Unavailable,0,,
+818,Vagabond,7,Unavailable,0,,
+819,Viamontian Slayer,391,Unavailable,0,,
+820,Viridian Dreamer,863,Unavailable,0,,
+821,Viridian Knight,865,Unavailable,0,,
+822,Viridian Lord,864,Unavailable,0,,
+823,Viridian Purifier,868,Unavailable,0,,
+824,Viridian Slayer,867,Unavailable,0,,
+825,Viridian Stalker,866,Unavailable,0,,
+826,Vitae King,392,Unavailable,0,,
+827,Vitae Vixen,393,Unavailable,0,,
+828,Vixen of Vitae,394,Unavailable,0,,
+829,Wabbit Bait,395,Unavailable,0,,
+830,Wabbit Killer,396,Unavailable,0,,
+831,Wandering Fool,397,Unavailable,0,,
+832,Wanga Fighter,507,Unavailable,0,,
+833,Warden in the Patriarch Raids,628,Unavailable,0,,
+834,Warden of Dereth,151,Unavailable,0,,
+835,Warden's Assistant,398,Unavailable,0,,
+836,Wardens Assistant,405,Unavailable,0,,
+837,Wardens Thug,399,Unavailable,0,,
+838,Warlord of Dereth,153,Unavailable,0,,
+839,Warrior,8,Unavailable,0,,
+840,Wimp,400,Unavailable,0,,
+841,Wolfpack Crafter,401,Unavailable,0,,
+842,Wonder Woman,402,Unavailable,0,,
+843,Ya got served,403,Unavailable,0,,
