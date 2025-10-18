@@ -56,6 +56,9 @@ namespace OracleOfDereth
         public HudStaticText JohnLabel { get; private set; }
         public HudStaticText JohnText { get; private set; }
 
+        public HudFixedLayout JohnListSortComplete { get; private set; }
+        public HudPictureBox JohnListSortCompleteIcon { get; private set; }
+
         public HudStaticText JohnListSortName { get; private set; }
         public HudStaticText JohnListSortReady { get; private set; }
         public HudStaticText JohnListSortSolves { get; private set; }
@@ -122,7 +125,7 @@ namespace OracleOfDereth
             // Quests Tab
             { 3_00, 430 }, // John
             { 3_01, 430 }, // Markers
-            { 3_02, 530 }, // Titles
+            { 3_02, 570 }, // Titles
 
             // About
             { 4, 350 }, // About
@@ -233,6 +236,12 @@ namespace OracleOfDereth
                 JohnList = (HudList)view["JohnList"];
                 JohnList.Click += JohnList_Click;
                 JohnList.ClearRows();
+
+                JohnListSortCompleteIcon = new HudPictureBox();
+                JohnListSortCompleteIcon.Image = IconSort;
+                JohnListSortComplete = (HudFixedLayout)view["JohnListSortComplete"];
+                JohnListSortComplete.AddControl(JohnListSortCompleteIcon, new Rectangle(0, 0, 16, 16));
+                JohnListSortCompleteIcon.Hit += JohnListSortComplete_Click;
 
                 JohnListSortName = (HudStaticText)view["JohnListSortName"];
                 JohnListSortName.Hit += JohnListSortName_Click;
@@ -624,6 +633,19 @@ namespace OracleOfDereth
                     Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
                 }
             }
+        }
+        void JohnListSortComplete_Click(object sender, EventArgs e)
+        {
+            if (JohnQuest.CurrentSortType == JohnQuest.SortType.CompleteAscending)
+            {
+                JohnQuest.Sort(JohnQuest.SortType.CompleteDescending);
+            }
+            else
+            {
+                JohnQuest.Sort(JohnQuest.SortType.CompleteAscending);
+            }
+
+            UpdateJohnList();
         }
 
         void JohnListSortName_Click(object sender, EventArgs e)
@@ -1216,6 +1238,7 @@ namespace OracleOfDereth
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
                 JohnList.Click -= JohnList_Click;
+                JohnListSortCompleteIcon.Hit -= JohnListSortComplete_Click;
                 JohnListSortName.Hit -= JohnListSortName_Click;
                 JohnListSortReady.Hit -= JohnListSortReady_Click;
                 JohnListSortSolves.Hit -= JohnListSortSolves_Click;

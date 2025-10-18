@@ -22,6 +22,8 @@ namespace OracleOfDereth
 
         public enum SortType
         {
+            CompleteAscending,
+            CompleteDescending,
             NameAscending,
             NameDescending,
             ReadyAscending,
@@ -89,6 +91,12 @@ namespace OracleOfDereth
             CurrentSortType = sortType;
             switch (sortType)
             {
+                case SortType.CompleteAscending:
+                    JohnQuests = JohnQuests.OrderBy(q => q.IsComplete()).ThenBy(q => q.Name).ToList();
+                    break;
+                case SortType.CompleteDescending:
+                    JohnQuests = JohnQuests.OrderByDescending(q => q.IsComplete()).ThenBy(q => q.Name).ToList();
+                    break;
                 case SortType.NameAscending:
                     JohnQuests = JohnQuests.OrderBy(q => q.Name).ToList();
                     break;
