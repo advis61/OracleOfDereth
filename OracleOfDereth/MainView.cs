@@ -109,6 +109,10 @@ namespace OracleOfDereth
         // Character: Recalls
         public HudList RecallsList { get; private set; }
 
+        // Facility Hub Quests
+        public HudList FacilityList { get; private set; }
+        public HudButton FacilityRefresh { get; private set; }
+
         // Resize Tracking
         public bool wasResized = false;
 
@@ -129,6 +133,7 @@ namespace OracleOfDereth
             { 3_00, 430 }, // John
             { 3_01, 430 }, // Markers
             { 3_02, 350 }, // Flags
+            { 3_03, 450 }, // Facility Hub
 
             // Titles
             { 4_00, 560 }, // Available and Unavailable
@@ -155,6 +160,7 @@ namespace OracleOfDereth
             { 3_00, 545}, // John
             { 3_01, 545 }, // Markers
             { 3_02, 520 }, // Flags
+            { 3_03, 485 }, // Facility Hub
 
             // Titles
             { 4_00, 545 }, // Available
@@ -279,6 +285,14 @@ namespace OracleOfDereth
                 FlagsList = (HudList)view["FlagsList"];
                 FlagsList.Click += FlagsList_Click;
                 FlagsList.ClearRows();
+
+                // Facility
+                FacilityRefresh = (HudButton)view["FacilityRefresh"];
+                FacilityRefresh.Hit += QuestFlagsRefresh_Hit;
+
+                FacilityList = (HudList)view["FacilityList"];
+                FacilityList.Click += FacilityList_Click;
+                FacilityList.ClearRows();
 
                 // Titles
                 TitlesText = (HudStaticText)view["TitlesText"];
@@ -425,6 +439,7 @@ namespace OracleOfDereth
             if (currentTab == 3_00) { UpdateJohn(); }
             if (currentTab == 3_01) { UpdateMarkers(); }
             if (currentTab == 3_02) { UpdateFlags(); }
+            if (currentTab == 3_03) { UpdateFacility(); }
 
             // Titles Tab
             if (currentTab == 4_00) { UpdateTitles(); }
@@ -510,6 +525,15 @@ namespace OracleOfDereth
             if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
             UpdateCreditsList();
         }
+
+        // Facility Hub Quests
+        public void UpdateFacility()
+        {
+            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            UpdateFacilityList();
+        }
+
+        // Flaggin Quests
 
         public void UpdateFlags()
         {
@@ -1328,6 +1352,85 @@ namespace OracleOfDereth
             }
         }
 
+
+        // Facility
+        private void UpdateFacilityList()
+        {
+            List<FacilityQuest> facilityQuests = FacilityQuest.FacilityQuests.ToList();
+
+            for (int x = 0; x < facilityQuests.Count; x++)
+            {
+                HudList.HudListRowAccessor row;
+
+                if (x >= FacilityList.RowCount)
+                {
+                    row = FacilityList.AddRow();
+
+                    ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
+                    ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                }
+                else
+                {
+                    row = FacilityList[x];
+                }
+
+                // Update
+                FacilityQuest facilityQuest = facilityQuests[x];
+
+                AssignImage((HudPictureBox)row[0], facilityQuest.IsComplete());
+                ((HudStaticText)row[1]).Text = facilityQuest.Name;
+
+                ((HudStaticText)row[2]).Text = facilityQuest.Level.ToString();
+
+                if (facilityQuest.IsComplete())
+                {
+                    ((HudStaticText)row[3]).Text = "completed";
+                }
+                else
+                {
+                    ((HudStaticText)row[3]).Text = "ready";
+                }
+
+                ((HudStaticText)row[4]).Text = facilityQuest.Flag;
+            }
+        }
+
+        private void FacilityList_Click(object sender, int row, int col)
+        {
+            string flag = ((HudStaticText)FacilityList[row][4]).Text;
+
+            FacilityQuest facilityQuest = FacilityQuest.FacilityQuests.FirstOrDefault(x => x.Flag == flag);
+            if (facilityQuest == null) { return; }
+
+            QuestFlag.QuestFlags.TryGetValue(flag, out QuestFlag questFacility);
+
+            // Quest URL
+            if (col == 0 && facilityQuest.Url.Length > 0)
+            {
+                Util.Think($"{facilityQuest.Name}: {facilityQuest.Url}");
+                Util.ClipboardCopy(facilityQuest.Url);
+            }
+
+            // Quest Hint
+            if (col == 1 && facilityQuest.Hint.Length > 0)
+            {
+                Util.Think($"{facilityQuest.Name}: {facilityQuest.Hint}");
+            }
+
+            // Quest Facility
+            if (col >= 2)
+            {
+                if (questFacility == null)
+                {
+                    Util.Chat($"{flag}: Never completed", Util.ColorPink);
+                }
+                else
+                {
+                    Util.Chat($"{questFacility.ToString()}", Util.ColorPink);
+                }
+            }
+        }
+
         // Shutdown
         public void Dispose()
         {
@@ -1352,6 +1455,7 @@ namespace OracleOfDereth
                 AugmentationsList.Click -= AugmentationsList_Click;
                 LuminanceList.Click -= LuminanceList_Click;
                 CreditsList.Click -= CreditsList_Click;
+                FacilityList.Click -= FacilityList_Click;
                 FlagsList.Click -= FlagsList_Click;
                 MarkersList.Click -= MarkersList_Click;
                 RecallsList.Click -= RecallsList_Click;
@@ -1368,6 +1472,7 @@ namespace OracleOfDereth
                 AugmentationsRefresh.Hit -= QuestFlagsRefresh_Hit;
                 LuminanceRefresh.Hit -= QuestFlagsRefresh_Hit;
                 CreditsRefresh.Hit -= QuestFlagsRefresh_Hit;
+                FacilityRefresh.Hit -= QuestFlagsRefresh_Hit;
                 FlagsRefresh.Hit -= QuestFlagsRefresh_Hit;
                 MarkersRefresh.Hit -= QuestFlagsRefresh_Hit;
 

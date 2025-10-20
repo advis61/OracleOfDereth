@@ -186,6 +186,22 @@
 					</control>
 				</page>
 
+				<page label="Facility Hub">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="FacilityText" left="5" top="5" width="300" height="20" text=""/>
+						<control progid="DecalControls.PushButton" name="FacilityRefresh" left="347" top="3" width="100" height="24" text="Refresh"/>
+						<control progid="DecalControls.StaticText" name="FacilityName" left="1" top="33" width="300" height="17" text="Facility Hub Item"/>
+
+						<control progid="DecalControls.List" name="FacilityList" left="0" top="53" width="450" height="2000">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="315" />
+							<column progid="DecalControls.TextColumn" name="Level" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Status" fixedwidth="85" />
+							<column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="1" />
+						</control>
+					</control>
+				</page>
+
 			</control>
 		</page>
 

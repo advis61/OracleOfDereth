@@ -14,32 +14,32 @@ using System.Windows.Forms;
 
 namespace OracleOfDereth
 {
-    public class FlagQuest
+    public class FacilityQuest
     {
-        // Collection of FlagQuests loaded from Flagquests.csv
-        public static List<FlagQuest> FlagQuests = new List<FlagQuest>();
+        // Collection of FacilityQuests loaded from creditquests.csv
+        public static List<FacilityQuest> FacilityQuests = new List<FacilityQuest>();
 
         // Properties
         public string Name = "";
         public string Flag = "";
-        public string Flag2 = "";
+        public int Level = 0;
         public string Url = "";
         public string Hint = "";
 
         public static void Init()
         {
-            FlagQuests.Clear();
-            LoadFlagQuestsCSV();
+            FacilityQuests.Clear();
+            LoadFacilityQuestsCSV();
         }
 
-        public static void LoadFlagQuestsCSV()
+        public static void LoadFacilityQuestsCSV()
         {
-            var quests = new List<FlagQuest>();
+            var quests = new List<FacilityQuest>();
 
             var assembly = Assembly.GetExecutingAssembly();
 
-            string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("flagquests.csv", StringComparison.OrdinalIgnoreCase));
-            if (resourceName == null) throw new FileNotFoundException("Embedded resource flagquests.csv not found.");
+            string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("facilityquests.csv", StringComparison.OrdinalIgnoreCase));
+            if (resourceName == null) throw new FileNotFoundException("Embedded resource facilityquests.csv not found.");
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             using (var reader = new StreamReader(stream))
@@ -55,20 +55,20 @@ namespace OracleOfDereth
 
                     var fields = line.Split(',');
 
-                    quests.Add(new FlagQuest
+                    quests.Add(new FacilityQuest
                     {
                         Name = fields[0].Trim(),
                         Flag = fields[1].Trim().ToLower(),
-                        Flag2 = fields[2].Trim().ToLower(),
+                        Level = int.Parse(fields[2].Trim()),
                         Url = fields[3].Trim(),
                         Hint = fields[4].Trim()
                     });
                 }
             }
 
-            FlagQuests.AddRange(quests);
+            FacilityQuests.AddRange(quests);
 
-            // Util.Chat($"Loaded {FlagQuests.Count} Flag Quests from embedded CSV.", 1);
+            // Util.Chat($"Loaded {FacilityQuests.Count} Facility Quests from embedded CSV.", 1);
         }
 
         public new string ToString()
@@ -78,22 +78,12 @@ namespace OracleOfDereth
 
         public bool IsComplete()
         {
-            if(Flag == "freebooter") {
-                return CoreManager.Current.CharacterFilter.GetCharProperty(287) >= 300;
-            }
-
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return false; }
 
-            if(Flag2.Length > 0) {
-                QuestFlag.QuestFlags.TryGetValue(Flag2, out QuestFlag questFlag2);
-                if (questFlag2 == null) { return false; }
-            }
-
-            return true;
+            return questFlag.Solves >= 0;
         }
     }
 }
-
 
 
