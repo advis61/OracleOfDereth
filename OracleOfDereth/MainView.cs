@@ -86,6 +86,9 @@ namespace OracleOfDereth
         public HudButton MarkersRefresh { get; private set; }
         public HudList MarkersList { get; private set; }
 
+        public HudList FlagsList { get; private set; }
+        public HudButton FlagsRefresh { get; private set; }
+
         // Character: Augmentations
         public HudList AugmentationsQuestsList { get; private set; }
         public HudList AugmentationsList { get; private set; }
@@ -125,9 +128,10 @@ namespace OracleOfDereth
             // Quests Tab
             { 3_00, 430 }, // John
             { 3_01, 430 }, // Markers
+            { 3_02, 350 }, // Flags
 
             // Titles
-            { 4_00, 530 }, // Available and Unavailable
+            { 4_00, 560 }, // Available and Unavailable
 
             // About
             { 5_00, 350 }, // About
@@ -150,6 +154,7 @@ namespace OracleOfDereth
             // Quests Tab
             { 3_00, 545}, // John
             { 3_01, 545 }, // Markers
+            { 3_02, 520 }, // Flags
 
             // Titles
             { 4_00, 545 }, // Available
@@ -266,6 +271,14 @@ namespace OracleOfDereth
                 MarkersList = (HudList)view["MarkersList"];
                 MarkersList.Click += MarkersList_Click;
                 MarkersList.ClearRows();
+
+                // Flags
+                FlagsRefresh = (HudButton)view["FlagsRefresh"];
+                FlagsRefresh.Hit += QuestFlagsRefresh_Hit;
+
+                FlagsList = (HudList)view["FlagsList"];
+                FlagsList.Click += FlagsList_Click;
+                FlagsList.ClearRows();
 
                 // Titles
                 TitlesText = (HudStaticText)view["TitlesText"];
@@ -411,6 +424,7 @@ namespace OracleOfDereth
             // Quests Tab
             if (currentTab == 3_00) { UpdateJohn(); }
             if (currentTab == 3_01) { UpdateMarkers(); }
+            if (currentTab == 3_02) { UpdateFlags(); }
 
             // Titles Tab
             if (currentTab == 4_00) { UpdateTitles(); }
@@ -427,6 +441,7 @@ namespace OracleOfDereth
             UpdateJohnList();
             UpdateAugmentationQuestsList();
             UpdateCreditsList();
+            UpdateFlagsList();
             UpdateLuminanceList();
             UpdateMarkersList();
 
@@ -494,6 +509,12 @@ namespace OracleOfDereth
         {
             if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
             UpdateCreditsList();
+        }
+
+        public void UpdateFlags()
+        {
+            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            UpdateFlagsList();
         }
 
         // Character: Luminance
@@ -1233,6 +1254,80 @@ namespace OracleOfDereth
             UnavailableTitlesText.Text = $"Titles: {Title.KnownTitleIds.Count} completed";
         }
 
+
+        // Flags
+        private void UpdateFlagsList()
+        {
+            List<FlagQuest> flagQuests = FlagQuest.FlagQuests.ToList();
+
+            for (int x = 0; x < flagQuests.Count; x++)
+            {
+                HudList.HudListRowAccessor row;
+
+                if (x >= FlagsList.RowCount) {
+                    row = FlagsList.AddRow();
+
+                    ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                    ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                } else {
+                    row = FlagsList[x];
+                }
+
+                // Update
+                FlagQuest flagQuest = flagQuests[x];
+
+                AssignImage((HudPictureBox)row[0], flagQuest.IsComplete());
+                ((HudStaticText)row[1]).Text = flagQuest.Name;
+
+                if (flagQuest.IsComplete())
+                {
+                    ((HudStaticText)row[2]).Text = "completed";
+                }
+                else
+                {
+                    ((HudStaticText)row[2]).Text = "ready";
+                }
+
+                ((HudStaticText)row[3]).Text = flagQuest.Flag;
+            }
+        }
+
+        private void FlagsList_Click(object sender, int row, int col)
+        {
+            string flag = ((HudStaticText)FlagsList[row][3]).Text;
+
+            FlagQuest flagQuest = FlagQuest.FlagQuests.FirstOrDefault(x => x.Flag == flag);
+            if (flagQuest == null) { return; }
+
+            QuestFlag.QuestFlags.TryGetValue(flag, out QuestFlag questFlag);
+
+            // Quest URL
+            if (col == 0 && flagQuest.Url.Length > 0)
+            {
+                Util.Think($"{flagQuest.Name}: {flagQuest.Url}");
+                Util.ClipboardCopy(flagQuest.Url);
+            }
+
+            // Quest Hint
+            if (col == 1 && flagQuest.Hint.Length > 0)
+            {
+                Util.Think($"{flagQuest.Name}: {flagQuest.Hint}");
+            }
+
+            // Quest Flag
+            if (col >= 2)
+            {
+                if (questFlag == null)
+                {
+                    Util.Chat($"{flag}: Never completed", Util.ColorPink);
+                }
+                else
+                {
+                    Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
+                }
+            }
+        }
+
         // Shutdown
         public void Dispose()
         {
@@ -1257,6 +1352,7 @@ namespace OracleOfDereth
                 AugmentationsList.Click -= AugmentationsList_Click;
                 LuminanceList.Click -= LuminanceList_Click;
                 CreditsList.Click -= CreditsList_Click;
+                FlagsList.Click -= FlagsList_Click;
                 MarkersList.Click -= MarkersList_Click;
                 RecallsList.Click -= RecallsList_Click;
                 UnavailableTitlesList.Click -= UnavailableTitlesList_Click;
@@ -1272,6 +1368,7 @@ namespace OracleOfDereth
                 AugmentationsRefresh.Hit -= QuestFlagsRefresh_Hit;
                 LuminanceRefresh.Hit -= QuestFlagsRefresh_Hit;
                 CreditsRefresh.Hit -= QuestFlagsRefresh_Hit;
+                FlagsRefresh.Hit -= QuestFlagsRefresh_Hit;
                 MarkersRefresh.Hit -= QuestFlagsRefresh_Hit;
 
                 // Other cleanup

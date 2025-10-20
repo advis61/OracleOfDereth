@@ -118,6 +118,7 @@ namespace OracleOfDereth
             AugQuest.Init();
             Cantrip.Init();
             CreditQuest.Init();
+            FlagQuest.Init();
             JohnQuest.Init();
             Marker.Init();
             QuestFlag.Init();
@@ -203,6 +204,12 @@ namespace OracleOfDereth
                 {
                     Marker.Info();
                     e.Eat = true;
+                }
+
+                if(command == "/od society")
+                {
+                    int thing = CoreManager.Current.CharacterFilter.GetCharProperty(289);
+                    Util.Chat($"Thing is {thing}");
                 }
             }
             catch (Exception ex) { Util.Log(ex); }

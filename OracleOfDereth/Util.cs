@@ -34,9 +34,7 @@ namespace OracleOfDereth
                     writer.Close();
                 }
             }
-            catch
-            {
-            }
+            catch { }
         }
 
         /// <summary>

@@ -39,6 +39,7 @@ namespace OracleOfDereth
         public int Number = 0;
         public string Name = "";
         public int TitleId = 0;
+        public string Type = "";
         public string Category = "";
         public int Level = 0;
         public string Url = "";
@@ -76,10 +77,10 @@ namespace OracleOfDereth
             switch (sortType)
             {
                 case SortType.CompleteAscending:
-                    Titles = Titles.OrderBy(q => q.IsComplete()).ThenBy(q => q.Number).ToList();
+                    Titles = Titles.OrderBy(q => q.IsComplete()).ThenBy(q => q.CategorySortKey()).ThenBy(q => q.Level).ThenBy(q => q.Number).ToList();
                     break;
                 case SortType.CompleteDescending:
-                    Titles = Titles.OrderByDescending(q => q.IsComplete()).ThenBy(q => q.Number).ToList();
+                    Titles = Titles.OrderByDescending(q => q.IsComplete()).ThenBy(q => q.CategorySortKey()).ThenBy(q => q.Level).ThenBy(q => q.Number).ToList();
                     break;
                 case SortType.NameAscending:
                     Titles = Titles.OrderBy(q => q.Name).ToList();
@@ -94,10 +95,10 @@ namespace OracleOfDereth
                     Titles = Titles.OrderByDescending(q => q.Level).ThenByDescending(q => q.Number).ToList();
                     break;
                 case SortType.CategoryAscending:
-                    Titles = Titles.OrderBy(q => q.Category).ThenBy(q => q.Number).ToList();
+                    Titles = Titles.OrderBy(q => q.CategorySortKey()).ThenBy(q => q.Level).ThenBy(q => q.Number).ToList();
                     break;
                 case SortType.CategoryDescending:
-                    Titles = Titles.OrderByDescending(q => q.Category).ThenByDescending(q => q.Number).ToList();
+                    Titles = Titles.OrderByDescending(q => q.CategorySortKey()).ThenByDescending(q => q.Level).ThenByDescending(q => q.Number).ToList();
                     break;
             }
         }
@@ -130,10 +131,11 @@ namespace OracleOfDereth
                         Number = int.Parse(fields[0].Trim()),
                         Name = fields[1].Trim(),
                         TitleId = int.Parse(fields[2].Trim()),
-                        Category = fields[3].Trim(),
-                        Level = int.Parse(fields[4].Trim()),
-                        Url = fields[5].Trim(),
-                        Hint = fields[6].Trim()
+                        Type = fields[3].Trim(),
+                        Category = fields[4].Trim(),
+                        Level = int.Parse(fields[5].Trim()),
+                        Url = fields[6].Trim(),
+                        Hint = fields[7].Trim()
                     });
                 }
             }
@@ -152,7 +154,15 @@ namespace OracleOfDereth
         {
             return KnownTitleIds.Contains(TitleId);
         }
+
+        public string CategorySortKey()
+        {
+            if(Type.Length > 0) { return Type; }
+            return Category;
+        }
+
     }
+
 }
 
 

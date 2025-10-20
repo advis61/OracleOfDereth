@@ -24,6 +24,7 @@
     <None Remove="mainView.xml" />
     <None Remove="Resources\augquests.csv" />
     <None Remove="Resources\cantrips.csv" />
+    <None Remove="Resources\flagquests.csv" />
     <None Remove="Resources\markers.csv" />
     <None Remove="Resources\recalls.csv" />
     <None Remove="Resources\titles.csv" />
@@ -43,6 +44,7 @@
     <EmbeddedResource Include="Resources\augmentations.csv" />
     <EmbeddedResource Include="Resources\cantrips.csv" />
     <EmbeddedResource Include="Resources\creditquests.csv" />
+    <EmbeddedResource Include="Resources\flagquests.csv" />
     <EmbeddedResource Include="Resources\markers.csv" />
     <EmbeddedResource Include="Resources\recalls.csv" />
     <EmbeddedResource Include="Resources\titles.csv" />

@@ -54,9 +54,9 @@
 			<control progid="DecalControls.Notebook" name="CharacterViewNotebook">
 				<page label="Augmentations">
 					<control progid="DecalControls.FixedLayout" clipped="">
-						<control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="100" height="17" text="Quest Name"/>
-						<control progid="DecalControls.StaticText" name="Ready" left="537" top="5" width="55" height="17" text="Ready In"/>
-						<control progid="DecalControls.StaticText" name="Solves" left="600" top="5" width="50" height="17" text="Solves"/>
+						<control progid="DecalControls.StaticText" name="AugmentationsName" left="1" top="5" width="100" height="17" text="Quest Name"/>
+						<control progid="DecalControls.StaticText" name="AugmentationsReady" left="537" top="5" width="55" height="17" text="Ready In"/>
+						<control progid="DecalControls.StaticText" name="AugmentationsSolves" left="600" top="5" width="50" height="17" text="Solves"/>
 						<control progid="DecalControls.List" name="AugmentationsQuestsList" left="0" top="23" width="650" height="110">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="420" />
@@ -64,7 +64,7 @@
 							<column progid="DecalControls.TextColumn" name="Solves" fixedwidth="30" />
 							<column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="100" />
 						</control>
-						<control progid="DecalControls.StaticText" name="Name" left="1" top="140" width="200" height="17" text="XP Augmentations"/>
+						<control progid="DecalControls.StaticText" name="AugmentationsName2" left="1" top="140" width="200" height="17" text="XP Augmentations"/>
 						<control progid="DecalControls.PushButton" name="AugmentationsRefresh" left="548" top="137" width="100" height="24" text="Refresh"/>
 						<control progid="DecalControls.List" name="AugmentationsList" left="0" top="165" width="650" height="2000">
 							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
@@ -91,7 +91,7 @@
 
 				<page label="Credits">
 					<control progid="DecalControls.FixedLayout" clipped="">
-						<control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="200" height="17" text="Skill Credit Quest Name"/>
+						<control progid="DecalControls.StaticText" name="Name" left="1" top="5" width="200" height="17" text="Skill Credit Name"/>
 						<control progid="DecalControls.StaticText" name="Progress" left="276" top="5" width="0" height="17" text="Progress"/>
 						<control progid="DecalControls.List" name="CreditsList" left="0" top="23" width="640" height="80">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
@@ -135,7 +135,7 @@
 		<page label="Quests">
 			<control progid="DecalControls.Notebook" name="QuestsViewNotebook">
 
-				<page label="Legendary John">
+				<page label="John">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="JohnText" left="5" top="5" width="300" height="20" text="Legendary John Quests"/>
 						<control progid="DecalControls.PushButton" name="JohnRefresh" left="327" top="3" width="100" height="24" text="Refresh"/>
@@ -155,7 +155,7 @@
 					</control>
 				</page>
 
-				<page label="Exploration Markers">
+				<page label="Markers">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="MarkersText" left="5" top="5" width="300" height="20" text="Exploration Markers"/>
 						<control progid="DecalControls.PushButton" name="MarkersRefresh" left="327" top="3" width="100" height="24" text="Refresh"/>
@@ -166,6 +166,22 @@
 							<column progid="DecalControls.TextColumn" name="Number" fixedwidth="24" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="236" />
 							<column progid="DecalControls.TextColumn" name="Location" fixedwidth="110" />
+						</control>
+					</control>
+				</page>
+
+				<page label="Flaggings">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.PushButton" name="FlagsRefresh" left="248" top="3" width="100" height="24" text="Refresh"/>
+
+						<control progid="DecalControls.StaticText" name="FlagsName" left="1" top="33" width="200" height="17" text="Flagging"/>
+						<control progid="DecalControls.StaticText" name="FlagsProgress" left="276" top="33" width="0" height="17" text="Progress"/>
+
+						<control progid="DecalControls.List" name="FlagsList" left="0" top="53" width="640" height="435">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
+							<column progid="DecalControls.TextColumn" name="Status" fixedwidth="70" />
+							<column progid="DecalControls.TextColumn" name="QuestFlag" fixedwidth="1" />
 						</control>
 					</control>
 				</page>
@@ -184,11 +200,11 @@
 						<control progid="DecalControls.StaticText" name="TitlesListSortLevel" left="235" top="33" width="35" height="17" text="Level"/>
 						<control progid="DecalControls.StaticText" name="TitlesListSortCategory" left="277" top="33" width="300" height="17" text="Category"/>
 
-						<control progid="DecalControls.List" name="TitlesList" left="0" top="53" width="640" height="2000">
+						<control progid="DecalControls.List" name="TitlesList" left="0" top="53" width="1000" height="2000">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="205" />
 							<column progid="DecalControls.TextColumn" name="Level" fixedwidth="32" />
-							<column progid="DecalControls.TextColumn" name="Category" fixedwidth="285" />
+							<column progid="DecalControls.TextColumn" name="Category" fixedwidth="385" />
 							<column progid="DecalControls.TextColumn" name="TitleId" fixedwidth="1" />
 						</control>
 					</control>
@@ -197,10 +213,10 @@
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="UnavailableTitlesText" left="5" top="5" width="300" height="20" text="Titles"/>
 						<control progid="DecalControls.StaticText" name="Name" left="1" top="33" width="200" height="17" text="Title Name"/>
-						<control progid="DecalControls.List" name="UnavailableTitlesList" left="0" top="53" width="640" height="2000">
+						<control progid="DecalControls.List" name="UnavailableTitlesList" left="0" top="53" width="1000" height="2000">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="205" />
-							<column progid="DecalControls.TextColumn" name="Category" fixedwidth="285" />
+							<column progid="DecalControls.TextColumn" name="Category" fixedwidth="385" />
 							<column progid="DecalControls.TextColumn" name="TitleId" fixedwidth="1" />
 						</control>
 					</control>
