@@ -62,21 +62,21 @@ Number,Name,Id,Type,Category,Level,Url,Hint
 61,Lightbringer,86,Tusk,Tusk: Tusker Redeemer Tusk Quest,25,https://acportalstorm.com/wiki/Tusker_Redeemer_Tusk_Quest,Facility Hub - Tusker Abode 3.2S 94.9E - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
 62,Worker Obliterator,157,Pincer,Pincer: Worker Pincer Quest,25,https://acportalstorm.com/wiki/Worker_Pincer_Quest,Facility Hub - Crumbling Empyrean Mansion 46.8N 67.8W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
 63,Apothecary,18,,Bestowers' Guild of Dereth: Alchemy,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Alchemy)
-64,Axe Warrior,22,,Bestowers' Guild of Dereth: Light,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+64,Axe Warrior,22,,Bestowers' Guild of Dereth: LW,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
 65,Ballisteer,23,,Bestowers' Guild of Dereth: Missile,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
 66,Chef,37,,Bestowers' Guild of Dereth: Cooking,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Cooking)
 67,Creature Adept,38,,Bestowers' Guild of Dereth: Creature,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Creature Magic)
-68,Dagger Fighter,39,,Bestowers' Guild of Dereth: Finesse,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Finesse Weapons)
+68,Dagger Fighter,39,,Bestowers' Guild of Dereth: FW,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Finesse Weapons)
 69,Fletcher,53,,Bestowers' Guild of Dereth: Fletching,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Fletching)
 70,Item Adept,78,,Bestowers' Guild of Dereth: Item,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Item Magic)
 71,Life Adept,85,,Bestowers' Guild of Dereth: Life,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Life Magic)
-72,Mace Warrior,87,,Bestowers' Guild of Dereth: Light,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+72,Mace Warrior,87,,Bestowers' Guild of Dereth: LW,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
 73,Sharpshooter,122,,Bestowers' Guild of Dereth: Missile,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
 74,Sniper,132,,Bestowers' Guild of Dereth: Missile,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
-75,Spear Warrior,134,,Bestowers' Guild of Dereth: Light,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
-76,Staff Warrior,136,,Bestowers' Guild of Dereth: Light,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
-77,Swordfighter,139,,Bestowers' Guild of Dereth: Heavy,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Heavy Weapons)
-78,Unarmed Brawler,146,,Bestowers' Guild of Dereth: Light,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+75,Spear Warrior,134,,Bestowers' Guild of Dereth: LW,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+76,Staff Warrior,136,,Bestowers' Guild of Dereth: LW,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+77,Swordfighter,139,,Bestowers' Guild of Dereth: HW,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Heavy Weapons)
+78,Unarmed Brawler,146,,Bestowers' Guild of Dereth: LW,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
 79,War Adept,150,,Bestowers' Guild of Dereth: War,30,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (War Magic)
 80,Apprentice of the Hunt,551,Carenzi,Carenzi Plague: Stalker,30,https://acportalstorm.com/wiki/Carenzi_Plague,Bluespire - Aun Teriona 41.3N 75.3W - Timaru - Marae Lassel - Kill Carenzi Stalker until they drop a liver - Use 35 livers within 2 hours
 81,Dire Mattekar Dispatcher,45,KT,KT: Dire Mattekar Kill Task,30,https://acportalstorm.com/wiki/Dire_Mattekar_Kill_Task,Baishi - Fergal the Dire 49.4S 62.4E - Kill 10 Dire Mattekar
@@ -95,17 +95,17 @@ Number,Name,Id,Type,Category,Level,Url,Hint
 94,Alchemist,16,,Bestowers' Guild of Dereth: Alchemy,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Alchemy)
 95,Artifex,21,,Bestowers' Guild of Dereth: Item,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Item Magic)
 96,Deadeye,40,,Bestowers' Guild of Dereth: Missile,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
-97,Duelist,46,,Bestowers' Guild of Dereth: Heavy,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Heavy Weapons)
+97,Duelist,46,,Bestowers' Guild of Dereth: HW,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Heavy Weapons)
 98,Evoker,49,,Bestowers' Guild of Dereth: Creature,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Creature Magic)
-99,Impaler,73,,Bestowers' Guild of Dereth: Light,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+99,Impaler,73,,Bestowers' Guild of Dereth: LW,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
 100,Iron Chef,76,,Bestowers' Guild of Dereth: Cooking,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Cooking)
 101,Master Fletcher,89,,Bestowers' Guild of Dereth: Fletching,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Fletching)
-102,Master of Staves,91,,Bestowers' Guild of Dereth: Light,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+102,Master of Staves,91,,Bestowers' Guild of Dereth: LW,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
 103,Projectilist,108,,Bestowers' Guild of Dereth: Missile,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
-104,Pugilist,109,,Bestowers' Guild of Dereth: Light,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
-105,Skullcrusher,129,,Bestowers' Guild of Dereth: Light,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
-106,Skullsplitter,130,,Bestowers' Guild of Dereth: Light,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
-107,Slicer,131,,Bestowers' Guild of Dereth: Finesse,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Finesse Weapons)
+104,Pugilist,109,,Bestowers' Guild of Dereth: LW,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+105,Skullcrusher,129,,Bestowers' Guild of Dereth: LW,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+106,Skullsplitter,130,,Bestowers' Guild of Dereth: LW,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Light Weapons)
+107,Slicer,131,,Bestowers' Guild of Dereth: FW,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Finesse Weapons)
 108,Sureshot,138,,Bestowers' Guild of Dereth: Missile,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Missile Weapons)
 109,Theurgist,140,,Bestowers' Guild of Dereth: Life,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (Life Magic)
 110,Warlock,152,,Bestowers' Guild of Dereth: War,40,https://acportalstorm.com/wiki/Bestowers'_Guild_of_Dereth,Eastham - Bestower Tent 17.0N 63.3E - Pickup a Skill Puzzle Base Piece from ground - Buy Puzzle Piece from NPC - Combine with skill check (War Magic)
@@ -155,9 +155,9 @@ Number,Name,Id,Type,Category,Level,Url,Hint
 154,Explorer,50,,Undead Mechanic Quest,50,https://acportalstorm.com/wiki/Undead_Mechanic_Quest,Redspire - Undead Mechanic 42.1N 79.0W - Retrieve 20 items from 20 dungeons - Combine into Blue Vellum Binder and give to Undead Mechanic
 155,Gaerlan Slayer,57,Gaerlan,Gaerlan's Citadel (Mid),59,https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Mid),Arwic - Sennon Valley Retreat 32.9N 59.4E - Frost Guardian Lair 52.8N 62.4E - Speak with Asheron's Platinum Golem 57.8N 48.4E - Lightning Zigguratat 57.1N 47.8E - Proving Grounds - Citadel Library - Gaerlan's Inner Sanctum - Defeat Gaerlan
 156,Arctic Mattekar Annihilator,20,KT,KT: Arctic Mattekar Kill Task,60,https://acportalstorm.com/wiki/Arctic_Mattekar_Kill_Task,Silyun - Enzo Ilario 87.4N 70.5W - North of Silyun - Kill 25 Arctic Mattekar
-157,Broodu Killer,27,CoK,Clutch of Kings: Broodu,60,https://acportalstorm.com/wiki/Clutch_of_Kings_(Broodu),Xarabydun - Watcher of the Dead 40.8S 11.9E - Jump down take North exit and hug left - Kill boss and loot hide from ground - Cragstone - Guard Hamdyn at 25.7N 48.8E
+157,Reeshan Killer,113,CoK,Clutch of Kings: Reeshan,60,https://acportalstorm.com/wiki/Clutch_of_Kings_(Reeshan),Mansion - Portal to Izji Qo's Temple - Watcher of the Dead 12.8S 58.9W - Jump down take East exit and hug left - Kill boss and loot hide from ground - Cragstone - Guard Ellyon 25.7N 48.8E
 158,Kiree Killer,82,CoK,Clutch of Kings: Kiree,60,https://acportalstorm.com/wiki/Clutch_of_Kings_(Kiree),Facility Hub - Blackmire Temple - Watcher of the Dead 21.7S 47.6E - Jump down take South exit and hug left - Kill boss and loot hide from ground - Cragstone - Guard Fassel 25.7N 48.8E
-159,Reeshan Killer,113,CoK,Clutch of Kings: Reeshan,60,https://acportalstorm.com/wiki/Clutch_of_Kings_(Reeshan),Mansion - Portal to Izji Qo's Temple - Watcher of the Dead 12.8S 58.9W - Jump down take East exit and hug left - Kill boss and loot hide from ground - Cragstone - Guard Ellyon 25.7N 48.8E
+159,Broodu Killer,27,CoK,Clutch of Kings: Broodu,60,https://acportalstorm.com/wiki/Clutch_of_Kings_(Broodu),Xarabydun - Watcher of the Dead 40.8S 11.9E - Jump down take North exit and hug left - Kill boss and loot hide from ground - Cragstone - Guard Hamdyn at 25.7N 48.8E
 160,Floeshark Flogger,54,KT,KT: Floeshark Kill Task,60,https://acportalstorm.com/wiki/Floeshark_Kill_Task,Eastwatch - Ryuichi Tai 90.3N 43.0W - Kill 50 Floesharks that spawn all around the Isle of Ruin
 161,Glenden Wood Militia,60,,Glenden Wood Invaders,60,https://acportalstorm.com/wiki/Glenden_Wood_Invaders,Glenden Wood - Londigul Ellic the Armorer 29.9N 27.1E - Kill 20 invaders and 1 guard at each camp - East 29.2N 29.3E - North 31.7N 27.9E - West 30.3N 25.5E
 162,Ranger Ruuk,475,KT,KT: Guruk Marauder Kill Task,60,https://acportalstorm.com/wiki/Guruk_Marauder_Kill_Task,Bur - Kurket - Kill 40 Guruk Marauders
@@ -255,578 +255,577 @@ Number,Name,Id,Type,Category,Level,Url,Hint
 254,Harvester Harvester Harvester,543,Seasonal,Seasonal: Harvest Reaper Kill Task,100,https://acportalstorm.com/wiki/Harvest_Reaper_Kill_Task,Seasonal only - Glenden Wood - Majestic Pumpkin 30.7N 27.8E - Kill 10 Harvest Reapers 40 times
 255,Iron-Spined Chittick Immolator,77,KT,KT: Iron Spined Chittick Kill Task,100,https://acportalstorm.com/wiki/Iron_Spined_Chittick_Kill_Task,Oolatanga's Refuge - Aidene 2.0N 95.6E - Kill 50 Iron Spined Chitticks
 256,K'nath An'dras Assassinator,83,KT,KT: K'nath An'dras Kill Task,100,https://acportalstorm.com/wiki/K'nath_An'dras_Kill_Task,Wai Jhou - Nona 61.8S 51.3W - Kill 25 K'nath An'dras
-257,Gift Gopher,860,Seasonal,Seasonal: Package Delivery,100,https://acportalstorm.com/wiki/Package_Delivery,Seasonal only - Fiun Outpost - Raymond 95.7N 56.6W (#1) Bluespire Marcia 39.0N 75.3W - Glenden Wood Joanne 29.4N 27.2E - Yaraq Kim 21.8S 1.6W - Rithwic Jenny 10.3N 58.3E (#2) Greenspire Jan 43.0N 66.7W - Qalaba'r Natalie 74.4S 19.2E - Holtburg Michelle 41.5N 34.5E - Eastham Chrissy - 17.9N 64.3E (#3) Redspire Cindy - 40.8N 83.3W - Mayoi Blair 61.3S 82.1E - Shoushi Stephanie 33.2S 72.7E - Cragstone Janet 25.3N 49.2E. 
-258,Repugnant Eater Ripper,115,KT,KT: Repugnant Eater Kill Task,100,https://acportalstorm.com/wiki/Repugnant_Eater_Kill_Task,Eastwatch - Xun Yu 90.2N 43.1W - Kill 50 Repugnant Eaters
-259,No Cage Can Hold Me,686,,Ries Woron's Story,100,https://acportalstorm.com/wiki/Ries_Woron's_Story,Baishi - Ries Woron 49.5S 62.7E - Free a Trapped Townsperson
-260,Sezzherei Slayer,119,,Sezzherei's Lair Quest,100,https://acportalstorm.com/wiki/Sezzherei's_Lair_Quest,Kill Fallen creatures on Singularity Caul - Loot a Sezzherei's Lair Portal Gem - Kill Sezzherei and loot token - Give to any Agent of the Arcanum
-261,Supreme Bunny Master,406,,Son of Pooky Quest,100,https://acportalstorm.com/wiki/Son_of_Pooky_Quest,Ayan Baqur - White Rabbit Cave 45.6S 87.0W - Kill the White Rabbit and loot a Son of Pooky's Den Portal Gem - Use Gem - Kill Son of Pooky - Loot White Rabbit's Foot from chest (lowish droprate) - Lytelthorpe - Asbel Domain 2.1N 50.5E - Give to Larry the Rabbit Master 1.9N 41.6E
-262,Fire of the Tanada,667,,Tanada House of Fire Quest,100,https://acportalstorm.com/wiki/Tanada_House_of_Fire_Quest,Hebian-To - Tanada Sajo 38.9S 83.3E - Baishi - Chamber of Scrolls 52.2S 63.2E
-263,Chosen of the Rift,530,KT,KT: Tenebrous Rift Kill Task,100,https://acportalstorm.com/wiki/Tenebrous_Rift_Kill_Task,Singularity Caul - Solange 97.4S 94.6W - Kill 350 Tenebrous Rift
-264,Miner,92,,Town Founder: Kreavon,100,https://acportalstorm.com/wiki/Town_Founder,Wai Jhou - Kreavon 62.3S 51.4W - Give 200 bags of salvage to Kreavon
-265,Timberman,142,,Town Founder: Caelis Renning,100,https://acportalstorm.com/wiki/Town_Founder,Wai Jhou - Caelis Renning 62.3S 51.4W - Give 200 bags of salvage to Caelis Renning
-266,Trapper,144,,Town Founder: Aun Teverea,100,https://acportalstorm.com/wiki/Town_Founder,Wai Jhou - Aun Teverea 62.3S 51.4W - Give 200 bags of salvage to Aun Teverea
-267,Man-At-Arms Thrasher,88,KT,KT: Viamontian Man-at-Arms Kill Task,100,https://acportalstorm.com/wiki/Viamontian_Man-at-Arms_Kill_Task,Marae Lassel - Robert Gutsmasher 43.9N 73.9W - Kill 50 Viamontian Man-at-Arms
-268,Master of the Hunt,549,Carenzi,Carenzi Plague: Tainted,105,https://acportalstorm.com/wiki/Carenzi_Plague,Bluespire - Aun Teriona 41.3N 75.3W - Singularity Caul - Kill Tainted Carenzi until they drop a liver - Use 13 livers within 2 hours
-269,Browerk Killer,28,CoK,Clutch of Kings: Browerk,105,https://acportalstorm.com/wiki/Clutch_of_Kings_(Browerk),Ayan Baqur - Watcher of the Dead 60.1S 88.1W - Setup: Steamy Font 91.1S 89.6E - Balmy Font 91.5S 89.7E - Humid Font 91.3S 89.8E - Muggy Font 91.5S 89.4E. Group: Font Tower 91.3S 89.5E - Kill boss and loot hide from ground - Cragstone - Guard Haigh 25.7N 48.9E
-270,Keerik Killer,80,CoK,Clutch of Kings: Keerik,105,https://acportalstorm.com/wiki/Clutch_of_Kings_(Keerik),Obsidian Rim - Watcher of the Dead 51.4S 67.9W - Jump down and take Northeast exit - Kill boss and loot hide from ground - Cragstone - Guard Sorchia 25.7N 48.9E
-271,Rehir Killer,114,CoK,Clutch of Kings: Rehir,105,https://acportalstorm.com/wiki/Clutch_of_Kings_(Rehir),Mansion to Portal to Kivik Lir's Temple - Watcher of the Dead 38.1S 47.3W - Jump down and take West ramp down - Kill boss and loot hide from ground - Cragstone - Guard Lo Pan 25.7N 48.8E
-272,Kingslayer,81,CoK,Clutch of Kings: Defeat all 6 Kings,105,https://acportalstorm.com/wiki/Clutch_of_Kings,Cragstone - Guard Devon 25.7N 48.9E - Defeat all 6 of the Burun Kings
-273,Champion of the Sea,589,Blight,Ritual of the Blight: Ayan Baqur,105,https://acportalstorm.com/wiki/Ritual_of_the_Blight,Mayoi - Captain Warner 61.4S 82.5E - Ayan Baqur - Blighted Grimy Moarsman Tunnels 60.9S 89.8W - Kill boss and loot Tattered Moarseman Rituation - Give to Captain Warner
-274,Champion of the Hive,468,Colo,Colosseum Bosses: Demon Swarm Matron,110,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete Arena 8 or higher - Use Demon Swarm Matron statue - Kill boss
-275,Ravenous Killer,111,Jaw,Jaw: Ravenous Eater Jaw Quest,110,https://acportalstorm.com/wiki/Ravenous_Eater_Jaw_Quest,Westwatch - Clemenza 72.7N 73.4W - Eastwatch - Ravenous Vault 92.8N 48.9W
-276,Servant of The Deep,118,,The Deep (Vissidal),120,https://acportalstorm.com/wiki/The_Deep_(Vissidal),Vissidal - Amorphous Haze 77.8N 67.1E - Hand a Gold Shallows Shredder Fin to The Deep
-277,Tukora Lieutenant Trouncer,145,KT,KT: Tukora Lieutenant Kill Task,120,https://acportalstorm.com/wiki/Tukora_Lieutenant_Kill_Task,Eastwatch - Claire Artmad 90.2N 43.1W - Kill 250 Tukora Lieutenants
-278,Ruuk Ally,471,Falatacot,Falatacot Medallion (Extreme),121,https://acportalstorm.com/wiki/Falatacot_Medallion_(Extreme),Bur - Gruuk'lar - Southern Catacombs - Deep Guruk Caverns - Kill boss and loot Falatacot Medallion
-279,Master of the Sea,590,Blight,Ritual of the Blight: Eastwatch,125,https://acportalstorm.com/wiki/Ritual_of_the_Blight,Mayoi - Captain Warner 61.4S 82.5E - Eastwatch - Blighted Verdant Moarsman Tunnels 92.7N 42.3W - Kill boss and loot Tattered Moarseman Rituation - Give to Captain Warner
-280,Honorary Shadow Hunter,159,,Shadowfire Stone Quest,125,https://acportalstorm.com/wiki/Shadowfire_Stone_Quest,Xarabydun - Ciandra Arcanum Alchemist 41.8S 15.8E - Nedysia Castle - Empyrean Workshop at 66.9N 15.9E - Cragstone - Haliana portal 26.2N 46.3E - Shade of Farelaith at 74.3N 58.6E - Obtain Shadowfire stone - Wai Jhou - Give stone to Sarkin Killcrane 61.9S 51.5W
-281,Insatiable Slayer,74,Jaw,Jaw: Insatiable Eater Jaw Quest,125,https://acportalstorm.com/wiki/Insatiable_Eater_Jaw_Quest,Westwatch - Clemenza 72.7N 73.4W - Fiun Outpost - Insatiable Vault at 97.6N 48.0W - Loot jaw near end of dungeon
-282,Prodigal Tusker Slayer,519,Tusk,Tusk: Aerbax's Prodigal Tusker,130,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Tusker,Oolutanga's Refuge - Whispering Caverns 14.9S 86.0E - Kill Dark Bobo and loot title token - Oolatanga's Refuge - Jilna Fullgood 2.0N 95.6E
-283,Warrior of the Past,560,,Black Death Catacombs Quiddity Seed,130,https://acportalstorm.com/wiki/Black_Death_Catacombs_Quiddity_Seed_Quest,Eastham - Asheron's Island 17.9N 64.3E - Emissary of Asheron - (#1) Strange Device 21.9N 19.0E - (#2) Cragstone - Isle of Tears 25.2N 49.9E - Underground City 21.3N 53.9E (#3) Strange Device 21.2N 69.2E (#4) Underground City Again (#5) Hebian-To - Arrowdale Cottages portal 41.4S 82.1E - Black Death Catacombs 59.9N 71.2E
-284,Crystalline Adventurer,668,Crag,Crystalline Adventurer: 70+,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Crystalline Dungeon 70+ - Kill Aggregate Crystalline Wisp - Give Aggregate Crystalline Shard to Tokashi Ando 14.6S 62.0W 
-285,Frozen Fighter,671,Crag,Crystalline Adventurer: 90+,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Icy Crystalline Dungeon 90+ - Kill Intense Aggregate Crystalline Wisp - Give Large Aggregate Crystalline Shard to Tokashi Ando 14.6S 62.0W 
-286,Burning Soul,670,Crag,Crystalline Adventurer: 110+,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Fiery Crystalline Dungeon 110+ - Kill Intense Aggregate Crystalline Wisp - Give Giant Aggregate Crystalline Shard to Tokashi Ando 14.6S 62.0W 
-287,Beginning's End,681,Crag,Crystalline Adventurer: 130+,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Progenitors Lair 130+ - Kill 3 Progenitors - Give Progenitor Ingot to Tokashi Ando 14.6S 62.0W 
-288,Gaerlan Slayer,57,Gaerlan,Gaerlan's Citadel (Extreme),130,https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Extreme),Arwic - Sennon Valley Retreat 32.9N 59.4E - Frost Guardian Lair 52.8N 62.4E - Speak with Asheron's Platinum Golem 57.8N 48.4E - Lightning Zigguratat 57.1N 47.8E - Proving Grounds - Citadel Library - Gaerlan's Inner Sanctum - Defeat Gaerlan
-289,Invader's Bane,75,GW,Glenden Wood Invasion (High),130,https://acportalstorm.com/wiki/Glenden_Wood_Invasion_(High),Glenden Wood - Kill 3 Portal Pillars 27.2N 27.9E - Take Red Portal - Glenden Wood - Captain Anrayl 29.9N 27.3E 
-290,Hope of the Past,572,,Ithaenc Quiddity Seed Quest,130,https://acportalstorm.com/wiki/Ithaenc_Quiddity_Seed_Quest,Eastham - Asheron's Island 17.9N 64.3E - Emissary of Asheron - Fort Tethana - Aun Aemaua 1.6N 71.7W - MacNiall's Freehold - Ithaenc Quiddity Seed 82.7S 93.4E
-291,Naughty Skeleton Snuffer,98,KT,KT: Naughty Skeleton Kill Task,130,https://acportalstorm.com/wiki/Naughty_Skeleton_Kill_Task,Eastwatch - Taku Yukio 90.3N 43.1W - Kill 100 Naughty Skeletons
-292,Friend of the Frostglaive,440,,The Black Spear Ice Totem: Kalakh,130,https://acportalstorm.com/wiki/The_Black_Spear_Ice_Totem,Shattered Outlands - Kalakh 94.0N 45.9W - Temple of the Black Spear 95.3N 52.2W - Give Black Spear Ice Totem to Kalakh
-293,Squire of New Viamont,441,,The Black Spear Ice Totem: Arialle,130,https://acportalstorm.com/wiki/The_Black_Spear_Ice_Totem,Shattered Outlands - Arialle du Bellenesse 93.2N 48.2W - Temple of the Black Spear 95.3N 52.2W - Give Black Spear Ice Totem to Arialle du Bellenesse
-294,Shadow Stalker,120,,The Temple of Xik Minru,130,https://acportalstorm.com/wiki/The_Temple_of_Xik_Minru,Holtburg - Buy Amber Gem from Monyra the Jeweler 42.6N 33.9E - Arwic - Branwyn 29.1N 57.9E - Vissidal Island - Temple of Xik Minru 73.3N 69.0E - Give Amber Gem to Causeway Sentinel - Wai Jhou - Give Book of Xik Minru to Sarkin Killcrane 61.9S 51.5W
-295,Wicked Skeleton Walloper,155,KT,KT: Wicked Skeleton Kill Task,130,https://acportalstorm.com/wiki/Wicked_Skeleton_Kill_Task,Eastwatch - Ruqaya al Mubarak 90.3N 43.1W - Kill 100 Wicked Skeletons
-296,Grave Stalker,536,,DeathTail Quest,135,https://acportalstorm.com/wiki/DeathTail_Quest,Graveyard - Lo Shoen 65.3S 43.4W - Give Lo Shoen's Rat Bait to Rat Burrow - Kill DeathTail
-297,Crypt Rat,535,KT,KT: Grave Rat Kill Task,135,https://acportalstorm.com/wiki/Grave_Rat_Kill_Task,Graveyard - Lo Shoen 65.3S 43.4W - Kill 100 Grave Rats during daytime
-298,Rift Shifter,531,KT,KT: Umbral Rift Kill Task,140,https://acportalstorm.com/wiki/Umbral_Rift_Kill_Task,Singularity Caul - Solange 97.4S 94.6W - Kill 30 Umbral Rifts - Rare title 10% chance
-299,Rift Walker,532,KT,KT: Umbral Rift Kill Task,140,https://acportalstorm.com/wiki/Umbral_Rift_Kill_Task,Singularity Caul - Solange 97.4S 94.6W - Kill 30 Umbral Rifts
-300,Protector of the Past,559,,Knorr Quiddity Seed Quest,145,https://acportalstorm.com/wiki/Knorr_Quiddity_Seed_Quest,Stonehold - Give an M note to Olcris Nuhmudira's Student 68.7N 21.6W - Use Gem - Eastham - Asheron's Island 17.9N 64.3E - Hand in Empyrean Spherule to Emissary of Asheron
-301,Paradox-touched Queenslayer,517,,Aerbax's Prodigal Olthoi,150,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Olthoi,Olthoi North - Loot a Coruscating Olthoi Scent Gland - Ward Guardian Cave 43.1N 55.1E - Kill Guardian - Arwic - Jeweled Thorn Estates 32.9N 59.4E - Black Death Catacombs 59.9N 71.2E - Kill Queen - Hand Queens head to Ethan Wintermaine 43.8N 54.9E
-302,One for All,688,,Aetherium Power Core Collection,150,https://acportalstorm.com/wiki/Aetherium_Power_Core_Collection,Direlands Gear Knight Invasion Area - T'ing Douzen 12.3S 75.0W - Iron Blade Overseer rare spawn near 11.2S 75.5W or 10.6S 74.7W - Give Shattered Aetherium Core Sample to T'ing Douzen
-303,Amelia's Caretaker,518,,Amelia's Lost Toys,150,https://acportalstorm.com/wiki/Amelia's_Lost_Toys,Graveyard - Amelia 64.8S 43.8W - Return all 6 toys to Amelia
-304,Gear Knight Assassin,703,,Atamarr Tasks: Iron Blade Warmaster,150,https://acportalstorm.com/wiki/Atamarr_Tasks,Xarabydun - Atamarr 41.7S 15.8E - Kill Iron Blade Warmaster 10.4S 75.2W
-305,Gear Knight Defender,710,,Atamarr Tasks: Bronze Gauntlet Knight,150,https://acportalstorm.com/wiki/Atamarr_Tasks,Xarabydun - Atamarr 41.7S 15.8E - Kill General Tarkaris 10.4S 75.2W
-306,Gear Knight Emissary,705,,Atamarr Tasks: Silver Scope Spymaster,150,https://acportalstorm.com/wiki/Atamarr_Tasks,Xarabydun - Atamarr 41.7S 15.8E - Talk to Silver Scope Spymaster 10.4S 75.2W - Gear Hunter Dungeon 7.2S 75.0W - Loot Silver Scope Spymaster Apostate Message Shard from ground - Back to Silver Scope Spymaster
-307,Gear Knight Recruiter,704,,Atamarr Tasks: Copper Cog Craftsmaster,150,https://acportalstorm.com/wiki/Atamarr_Tasks,Xarabydun - Atamarr 41.7S 15.8E - Talk to Copper Cog Craftsmaster 10.4S 75.2W - Gear Hunter Dungeon 7.2S 75.0W - Kill Apostate Overseer - Give Apostate Overseer's Mask to Copper Cog Craftsmaster
-308,Shellfish Hater,123,KT,KT: Benek Niffis Kill Task,150,https://acportalstorm.com/wiki/Benek_Niffis_Kill_Task,Vissidal - Colista Fluress 77.8N 67.1E - Kill 50 Benek Niffis
-309,Burun Liberator,490,,Burun Liberator,150,https://acportalstorm.com/wiki/Burun_Liberator,Bur - Scout Leader Tmauruk - Southern Catacombs - Use the Rock - Lower Catacombs - Find Shaman - Get Link of a Falatacot Chain - Hand in Link of a Falatacot Chain to Tmauruk
-310,Mad Cow Slayer,293,Colo,Colosseum Bosses: Mad Cow,150,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Give Colosseum Master a Tipped Pack Cow - Use Very Mad Cow statue - Kill boss
-311,Pumpkin Throne Usurper,544,Colo,Colosseum Bosses: Pumpkin King,150,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Give Colosseum Master a Blue Blanket - Use Pumpkin King statue - Kill boss
-312,Thunder Chicken Slayer,380,Colo,Colosseum Bosses: Thunder Chicken,150,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Give Colosseum Master an Egg - Use Thunder Chicken statue - Kill boss
-313,Tracker,143,KT,KT: Coral Golem Viceroy Kill Task,150,https://acportalstorm.com/wiki/Coral_Golem_Viceroy_Kill_Task,Ayan Baqur - Aun Aukherea 60.8S 88.0W - Kill 5 Golem Viceroy - Talk with NPC for item - Start task again - Kill 5 more Golem Viceroy - Talk with NPC for title
-314,Loss Prevention,859,Seasonal,Seasonal: Drudge Present Raids,150,https://acportalstorm.com/wiki/Drudge_Present_Raids,Seasonal only - Watch for green global announcement of location Yaraq Sanamar or Silyun - Protect the presents - Loot large single present
-315,Plucker of Eyes,600,,Eye of T'thuun Quest,150,https://acportalstorm.com/wiki/Eye_of_T'thuun_Quest,Greenspire - Tamara du Cinghalle 43.2N 67.1W - Timaru - East of Tall Trees 51.8N 72.7W - Kill 50 tentacles - Double click on the Eye-covered Tentacles of T'thuun to retrieve a Plucked Eye of T'thuun - Return to Tamara
-316,Gaerlan Slayer,57,Gaerlan,Gaerlan's Citadel (Uber),150,https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Uber),Arwic - Sennon Valley Retreat 32.9N 59.4E - Frost Guardian Lair 52.8N 62.4E - Speak with Asheron's Platinum Golem 57.8N 48.4E - Lightning Zigguratat 57.1N 47.8E - Proving Grounds - Citadel Library - Gaerlan's Inner Sanctum - Defeat Gaerlan
-317,Present Protector,857,Seasonal,Seasonal: Gurog Present Raids,150,https://acportalstorm.com/wiki/Gurog_Present_Raids,Seasonal only - Watch for green global announcement of location Tufa Al-Jalima Samsur Khayyaban Xarabydun - Protect the presents - Loot large single present
-318,Monster Killer,480,KT,KT: Guruk Monstrosity Kill Task,150,https://acportalstorm.com/wiki/Guruk_Monstrosity_Kill_Task,Bur - Borsh - Kill 10 Guruk Monstrosities
-319,Bosh Bosh Kibosh,481,,Killing Bosh Bosh,150,https://acportalstorm.com/wiki/Killing_Bosh_Bosh,Bur - Kuuru - Southern Catacombs - Deep Guruk Caverns - Kill Bosh Bosh and loot token - Return to Kuuru
-320,Lady Tairla's Champion,505,,Lady Mhoire Quest,150,https://acportalstorm.com/wiki/Lady_Mhoire_Quest,Graveyard - Kill Lady Tarla Mhoire rare spawn - Speak to the NPC ghost of Lady Tairla Mhoire
-321,Mosswart Worshipper Whipper,95,KT,KT: Mosswart Worshipper Kill Task,150,https://acportalstorm.com/wiki/Mosswart_Worshipper_Kill_Task,Eastwatch - Orfeo Orlando 90.2N 43.1W - Kill 175 Mosswart Worshippers
-322,Mottled Carenzi Mauler,96,KT,KT: Mottled Carenzi Kill Task,150,https://acportalstorm.com/wiki/Mottled_Carenzi_Kill_Task,Candeth Keep - Grania the Bold 87.6S 67.4W - Kill 50 Mottled Carenzis
-323,Moarsman Defiler,93,KT,KT: Mucky Moarsman Kill Task,150,https://acportalstorm.com/wiki/Mucky_Moarsman_Kill_Task,Vissidal - Algar Oreksun 77.8N 67.1E - Kill 50 Mucky Moarsman
-324,Mukkir Masher,410,,Mukkir Nest Quest,150,https://acportalstorm.com/wiki/Mukkir_Nest_Quest,Mukkir Nest Portal Gem (Dropped by Royal Inquisitors and Barbaric Mukkirs or buy from Colosseum) - Kill boss - Qalaba'r - Qath al-Haddash 74.2S 19.2E
-325,Olthoi Ripper Reducer,99,KT,KT: Olthoi Ripper Kill Task,150,https://acportalstorm.com/wiki/Olthoi_Ripper_Kill_Task,Eastwatch - Marcello 90.2N 43.1W - Kill 250 Olthoi Rippers
-326,Platinum Prowler,103,KT,KT: Platinum Golem Mountain King,150,https://acportalstorm.com/wiki/Platinum_Golem_Mountain_King_Kill_Task,Ayan Baqur - Aun Khekierea 60.8S 88.0W - Kill 5 Golem Mountain King - Talk with NPC for item - Start task again - Kill 5 more Golem Mountain King - Talk with NPC for title
-327,Pet Savior,776,,Protecting Picketed Pets,150,https://acportalstorm.com/wiki/Protecting_Picketed_Pets,Danby's Outpost - Colton Reeyan 23.5N 28.8W - Colton Reeyan's Sanctuary 22.9N 37.0W
-328,Warden of the Burning Wood,601,,Ranger Lord Mhoire,150,https://acportalstorm.com/wiki/Ranger_Lord_Mhoire,Graveyard - Find Corrupted Pyre Oak rare spawn 66.5S 44.8W - Speak to Ranger Lord Grymar Mhoire and loot Burnt and Twisted Stump
-329,Bane of the Remoran,24,KT,KT: Remoran Sea Raptor Kill Task,150,https://acportalstorm.com/wiki/Remoran_Sea_Raptor_Kill_Task,Vissidal - Peng-Ya 77.8N 67.1E - Kill 50 Remoran Sea Raptors
-330,Healer Ritualist,763,,Researching the Lost Rituals,150,https://acportalstorm.com/wiki/Researching_the_Lost_Rituals,Cragstone - Empyrean Researchers 26.2N 47.1E - Complete all 4 tasks
-331,Hero of the Golden Flame,430,,Shadow Aspect of Grael Quest,150,https://acportalstorm.com/wiki/Shadow_Aspect_of_Grael_Quest,Sanctuary - Abbess Zik'Lir 83.5S 97.2E - Falatacot Vault 74.7S 98.2E - Shadow-Infested Black Spear Temple 76.8S 93.8E - Give Shard of the Black Spear to Abbess Zik'Lir
-332,Shallows Shark Nemesis,121,KT,KT: Shallows Gorger Kill Task,150,https://acportalstorm.com/wiki/Shallows_Gorger_Kill_Task,Vissidal - Dayla Bint Kazm 77.8N 67.1E - Kill 50 Shallows Gorgers
-333,Arwic Noble,624,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Arwic Invoking Stones to Royal Scout
-334,Archaeologist,603,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Southern Osteth Invoking Stones to Royal Scout
-335,Arwician,611,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Arwic Invoking Stones to Royal Scout
-336,Asheron's Militia,638,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Asheron's Island Invoking Stones to Royal Scout
-337,Defender of Silyun,605,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Silyun Invoking Stones to Royal Scout
-338,Desert Warrior,612,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Ayan Baqur Invoking Stones to Royal Scout
-339,Guardian of the Keep,608,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Candeth Keep Invoking Stones to Royal Scout
-340,Hero of Woe,604,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Isle of Tears Invoking Stones to Royal Scout
-341,Mayoi Protector,613,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Mayoi Invoking Stones to Royal Scout
-342,Memorial Champion,606,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Festival Stone of Midsong Invoking Stones to Royal Scout
-343,Thane of Colier,607,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Colier Invoking Stones to Royal Scout
-344,Tough Tough,602,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Tou-Tou Invoking Stones to Royal Scout
-345,Warrior of the Crater Lake,609,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 30 Mount Esper Invoking Stones to Royal Scout
-346,Stone Collector,614,Summoning,Summoning T'thuun: 30 of each Stone,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Turn in 30 of each Invoking Stone - Eastham - Talk to Asheron's Investigator 17.6N 63.5E
-347,Champion Immemorial,619,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Festival Stone of Midsong Invoking Stones to Royal Scout
-348,Colier Miner,620,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Colier Invoking Stones to Royal Scout
-349,Has way too much time,618,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Silyun Invoking Stones to Royal Scout
-350,Hilltop Defender,623,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Asheron's Island Invoking Stones to Royal Scout
-351,Legionnaire,621,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Candeth Keep Invoking Stones to Royal Scout
-352,Rock Hound,616,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Southern Osteth Invoking Stones to Royal Scout
-353,Rock Star,615,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Tou-Tou Invoking Stones to Royal Scout
-354,Samurai,626,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Mayoi Invoking Stones to Royal Scout
-355,Volcanologist,622,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Mount Esper Invoking Stones to Royal Scout
-356,Warrior of Woe,617,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Isle of Tears Invoking Stones to Royal Scout
-357,Zharalim,625,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Inside Pyramids - Give 90 Ayan Baqur Invoking Stones to Royal Scout
-358,Dereth's Elite,646,Summoning,Summoning T'thuun: Ritual,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Complete Summoning of T'thuun Quest
-359,Royal Investigator,506,,The Archivist Quest,150,https://acportalstorm.com/wiki/The_Archivist_Quest,Ayan Baqur - Ennio di Cinghalle 59.6S 87.7W - Chaos Virindi Cave 58.6S 81.5W - Zaikhal - Diyas al-Yat 13.8N 0.1E - Bring the Observations: Harraag (Attuned) to Ennio di Cinghalle
-360,Death Knight,545,Seasonal,Seasonal: Undead Attack on Al-Jalima,150,https://acportalstorm.com/wiki/Undead_Attack_on_Al-Jalima,Al-Jalima - Loot Decaying Zombie Brain Portion - Glenden Wood - Ungrim the Unpleasant Smelling 29.4N 27.2E - Burial Temple 8.5N 5.9E - Al-Jalima - Trevor Shunderson - Hand in Ancient Crest to Trevor Shunderson
-361,Zombie Incursion Survivor,443,Seasonal,Seasonal: Undead Attack on Al-Jalima,150,https://acportalstorm.com/wiki/Undead_Attack_on_Al-Jalima,Al-Jalima - Loot Decaying Zombie Brain Portion - Glenden Wood - Ungrim the Unpleasant Smelling 29.4N 27.2E - Hand in Decaying Zombie Brain Portion to Ungrim the Unpleasant Smelling
-362,Aerbax's Bane,574,,Aerbax's Citadel,160,https://acportalstorm.com/wiki/Aerbax's_Citadel,Obsidian Plains - Aerbax's Citadel Quest: Kill Virindi Artificer at North 63.3S 63.7W East 64.0S 62.9W West 64.1S 64.7W - Inside Southgate at 65.0S 63.8W - Long run - Give to NPC - Portal in - Defeat boss - Speak to the Emissary of Asheron after defeating Aerbax's Shadow
-363,Dojiro Sangi's Savior,548,,Aerbax's Prodigal Human,160,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Human,Stonehold - Hidden Laboratory 67.2N 27.1W - Candeth Keep - Ryukai Hiro 87.8S 67.3W - Hand in Dojiro Sangi's Ring to Ryukai Hiro
-364,Prodigal Shadow Slayer,522,,Aerbax's Prodigal Shadow,160,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Shadow,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Pulsating Bony Lump - Find random The Orphanage - Wai Jhou - Riordin Nightbane 61.9S 51.4W - Hand in Scrap of Shadow Essence
-365,Guardian of the Tower,499,,Asheron's Tower Guardian,160,https://acportalstorm.com/wiki/Asheron's_Tower_Guardian,Asheron's Castle - Defeat the Tower Guardian
-366,Tower Guardian Architect,497,,Asheron's Tower Guardian,160,https://acportalstorm.com/wiki/Asheron's_Tower_Guardian,Asheron's Castle - Hand in 50 Resource Points worth of items to Asheron's Servant
-367,Champion of Assassins,469,Colo,Colosseum Bosses: The Master,160,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete Arena 18 or higher (full win) - Use The Master statue - Kill boss
-368,Crater Crasher,663,Markers,Dereth Exploration: 5 Crater Crasher,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Crater Crasher markers
-369,Daredevil,659,Markers,Dereth Exploration: 5 Daredevil,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Daredevil markers 
-370,Mountain Climber,658,Markers,Dereth Exploration: 5 Mountain Climber,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Mountain Climber markers
-371,Party-Goer,662,Markers,Dereth Exploration: 5 Party-Goer,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Party-Goer markers
-372,Sky Diver,660,Markers,Dereth Exploration: 5 Sky Diver,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Sky Diver markers
-373,Spelunker,661,Markers,Dereth Exploration: 5 Spelunker,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Spelunker markers
-374,Amateur Explorer,653,Markers,Dereth Exploration: 20 Markers,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find 20 markers
-375,Experienced Explorer,654,Markers,Dereth Exploration: 40 Markers,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find 40 markers
-376,Adept Explorer,655,Markers,Dereth Exploration: 60 Markers,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find 60 markers
-377,Master Explorer,656,Markers,Dereth Exploration: 80 Markers,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find 80 markers
-378,Elite Explorer,657,Markers,Dereth Exploration: 100 Markers,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find 100 markers
-379,Violator Grievver Vetoer,147,KT,KT: Grievver Violator Kill Task,160,https://acportalstorm.com/wiki/Grievver_Violator_Kill_Task,Eastwatch - Moina 90.4N 43.1W - Kill 100 Grievver Violators
-380,Jester's Accomplice,578,,Jester Released,160,https://acportalstorm.com/wiki/Jester_Released,Graveyard - Speak with the Jester after defeating him
-381,Marble Wrangler,580,,Jester's Lost Marbles,160,https://acportalstorm.com/wiki/Jester's_Lost_Marbles,Graveyard - Run to 63.4S 44.4W to get up onto the cliffside - Pick up the Jester's Marbles 65.1S 43.7W - Use summoning stone at 65.8S 43.8W - Give Marbles to Jester
-382,Secret Keeper,581,,Jester's Lost Marbles,160,https://acportalstorm.com/wiki/Jester's_Lost_Marbles,Graveyard - Run to 63.4S 44.4W to get up onto the cliffside - Pick up the Jester's Marbles 65.1S 43.7W - Use summoning stone at 65.8S 43.8W - Mhoire Armory - Find 9 of Jester's Markers and give the 10th to Jester
-383,Slayer of the Black Spear,431,,Mukkir Aspect of Grael Quest,160,https://acportalstorm.com/wiki/Mukkir_Aspect_of_Grael_Quest,Obsidian Rim - Varetha 44.3S 62.5W - Black Ferah's Vault at 39.1S 60.1W - Talk to Varetha - VoD - Mukkir Infested Black Spear Temple at 37.2S 67.0W - Kill boss - Ayan Baqur - Hoshar ibn Jalaq at 59.6S 88.0W - Give Mukkir Aspect Slayer Title Token to Hoshar ibn Jalaq
-384,Nexus Crawler,682,,Nexus Crawl,160,https://acportalstorm.com/wiki/Nexus_Crawl,Zaikhal - Ned the Clever 13.4N 0.9E - Ayan Baqur or Mt Lethe Recall - Nexus 40.1S 79.2W - Talk to Ned after handing in the Resonator
-385,Jester's Emancipator,576,,Releasing Jester,160,https://acportalstorm.com/wiki/Releasing_Jester,Graveyard - Return to Jester's Prison - Release Jester and speak to Laylana
-386,Jester's Fool,577,,Releasing Jester,160,https://acportalstorm.com/wiki/Releasing_Jester,Graveyard - Return to Jester's Prison - Release Jester - Speak with Jester a second time after releasing him
-387,Asheron's Defender,492,,Saving Asheron,160,https://acportalstorm.com/wiki/Saving_Asheron,Bur - Collector Golem - Speak with Scout Leader Tmauruk - Southern Catacombs - Use the Rock - Temple of the Three - Give Glowing Statue Shard to Collector Golem
-388,Coin Collector,884,Gauntlet,Gauntlet: Room 5,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 5 of the Gauntlet
-389,Society Savage,883,Gauntlet,Gauntlet: Room 6,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 6 of the Gauntlet
-390,Brutal Barbarian,885,Gauntlet,Gauntlet: Room 7,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 7 of the Gauntlet
-391,Soldier of Fortune,882,Gauntlet,Gauntlet: Room 8,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 8 of the Gauntlet
-392,Wily Warrior,881,Gauntlet,Gauntlet: Room 9,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 9 of the Gauntlet
-393,Gauntlet Gladiator,880,Gauntlet,Gauntlet: Room 10,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 10 of the Gauntlet
-394,Bloodthirsty,879,Gauntlet,Gauntlet: Room 11,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 11 of the Gauntlet
-395,Gauntlet Champion,878,Gauntlet,Gauntlet: Room 12 (Win),180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 12 of the Gauntlet - A full win
-396,Master of Puppets,887,Gauntlet,Gauntlet Bosses: Tremb'Orh,180,https://acportalstorm.com/wiki/Gauntlet_Bosses,Complete Room 8 of the Gauntlet - Use Gauntlet statue - Defeat Tremb'Orh
-397,Idolized,886,Gauntlet,Gauntlet Bosses: Holcha,180,https://acportalstorm.com/wiki/Gauntlet_Bosses,Complete Room 11 of the Gauntlet - Use Gauntlet statue - Defeat Holcha
-398,Titan Slayer,888,Gauntlet,Gauntlet Bosses: Gromnus Champion,180,https://acportalstorm.com/wiki/Gauntlet_Bosses,Complete 10 Gauntlet wins - Use Gauntlet statue - Defeat Gromnus Champion
-399,Expendable,584,Harlune,Harlune's Diplomacy,180,https://acportalstorm.com/wiki/Harlune's_Diplomacy,Facility Hub - Mite Maze 41.1N 57.3E - Speak with Roderick - Bur - Southern Catacombs 67.4N 30.5E - Upper Catacombs - Falatacot Visitor's Alcove - Give Falatacot Blood Prophetess Trinket to Roderick
-400,Hard to Kill,583,Harlune,Harlune's Diplomacy,180,https://acportalstorm.com/wiki/Harlune's_Diplomacy,Facility Hub - Mite Maze 41.1N 57.3E - Speak with Roderick - Bur - Southern Catacombs 67.4N 30.5E - Upper Catacombs - Falatacot Visitor's Alcove - Give Falatacot Blood Prophetess Trinket to Roderick for a 2nd time
-401,Hive Queenslayer,780,,Hive Queen Assault,180,https://acportalstorm.com/wiki/Hive_Queen_Assault,Greenspire - Virindi Delegate 43.3N 66.7W - Timaru - Chiming Portal 45.0N 73.5W - Get Forks - Drop 5 Forks: (#1) 53.0N 73.3W (#2) 49.2N 74.6W (#3) 46.5N 75.8W (#4) 44.7N 80.9W (#5) 50.1N 80.4W - Mount Elyrii Hive 48.5N 81.7W - Royal Hive - Group: Timaru - West Fork Dam Hive 49.1N 80.0W
-402,Out of Tune,779,,Hive Queen Assault,180,https://acportalstorm.com/wiki/Hive_Queen_Assault,Greenspire - Virindi Delegate 43.3N 66.7W - Timaru - Chiming Portal 45.0N 73.5W - Get Forks -  Forks: (#1) 53.0N 73.3W (#2) 49.2N 74.6W (#3) 46.5N 75.8W (#4) 44.7N 80.9W (#5) 50.1N 80.4W - Drop a fork twice
-403,Holly Jolly Helper,858,,Holly Jolly Helper Quest,180,https://acportalstorm.com/wiki/Holly_Jolly_Helper_Quest,Sawato - Osdryd 29.0S 58.9E - Kill 15 of the Mosswart Cynics in Sawato
-404,Night Owl,797,KT,KT: Empowered Wisps,180,https://acportalstorm.com/wiki/Kill:_Empowered_Wisps,RTW Camp - Tillahan 61.6S 63.3W - Kill 3 Empowered Wisp
-405,Minion Marauder,792,KT,KT: Rynthid Minions,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Minions,RTW Camp - Marcus 61.6S 63.3W - Kill 25 Rynthid Minion
-406,Rage Quitter,795,KT,KT: Rynthid Ragers,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Ragers,RTW Camp - Ranulf 61.6S 63.3W - Kill 15 Rynthid Rager
-407,Mender of the Rift,794,KT,KT: Rynthid Rifts,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Rifts,RTW Camp - Rhys 61.6S 63.3W - Kill 10 Rynthid Rift
-408,Rynthid Wrecker,793,KT,KT: Rynthid Slayers,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Slayers,RTW Camp - Sylvanus 61.6S 63.3W - Kill 15 Rynthid Slayer
-409,Sorcerer Slayer,796,KT,KT: Rynthid Sorcerers,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Sorcerers,RTW Camp - Wido 61.6S 63.3W - Kill 15 Rynthid Sorcerer
-410,Liberator of Uziz,778,,Liberation of Uziz,180,https://acportalstorm.com/wiki/Liberation_of_Uziz,Al-Arqas - Ahr-Zona 33.5S 13.1E - Virindi Edifice 19.4S 18.2E
-411,Menhir Seeker,706,Menhir,Menhir Research: 20 Fields,180,https://acportalstorm.com/wiki/Menhir_Research,Xarabydun - Cara the Apprentice 41.7S 15.8E - Find 20 Menhir Fields
-412,Bane of the Blessed,648,,Rare Trophies: Giant Blessed Moarsman,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,Freebooter Isle - Kill Giant Blessed Moarsman near the eastern end of the Freebooter Isle. (Confirmed sightings at 57.0S 97.5E at Dawnsong and at 57.0S 97.3E slso at WarmTide and a half) - Hand to society NPC
-413,Bane of the Blight,650,,Rare Trophies: Moarsman Blight-caller,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,Moarsman City - Kill Moarsman Blight-caller near the eastern end of the Moarsman City (Confirmed siting at 93.0S 49.2W at Dawnsong) - Give to society NPC
-414,Defender of the Deru,647,,Rare Trophies: Tchk'Tain the Tender,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,"Freebooter Isle - Kill Tchk'Tain the Tender near the Deru Tree of Degar'Alesh (Spawns during the day at 60.7S 96.8E, and at night at 60.8S 96.1E) - Give to society NPC"
-415,Negotiator,649,,Rare Trophies: Tch'Keryk the Emissary,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,Moarsman City - Kill Tch'Keryk the Emissary near the western end of the Moarsman City. (Confirmed sitings at 93.2S 57.0W) - Give to society NPC
-416,Emotional Wreck,791,,Rynthid Foothold,180,https://acportalstorm.com/wiki/Rynthid_Foothold,RTW Camp 61.6S 63.3W - Speak with Vision of Horror - Up ramps 62.5S 65.4W - Jump up 3rd ramp then go right - Path of Torment 62.1S 65.8W - Path of Rage 62.5S 65.4W - Exit - turn around walk north and look down then shift+jump to platform below - Rynthid Genesis
-417,Well Trained,849,,Rynthid Training,180,https://acportalstorm.com/wiki/Rynthid_Training,RTW Camp 61.6S 63.3W - Rynthid Assessment Crystal 62.3S 66.2W
-418,Meddler,526,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Show Corrupted Harbinger Blood to Vincadi
-419,Spy,528,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Show Corrupted Harbinger Blood to Vincadi
-420,Vile Betrayer,527,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Show Corrupted Harbinger Blood to Vincadi
-421,Prodigal Harbinger Slayer,523,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Hand in Corrupted Harbinger Blood to Issk - Prodigal Harbinger Slayer (If you got the killin shot) 
-422,Blood Seeker,524,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Hand in Corrupted Harbinger Blood to Issk
-423,Storm Rider,525,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Hand in Corrupted Harbinger Blood to Emissary of Asheron
-424,Guardian of Linvak Tukal,555,,Aerbax's Prodigal Lugian,200,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Lugian,Cragstone - Oswent the Pale 25.7N 49.2E - Linvak Tukal - Lord Kresovus 77.6S 28.0E - Use Kresovus' Lockbox - Give Sigil of Linvak Tukal to Lord Kresovus
-425,Bloodstone Hunter,713,,Bloodstone Investigation,200,https://acportalstorm.com/wiki/Bloodstone_Investigation,Frozen Valley 83.8N 4.3W - Gurog Ice Cave 84.9N 7.1W - Bloodstone Factory 84.5N 5.1W
-426,Knight of the Northwest Tower,691,,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,Graveyard - Use west gargoyle statue 64.6S 44.1W - Enter Northeast Tower - Speak with Shade of Antemy - Trials: (NW) Complete Rite of Wisdom
-427,Knight of the Southeast Tower,692,,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,Graveyard - Use west gargoyle statue 64.6S 44.1W - Enter Northeast Tower - Speak with Shade of Antemy - Trials: (SE) Complete Flames of Courage
-428,Knight of the Southwest Tower,693,,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,Graveyard - Use west gargoyle statue 64.6S 44.1W - Enter Northeast Tower - Speak with Shade of Antemy - Trials: (SW) Complete Flames of Virtue 
-429,Champion of House Mhoire,696,,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,Graveyard - Use west statue 64.6S 44.1W - Mhoire Castle - Complete 3 Trials - Mhoire Castle Great Hall - Kill Shade of Lord Rytheran
-430,Crown of the Deru,862,,Climbing the Viridian Deru Tree,200,https://acportalstorm.com/wiki/Climbing_the_Viridian_Deru_Tree,Viridian Rise - On VR7 climb the Deru Tree - Speak with Doriathazaar to receive your rewards
-431,Thrungus Reaper,141,,Death's Allure,200,https://acportalstorm.com/wiki/Death's_Allure,Eastwatch - Pass at 93.0N 47.0W - Hermit 94.2N 43.0W
-432,Fiery Spirit,754,,Geraine's Hosts #1: Fiery,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Singularity Caul - Fiery Refuge 95.3S 94.1W - Graveyard - Give heart to Mhoire Lieutenant
-433,Shocking Disposition,756,,Geraine's Hosts #2: Charged,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Arwic - Artifice Cottages 32.9N 59.6E - Chared Refuge 86.8S 10.5E - Graveyard - Give heart to Mhoire Lieutenant
-434,Icy Veins,755,,Geraine's Hosts #3: Frozen,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Eastwatch - Frozen Refuge 93.9N 45.4W - Graveyard - Give heart to Mhoire Lieutenant
-435,Acidic Soul,757,,Geraine's Hosts #4: Acidic,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Sawato - Explorer's Villas 27.2S 59.9E - Acidic Refuge 59.0N 65.8E - Graveyard - Give heart to Mhoire Lieutenant
-436,Grounded Morals,758,,Geraine's Hosts #5: Cavernous,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Al-Jalima - Jackcat Canyon 5.7N 4.3E - Up 0.3N 9.3E - Cavernous Refuge 7.3S 13.4E - Graveyard - Give heart to Mhoire Lieutenant
-437,Darkened Heart,759,,Geraine's Hosts #6: Shadowy,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Tou-Tou - Shadowy Refuge 26.8S 96.0E - Graveyard - Give heart to Mhoire Lieutenant
-438,The True Emperor,760,,Geraine's Hosts #7: Twisted,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Obsidian Plains - Twisted Refuge 62.7S 64.9W - Graveyard - Give heart to Mhoire Lieutenant
-439,Eviscerator Decimator,781,Pincer,Pincer: Hive Eviscerator Pincer Quest,200,https://acportalstorm.com/wiki/Hive_Eviscerator_Pincer_Quest,Timaru - Hive Eviscerator Burrow 48.6N 73.7W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
-440,Ultimate Warrior,782,Pincer,Pincer: Hive Warrior Pincer Quest,200,https://acportalstorm.com/wiki/Hive_Warrior_Pincer_Quest,Timaru -  Hive Warrior Mound 49.3N 81.2W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
-441,Vanquisher of the Titan,764,,Hoshino Fortress Infiltration,200,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration,Hosh Tents 80.7N 43.0W - Hosh Tower 79.2N 40.4W - Combine 3 broken keys - Hoshino Fortress 79.1N 41.5W - Give Ancient Skull and Bones to Ancient Altar
-442,Heretic,651,,Hoshino Fortress Infiltration,200,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration,Hosh Tents 80.7N 43.0W - Hosh Tower 79.2N 40.4W - Combine 3 broken keys - Hoshino Fortress 79.1N 41.5W - Speak to Freed Temple Exarch
-443,Captain,775,,Hoshino Fortress Infiltration,200,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration,Hosh Tents 80.7N 43.0W - Hosh Tower 79.2N 40.4W - Combine 3 broken keys - Hoshino Fortress 79.1N 41.5W - Give First Lieutenant's Insignia to Mareeno Donn
-444,Jester's Little Helper,582,,Jester Focuses,200,https://acportalstorm.com/wiki/Jester_Focuses,Graveyard - Up at 62.8S 45.1E - Knathtead Excavation 63.1S 44.3W - Get Rytheran's Master Seal at Ancient Chest 65.6S 43.9W - Neydisa Castle - Give Seal to  Master's Sentinel 74.7N 18.4E - Graveyard - Jester - Gardens of Menilesh 64.7S 43.8W - Give Empowered K'nath Core to Jester 
-445,Hero of House Mhoire,504,,Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Lord_Mhoire_Quest,Graveyard - Laylana 65.3S 44.3W - Jailer 64.9S 44.1W - Jester's Prison - Graveyard - Use right statue at 64.6S 44.1W - Defeat Lord Cynreft Mhoire and then speak to the ghost of Lord Cynreft Mhoire in dungeon
-446,Master of the Oubliette,751,,Oubliette of Mhoire Castle Quest,200,https://acportalstorm.com/wiki/Oubliette_of_Mhoire_Castle_Quest,Graveyard - Use west gargoyle statue 64.6S 44.1W - Enter Northeast Tower - Speak with Shade of Terelev - Mhoire Castle Great Hall portal
-447,Purifier,798,,Rynthid Artifact Collection,200,https://acportalstorm.com/wiki/Rynthid_Artifact_Collection,RTW Camp 61.6S 63.3W - Speak with The Bringer of Light - Up ramps 62.5S 65.4W - Jump up 3rd ramp then go right - Kill 20 Tormented Shadows in Path of Torment 62.1S 65.8W - Kill 20 Enraged Shadows in Path of Rage 62.5S 65.4W - Collect 10 Wisp of Corrupted Emotion from ground in Path of Sorrow
-448,Bearer of Darkness,761,,Sealing Away the Book of Eibhil,200,https://acportalstorm.com/wiki/Sealing_Away_the_Book_of_Eibhil,Asheron's Castle - Asheron - Neftet - Deep Caves 20.7S 8.3E - Bring the Deru Avatar's Gem to Asheron 
-449,Guiding Light,714,,Shadows #1: Shadow Communication,200,https://acportalstorm.com/wiki/Shadow_Communication,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Get Message from Ler Rhan to Black Ferah - Show message to Isin Dule before giving it to Black Ferah
-450,Clouded Soul,715,,Shadows #1: Shadow Communication,200,https://acportalstorm.com/wiki/Shadow_Communication,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Get Message from Ler Rhan to Black Ferah - Give message to Black Ferah 
-451,Illuminating the Shadows,719,,Shadows #2: Strange Crystal Quest,200,https://acportalstorm.com/wiki/Strange_Crystal_Quest,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Get Strange Purple Crystal from The Shadows - Give Strange Purple Crystal from The Shadows to Asheron 
-452,Undercover of Darkness,716,,Shadows #2: Strange Crystal Quest,200,https://acportalstorm.com/wiki/Strange_Crystal_Quest,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Get Strange Purple Crystal from The Shadows - Give Strange Purple Crystal from The Shadows to Ler Rhan
-453,Hopebringer,723,,Shadows #3: Fate of Bael'Zharon,200,https://acportalstorm.com/wiki/Fate_of_Bael'Zharon,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Ler Rhan - Siding with Ler Rhan: Summoning Cave 29.2S 95.8E - Give message to Ter Shen - Bring the Energy Scintilla to Ler Rhan
-454,Shadow Puppet,722,,Shadows #3: Fate of Bael'Zharon,200,https://acportalstorm.com/wiki/Fate_of_Bael'Zharon,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Ler Rhan - Siding with Isin Dule: Isin Dule 33.4N 56.9E - Summoning Cave 29.2S 95.8E - Bring the Energy Scintilla back Isin Dule
-455,Searching the Shadows,726,,Shadows #4: Dark Recordings,200,https://acportalstorm.com/wiki/Dark_Recordings,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Black Ferah 29.2S 95.8E - Get 3 devices - Top 27.4S 95.3E - Middle 28.9S 96.1E - Bottom 28.3S 96.9E - Combine - Dark Rocks 28.0S 96.5E and 27.2S 96.6E - Siding with Black Ferah: Show Recording Device to Isin Dule before giving it to Black Ferah
-456,In The Dark,724,,Shadows #4: Dark Recordings,200,https://acportalstorm.com/wiki/Dark_Recordings,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Black Ferah 29.2S 95.8E - Get 3 devices - Top 27.4S 95.3E - Middle 28.9S 96.1E - Bottom 28.3S 96.9E - Combine - Dark Rocks 28.0S 96.5E and 27.2S 96.6E - Siding with Black Ferah: Give Recording Device to Black Ferah
-457,Bright Knight,728,,Shadows #5: Shadow Assault,200,https://acportalstorm.com/wiki/Shadow_Assault,Arwic - Isin Dule 33.4N 56.9E - Siding with Isin Dule: Kill 3 Shadow Vortexes 28.0S 96.2E and 28.5S 95.5E - Return to Isin Dule - Asheron's Castle - Emissary of Asheron
-458,Shadow Soldier,727,,Shadows #5: Shadow Assault,200,https://acportalstorm.com/wiki/Shadow_Assault,Tou-Tou - Black Ferah 29.2S 95.8E - Siding with Black Ferah and Ler Rhan: Shadow Captain 28.3S 95.3E - Kill 15 Soldiers and then speak with the Shadow Captain again - Shadows 29.5S 94.2E - Speak to Ler Rhan
-459,Merciful Killer,729,,Shadows #6: Tou-Tou Blockade,200,https://acportalstorm.com/wiki/Tou-Tou_Blockade,Arwic - Isin Dule 33.4N 56.9E - Siding with Isin Dule: Tou-Tou - Shadow Vortex 28.1S 95.5E - Kill 5 towns folk and 10 shadows - Return to Isin Dule
-460,Soul Siphon,730,,Shadows #6: Tou-Tou Blockade,200,https://acportalstorm.com/wiki/Tou-Tou_Blockade,Tou-Tou - Black Ferah 29.2S 95.8E - Siding with Black Ferah and Ler Rhan: Shadow Vortex 28.9S 95.46E - Kill 15 Soldiers inside the dungeon - Return to Black Ferah
-461,Duleing with the Dark,733,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 5-6, Shadows: 0-1): Arwic - Speak twice to Isin Dule 33.4N 56.9E - Siding with Isin Dule: Tou-Tou - Shadows 29.5S 94.2E - Kill 1 Engineer inside - Kill 3 more outside at 27.4S 95.3E and 28.9S 96.1E and 28.3S 96.9E - Return to Isin Dule"
-462,Hero of the Night,736,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 5-6, Shadows: 0-1): Arwic - Speak twice to Isin Dule 33.4N 56.9E - Siding with Isin Dule: Tou-Tou - Shadows 29.5S 94.2E - Kill 1 Engineer inside - Kill 3 more outside at 27.4S 95.3E and 28.9S 96.1E and 28.3S 96.9E - Return to Isin Dule"
-463,Conspirator,735,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 2-4, Shadows: 2-4): Arwic - Speak twice to Isin Dule 33.4N 56.9E - Siding with Isin Dule: Tou-Tou - Shadows 29.5S 94.2E - Kill 1 Engineer inside - Kill 3 more outside at 27.4S 95.3E and 28.9S 96.1E and 28.3S 96.9E - Return to Isin Dule"
-464,Double Agent,732,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 2-4, Shadows: 2-4): Tou-Tou - Ler Rhan 29.5S 94.2E - Siding with Ler Rhan: Shadows 29.5S 94.2E - Get 1 crystal inside - Get 3 more outside at 27.4S 95.3E and 28.9S 96.1E take the first left down and 28.3S 96.9E - Return to Ler Rhan"
-465,The Tou-Tou Terror,731,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 0-1, Shadows: 5-6): Tou-Tou - Ler Rhan 29.5S 94.2E - Siding with Ler Rhan: Shadows 29.5S 94.2E - Get 1 crystal inside - Get 3 more outside at 27.4S 95.3E and 28.9S 96.1E take the first left down and 28.3S 96.9E - Return to Ler Rhan"
-466,Creature of Chaos,734,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 0-1, Shadows: 5-6): Tou-Tou - Ler Rhan 29.5S 94.2E - Siding with Ler Rhan: Shadows 29.5S 94.2E - Get 1 crystal inside - Get 3 more outside at 27.4S 95.3E and 28.9S 96.1E take the first left down and 28.3S 96.9E - Return to Ler Rhan"
-467,Stone Cold Killer,783,Tusk,Tusk: Snow Tusker Leader Tusk Quest,200,https://acportalstorm.com/wiki/Snow_Tusker_Leader_Tusk_Quest,Frozen Valley - Tusker Den 84.3N 6.4W - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
-468,Exploring Archaeologist,720,,Stone Tablet Collecting,200,https://acportalstorm.com/wiki/Stone_Tablet_Collecting,Netfet - Taylarn bint Tulani 22.2S 6.2E - Kill rare spawn Filinuvekta Emissary - Give Large Stone Tablet to Taylarn
-469,Immortal Champion,470,Colo,Colosseum Bosses: Diemos,200,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete 10 full Colosseum wins - Complete Diemos Flagging - Use The Gladiator Diemos statue - Kill boss
-470,Awakened,889,,Enlightenment: 1 time,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 1 time
-471,Enlightened,890,,Enlightenment: 2 times,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 2 times
-472,Illuminated,891,,Enlightenment: 3 times,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 3 times
-473,Transcended,892,,Enlightenment: 4 times,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 4 times
-474,Cosmic Conscious,893,,Enlightenment: 5 times,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 5 times
-475,Cowboy,199,,Levistras: AL League,275,https://acportalstorm.com/wiki/Auroch_League,Levistras only - Participate in Auroch League (retired)
-476,Possessed,852,,Levistras: BL League,275,https://acportalstorm.com/wiki/Banderleague,Levistras only - Participate in Banderling League (retired)
-477,Squire of the Golden Flame,415,,Levistras: CL League,275,https://acportalstorm.com/wiki/Chittick_Chittick_Bang_Bang,Levistras only - Participate in Chittick League (retired)
-478,Ghostbuster,240,,Levistras: Guy the Drudge,275,https://acportalstorm.com/wiki/Guy%27s_Trading,Levistras only - Complete Guy the Drudge's task (retired)
-479,Blood Warrior,426,,Levistras: PK Tournament,275,https://acportalstorm.com/wiki/Player_Killer,Levistras only - Participate in a PK tournament
-480,Reanimator,442,,Levistras: Urenna (Halloween),275,https://acportalstorm.com/wiki/Urenna_the_Unravelled_(NPC),Levistras only - Halloween - Rebuild Urenna with wrappings - Participate in the group battle
-481,2nd Place Lore- Quiz Night,166,,Unavailable,0,,
-482,99 Problems Olthoi Ate,1836,,Unavailable,0,,
-483,AC Veteran,167,,Unavailable,0,,
-484,Accursed,854,,Unavailable,0,,
-485,Aerbax Slayer,575,,Unavailable,0,,
-486,Ain't afraid of no ghost,169,,Unavailable,0,,
-487,Ain't afraid of no ghost!,168,,Unavailable,0,,
-488,Ain't afraid of no ghost..mwahaha!,170,,Unavailable,0,,
-489,Ally of the Council,790,,Unavailable,0,,
-490,Ally of the Lothus,789,,Unavailable,0,,
-491,Always Picked First,833,,Unavailable,0,,
-492,Always Picked Last,834,,Unavailable,0,,
-493,Ankle Biter,171,,Unavailable,0,,
-494,Annoying Furry Talking Animal,172,,Unavailable,0,,
-495,Apprentice Shadow Hunter,414,,Unavailable,0,,
-496,Archer,2,,Unavailable,0,,
-497,Archer Assassin,173,,Unavailable,0,,
-498,Archmage,174,,Unavailable,0,,
-499,Archmage of House Mhoire,698,,Unavailable,0,,
-500,Artisan of the Flame and Light,498,,Unavailable,0,,
-501,Asheron's #1 Fan,800,,Unavailable,0,,
-502,Asheron's Call God,175,,Unavailable,0,,
-503,Asheron's Collect Caller,818,,Unavailable,0,,
-504,Asheron's Savior,491,,Unavailable,0,,
-505,Avatar of Kain,176,,Unavailable,0,,
-506,Azure Assailant,177,,Unavailable,0,,
-507,Baby Bunny Master,178,,Unavailable,0,,
-508,Baron Oddity,179,,Unavailable,0,,
-509,Bathed in Blood,678,,Unavailable,0,,
-510,Beacon of Hope,573,,Unavailable,0,,
-511,Beginning of the End,180,,Unavailable,0,,
-512,Best Melee in DT,181,,Unavailable,0,,
-513,Big Block,182,,Unavailable,0,,
-514,Big Rocx,183,,Unavailable,0,,
-515,Blademaster,3,,Unavailable,0,,
-516,Blood,184,,Unavailable,0,,
-517,Bounty Hunter,185,,Unavailable,0,,
-518,British Tootsie,186,,Unavailable,0,,
-519,Bug Bait,187,,Unavailable,0,,
-520,Bunny Killer,188,,Unavailable,0,,
-521,Can't Follow Directions,807,,Unavailable,0,,
-522,Captivating,813,,Unavailable,0,,
-523,Carebear Stare,189,,Unavailable,0,,
-524,Carraida's Avenger,420,,Unavailable,0,,
-525,Cathedrals Champion,637,,Unavailable,0,,
-526,Certified Ganksta,190,,Unavailable,0,,
-527,Chimaera's Champion,193,,Unavailable,0,,
-528,Chosen of Elysa,424,,Unavailable,0,,
-529,Chosen of Varicci,423,,Unavailable,0,,
-530,Co-Monarch of TheChosen,194,,Unavailable,0,,
-531,Cold Turkey,855,,Unavailable,0,,
-532,Containment Unit,195,,Unavailable,0,,
-533,Controller of Emotions,786,,Unavailable,0,,
-534,Coolest Title Ever!,196,,Unavailable,0,,
-535,Corrosive Soul,197,,Unavailable,0,,
-536,Corruptor Of The Root,874,,Unavailable,0,,
-537,Cow Killer,198,,Unavailable,0,,
-538,Cruel Summer,845,,Unavailable,0,,
-539,Crypt Creeper,538,,Unavailable,0,,
-540,Crystal Lord King,200,,Unavailable,0,,
-541,Cuddly Kitten >^..^<,201,,Unavailable,0,,
-542,Curmudgeon's Friend,202,,Unavailable,0,,
-543,Cursed Adventurer,203,,Unavailable,0,,
-544,Dagger Master,204,,Unavailable,0,,
-545,Dark Sword Lady,205,,Unavailable,0,,
-546,Darktides Finest,206,,Unavailable,0,,
-547,Darktides Most Wanted,207,,Unavailable,0,,
-548,Dead Meat,208,,Unavailable,0,,
-549,Deadly Eggburt,209,,Unavailable,0,,
-550,Death by Default,210,,Unavailable,0,,
-551,Death by Pumpkin,211,,Unavailable,0,,
-552,Death by Sappho,212,,Unavailable,0,,
-553,Death Specialist,213,,Unavailable,0,,
-554,Defender of Mr. P,214,,Unavailable,0,,
-555,Dereth Recruiter,803,,Unavailable,0,,
-556,Dereth's Gladiator,215,,Unavailable,0,,
-557,Dereth's Master Dodger,216,,Unavailable,0,,
-558,Dev Evader,217,,Unavailable,0,,
-559,Dev Killer,218,,Unavailable,0,,
-560,Dev Slayer,219,,Unavailable,0,,
-561,Diplomat,44,,Unavailable,0,,
-562,Dude of DOOM!,223,,Unavailable,0,,
-563,Double Fashion King,220,,Unavailable,0,,
-564,Double Golem Killer,221,,Unavailable,0,,
-565,Double Survival Champion,222,,Unavailable,0,,
-566,Ecto Cooler,224,,Unavailable,0,,
-567,Ecto-Cooler,225,,Unavailable,0,,
-568,Enchanter,4,,Unavailable,0,,
-569,Envoy Slayer,226,,Unavailable,0,,
-570,Escapee Killer,227,,Unavailable,0,,
-571,Evil Toothfairy,228,,Unavailable,0,,
-572,Fan of Asheron,799,,Unavailable,0,,
-573,Fancy Title,229,,Unavailable,0,,
-574,Fashion King,230,,Unavailable,0,,
-575,Fashion Penguin King,231,,Unavailable,0,,
-576,Fashion Queen,232,,Unavailable,0,,
-577,Fashion Victim,233,,Unavailable,0,,
-578,Fearless Fighter,234,,Unavailable,0,,
-579,Flag Boy,235,,Unavailable,0,,
-580,Flower Sniffer,842,,Unavailable,0,,
-581,Follows Directions,806,,Unavailable,0,,
-582,Forever Alone,835,,Unavailable,0,,
-583,Frelorn Slayer,236,,Unavailable,0,,
-584,Friend to Mr. P,237,,Unavailable,0,,
-585,Gangsta Style,238,,Unavailable,0,,
-586,Gangster,239,,Unavailable,0,,
-587,Gimp,241,,Unavailable,0,,
-588,GIMP,404,,Unavailable,0,,
-589,Gimp Goddess,242,,Unavailable,0,,
-590,Gimpy Mage of Might,243,,Unavailable,0,,
-591,Gladiator Champion,244,,Unavailable,0,,
-592,Glowing Archer,245,,Unavailable,0,,
-593,God of the Swordsman,246,,Unavailable,0,,
-594,Golem Killer,247,,Unavailable,0,,
-595,Golem Slayer,248,,Unavailable,0,,
-596,Great Pookie Slayer,249,,Unavailable,0,,
-597,Guardian Angel,250,,Unavailable,0,,
-598,Guardian of Arwic,251,,Unavailable,0,,
-599,Guardian in the Patriarch Raids,627,,Unavailable,0,,
-600,Guardian of Dereth,63,,Unavailable,0,,
-601,Hamster Herder,252,,Unavailable,0,,
-602,Hamster Vitae,253,,Unavailable,0,,
-603,Have Bunnie's Will Travel,254,,Unavailable,0,,
-604,Have Trike Will Babble,255,,Unavailable,0,,
-605,Hide and Seek Specialist,256,,Unavailable,0,,
-606,Historian of the Mhoire Throne,695,,Unavailable,0,,
-607,Hollywood Bud,257,,Unavailable,0,,
-608,Holtburg Survival Champion,258,,Unavailable,0,,
-609,Holtburg's Survivor Champion,259,,Unavailable,0,,
-610,Honorary Burun Scout,579,,Unavailable,0,,
-611,Honorary Pink Eep,260,,Unavailable,0,,
-612,Hungry for Moar,837,,Unavailable,0,,
-613,Hungry Hungry Hippo,261,,Unavailable,0,,
-614,Husband of Lynnie,262,,Unavailable,0,,
-615,Husbands Healer,263,,Unavailable,0,,
-616,I am Big []D [] []/[] []D [] [][],264,,Unavailable,0,,
-617,I Am Darktide,679,,Unavailable,0,,
-618,I Can Haz Title Nao,838,,Unavailable,0,,
-619,I liked dying!,265,,Unavailable,0,,
-620,Jessica <3,266,,Unavailable,0,,
-621,Kazyk Ri's Bane,640,,Unavailable,0,,
-622,Kazyk Ri's Nemesis,643,,Unavailable,0,,
-623,Keeper of Dereth,79,,Unavailable,0,,
-624,Killcrane's Ally,413,,Unavailable,0,,
-625,Killer Among Shadows,875,,Unavailable,0,,
-626,King of all that is Pumpkin,267,,Unavailable,0,,
-627,King of Caul,268,,Unavailable,0,,
-628,King of Darktide,269,,Unavailable,0,,
-629,King of Pierce Diggys,270,,Unavailable,0,,
-630,Knight of the Golden Flame,416,,Unavailable,0,,
-631,Knight of the Mhoire Throne,694,,Unavailable,0,,
-632,Knight of the Northeast Tower,690,,Unavailable,0,,
-633,Knight of the Whispering Blade,417,,Unavailable,0,,
-634,Knight of the Windmill,503,,Unavailable,0,,
-635,Knight Of Thorns,869,,Unavailable,0,,
-636,Knight Rider,271,,Unavailable,0,,
-637,Lady of the Four Towers,272,,Unavailable,0,,
-638,Lange Gang,273,,Unavailable,0,,
-639,Last Man Standing,894,,Unavailable,0,,
-640,Level Master,274,,Unavailable,0,,
-641,Leviathan,275,,Unavailable,0,,
-642,Leviathan Slayer,276,,Unavailable,0,,
-643,Libe Events Manager,277,,Unavailable,0,,
-644,Life Mage,5,,Unavailable,0,,
-645,Life Preserver,278,,Unavailable,0,,
-646,Likable,812,,Unavailable,0,,
-647,Likes Ulgrim,811,,Unavailable,0,,
-648,Likes Where This Is Going,810,,Unavailable,0,,
-649,Live Event Coordinator,279,,Unavailable,0,,
-650,Live Events Manager,280,,Unavailable,0,,
-651,Live Op Coordinator,281,,Unavailable,0,,
-652,Lord of Dark Dreams,741,,Unavailable,0,,
-653,Lore 2nd Place Quiz Night,283,,Unavailable,0,,
-654,Lore Champion - Quiz Night,284,,Unavailable,0,,
-655,Lore Champion Quiz Night,285,,Unavailable,0,,
-656,Lore Master,286,,Unavailable,0,,
-657,Lore Master - Quiz Night,288,,Unavailable,0,,
-658,Lore Master 2nd Place,289,,Unavailable,0,,
-659,Lore Master of Staves,290,,Unavailable,0,,
-660,Lore Master Quiz Night,287,,Unavailable,0,,
-661,Lore- 2nd Place,282,,Unavailable,0,,
-662,Lothus Servitor,788,,Unavailable,0,,
-663,Lots of Vitae,291,,Unavailable,0,,
-664,Lucky Lady,292,,Unavailable,0,,
-665,Mage Of Thorns,871,,Unavailable,0,,
-666,Mages Assitant,294,,Unavailable,0,,
-667,Marked by Bacon,827,,Unavailable,0,,
-668,Marked by Fame,825,,Unavailable,0,,
-669,Marked by Fate,824,,Unavailable,0,,
-670,Marked by Glamour,826,,Unavailable,0,,
-671,Marked by Luck,823,,Unavailable,0,,
-672,Marked by the Patriarchs,630,,Unavailable,0,,
-673,Master of Ceremony,814,,Unavailable,0,,
-674,Master Tinkerer,295,,Unavailable,0,,
-675,Mayor of Ayan Baqur,296,,Unavailable,0,,
-676,Minty Fresh,297,,Unavailable,0,,
-677,Misunderstood Pengy,298,,Unavailable,0,,
-678,Mom,299,,Unavailable,0,,
-679,Mommy Pengy,300,,Unavailable,0,,
-680,Mosswart Ally,301,,Unavailable,0,,
-681,Mr. Nice Guy,302,,Unavailable,0,,
-682,Murderer,303,,Unavailable,0,,
-683,Murderer !,304,,Unavailable,0,,
-684,Newby Title,305,,Unavailable,0,,
-685,Nice Blue Lady,306,,Unavailable,0,,
-686,Nivinizk's Bane,641,,Unavailable,0,,
-687,Nivinizk's Nemesis,644,,Unavailable,0,,
-688,Null Title,546,,Unavailable,0,,
-689,Number one draft pick,307,,Unavailable,0,,
-690,Old School,308,,Unavailable,0,,
-691,Oolutanga's Bane,521,,Unavailable,0,,
-692,Paradox Slayer,309,,Unavailable,0,,
-693,Patron Saint of the Lifestone,310,,Unavailable,0,,
-694,Peacebear,311,,Unavailable,0,,
-695,Penguin Killer,312,,Unavailable,0,,
-696,Penguin Plunge,841,,Unavailable,0,,
-697,PK Queen,318,,Unavailable,0,,
-698,Playa Killa King,319,,Unavailable,0,,
-699,Player Slayer,677,,Unavailable,0,,
-700,Pokemon Slayer,320,,Unavailable,0,,
-701,Portal Ritualist,474,,Unavailable,0,,
-702,Portal Stormer,820,,Unavailable,0,,
-703,Pretty Pumpkin,321,,Unavailable,0,,
-704,Prisoner,322,,Unavailable,0,,
-705,Protector of the Cheese,323,,Unavailable,0,,
-706,Proton Pack,324,,Unavailable,0,,
-707,Pumpkin Lord,850,,Unavailable,0,,
-708,Pumpkin Slayer,325,,Unavailable,0,,
-709,Pumpkin Stalker,326,,Unavailable,0,,
-710,Purple Pengy,327,,Unavailable,0,,
-711,Puzzlemaster,828,,Unavailable,0,,
-712,Pwner of Newbs,328,,Unavailable,0,,
-713,Queen of Brats,329,,Unavailable,0,,
-714,Queen's Crafter,331,,Unavailable,0,,
-715,Queen's Pack Rat,332,,Unavailable,0,,
-716,Queen's Packrat,333,,Unavailable,0,,
-717,Queen's Tinker,334,,Unavailable,0,,
-718,Queens Crafter,330,,Unavailable,0,,
-719,Rawr!,335,,Unavailable,0,,
-720,Rayne's Mage Pet,336,,Unavailable,0,,
-721,Reggae Renegade,337,,Unavailable,0,,
-722,Riddle Ravager,829,,Unavailable,0,,
-723,Ring Bearer,338,,Unavailable,0,,
-724,Ring ring ring.....Bananaphone,339,,Unavailable,0,,
-725,Road Kill,340,,Unavailable,0,,
-726,Road Warrior,815,,Unavailable,0,,
-727,Rolling Death Destroyer,341,,Unavailable,0,,
-728,Royal Chef,342,,Unavailable,0,,
-729,Royal Cook,343,,Unavailable,0,,
-730,Rugged,344,,Unavailable,0,,
-731,Runs Through Sprinklers,847,,Unavailable,0,,
-732,Rynthid Ravager,787,,Unavailable,0,,
-733,Sanitation Engineer,345,,Unavailable,0,,
-734,Scarecrow Slayer,346,,Unavailable,0,,
-735,Scary Pumkpkin Dominator,347,,Unavailable,0,,
-736,Scary Pumpkin Slayer,348,,Unavailable,0,,
-737,Seeker of Asheron,472,,Unavailable,0,,
-738,Seeker of Castle Mhoire,699,,Unavailable,0,,
-739,Seeker of Torgluuk,473,,Unavailable,0,,
-740,Selfless Soul,683,,Unavailable,0,,
-741,Sentinal,349,,Unavailable,0,,
-742,Sentry,350,,Unavailable,0,,
-743,Shadow Child,351,,Unavailable,0,,
-744,Shadow Hunter,352,,Unavailable,0,,
-745,Shadow Slayer,353,,Unavailable,0,,
-746,Slayer of the Great Pookie,354,,Unavailable,0,,
-747,Slimer,355,,Unavailable,0,,
-748,Snazzy Dresser,356,,Unavailable,0,,
-749,Snowbunny,839,,Unavailable,0,,
-750,Soul Man,357,,Unavailable,0,,
-751,Sorcerer,6,,Unavailable,0,,
-752,Spooky Title,358,,Unavailable,0,,
-753,Springs Into Action,843,,Unavailable,0,,
-754,Staff Masta,359,,Unavailable,0,,
-755,Staypuffed Mallow Girl,360,,Unavailable,0,,
-756,Steward of Castle Mhoire,700,,Unavailable,0,,
-757,Super Gimped Adventurer,361,,Unavailable,0,,
-758,Supercalifragilisticexpialidocious,362,,Unavailable,0,,
-759,Superman,363,,Unavailable,0,,
-760,Survivor Champion,364,,Unavailable,0,,
-761,Sword Scholar,365,,Unavailable,0,,
-762,Swordbearer of House Mhoire,697,,Unavailable,0,,
-763,Tactical Aid,664,,Unavailable,0,,
-764,Tactical Fantastical,666,,Unavailable,0,,
-765,Teh Newb,366,,Unavailable,0,,
-766,Teh Saint,367,,Unavailable,0,,
-767,Testing Guy,368,,Unavailable,0,,
-768,The Bait,369,,Unavailable,0,,
-769,The Black Spear,418,,Unavailable,0,,
-770,The Chosen King,370,,Unavailable,0,,
-771,The Come Back Kid,371,,Unavailable,0,,
-772,The Dark Dreamwalker,743,,Unavailable,0,,
-773,The Dreamslayer,745,,Unavailable,0,,
-774,The Focused,802,,Unavailable,0,,
-775,The Forgotten,372,,Unavailable,0,,
-776,The Gimped,373,,Unavailable,0,,
-777,The Great and Powerful,374,,Unavailable,0,,
-778,The Half-Fox,375,,Unavailable,0,,
-779,The Inquisitive,819,,Unavailable,0,,
-780,The Knowledgeable,848,,Unavailable,0,,
-781,The Nightmare Lord,738,,Unavailable,0,,
-782,The Nightmare Mage,739,,Unavailable,0,,
-783,The Nightmare Stalker,746,,Unavailable,0,,
-784,The Noob,376,,Unavailable,0,,
-785,The Purple Fez,377,,Unavailable,0,,
-786,The Pwnerer,378,,Unavailable,0,,
-787,The Restless,753,,Unavailable,0,,
-788,The Thought Spiral,748,,Unavailable,0,,
-789,The Twisted Weaver,740,,Unavailable,0,,
-790,The Unknown Pk,379,,Unavailable,0,,
-791,Tomb Raider,539,,Unavailable,0,,
-792,Torgluuk's Liberator,489,,Unavailable,0,,
-793,Tough Guy,382,,Unavailable,0,,
-794,Tracker Guardian,547,,Unavailable,0,,
-795,Tradesman of Auberean,383,,Unavailable,0,,
-796,Treasure Hunter,384,,Unavailable,0,,
-797,Tremendous Monouga Master,385,,Unavailable,0,,
-798,Triple Golem Killer,386,,Unavailable,0,,
-799,True Tactician,665,,Unavailable,0,,
-800,Turbine Slayer,387,,Unavailable,0,,
-801,Twins of Terror,388,,Unavailable,0,,
-802,Uberest Noob on Frostfell,389,,Unavailable,0,,
-803,Ulgrim's Happy Hundredth,599,,Unavailable,0,,
-804,Underworld-Thugg,390,,Unavailable,0,,
-805,Unwitting Participant,556,,Unavailable,0,,
-806,Vagabond,7,,Unavailable,0,,
-807,Viamontian Slayer,391,,Unavailable,0,,
-808,Viridian Dreamer,863,,Unavailable,0,,
-809,Viridian Knight,865,,Unavailable,0,,
-810,Viridian Lord,864,,Unavailable,0,,
-811,Viridian Purifier,868,,Unavailable,0,,
-812,Viridian Slayer,867,,Unavailable,0,,
-813,Viridian Stalker,866,,Unavailable,0,,
-814,Vitae King,392,,Unavailable,0,,
-815,Vitae Vixen,393,,Unavailable,0,,
-816,Vixen of Vitae,394,,Unavailable,0,,
-817,Wabbit Bait,395,,Unavailable,0,,
-818,Wabbit Killer,396,,Unavailable,0,,
-819,Wandering Fool,397,,Unavailable,0,,
-820,Wanga Fighter,507,,Unavailable,0,,
-821,Warden in the Patriarch Raids,628,,Unavailable,0,,
-822,Warden of Dereth,151,,Unavailable,0,,
-823,Warden's Assistant,398,,Unavailable,0,,
-824,Wardens Assistant,405,,Unavailable,0,,
-825,Wardens Thug,399,,Unavailable,0,,
-826,Warlord of Dereth,153,,Unavailable,0,,
-827,Warrior,8,,Unavailable,0,,
-828,Wimp,400,,Unavailable,0,,
-829,Wolfpack Crafter,401,,Unavailable,0,,
-830,Wonder Woman,402,,Unavailable,0,,
-831,Ya got served,403,,Unavailable,0,,
+257,Repugnant Eater Ripper,115,KT,KT: Repugnant Eater Kill Task,100,https://acportalstorm.com/wiki/Repugnant_Eater_Kill_Task,Eastwatch - Xun Yu 90.2N 43.1W - Kill 50 Repugnant Eaters
+258,No Cage Can Hold Me,686,,Ries Woron's Story,100,https://acportalstorm.com/wiki/Ries_Woron's_Story,Baishi - Ries Woron 49.5S 62.7E - Free a Trapped Townsperson
+259,Sezzherei Slayer,119,,Sezzherei's Lair Quest,100,https://acportalstorm.com/wiki/Sezzherei's_Lair_Quest,Kill Fallen creatures on Singularity Caul - Loot a Sezzherei's Lair Portal Gem - Kill Sezzherei and loot token - Give to any Agent of the Arcanum
+260,Supreme Bunny Master,406,,Son of Pooky Quest,100,https://acportalstorm.com/wiki/Son_of_Pooky_Quest,Ayan Baqur - White Rabbit Cave 45.6S 87.0W - Kill the White Rabbit and loot a Son of Pooky's Den Portal Gem - Use Gem - Kill Son of Pooky - Loot White Rabbit's Foot from chest (lowish droprate) - Lytelthorpe - Asbel Domain 2.1N 50.5E - Give to Larry the Rabbit Master 1.9N 41.6E
+261,Fire of the Tanada,667,,Tanada House of Fire Quest,100,https://acportalstorm.com/wiki/Tanada_House_of_Fire_Quest,Hebian-To - Tanada Sajo 38.9S 83.3E - Baishi - Chamber of Scrolls 52.2S 63.2E
+262,Chosen of the Rift,530,KT,KT: Tenebrous Rift Kill Task,100,https://acportalstorm.com/wiki/Tenebrous_Rift_Kill_Task,Singularity Caul - Solange 97.4S 94.6W - Kill 350 Tenebrous Rift
+263,Miner,92,,Town Founder: Kreavon,100,https://acportalstorm.com/wiki/Town_Founder,Wai Jhou - Kreavon 62.3S 51.4W - Give 200 bags of salvage to Kreavon
+264,Timberman,142,,Town Founder: Caelis Renning,100,https://acportalstorm.com/wiki/Town_Founder,Wai Jhou - Caelis Renning 62.3S 51.4W - Give 200 bags of salvage to Caelis Renning
+265,Trapper,144,,Town Founder: Aun Teverea,100,https://acportalstorm.com/wiki/Town_Founder,Wai Jhou - Aun Teverea 62.3S 51.4W - Give 200 bags of salvage to Aun Teverea
+266,Man-At-Arms Thrasher,88,KT,KT: Viamontian Man-at-Arms Kill Task,100,https://acportalstorm.com/wiki/Viamontian_Man-at-Arms_Kill_Task,Marae Lassel - Robert Gutsmasher 43.9N 73.9W - Kill 50 Viamontian Man-at-Arms
+267,Master of the Hunt,549,Carenzi,Carenzi Plague: Tainted,105,https://acportalstorm.com/wiki/Carenzi_Plague,Bluespire - Aun Teriona 41.3N 75.3W - Singularity Caul - Kill Tainted Carenzi until they drop a liver - Use 13 livers within 2 hours
+268,Keerik Killer,80,CoK,Clutch of Kings: Keerik,105,https://acportalstorm.com/wiki/Clutch_of_Kings_(Keerik),Obsidian Rim - Watcher of the Dead 51.4S 67.9W - Jump down and take Northeast exit - Kill boss and loot hide from ground - Cragstone - Guard Sorchia 25.7N 48.9E
+269,Rehir Killer,114,CoK,Clutch of Kings: Rehir,105,https://acportalstorm.com/wiki/Clutch_of_Kings_(Rehir),Mansion to Portal to Kivik Lir's Temple - Watcher of the Dead 38.1S 47.3W - Jump down and take West ramp down - Kill boss and loot hide from ground - Cragstone - Guard Lo Pan 25.7N 48.8E
+270,Champion of the Sea,589,Blight,Ritual of the Blight: Ayan Baqur,105,https://acportalstorm.com/wiki/Ritual_of_the_Blight,Mayoi - Captain Warner 61.4S 82.5E - Ayan Baqur - Blighted Grimy Moarsman Tunnels 60.9S 89.8W - Kill boss and loot Tattered Moarseman Rituation - Give to Captain Warner
+271,Champion of the Hive,468,Colo,Colosseum Bosses: Demon Swarm Matron,110,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete Arena 8 or higher - Use Demon Swarm Matron statue - Kill boss
+272,Ravenous Killer,111,Jaw,Jaw: Ravenous Eater Jaw Quest,110,https://acportalstorm.com/wiki/Ravenous_Eater_Jaw_Quest,Westwatch - Clemenza 72.7N 73.4W - Eastwatch - Ravenous Vault 92.8N 48.9W
+273,Servant of The Deep,118,,The Deep (Vissidal),120,https://acportalstorm.com/wiki/The_Deep_(Vissidal),Vissidal - Amorphous Haze 77.8N 67.1E - Hand a Gold Shallows Shredder Fin to The Deep
+274,Tukora Lieutenant Trouncer,145,KT,KT: Tukora Lieutenant Kill Task,120,https://acportalstorm.com/wiki/Tukora_Lieutenant_Kill_Task,Eastwatch - Claire Artmad 90.2N 43.1W - Kill 250 Tukora Lieutenants
+275,Ruuk Ally,471,Falatacot,Falatacot Medallion (Extreme),121,https://acportalstorm.com/wiki/Falatacot_Medallion_(Extreme),Bur - Gruuk'lar - Southern Catacombs - Deep Guruk Caverns - Kill boss and loot Falatacot Medallion
+276,Master of the Sea,590,Blight,Ritual of the Blight: Eastwatch,125,https://acportalstorm.com/wiki/Ritual_of_the_Blight,Mayoi - Captain Warner 61.4S 82.5E - Eastwatch - Blighted Verdant Moarsman Tunnels 92.7N 42.3W - Kill boss and loot Tattered Moarseman Rituation - Give to Captain Warner
+277,Honorary Shadow Hunter,159,,Shadowfire Stone Quest,125,https://acportalstorm.com/wiki/Shadowfire_Stone_Quest,Xarabydun - Ciandra Arcanum Alchemist 41.8S 15.8E - Nedysia Castle - Empyrean Workshop at 66.9N 15.9E - Cragstone - Haliana portal 26.2N 46.3E - Shade of Farelaith at 74.3N 58.6E - Obtain Shadowfire stone - Wai Jhou - Give stone to Sarkin Killcrane 61.9S 51.5W
+278,Insatiable Slayer,74,Jaw,Jaw: Insatiable Eater Jaw Quest,125,https://acportalstorm.com/wiki/Insatiable_Eater_Jaw_Quest,Westwatch - Clemenza 72.7N 73.4W - Fiun Outpost - Insatiable Vault at 97.6N 48.0W - Loot jaw near end of dungeon
+279,Prodigal Tusker Slayer,519,Tusk,Tusk: Aerbax's Prodigal Tusker,130,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Tusker,Oolutanga's Refuge - Whispering Caverns 14.9S 86.0E - Kill Dark Bobo and loot title token - Oolatanga's Refuge - Jilna Fullgood 2.0N 95.6E
+280,Warrior of the Past,560,,Black Death Catacombs Quiddity Seed,130,https://acportalstorm.com/wiki/Black_Death_Catacombs_Quiddity_Seed_Quest,Eastham - Asheron's Island 17.9N 64.3E - Emissary of Asheron - (#1) Strange Device 21.9N 19.0E - (#2) Cragstone - Isle of Tears 25.2N 49.9E - Underground City 21.3N 53.9E (#3) Strange Device 21.2N 69.2E (#4) Underground City Again (#5) Hebian-To - Arrowdale Cottages portal 41.4S 82.1E - Black Death Catacombs 59.9N 71.2E
+281,Crystalline Adventurer,668,Crag,Crystalline Adventurer: 70+,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Crystalline Dungeon 70+ - Kill Aggregate Crystalline Wisp - Give Aggregate Crystalline Shard to Tokashi Ando 14.6S 62.0W 
+282,Frozen Fighter,671,Crag,Crystalline Adventurer: 90+,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Icy Crystalline Dungeon 90+ - Kill Intense Aggregate Crystalline Wisp - Give Large Aggregate Crystalline Shard to Tokashi Ando 14.6S 62.0W 
+283,Burning Soul,670,Crag,Crystalline Adventurer: 110+,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Fiery Crystalline Dungeon 110+ - Kill Intense Aggregate Crystalline Wisp - Give Giant Aggregate Crystalline Shard to Tokashi Ando 14.6S 62.0W 
+284,Beginning's End,681,Crag,Crystalline Adventurer: 130+,130,https://acportalstorm.com/wiki/Crystalline_Adventurer,Access Crystaline Crag from Resonant Portal 14.6S 62.2W - Crystalline Portal 17.0S 61.2W - Progenitors Lair 130+ - Kill 3 Progenitors - Give Progenitor Ingot to Tokashi Ando 14.6S 62.0W 
+285,Gaerlan Slayer,57,Gaerlan,Gaerlan's Citadel (Extreme),130,https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Extreme),Arwic - Sennon Valley Retreat 32.9N 59.4E - Frost Guardian Lair 52.8N 62.4E - Speak with Asheron's Platinum Golem 57.8N 48.4E - Lightning Zigguratat 57.1N 47.8E - Proving Grounds - Citadel Library - Gaerlan's Inner Sanctum - Defeat Gaerlan
+286,Invader's Bane,75,GW,Glenden Wood Invasion (High),130,https://acportalstorm.com/wiki/Glenden_Wood_Invasion_(High),Glenden Wood - Kill 3 Portal Pillars 27.2N 27.9E - Take Red Portal - Glenden Wood - Captain Anrayl 29.9N 27.3E 
+287,Hope of the Past,572,,Ithaenc Quiddity Seed Quest,130,https://acportalstorm.com/wiki/Ithaenc_Quiddity_Seed_Quest,Eastham - Asheron's Island 17.9N 64.3E - Emissary of Asheron - Fort Tethana - Aun Aemaua 1.6N 71.7W - MacNiall's Freehold - Ithaenc Quiddity Seed 82.7S 93.4E
+288,Naughty Skeleton Snuffer,98,KT,KT: Naughty Skeleton Kill Task,130,https://acportalstorm.com/wiki/Naughty_Skeleton_Kill_Task,Eastwatch - Taku Yukio 90.3N 43.1W - Kill 100 Naughty Skeletons
+289,Friend of the Frostglaive,440,,The Black Spear Ice Totem: Kalakh,130,https://acportalstorm.com/wiki/The_Black_Spear_Ice_Totem,Shattered Outlands - Kalakh 94.0N 45.9W - Temple of the Black Spear 95.3N 52.2W - Give Black Spear Ice Totem to Kalakh
+290,Squire of New Viamont,441,,The Black Spear Ice Totem: Arialle,130,https://acportalstorm.com/wiki/The_Black_Spear_Ice_Totem,Shattered Outlands - Arialle du Bellenesse 93.2N 48.2W - Temple of the Black Spear 95.3N 52.2W - Give Black Spear Ice Totem to Arialle du Bellenesse
+291,Shadow Stalker,120,,The Temple of Xik Minru,130,https://acportalstorm.com/wiki/The_Temple_of_Xik_Minru,Holtburg - Buy Amber Gem from Monyra the Jeweler 42.6N 33.9E - Arwic - Branwyn 29.1N 57.9E - Vissidal Island - Temple of Xik Minru 73.3N 69.0E - Give Amber Gem to Causeway Sentinel - Wai Jhou - Give Book of Xik Minru to Sarkin Killcrane 61.9S 51.5W
+292,Wicked Skeleton Walloper,155,KT,KT: Wicked Skeleton Kill Task,130,https://acportalstorm.com/wiki/Wicked_Skeleton_Kill_Task,Eastwatch - Ruqaya al Mubarak 90.3N 43.1W - Kill 100 Wicked Skeletons
+293,Grave Stalker,536,,DeathTail Quest,135,https://acportalstorm.com/wiki/DeathTail_Quest,Graveyard - Lo Shoen 65.3S 43.4W - Give Lo Shoen's Rat Bait to Rat Burrow - Kill DeathTail
+294,Crypt Rat,535,KT,KT: Grave Rat Kill Task,135,https://acportalstorm.com/wiki/Grave_Rat_Kill_Task,Graveyard - Lo Shoen 65.3S 43.4W - Kill 100 Grave Rats during daytime
+295,Rift Shifter,531,KT,KT: Umbral Rift Kill Task,140,https://acportalstorm.com/wiki/Umbral_Rift_Kill_Task,Singularity Caul - Solange 97.4S 94.6W - Kill 30 Umbral Rifts - Rare title 10% chance
+296,Rift Walker,532,KT,KT: Umbral Rift Kill Task,140,https://acportalstorm.com/wiki/Umbral_Rift_Kill_Task,Singularity Caul - Solange 97.4S 94.6W - Kill 30 Umbral Rifts
+297,Protector of the Past,559,,Knorr Quiddity Seed Quest,145,https://acportalstorm.com/wiki/Knorr_Quiddity_Seed_Quest,Stonehold - Give an M note to Olcris Nuhmudira's Student 68.7N 21.6W - Use Gem - Eastham - Asheron's Island 17.9N 64.3E - Hand in Empyrean Spherule to Emissary of Asheron
+298,Paradox-touched Queenslayer,517,,Aerbax's Prodigal Olthoi,150,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Olthoi,Olthoi North - Loot a Coruscating Olthoi Scent Gland - Ward Guardian Cave 43.1N 55.1E - Kill Guardian - Arwic - Jeweled Thorn Estates 32.9N 59.4E - Black Death Catacombs 59.9N 71.2E - Kill Queen - Hand Queens head to Ethan Wintermaine 43.8N 54.9E
+299,One for All,688,,Aetherium Power Core Collection,150,https://acportalstorm.com/wiki/Aetherium_Power_Core_Collection,Direlands Gear Knight Invasion Area - T'ing Douzen 12.3S 75.0W - Iron Blade Overseer rare spawn near 11.2S 75.5W or 10.6S 74.7W - Give Shattered Aetherium Core Sample to T'ing Douzen
+300,Amelia's Caretaker,518,,Amelia's Lost Toys,150,https://acportalstorm.com/wiki/Amelia's_Lost_Toys,Graveyard - Amelia 64.8S 43.8W - Return all 6 toys to Amelia
+301,Gear Knight Assassin,703,,Atamarr Tasks: Iron Blade Warmaster,150,https://acportalstorm.com/wiki/Atamarr_Tasks,Xarabydun - Atamarr 41.7S 15.8E - Kill Iron Blade Warmaster 10.4S 75.2W
+302,Gear Knight Defender,710,,Atamarr Tasks: Bronze Gauntlet Knight,150,https://acportalstorm.com/wiki/Atamarr_Tasks,Xarabydun - Atamarr 41.7S 15.8E - Kill General Tarkaris 10.4S 75.2W
+303,Gear Knight Emissary,705,,Atamarr Tasks: Silver Scope Spymaster,150,https://acportalstorm.com/wiki/Atamarr_Tasks,Xarabydun - Atamarr 41.7S 15.8E - Talk to Silver Scope Spymaster 10.4S 75.2W - Gear Hunter Dungeon 7.2S 75.0W - Loot Silver Scope Spymaster Apostate Message Shard from ground - Back to Silver Scope Spymaster
+304,Gear Knight Recruiter,704,,Atamarr Tasks: Copper Cog Craftsmaster,150,https://acportalstorm.com/wiki/Atamarr_Tasks,Xarabydun - Atamarr 41.7S 15.8E - Talk to Copper Cog Craftsmaster 10.4S 75.2W - Gear Hunter Dungeon 7.2S 75.0W - Kill Apostate Overseer - Give Apostate Overseer's Mask to Copper Cog Craftsmaster
+305,Shellfish Hater,123,KT,KT: Benek Niffis Kill Task,150,https://acportalstorm.com/wiki/Benek_Niffis_Kill_Task,Vissidal - Colista Fluress 77.8N 67.1E - Kill 50 Benek Niffis
+306,Burun Liberator,490,,Burun Liberator,150,https://acportalstorm.com/wiki/Burun_Liberator,Bur - Scout Leader Tmauruk - Southern Catacombs - Use the Rock - Lower Catacombs - Find Shaman - Get Link of a Falatacot Chain - Hand in Link of a Falatacot Chain to Tmauruk
+307,Mad Cow Slayer,293,Colo,Colosseum Bosses: Mad Cow,150,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Give Colosseum Master a Tipped Pack Cow - Use Very Mad Cow statue - Kill boss
+308,Pumpkin Throne Usurper,544,Colo,Colosseum Bosses: Pumpkin King,150,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Give Colosseum Master a Blue Blanket - Use Pumpkin King statue - Kill boss
+309,Thunder Chicken Slayer,380,Colo,Colosseum Bosses: Thunder Chicken,150,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Give Colosseum Master an Egg - Use Thunder Chicken statue - Kill boss
+310,Tracker,143,KT,KT: Coral Golem Viceroy Kill Task,150,https://acportalstorm.com/wiki/Coral_Golem_Viceroy_Kill_Task,Ayan Baqur - Aun Aukherea 60.8S 88.0W - Kill 5 Golem Viceroy - Talk with NPC for item - Start task again - Kill 5 more Golem Viceroy - Talk with NPC for title
+311,Loss Prevention,859,Seasonal,Seasonal: Drudge Present Raids,150,https://acportalstorm.com/wiki/Drudge_Present_Raids,Seasonal only - Watch for green global announcement of location Yaraq Sanamar or Silyun - Protect the presents - Loot large single present
+312,Plucker of Eyes,600,,Eye of T'thuun Quest,150,https://acportalstorm.com/wiki/Eye_of_T'thuun_Quest,Greenspire - Tamara du Cinghalle 43.2N 67.1W - Timaru - East of Tall Trees 51.8N 72.7W - Kill 50 tentacles - Double click on the Eye-covered Tentacles of T'thuun to retrieve a Plucked Eye of T'thuun - Return to Tamara
+313,Gaerlan Slayer,57,Gaerlan,Gaerlan's Citadel (Uber),150,https://acportalstorm.com/wiki/Gaerlan's_Citadel_(Uber),Arwic - Sennon Valley Retreat 32.9N 59.4E - Frost Guardian Lair 52.8N 62.4E - Speak with Asheron's Platinum Golem 57.8N 48.4E - Lightning Zigguratat 57.1N 47.8E - Proving Grounds - Citadel Library - Gaerlan's Inner Sanctum - Defeat Gaerlan
+314,Present Protector,857,Seasonal,Seasonal: Gurog Present Raids,150,https://acportalstorm.com/wiki/Gurog_Present_Raids,Seasonal only - Watch for green global announcement of location Tufa Al-Jalima Samsur Khayyaban Xarabydun - Protect the presents - Loot large single present
+315,Monster Killer,480,KT,KT: Guruk Monstrosity Kill Task,150,https://acportalstorm.com/wiki/Guruk_Monstrosity_Kill_Task,Bur - Borsh - Kill 10 Guruk Monstrosities
+316,Bosh Bosh Kibosh,481,,Killing Bosh Bosh,150,https://acportalstorm.com/wiki/Killing_Bosh_Bosh,Bur - Kuuru - Southern Catacombs - Deep Guruk Caverns - Kill Bosh Bosh and loot token - Return to Kuuru
+317,Lady Tairla's Champion,505,,Lady Mhoire Quest,150,https://acportalstorm.com/wiki/Lady_Mhoire_Quest,Graveyard - Kill Lady Tarla Mhoire rare spawn - Speak to the NPC ghost of Lady Tairla Mhoire
+318,Mosswart Worshipper Whipper,95,KT,KT: Mosswart Worshipper Kill Task,150,https://acportalstorm.com/wiki/Mosswart_Worshipper_Kill_Task,Eastwatch - Orfeo Orlando 90.2N 43.1W - Kill 175 Mosswart Worshippers
+319,Mottled Carenzi Mauler,96,KT,KT: Mottled Carenzi Kill Task,150,https://acportalstorm.com/wiki/Mottled_Carenzi_Kill_Task,Candeth Keep - Grania the Bold 87.6S 67.4W - Kill 50 Mottled Carenzis
+320,Moarsman Defiler,93,KT,KT: Mucky Moarsman Kill Task,150,https://acportalstorm.com/wiki/Mucky_Moarsman_Kill_Task,Vissidal - Algar Oreksun 77.8N 67.1E - Kill 50 Mucky Moarsman
+321,Mukkir Masher,410,,Mukkir Nest Quest,150,https://acportalstorm.com/wiki/Mukkir_Nest_Quest,Mukkir Nest Portal Gem (Dropped by Royal Inquisitors and Barbaric Mukkirs or buy from Colosseum) - Kill boss - Qalaba'r - Qath al-Haddash 74.2S 19.2E
+322,Olthoi Ripper Reducer,99,KT,KT: Olthoi Ripper Kill Task,150,https://acportalstorm.com/wiki/Olthoi_Ripper_Kill_Task,Eastwatch - Marcello 90.2N 43.1W - Kill 250 Olthoi Rippers
+323,Platinum Prowler,103,KT,KT: Platinum Golem Mountain King,150,https://acportalstorm.com/wiki/Platinum_Golem_Mountain_King_Kill_Task,Ayan Baqur - Aun Khekierea 60.8S 88.0W - Kill 5 Golem Mountain King - Talk with NPC for item - Start task again - Kill 5 more Golem Mountain King - Talk with NPC for title
+324,Pet Savior,776,,Protecting Picketed Pets,150,https://acportalstorm.com/wiki/Protecting_Picketed_Pets,Danby's Outpost - Colton Reeyan 23.5N 28.8W - Colton Reeyan's Sanctuary 22.9N 37.0W
+325,Warden of the Burning Wood,601,,Ranger Lord Mhoire,150,https://acportalstorm.com/wiki/Ranger_Lord_Mhoire,Graveyard - Find Corrupted Pyre Oak rare spawn 66.5S 44.8W - Speak to Ranger Lord Grymar Mhoire and loot Burnt and Twisted Stump
+326,Bane of the Remoran,24,KT,KT: Remoran Sea Raptor Kill Task,150,https://acportalstorm.com/wiki/Remoran_Sea_Raptor_Kill_Task,Vissidal - Peng-Ya 77.8N 67.1E - Kill 50 Remoran Sea Raptors
+327,Healer Ritualist,763,,Researching the Lost Rituals,150,https://acportalstorm.com/wiki/Researching_the_Lost_Rituals,Cragstone - Empyrean Researchers 26.2N 47.1E - Complete all 4 tasks
+328,Hero of the Golden Flame,430,,Shadow Aspect of Grael Quest,150,https://acportalstorm.com/wiki/Shadow_Aspect_of_Grael_Quest,Sanctuary - Abbess Zik'Lir 83.5S 97.2E - Falatacot Vault 74.7S 98.2E - Shadow-Infested Black Spear Temple 76.8S 93.8E - Give Shard of the Black Spear to Abbess Zik'Lir
+329,Shallows Shark Nemesis,121,KT,KT: Shallows Gorger Kill Task,150,https://acportalstorm.com/wiki/Shallows_Gorger_Kill_Task,Vissidal - Dayla Bint Kazm 77.8N 67.1E - Kill 50 Shallows Gorgers
+330,Arwic Noble,624,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Arwic Invoking Stones to Royal Scout
+331,Archaeologist,603,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Southern Osteth Invoking Stones to Royal Scout
+332,Arwician,611,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Arwic Invoking Stones to Royal Scout
+333,Asheron's Militia,638,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Asheron's Island Invoking Stones to Royal Scout
+334,Defender of Silyun,605,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Silyun Invoking Stones to Royal Scout
+335,Desert Warrior,612,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Ayan Baqur Invoking Stones to Royal Scout
+336,Guardian of the Keep,608,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Candeth Keep Invoking Stones to Royal Scout
+337,Hero of Woe,604,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Isle of Tears Invoking Stones to Royal Scout
+338,Mayoi Protector,613,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Mayoi Invoking Stones to Royal Scout
+339,Memorial Champion,606,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Festival Stone of Midsong Invoking Stones to Royal Scout
+340,Thane of Colier,607,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Colier Invoking Stones to Royal Scout
+341,Tough Tough,602,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Tou-Tou Invoking Stones to Royal Scout
+342,Warrior of the Crater Lake,609,Summoning,Summoning T'thuun: 30 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 30 Mount Esper Invoking Stones to Royal Scout
+343,Stone Collector,614,Summoning,Summoning T'thuun: 30 of each Stone,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Turn in 30 of each Invoking Stone - Eastham - Talk to Asheron's Investigator 17.6N 63.5E
+344,Champion Immemorial,619,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Festival Stone of Midsong Invoking Stones to Royal Scout
+345,Colier Miner,620,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Colier Invoking Stones to Royal Scout
+346,Has way too much time,618,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Silyun Invoking Stones to Royal Scout
+347,Hilltop Defender,623,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Asheron's Island Invoking Stones to Royal Scout
+348,Legionnaire,621,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Candeth Keep Invoking Stones to Royal Scout
+349,Rock Hound,616,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Southern Osteth Invoking Stones to Royal Scout
+350,Rock Star,615,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Tou-Tou Invoking Stones to Royal Scout
+351,Samurai,626,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Mayoi Invoking Stones to Royal Scout
+352,Volcanologist,622,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Mount Esper Invoking Stones to Royal Scout
+353,Warrior of Woe,617,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Isle of Tears Invoking Stones to Royal Scout
+354,Zharalim,625,Summoning,Summoning T'thuun: 90 Stones,150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Give 90 Ayan Baqur Invoking Stones to Royal Scout
+355,Dereth's Elite,646,Summoning,Summoning T'thuun: Ritual (Book Drop),150,https://acportalstorm.com/wiki/Summoning_T'thuun,Eastham - Patriarch's Valley 17.6N 63.5E - Complete Summoning of T'thuun Quest
+356,Royal Investigator,506,,The Archivist Quest,150,https://acportalstorm.com/wiki/The_Archivist_Quest,Ayan Baqur - Ennio di Cinghalle 59.6S 87.7W - Chaos Virindi Cave 58.6S 81.5W - Zaikhal - Diyas al-Yat 13.8N 0.1E - Bring the Observations: Harraag (Attuned) to Ennio di Cinghalle
+357,Death Knight,545,Seasonal,Seasonal: Undead Attack on Al-Jalima,150,https://acportalstorm.com/wiki/Undead_Attack_on_Al-Jalima,Al-Jalima - Loot Decaying Zombie Brain Portion - Glenden Wood - Ungrim the Unpleasant Smelling 29.4N 27.2E - Burial Temple 8.5N 5.9E - Al-Jalima - Trevor Shunderson - Hand in Ancient Crest to Trevor Shunderson
+358,Zombie Incursion Survivor,443,Seasonal,Seasonal: Undead Attack on Al-Jalima,150,https://acportalstorm.com/wiki/Undead_Attack_on_Al-Jalima,Al-Jalima - Loot Decaying Zombie Brain Portion - Glenden Wood - Ungrim the Unpleasant Smelling 29.4N 27.2E - Hand in Decaying Zombie Brain Portion to Ungrim the Unpleasant Smelling
+359,Aerbax's Bane,574,,Aerbax's Citadel,160,https://acportalstorm.com/wiki/Aerbax's_Citadel,Obsidian Plains - Aerbax's Citadel Quest: Kill Virindi Artificer at North 63.3S 63.7W East 64.0S 62.9W West 64.1S 64.7W - Inside Southgate at 65.0S 63.8W - Long run - Give to NPC - Portal in - Defeat boss - Speak to the Emissary of Asheron after defeating Aerbax's Shadow
+360,Dojiro Sangi's Savior,548,,Aerbax's Prodigal Human,160,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Human,Stonehold - Hidden Laboratory 67.2N 27.1W - Candeth Keep - Ryukai Hiro 87.8S 67.3W - Hand in Dojiro Sangi's Ring to Ryukai Hiro
+361,Prodigal Shadow Slayer,522,,Aerbax's Prodigal Shadow,160,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Shadow,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Pulsating Bony Lump - Find random The Orphanage - Wai Jhou - Riordin Nightbane 61.9S 51.4W - Hand in Scrap of Shadow Essence
+362,Guardian of the Tower,499,,Asheron's Tower Guardian,160,https://acportalstorm.com/wiki/Asheron's_Tower_Guardian,Asheron's Castle - Defeat the Tower Guardian
+363,Tower Guardian Architect,497,,Asheron's Tower Guardian,160,https://acportalstorm.com/wiki/Asheron's_Tower_Guardian,Asheron's Castle - Hand in 50 Resource Points worth of items to Asheron's Servant
+364,Champion of Assassins,469,Colo,Colosseum Bosses: The Master,160,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete Arena 18 or higher (full win) - Use The Master statue - Kill boss
+365,Crater Crasher,663,Markers,Dereth Exploration: 5 Crater Crasher,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Crater Crasher markers
+366,Daredevil,659,Markers,Dereth Exploration: 5 Daredevil,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Daredevil markers 
+367,Mountain Climber,658,Markers,Dereth Exploration: 5 Mountain Climber,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Mountain Climber markers
+368,Party-Goer,662,Markers,Dereth Exploration: 5 Party-Goer,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Party-Goer markers
+369,Sky Diver,660,Markers,Dereth Exploration: 5 Sky Diver,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Sky Diver markers
+370,Spelunker,661,Markers,Dereth Exploration: 5 Spelunker,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find all 5 Spelunker markers
+371,Amateur Explorer,653,Markers,Dereth Exploration: 20 Markers,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find 20 markers
+372,Experienced Explorer,654,Markers,Dereth Exploration: 40 Markers,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find 40 markers
+373,Adept Explorer,655,Markers,Dereth Exploration: 60 Markers,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find 60 markers
+374,Master Explorer,656,Markers,Dereth Exploration: 80 Markers,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find 80 markers
+375,Elite Explorer,657,Markers,Dereth Exploration: 100 Markers,160,https://acportalstorm.com/wiki/Dereth_Exploration,Exploration Markers - Find 100 markers
+376,Violator Grievver Vetoer,147,KT,KT: Grievver Violator Kill Task,160,https://acportalstorm.com/wiki/Grievver_Violator_Kill_Task,Eastwatch - Moina 90.4N 43.1W - Kill 100 Grievver Violators
+377,Jester's Accomplice,578,,Jester Released,160,https://acportalstorm.com/wiki/Jester_Released,Graveyard - Speak with the Jester after defeating him
+378,Marble Wrangler,580,,Jester's Lost Marbles,160,https://acportalstorm.com/wiki/Jester's_Lost_Marbles,Graveyard - Run to 63.4S 44.4W to get up onto the cliffside - Pick up the Jester's Marbles 65.1S 43.7W - Use summoning stone at 65.8S 43.8W - Give Marbles to Jester
+379,Secret Keeper,581,,Jester's Lost Marbles,160,https://acportalstorm.com/wiki/Jester's_Lost_Marbles,Graveyard - Run to 63.4S 44.4W to get up onto the cliffside - Pick up the Jester's Marbles 65.1S 43.7W - Use summoning stone at 65.8S 43.8W - Mhoire Armory - Find 9 of Jester's Markers and give the 10th to Jester
+380,Slayer of the Black Spear,431,,Mukkir Aspect of Grael Quest,160,https://acportalstorm.com/wiki/Mukkir_Aspect_of_Grael_Quest,Obsidian Rim - Varetha 44.3S 62.5W - Black Ferah's Vault at 39.1S 60.1W - Talk to Varetha - VoD - Mukkir Infested Black Spear Temple at 37.2S 67.0W - Kill boss - Ayan Baqur - Hoshar ibn Jalaq at 59.6S 88.0W - Give Mukkir Aspect Slayer Title Token to Hoshar ibn Jalaq
+381,Nexus Crawler,682,,Nexus Crawl,160,https://acportalstorm.com/wiki/Nexus_Crawl,Zaikhal - Ned the Clever 13.4N 0.9E - Ayan Baqur or Mt Lethe Recall - Nexus 40.1S 79.2W - Talk to Ned after handing in the Resonator
+382,Jester's Emancipator,576,,Releasing Jester,160,https://acportalstorm.com/wiki/Releasing_Jester,Graveyard - Return to Jester's Prison - Release Jester and speak to Laylana
+383,Jester's Fool,577,,Releasing Jester,160,https://acportalstorm.com/wiki/Releasing_Jester,Graveyard - Return to Jester's Prison - Release Jester - Speak with Jester a second time after releasing him
+384,Asheron's Defender,492,,Saving Asheron,160,https://acportalstorm.com/wiki/Saving_Asheron,Bur - Collector Golem - Speak with Scout Leader Tmauruk - Southern Catacombs - Use the Rock - Temple of the Three - Give Glowing Statue Shard to Collector Golem
+385,Coin Collector,884,Gauntlet,Gauntlet: Room 5,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 5 of the Gauntlet
+386,Society Savage,883,Gauntlet,Gauntlet: Room 6,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 6 of the Gauntlet
+387,Brutal Barbarian,885,Gauntlet,Gauntlet: Room 7,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 7 of the Gauntlet
+388,Soldier of Fortune,882,Gauntlet,Gauntlet: Room 8,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 8 of the Gauntlet
+389,Wily Warrior,881,Gauntlet,Gauntlet: Room 9,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 9 of the Gauntlet
+390,Gauntlet Gladiator,880,Gauntlet,Gauntlet: Room 10,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 10 of the Gauntlet
+391,Bloodthirsty,879,Gauntlet,Gauntlet: Room 11,180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 11 of the Gauntlet
+392,Gauntlet Champion,878,Gauntlet,Gauntlet: Room 12 (Win),180,https://acportalstorm.com/wiki/Gauntlet,Complete Room 12 of the Gauntlet - A full win
+393,Master of Puppets,887,Gauntlet,Gauntlet Bosses: Tremb'Orh,180,https://acportalstorm.com/wiki/Gauntlet_Bosses,Complete Room 8 of the Gauntlet - Use Gauntlet statue - Defeat Tremb'Orh
+394,Idolized,886,Gauntlet,Gauntlet Bosses: Holcha,180,https://acportalstorm.com/wiki/Gauntlet_Bosses,Complete Room 11 of the Gauntlet - Use Gauntlet statue - Defeat Holcha
+395,Titan Slayer,888,Gauntlet,Gauntlet Bosses: Gromnus Champion,180,https://acportalstorm.com/wiki/Gauntlet_Bosses,Complete 10 Gauntlet wins - Use Gauntlet statue - Defeat Gromnus Champion
+396,Expendable,584,Harlune,Harlune's Diplomacy,180,https://acportalstorm.com/wiki/Harlune's_Diplomacy,Facility Hub - Mite Maze 41.1N 57.3E - Speak with Roderick - Bur - Southern Catacombs 67.4N 30.5E - Upper Catacombs - Falatacot Visitor's Alcove - Give Falatacot Blood Prophetess Trinket to Roderick
+397,Hard to Kill,583,Harlune,Harlune's Diplomacy,180,https://acportalstorm.com/wiki/Harlune's_Diplomacy,Facility Hub - Mite Maze 41.1N 57.3E - Speak with Roderick - Bur - Southern Catacombs 67.4N 30.5E - Upper Catacombs - Falatacot Visitor's Alcove - Give Falatacot Blood Prophetess Trinket to Roderick for a 2nd time
+398,Hive Queenslayer,780,,Hive Queen Assault,180,https://acportalstorm.com/wiki/Hive_Queen_Assault,Greenspire - Virindi Delegate 43.3N 66.7W - Timaru - Chiming Portal 45.0N 73.5W - Get Forks - Drop 5 Forks: (#1) 53.0N 73.3W (#2) 49.2N 74.6W (#3) 46.5N 75.8W (#4) 44.7N 80.9W (#5) 50.1N 80.4W - Mount Elyrii Hive 48.5N 81.7W - Royal Hive - Group: Timaru - West Fork Dam Hive 49.1N 80.0W
+399,Out of Tune,779,,Hive Queen Assault,180,https://acportalstorm.com/wiki/Hive_Queen_Assault,Greenspire - Virindi Delegate 43.3N 66.7W - Timaru - Chiming Portal 45.0N 73.5W - Get Forks -  Forks: (#1) 53.0N 73.3W (#2) 49.2N 74.6W (#3) 46.5N 75.8W (#4) 44.7N 80.9W (#5) 50.1N 80.4W - Drop a fork twice
+400,Holly Jolly Helper,858,,Holly Jolly Helper Quest,180,https://acportalstorm.com/wiki/Holly_Jolly_Helper_Quest,Sawato - Osdryd 29.0S 58.9E - Kill 15 of the Mosswart Cynics in Sawato
+401,Night Owl,797,KT,KT: Empowered Wisps,180,https://acportalstorm.com/wiki/Kill:_Empowered_Wisps,RTW Camp - Tillahan 61.6S 63.3W - Kill 3 Empowered Wisp
+402,Minion Marauder,792,KT,KT: Rynthid Minions,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Minions,RTW Camp - Marcus 61.6S 63.3W - Kill 25 Rynthid Minion
+403,Rage Quitter,795,KT,KT: Rynthid Ragers,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Ragers,RTW Camp - Ranulf 61.6S 63.3W - Kill 15 Rynthid Rager
+404,Mender of the Rift,794,KT,KT: Rynthid Rifts,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Rifts,RTW Camp - Rhys 61.6S 63.3W - Kill 10 Rynthid Rift
+405,Rynthid Wrecker,793,KT,KT: Rynthid Slayers,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Slayers,RTW Camp - Sylvanus 61.6S 63.3W - Kill 15 Rynthid Slayer
+406,Sorcerer Slayer,796,KT,KT: Rynthid Sorcerers,180,https://acportalstorm.com/wiki/Kill:_Rynthid_Sorcerers,RTW Camp - Wido 61.6S 63.3W - Kill 15 Rynthid Sorcerer
+407,Liberator of Uziz,778,,Liberation of Uziz,180,https://acportalstorm.com/wiki/Liberation_of_Uziz,Al-Arqas - Ahr-Zona 33.5S 13.1E - Virindi Edifice 19.4S 18.2E
+408,Menhir Seeker,706,Menhir,Menhir Research: 20 Fields,180,https://acportalstorm.com/wiki/Menhir_Research,Xarabydun - Cara the Apprentice 41.7S 15.8E - Find 20 Menhir Fields
+409,Bane of the Blessed,648,,Rare Trophies: Giant Blessed Moarsman,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,Freebooter Isle - Kill Giant Blessed Moarsman near the eastern end of the Freebooter Isle. (Confirmed sightings at 57.0S 97.5E at Dawnsong and at 57.0S 97.3E slso at WarmTide and a half) - Hand to society NPC
+410,Bane of the Blight,650,,Rare Trophies: Moarsman Blight-caller,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,Moarsman City - Kill Moarsman Blight-caller near the eastern end of the Moarsman City (Confirmed siting at 93.0S 49.2W at Dawnsong) - Give to society NPC
+411,Defender of the Deru,647,,Rare Trophies: Tchk'Tain the Tender,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,"Freebooter Isle - Kill Tchk'Tain the Tender near the Deru Tree of Degar'Alesh (Spawns during the day at 60.7S 96.8E, and at night at 60.8S 96.1E) - Give to society NPC"
+412,Negotiator,649,,Rare Trophies: Tch'Keryk the Emissary,180,https://acportalstorm.com/wiki/Rare_Island_Trophies,Moarsman City - Kill Tch'Keryk the Emissary near the western end of the Moarsman City. (Confirmed sitings at 93.2S 57.0W) - Give to society NPC
+413,Emotional Wreck,791,,Rynthid Foothold,180,https://acportalstorm.com/wiki/Rynthid_Foothold,RTW Camp 61.6S 63.3W - Speak with Vision of Horror - Up ramps 62.5S 65.4W - Jump up 3rd ramp then go right - Path of Torment 62.1S 65.8W - Path of Rage 62.5S 65.4W - Exit - turn around walk north and look down then shift+jump to platform below - Rynthid Genesis
+414,Well Trained,849,,Rynthid Training,180,https://acportalstorm.com/wiki/Rynthid_Training,RTW Camp 61.6S 63.3W - Rynthid Assessment Crystal 62.3S 66.2W
+415,Meddler,526,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Show Corrupted Harbinger Blood to Vincadi
+416,Spy,528,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Show Corrupted Harbinger Blood to Vincadi
+417,Vile Betrayer,527,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Show Corrupted Harbinger Blood to Vincadi
+418,Prodigal Harbinger Slayer,523,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Singularity Caul - Artifex Collegium 91.9S 93.7W - Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Hand in Corrupted Harbinger Blood to Issk - Prodigal Harbinger Slayer (If you got the killin shot) 
+419,Blood Seeker,524,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Hand in Corrupted Harbinger Blood to Issk
+420,Storm Rider,525,Harbinger,Aerbax's Prodigal Harbinger,190,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Harbinger,Get Elemental Talisman - Yanshi - Issk 12.9S 46.5E or Vincadi 12.6S 46.7E - Tunnels to the Harbinger - Take Prodigal Harbinger's Antechamber at bottom - Hand in Corrupted Harbinger Blood to Emissary of Asheron
+421,Browerk Killer,28,CoK,Clutch of Kings: Browerk,190,https://acportalstorm.com/wiki/Clutch_of_Kings_(Browerk),Ayan Baqur - Watcher of the Dead 60.1S 88.1W - Setup: Steamy Font 91.1S 89.6E - Balmy Font 91.5S 89.7E - Humid Font 91.3S 89.8E - Muggy Font 91.5S 89.4E. Group: Font Tower 91.3S 89.5E - Kill boss and loot hide from ground - Cragstone - Guard Haigh 25.7N 48.9E
+422,Kingslayer,81,CoK,Clutch of Kings: Defeat all 6 Kings,190,https://acportalstorm.com/wiki/Clutch_of_Kings,Cragstone - Guard Devon 25.7N 48.9E - Defeat all 6 of the Burun Kings
+423,Guardian of Linvak Tukal,555,,Aerbax's Prodigal Lugian,200,https://acportalstorm.com/wiki/Aerbax's_Prodigal_Lugian,Cragstone - Oswent the Pale 25.7N 49.2E - Linvak Tukal - Lord Kresovus 77.6S 28.0E - Use Kresovus' Lockbox - Give Sigil of Linvak Tukal to Lord Kresovus
+424,Bloodstone Hunter,713,,Bloodstone Investigation,200,https://acportalstorm.com/wiki/Bloodstone_Investigation,Frozen Valley 83.8N 4.3W - Gurog Ice Cave 84.9N 7.1W - Bloodstone Factory 84.5N 5.1W
+425,Knight of the Northwest Tower,691,,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,Graveyard - Use west gargoyle statue 64.6S 44.1W - Enter Northeast Tower - Speak with Shade of Antemy - Trials: (NW) Complete Rite of Wisdom
+426,Knight of the Southeast Tower,692,,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,Graveyard - Use west gargoyle statue 64.6S 44.1W - Enter Northeast Tower - Speak with Shade of Antemy - Trials: (SE) Complete Flames of Courage
+427,Knight of the Southwest Tower,693,,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,Graveyard - Use west gargoyle statue 64.6S 44.1W - Enter Northeast Tower - Speak with Shade of Antemy - Trials: (SW) Complete Flames of Virtue 
+428,Champion of House Mhoire,696,,Castle of Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Castle_of_Lord_Mhoire_Quest,Graveyard - Use west statue 64.6S 44.1W - Mhoire Castle - Complete 3 Trials - Mhoire Castle Great Hall - Kill Shade of Lord Rytheran
+429,Crown of the Deru,862,,Climbing the Viridian Deru Tree,200,https://acportalstorm.com/wiki/Climbing_the_Viridian_Deru_Tree,Viridian Rise - On VR7 climb the Deru Tree - Speak with Doriathazaar to receive your rewards
+430,Thrungus Reaper,141,,Death's Allure,200,https://acportalstorm.com/wiki/Death's_Allure,Eastwatch - Pass at 93.0N 47.0W - Hermit 94.2N 43.0W
+431,Fiery Spirit,754,,Geraine's Hosts #1: Fiery,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Singularity Caul - Fiery Refuge 95.3S 94.1W - Graveyard - Give heart to Mhoire Lieutenant
+432,Shocking Disposition,756,,Geraine's Hosts #2: Charged,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Arwic - Artifice Cottages 32.9N 59.6E - Chared Refuge 86.8S 10.5E - Graveyard - Give heart to Mhoire Lieutenant
+433,Icy Veins,755,,Geraine's Hosts #3: Frozen,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Eastwatch - Frozen Refuge 93.9N 45.4W - Graveyard - Give heart to Mhoire Lieutenant
+434,Acidic Soul,757,,Geraine's Hosts #4: Acidic,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Sawato - Explorer's Villas 27.2S 59.9E - Acidic Refuge 59.0N 65.8E - Graveyard - Give heart to Mhoire Lieutenant
+435,Grounded Morals,758,,Geraine's Hosts #5: Cavernous,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Al-Jalima - Jackcat Canyon 5.7N 4.3E - Up 0.3N 9.3E - Cavernous Refuge 7.3S 13.4E - Graveyard - Give heart to Mhoire Lieutenant
+436,Darkened Heart,759,,Geraine's Hosts #6: Shadowy,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Tou-Tou - Shadowy Refuge 26.8S 96.0E - Graveyard - Give heart to Mhoire Lieutenant
+437,The True Emperor,760,,Geraine's Hosts #7: Twisted,200,https://acportalstorm.com/wiki/Geraine's_Hosts,Obsidian Plains - Twisted Refuge 62.7S 64.9W - Graveyard - Give heart to Mhoire Lieutenant
+438,Eviscerator Decimator,781,Pincer,Pincer: Hive Eviscerator Pincer Quest,200,https://acportalstorm.com/wiki/Hive_Eviscerator_Pincer_Quest,Timaru - Hive Eviscerator Burrow 48.6N 73.7W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
+439,Ultimate Warrior,782,Pincer,Pincer: Hive Warrior Pincer Quest,200,https://acportalstorm.com/wiki/Hive_Warrior_Pincer_Quest,Timaru -  Hive Warrior Mound 49.3N 81.2W - Loot a Pincer near end of dungeon - Redspire - Behdo Yii 40.8N 83.3W
+440,Vanquisher of the Titan,764,,Hoshino Fortress Infiltration,200,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration,Hosh Tents 80.7N 43.0W - Hosh Tower 79.2N 40.4W - Combine 3 broken keys - Hoshino Fortress 79.1N 41.5W - Give Ancient Skull and Bones to Ancient Altar
+441,Heretic,774,,Hoshino Fortress Infiltration,200,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration,Hosh Tents 80.7N 43.0W - Hosh Tower 79.2N 40.4W - Combine 3 broken keys - Hoshino Fortress 79.1N 41.5W - Speak to Freed Temple Exarch
+442,Captain,775,,Hoshino Fortress Infiltration,200,https://acportalstorm.com/wiki/Hoshino_Fortress_Infiltration,Hosh Tents 80.7N 43.0W - Hosh Tower 79.2N 40.4W - Combine 3 broken keys - Hoshino Fortress 79.1N 41.5W - Give First Lieutenant's Insignia to Mareeno Donn
+443,Jester's Little Helper,582,,Jester Focuses,200,https://acportalstorm.com/wiki/Jester_Focuses,Graveyard - Up at 62.8S 45.1E - Knathtead Excavation 63.1S 44.3W - Get Rytheran's Master Seal at Ancient Chest 65.6S 43.9W - Neydisa Castle - Give Seal to  Master's Sentinel 74.7N 18.4E - Graveyard - Jester - Gardens of Menilesh 64.7S 43.8W - Give Empowered K'nath Core to Jester 
+444,Hero of House Mhoire,504,,Lord Mhoire Quest,200,https://acportalstorm.com/wiki/Lord_Mhoire_Quest,Graveyard - Laylana 65.3S 44.3W - Jailer 64.9S 44.1W - Jester's Prison - Graveyard - Use right statue at 64.6S 44.1W - Defeat Lord Cynreft Mhoire and then speak to the ghost of Lord Cynreft Mhoire in dungeon
+445,Master of the Oubliette,751,,Oubliette of Mhoire Castle Quest,200,https://acportalstorm.com/wiki/Oubliette_of_Mhoire_Castle_Quest,Graveyard - Use west gargoyle statue 64.6S 44.1W - Enter Northeast Tower - Speak with Shade of Terelev - Mhoire Castle Great Hall portal
+446,Purifier,798,,Rynthid Artifact Collection,200,https://acportalstorm.com/wiki/Rynthid_Artifact_Collection,RTW Camp 61.6S 63.3W - Speak with The Bringer of Light - Up ramps 62.5S 65.4W - Jump up 3rd ramp then go right - Kill 20 Tormented Shadows in Path of Torment 62.1S 65.8W - Kill 20 Enraged Shadows in Path of Rage 62.5S 65.4W - Collect 10 Wisp of Corrupted Emotion from ground in Path of Sorrow
+447,Bearer of Darkness,761,,Sealing Away the Book of Eibhil,200,https://acportalstorm.com/wiki/Sealing_Away_the_Book_of_Eibhil,Asheron's Castle - Asheron - Neftet - Deep Caves 20.7S 8.3E - Bring the Deru Avatar's Gem to Asheron 
+448,Guiding Light,714,,Shadows #1: Shadow Communication,200,https://acportalstorm.com/wiki/Shadow_Communication,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Get Message from Ler Rhan to Black Ferah - Show message to Isin Dule before giving it to Black Ferah
+449,Clouded Soul,715,,Shadows #1: Shadow Communication,200,https://acportalstorm.com/wiki/Shadow_Communication,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Get Message from Ler Rhan to Black Ferah - Give message to Black Ferah 
+450,Illuminating the Shadows,719,,Shadows #2: Strange Crystal Quest,200,https://acportalstorm.com/wiki/Strange_Crystal_Quest,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Get Strange Purple Crystal from The Shadows - Give Strange Purple Crystal from The Shadows to Asheron 
+451,Undercover of Darkness,716,,Shadows #2: Strange Crystal Quest,200,https://acportalstorm.com/wiki/Strange_Crystal_Quest,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Get Strange Purple Crystal from The Shadows - Give Strange Purple Crystal from The Shadows to Ler Rhan
+452,Hopebringer,723,,Shadows #3: Fate of Bael'Zharon,200,https://acportalstorm.com/wiki/Fate_of_Bael'Zharon,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Ler Rhan - Siding with Ler Rhan: Summoning Cave 29.2S 95.8E - Give message to Ter Shen - Bring the Energy Scintilla to Ler Rhan
+453,Shadow Puppet,722,,Shadows #3: Fate of Bael'Zharon,200,https://acportalstorm.com/wiki/Fate_of_Bael'Zharon,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Shadows 29.5S 94.2E - Ler Rhan - Siding with Isin Dule: Isin Dule 33.4N 56.9E - Summoning Cave 29.2S 95.8E - Bring the Energy Scintilla back Isin Dule
+454,Searching the Shadows,726,,Shadows #4: Dark Recordings,200,https://acportalstorm.com/wiki/Dark_Recordings,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Black Ferah 29.2S 95.8E - Get 3 devices - Top 27.4S 95.3E - Middle 28.9S 96.1E - Bottom 28.3S 96.9E - Combine - Dark Rocks 28.0S 96.5E and 27.2S 96.6E - Siding with Black Ferah: Show Recording Device to Isin Dule before giving it to Black Ferah
+455,In The Dark,724,,Shadows #4: Dark Recordings,200,https://acportalstorm.com/wiki/Dark_Recordings,Arwic - Isin Dule 33.4N 56.9E - Tou-Tou - Black Ferah 29.2S 95.8E - Get 3 devices - Top 27.4S 95.3E - Middle 28.9S 96.1E - Bottom 28.3S 96.9E - Combine - Dark Rocks 28.0S 96.5E and 27.2S 96.6E - Siding with Black Ferah: Give Recording Device to Black Ferah
+456,Bright Knight,728,,Shadows #5: Shadow Assault,200,https://acportalstorm.com/wiki/Shadow_Assault,Arwic - Isin Dule 33.4N 56.9E - Siding with Isin Dule: Kill 3 Shadow Vortexes 28.0S 96.2E and 28.5S 95.5E - Return to Isin Dule - Asheron's Castle - Emissary of Asheron
+457,Shadow Soldier,727,,Shadows #5: Shadow Assault,200,https://acportalstorm.com/wiki/Shadow_Assault,Tou-Tou - Black Ferah 29.2S 95.8E - Siding with Black Ferah and Ler Rhan: Shadow Captain 28.3S 95.3E - Kill 15 Soldiers and then speak with the Shadow Captain again - Shadows 29.5S 94.2E - Speak to Ler Rhan
+458,Merciful Killer,729,,Shadows #6: Tou-Tou Blockade,200,https://acportalstorm.com/wiki/Tou-Tou_Blockade,Arwic - Isin Dule 33.4N 56.9E - Siding with Isin Dule: Tou-Tou - Shadow Vortex 28.1S 95.5E - Kill 5 towns folk and 10 shadows - Return to Isin Dule
+459,Soul Siphon,730,,Shadows #6: Tou-Tou Blockade,200,https://acportalstorm.com/wiki/Tou-Tou_Blockade,Tou-Tou - Black Ferah 29.2S 95.8E - Siding with Black Ferah and Ler Rhan: Shadow Vortex 28.9S 95.46E - Kill 15 Soldiers inside the dungeon - Return to Black Ferah
+460,Duleing with the Dark,733,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 5-6, Shadows: 0-1): Arwic - Speak twice to Isin Dule 33.4N 56.9E - Siding with Isin Dule: Tou-Tou - Shadows 29.5S 94.2E - Kill 1 Engineer inside - Kill 3 more outside at 27.4S 95.3E and 28.9S 96.1E and 28.3S 96.9E - Return to Isin Dule"
+461,Hero of the Night,736,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 5-6, Shadows: 0-1): Arwic - Speak twice to Isin Dule 33.4N 56.9E - Siding with Isin Dule: Tou-Tou - Shadows 29.5S 94.2E - Kill 1 Engineer inside - Kill 3 more outside at 27.4S 95.3E and 28.9S 96.1E and 28.3S 96.9E - Return to Isin Dule"
+462,Conspirator,735,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 2-4, Shadows: 2-4): Arwic - Speak twice to Isin Dule 33.4N 56.9E - Siding with Isin Dule: Tou-Tou - Shadows 29.5S 94.2E - Kill 1 Engineer inside - Kill 3 more outside at 27.4S 95.3E and 28.9S 96.1E and 28.3S 96.9E - Return to Isin Dule"
+463,Double Agent,732,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 2-4, Shadows: 2-4): Tou-Tou - Ler Rhan 29.5S 94.2E - Siding with Ler Rhan: Shadows 29.5S 94.2E - Get 1 crystal inside - Get 3 more outside at 27.4S 95.3E and 28.9S 96.1E take the first left down and 28.3S 96.9E - Return to Ler Rhan"
+464,The Tou-Tou Terror,731,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 0-1, Shadows: 5-6): Tou-Tou - Ler Rhan 29.5S 94.2E - Siding with Ler Rhan: Shadows 29.5S 94.2E - Get 1 crystal inside - Get 3 more outside at 27.4S 95.3E and 28.9S 96.1E take the first left down and 28.3S 96.9E - Return to Ler Rhan"
+465,Creature of Chaos,734,,Shadows #7: Stop the Rebuilding,200,https://acportalstorm.com/wiki/Stop_the_Rebuilding,"(Isin Dule: 0-1, Shadows: 5-6): Tou-Tou - Ler Rhan 29.5S 94.2E - Siding with Ler Rhan: Shadows 29.5S 94.2E - Get 1 crystal inside - Get 3 more outside at 27.4S 95.3E and 28.9S 96.1E take the first left down and 28.3S 96.9E - Return to Ler Rhan"
+466,Stone Cold Killer,783,Tusk,Tusk: Snow Tusker Leader Tusk Quest,200,https://acportalstorm.com/wiki/Snow_Tusker_Leader_Tusk_Quest,Frozen Valley - Tusker Den 84.3N 6.4W - Loot a Tusk near end of dungeon - Oolutanga's Refuge - Brighteyes the Tailor 2.2N 95.6E
+467,Exploring Archaeologist,720,,Stone Tablet Collecting,200,https://acportalstorm.com/wiki/Stone_Tablet_Collecting,Netfet - Taylarn bint Tulani 22.2S 6.2E - Kill rare spawn Filinuvekta Emissary - Give Large Stone Tablet to Taylarn
+468,Immortal Champion,470,Colo,Colosseum Bosses: Diemos,200,https://acportalstorm.com/wiki/Colosseum_Bosses,Colosseum - Yanshi 11.3S 37.6E - Complete 10 full Colosseum wins - Complete Diemos Flagging - Use The Gladiator Diemos statue - Kill boss
+469,Awakened,889,,Enlightenment: 1 time,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 1 time
+470,Enlightened,890,,Enlightenment: 2 times,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 2 times
+471,Illuminated,891,,Enlightenment: 3 times,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 3 times
+472,Transcended,892,,Enlightenment: 4 times,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 4 times
+473,Cosmic Conscious,893,,Enlightenment: 5 times,275,https://acportalstorm.com/wiki/Enlightenment,Enlighten 5 times
+474,Cowboy,199,,Levistras: AL League,275,https://acportalstorm.com/wiki/Auroch_League,Levistras only - Participate in Auroch League (retired)
+475,Possessed,852,,Levistras: BL League,275,https://acportalstorm.com/wiki/Banderleague,Levistras only - Participate in Banderling League (retired)
+476,Squire of the Golden Flame,415,,Levistras: CL League,275,https://acportalstorm.com/wiki/Chittick_Chittick_Bang_Bang,Levistras only - Participate in Chittick League (retired)
+477,Ghostbuster,240,,Levistras: Guy the Drudge,275,https://acportalstorm.com/wiki/Guy%27s_Trading,Levistras only - Complete Guy the Drudge's task (retired)
+478,Blood Warrior,426,,Levistras: PK Tournament,275,https://acportalstorm.com/wiki/Player_Killer,Levistras only - Participate in a PK tournament
+479,Reanimator,442,,Levistras: Urenna (Halloween),275,https://acportalstorm.com/wiki/Urenna_the_Unravelled_(NPC),Levistras only - Halloween - Rebuild Urenna with wrappings - Participate in the group battle
+480,2nd Place Lore- Quiz Night,166,,Unavailable,0,,
+481,99 Problems Olthoi Ate,836,,Unavailable,0,,
+482,AC Veteran,167,,Unavailable,0,,
+483,Accursed,854,,Unavailable,0,,
+484,Aerbax Slayer,575,,Unavailable,0,,
+485,Ain't afraid of no ghost,169,,Unavailable,0,,
+486,Ain't afraid of no ghost!,168,,Unavailable,0,,
+487,Ain't afraid of no ghost..mwahaha!,170,,Unavailable,0,,
+488,Ally of the Council,790,,Unavailable,0,,
+489,Ally of the Lothus,789,,Unavailable,0,,
+490,Always Picked First,833,,Unavailable,0,,
+491,Always Picked Last,834,,Unavailable,0,,
+492,Ankle Biter,171,,Unavailable,0,,
+493,Annoying Furry Talking Animal,172,,Unavailable,0,,
+494,Apprentice Shadow Hunter,414,,Unavailable,0,,
+495,Archer,2,,Unavailable,0,,
+496,Archer Assassin,173,,Unavailable,0,,
+497,Archmage,174,,Unavailable,0,,
+498,Archmage of House Mhoire,698,,Unavailable,0,,
+499,Artisan of the Flame and Light,498,,Unavailable,0,,
+500,Asheron's #1 Fan,800,,Unavailable,0,,
+501,Asheron's Call God,175,,Unavailable,0,,
+502,Asheron's Collect Caller,818,,Unavailable,0,,
+503,Asheron's Savior,491,,Unavailable,0,,
+504,Avatar of Kain,176,,Unavailable,0,,
+505,Azure Assailant,177,,Unavailable,0,,
+506,Baby Bunny Master,178,,Unavailable,0,,
+507,Baron Oddity,179,,Unavailable,0,,
+508,Bathed in Blood,678,,Unavailable,0,,
+509,Beacon of Hope,573,,Unavailable,0,,
+510,Beginning of the End,180,,Unavailable,0,,
+511,Best Melee in DT,181,,Unavailable,0,,
+512,Big Block,182,,Unavailable,0,,
+513,Big Rocx,183,,Unavailable,0,,
+514,Blademaster,3,,Unavailable,0,,
+515,Blood,184,,Unavailable,0,,
+516,Bounty Hunter,185,,Unavailable,0,,
+517,British Tootsie,186,,Unavailable,0,,
+518,Bug Bait,187,,Unavailable,0,,
+519,Bunny Killer,188,,Unavailable,0,,
+520,Can't Follow Directions,807,,Unavailable,0,,
+521,Captivating,813,,Unavailable,0,,
+522,Carebear Stare,189,,Unavailable,0,,
+523,Carraida's Avenger,420,,Unavailable,0,,
+524,Cathedrals Champion,637,,Unavailable,0,,
+525,Certified Ganksta,190,,Unavailable,0,,
+526,Chimaera's Champion,193,,Unavailable,0,,
+527,Chosen of Elysa,424,,Unavailable,0,,
+528,Chosen of Varicci,423,,Unavailable,0,,
+529,Co-Monarch of TheChosen,194,,Unavailable,0,,
+530,Cold Turkey,855,,Unavailable,0,,
+531,Containment Unit,195,,Unavailable,0,,
+532,Controller of Emotions,786,,Unavailable,0,,
+533,Coolest Title Ever!,196,,Unavailable,0,,
+534,Corrosive Soul,197,,Unavailable,0,,
+535,Corruptor Of The Root,874,,Unavailable,0,,
+536,Cow Killer,198,,Unavailable,0,,
+537,Cruel Summer,845,,Unavailable,0,,
+538,Crypt Creeper,538,,Unavailable,0,,
+539,Crystal Lord King,200,,Unavailable,0,,
+540,Cuddly Kitten >^..^<,201,,Unavailable,0,,
+541,Curmudgeon's Friend,202,,Unavailable,0,,
+542,Cursed Adventurer,203,,Unavailable,0,,
+543,Dagger Master,204,,Unavailable,0,,
+544,Dark Sword Lady,205,,Unavailable,0,,
+545,Darktides Finest,206,,Unavailable,0,,
+546,Darktides Most Wanted,207,,Unavailable,0,,
+547,Dead Meat,208,,Unavailable,0,,
+548,Deadly Eggburt,209,,Unavailable,0,,
+549,Death by Default,210,,Unavailable,0,,
+550,Death by Pumpkin,211,,Unavailable,0,,
+551,Death by Sappho,212,,Unavailable,0,,
+552,Death Specialist,213,,Unavailable,0,,
+553,Defender of Mr. P,214,,Unavailable,0,,
+554,Dereth Recruiter,803,,Unavailable,0,,
+555,Dereth's Gladiator,215,,Unavailable,0,,
+556,Dereth's Master Dodger,216,,Unavailable,0,,
+557,Dev Evader,217,,Unavailable,0,,
+558,Dev Killer,218,,Unavailable,0,,
+559,Dev Slayer,219,,Unavailable,0,,
+560,Diplomat,44,,Unavailable,0,,
+561,Dude of DOOM!,223,,Unavailable,0,,
+562,Double Fashion King,220,,Unavailable,0,,
+563,Double Golem Killer,221,,Unavailable,0,,
+564,Double Survival Champion,222,,Unavailable,0,,
+565,Ecto Cooler,224,,Unavailable,0,,
+566,Ecto-Cooler,225,,Unavailable,0,,
+567,Enchanter,4,,Unavailable,0,,
+568,Envoy Slayer,226,,Unavailable,0,,
+569,Escapee Killer,227,,Unavailable,0,,
+570,Evil Toothfairy,228,,Unavailable,0,,
+571,Fan of Asheron,799,,Unavailable,0,,
+572,Fancy Title,229,,Unavailable,0,,
+573,Fashion King,230,,Unavailable,0,,
+574,Fashion Penguin King,231,,Unavailable,0,,
+575,Fashion Queen,232,,Unavailable,0,,
+576,Fashion Victim,233,,Unavailable,0,,
+577,Fearless Fighter,234,,Unavailable,0,,
+578,Flag Boy,235,,Unavailable,0,,
+579,Flower Sniffer,842,,Unavailable,0,,
+580,Follows Directions,806,,Unavailable,0,,
+581,Forever Alone,835,,Unavailable,0,,
+582,Frelorn Slayer,236,,Unavailable,0,,
+583,Friend to Mr. P,237,,Unavailable,0,,
+584,Gangsta Style,238,,Unavailable,0,,
+585,Gangster,239,,Unavailable,0,,
+586,Gimp,241,,Unavailable,0,,
+587,GIMP,404,,Unavailable,0,,
+588,Gimp Goddess,242,,Unavailable,0,,
+589,Gimpy Mage of Might,243,,Unavailable,0,,
+590,Gladiator Champion,244,,Unavailable,0,,
+591,Glowing Archer,245,,Unavailable,0,,
+592,God of the Swordsman,246,,Unavailable,0,,
+593,Golem Killer,247,,Unavailable,0,,
+594,Golem Slayer,248,,Unavailable,0,,
+595,Great Pookie Slayer,249,,Unavailable,0,,
+596,Guardian Angel,250,,Unavailable,0,,
+597,Guardian of Arwic,251,,Unavailable,0,,
+598,Guardian in the Patriarch Raids,627,,Unavailable,0,,
+599,Guardian of Dereth,63,,Unavailable,0,,
+600,Hamster Herder,252,,Unavailable,0,,
+601,Hamster Vitae,253,,Unavailable,0,,
+602,Have Bunnie's Will Travel,254,,Unavailable,0,,
+603,Have Trike Will Babble,255,,Unavailable,0,,
+604,Hide and Seek Specialist,256,,Unavailable,0,,
+605,Historian of the Mhoire Throne,695,,Unavailable,0,,
+606,Hollywood Bud,257,,Unavailable,0,,
+607,Holtburg Survival Champion,258,,Unavailable,0,,
+608,Holtburg's Survivor Champion,259,,Unavailable,0,,
+609,Honorary Burun Scout,579,,Unavailable,0,,
+610,Honorary Pink Eep,260,,Unavailable,0,,
+611,Hungry for Moar,837,,Unavailable,0,,
+612,Hungry Hungry Hippo,261,,Unavailable,0,,
+613,Husband of Lynnie,262,,Unavailable,0,,
+614,Husbands Healer,263,,Unavailable,0,,
+615,I am Big []D [] []/[] []D [] [][],264,,Unavailable,0,,
+616,I Am Darktide,679,,Unavailable,0,,
+617,I Can Haz Title Nao,838,,Unavailable,0,,
+618,I liked dying!,265,,Unavailable,0,,
+619,Jessica <3,266,,Unavailable,0,,
+620,Kazyk Ri's Bane,640,,Unavailable,0,,
+621,Kazyk Ri's Nemesis,643,,Unavailable,0,,
+622,Keeper of Dereth,79,,Unavailable,0,,
+623,Killcrane's Ally,413,,Unavailable,0,,
+624,Killer Among Shadows,875,,Unavailable,0,,
+625,King of all that is Pumpkin,267,,Unavailable,0,,
+626,King of Caul,268,,Unavailable,0,,
+627,King of Darktide,269,,Unavailable,0,,
+628,King of Pierce Diggys,270,,Unavailable,0,,
+629,Knight of the Golden Flame,416,,Unavailable,0,,
+630,Knight of the Mhoire Throne,694,,Unavailable,0,,
+631,Knight of the Northeast Tower,690,,Unavailable,0,,
+632,Knight of the Whispering Blade,417,,Unavailable,0,,
+633,Knight of the Windmill,503,,Unavailable,0,,
+634,Knight Of Thorns,869,,Unavailable,0,,
+635,Knight Rider,271,,Unavailable,0,,
+636,Lady of the Four Towers,272,,Unavailable,0,,
+637,Lange Gang,273,,Unavailable,0,,
+638,Last Man Standing,894,,Unavailable,0,,
+639,Level Master,274,,Unavailable,0,,
+640,Leviathan,275,,Unavailable,0,,
+641,Leviathan Slayer,276,,Unavailable,0,,
+642,Libe Events Manager,277,,Unavailable,0,,
+643,Life Mage,5,,Unavailable,0,,
+644,Life Preserver,278,,Unavailable,0,,
+645,Likable,812,,Unavailable,0,,
+646,Likes Ulgrim,811,,Unavailable,0,,
+647,Likes Where This Is Going,810,,Unavailable,0,,
+648,Live Event Coordinator,279,,Unavailable,0,,
+649,Live Events Manager,280,,Unavailable,0,,
+650,Live Op Coordinator,281,,Unavailable,0,,
+651,Lord of Dark Dreams,741,,Unavailable,0,,
+652,Lore 2nd Place Quiz Night,283,,Unavailable,0,,
+653,Lore Champion - Quiz Night,284,,Unavailable,0,,
+654,Lore Champion Quiz Night,285,,Unavailable,0,,
+655,Lore Master,286,,Unavailable,0,,
+656,Lore Master - Quiz Night,288,,Unavailable,0,,
+657,Lore Master 2nd Place,289,,Unavailable,0,,
+658,Lore Master of Staves,290,,Unavailable,0,,
+659,Lore Master Quiz Night,287,,Unavailable,0,,
+660,Lore- 2nd Place,282,,Unavailable,0,,
+661,Lothus Servitor,788,,Unavailable,0,,
+662,Lots of Vitae,291,,Unavailable,0,,
+663,Lucky Lady,292,,Unavailable,0,,
+664,Mage Of Thorns,871,,Unavailable,0,,
+665,Mages Assitant,294,,Unavailable,0,,
+666,Marked by Bacon,827,,Unavailable,0,,
+667,Marked by Fame,825,,Unavailable,0,,
+668,Marked by Fate,824,,Unavailable,0,,
+669,Marked by Glamour,826,,Unavailable,0,,
+670,Marked by Luck,823,,Unavailable,0,,
+671,Marked by the Patriarchs,630,,Unavailable,0,,
+672,Master of Ceremony,814,,Unavailable,0,,
+673,Master Tinkerer,295,,Unavailable,0,,
+674,Mayor of Ayan Baqur,296,,Unavailable,0,,
+675,Minty Fresh,297,,Unavailable,0,,
+676,Misunderstood Pengy,298,,Unavailable,0,,
+677,Mom,299,,Unavailable,0,,
+678,Mommy Pengy,300,,Unavailable,0,,
+679,Mosswart Ally,301,,Unavailable,0,,
+680,Mr. Nice Guy,302,,Unavailable,0,,
+681,Murderer,303,,Unavailable,0,,
+682,Murderer !,304,,Unavailable,0,,
+683,Newby Title,305,,Unavailable,0,,
+684,Nice Blue Lady,306,,Unavailable,0,,
+685,Nivinizk's Bane,641,,Unavailable,0,,
+686,Nivinizk's Nemesis,644,,Unavailable,0,,
+687,Null Title,546,,Unavailable,0,,
+688,Number one draft pick,307,,Unavailable,0,,
+689,Old School,308,,Unavailable,0,,
+690,Oolutanga's Bane,521,,Unavailable,0,,
+691,Paradox Slayer,309,,Unavailable,0,,
+692,Patron Saint of the Lifestone,310,,Unavailable,0,,
+693,Peacebear,311,,Unavailable,0,,
+694,Penguin Killer,312,,Unavailable,0,,
+695,Penguin Plunge,841,,Unavailable,0,,
+696,PK Queen,318,,Unavailable,0,,
+697,Playa Killa King,319,,Unavailable,0,,
+698,Player Slayer,677,,Unavailable,0,,
+699,Pokemon Slayer,320,,Unavailable,0,,
+700,Portal Ritualist,474,,Unavailable,0,,
+701,Portal Stormer,820,,Unavailable,0,,
+702,Pretty Pumpkin,321,,Unavailable,0,,
+703,Prisoner,322,,Unavailable,0,,
+704,Protector of the Cheese,323,,Unavailable,0,,
+705,Proton Pack,324,,Unavailable,0,,
+706,Pumpkin Lord,850,,Unavailable,0,,
+707,Pumpkin Slayer,325,,Unavailable,0,,
+708,Pumpkin Stalker,326,,Unavailable,0,,
+709,Purple Pengy,327,,Unavailable,0,,
+710,Puzzlemaster,828,,Unavailable,0,,
+711,Pwner of Newbs,328,,Unavailable,0,,
+712,Queen of Brats,329,,Unavailable,0,,
+713,Queen's Crafter,331,,Unavailable,0,,
+714,Queen's Pack Rat,332,,Unavailable,0,,
+715,Queen's Packrat,333,,Unavailable,0,,
+716,Queen's Tinker,334,,Unavailable,0,,
+717,Queens Crafter,330,,Unavailable,0,,
+718,Rawr!,335,,Unavailable,0,,
+719,Rayne's Mage Pet,336,,Unavailable,0,,
+720,Reggae Renegade,337,,Unavailable,0,,
+721,Riddle Ravager,829,,Unavailable,0,,
+722,Ring Bearer,338,,Unavailable,0,,
+723,Ring ring ring.....Bananaphone,339,,Unavailable,0,,
+724,Road Kill,340,,Unavailable,0,,
+725,Road Warrior,815,,Unavailable,0,,
+726,Rolling Death Destroyer,341,,Unavailable,0,,
+727,Royal Chef,342,,Unavailable,0,,
+728,Royal Cook,343,,Unavailable,0,,
+729,Rugged,344,,Unavailable,0,,
+730,Runs Through Sprinklers,847,,Unavailable,0,,
+731,Rynthid Ravager,787,,Unavailable,0,,
+732,Sanitation Engineer,345,,Unavailable,0,,
+733,Scarecrow Slayer,346,,Unavailable,0,,
+734,Scary Pumkpkin Dominator,347,,Unavailable,0,,
+735,Scary Pumpkin Slayer,348,,Unavailable,0,,
+736,Seeker of Asheron,472,,Unavailable,0,,
+737,Seeker of Castle Mhoire,699,,Unavailable,0,,
+738,Seeker of Torgluuk,473,,Unavailable,0,,
+739,Selfless Soul,683,,Unavailable,0,,
+740,Sentinal,349,,Unavailable,0,,
+741,Sentry,350,,Unavailable,0,,
+742,Shadow Child,351,,Unavailable,0,,
+743,Shadow Hunter,352,,Unavailable,0,,
+744,Shadow Slayer,353,,Unavailable,0,,
+745,Slayer of the Great Pookie,354,,Unavailable,0,,
+746,Slimer,355,,Unavailable,0,,
+747,Snazzy Dresser,356,,Unavailable,0,,
+748,Snowbunny,839,,Unavailable,0,,
+749,Soul Man,357,,Unavailable,0,,
+750,Sorcerer,6,,Unavailable,0,,
+751,Spooky Title,358,,Unavailable,0,,
+752,Springs Into Action,843,,Unavailable,0,,
+753,Staff Masta,359,,Unavailable,0,,
+754,Staypuffed Mallow Girl,360,,Unavailable,0,,
+755,Steward of Castle Mhoire,700,,Unavailable,0,,
+756,Super Gimped Adventurer,361,,Unavailable,0,,
+757,Supercalifragilisticexpialidocious,362,,Unavailable,0,,
+758,Superman,363,,Unavailable,0,,
+759,Survivor Champion,364,,Unavailable,0,,
+760,Sword Scholar,365,,Unavailable,0,,
+761,Swordbearer of House Mhoire,697,,Unavailable,0,,
+762,Tactical Aid,664,,Unavailable,0,,
+763,Tactical Fantastical,666,,Unavailable,0,,
+764,Teh Newb,366,,Unavailable,0,,
+765,Teh Saint,367,,Unavailable,0,,
+766,Testing Guy,368,,Unavailable,0,,
+767,The Bait,369,,Unavailable,0,,
+768,The Black Spear,418,,Unavailable,0,,
+769,The Chosen King,370,,Unavailable,0,,
+770,The Come Back Kid,371,,Unavailable,0,,
+771,The Dark Dreamwalker,743,,Unavailable,0,,
+772,The Dreamslayer,745,,Unavailable,0,,
+773,The Focused,802,,Unavailable,0,,
+774,The Forgotten,372,,Unavailable,0,,
+775,The Gimped,373,,Unavailable,0,,
+776,The Great and Powerful,374,,Unavailable,0,,
+777,The Half-Fox,375,,Unavailable,0,,
+778,The Inquisitive,819,,Unavailable,0,,
+779,The Knowledgeable,848,,Unavailable,0,,
+780,The Nightmare Lord,738,,Unavailable,0,,
+781,The Nightmare Mage,739,,Unavailable,0,,
+782,The Nightmare Stalker,746,,Unavailable,0,,
+783,The Noob,376,,Unavailable,0,,
+784,The Purple Fez,377,,Unavailable,0,,
+785,The Pwnerer,378,,Unavailable,0,,
+786,The Restless,753,,Unavailable,0,,
+787,The Thought Spiral,748,,Unavailable,0,,
+788,The Twisted Weaver,740,,Unavailable,0,,
+789,The Unknown Pk,379,,Unavailable,0,,
+790,Tomb Raider,539,,Unavailable,0,,
+791,Torgluuk's Liberator,489,,Unavailable,0,,
+792,Tough Guy,382,,Unavailable,0,,
+793,Tracker Guardian,547,,Unavailable,0,,
+794,Tradesman of Auberean,383,,Unavailable,0,,
+795,Treasure Hunter,384,,Unavailable,0,,
+796,Tremendous Monouga Master,385,,Unavailable,0,,
+797,Triple Golem Killer,386,,Unavailable,0,,
+798,True Tactician,665,,Unavailable,0,,
+799,Turbine Slayer,387,,Unavailable,0,,
+800,Twins of Terror,388,,Unavailable,0,,
+801,Uberest Noob on Frostfell,389,,Unavailable,0,,
+802,Ulgrim's Happy Hundredth,599,,Unavailable,0,,
+803,Underworld-Thugg,390,,Unavailable,0,,
+804,Unwitting Participant,556,,Unavailable,0,,
+805,Vagabond,7,,Unavailable,0,,
+806,Viamontian Slayer,391,,Unavailable,0,,
+807,Viridian Dreamer,863,,Unavailable,0,,
+808,Viridian Knight,865,,Unavailable,0,,
+809,Viridian Lord,864,,Unavailable,0,,
+810,Viridian Purifier,868,,Unavailable,0,,
+811,Viridian Slayer,867,,Unavailable,0,,
+812,Viridian Stalker,866,,Unavailable,0,,
+813,Vitae King,392,,Unavailable,0,,
+814,Vitae Vixen,393,,Unavailable,0,,
+815,Vixen of Vitae,394,,Unavailable,0,,
+816,Wabbit Bait,395,,Unavailable,0,,
+817,Wabbit Killer,396,,Unavailable,0,,
+818,Wandering Fool,397,,Unavailable,0,,
+819,Wanga Fighter,507,,Unavailable,0,,
+820,Warden in the Patriarch Raids,628,,Unavailable,0,,
+821,Warden of Dereth,151,,Unavailable,0,,
+822,Warden's Assistant,398,,Unavailable,0,,
+823,Wardens Assistant,405,,Unavailable,0,,
+824,Wardens Thug,399,,Unavailable,0,,
+825,Warlord of Dereth,153,,Unavailable,0,,
+826,Warrior,8,,Unavailable,0,,
+827,Wimp,400,,Unavailable,0,,
+828,Wolfpack Crafter,401,,Unavailable,0,,
+829,Wonder Woman,402,,Unavailable,0,,
+830,Ya got served,403,,Unavailable,0,,
