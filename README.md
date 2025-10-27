@@ -2,7 +2,7 @@
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.8.0/OracleOfDerethInstaller-1.8.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.9.0/OracleOfDerethInstaller-1.9.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
@@ -47,6 +47,10 @@ Luminance
 
 ![Luminance Augmentations](./docs/Luminance.png)
 
+Recalls
+
+![Recall Spells](./docs/Recalls.png)
+
 John Tracker
 
 ![John Tracker](./docs/John.png)
@@ -55,14 +59,22 @@ Exploration Markers
 
 ![John Tracker](./docs/Markers.png)
 
+Facility Hub
+
+![Facility Hub](./docs/FacilityHub.png)
+
+Flagging quests
+
+![Flagging Quests](./docs/Flaggings.png)
+
+Titles
+
+![Titles Tracker](./docs/Titles.png)
+
 Void Target View
 
 ![Void Target View](./docs/Void.png)
 
-
-## Usage
-
-There are 8 main areas: the Status HUD, Buffs, XP Augs, Luminance Augs, Cantrips, John Tracker, Exploration Markers and Void Target View.
 
 ### Status HUD
 
@@ -94,6 +106,10 @@ Displays your buffs and debuffs with time remaining.
 Displays your character's Luminance Augmentations
 Displays amount of luminance spent, remaining, and % to max.
 
+### Recall Spells
+
+Displays your known recall spells.
+
 ### Cantrips List
 
 - Displays minor / moderate / epic / legendary for every cantrip. 
@@ -121,6 +137,18 @@ Click the Refresh button will run /myquests and refresh the quest data.
 Have you ever run the [100 Exploration Markers](https://acportalstorm.com/wiki/Dereth_Exploration/Markers_by_Efficiency) only to get to the end and realize you missed one? But which one?!?!
 
 This plugin will display which markers you have completed and guide you to the next one.
+
+### Facility Hub
+
+Displays which facility hub items you've turned in.
+
+### Flagging quests
+
+Displays which major flagging quests you've completed.
+
+### Titles Tracker
+
+Displays the titles you've completed.
 
 ### Void Target View
 
