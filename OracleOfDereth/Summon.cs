@@ -31,12 +31,12 @@ namespace OracleOfDereth
             CurrentTargetId = 0;
         }
 
-        public static void SetCurrent(int id)
+        public static void ItemIdentified(int id)
         {
             CurrentTargetId = id;
 
             Summon summon = GetCurrent();
-            if(summon == null || summon.IsSummon() == false) { return; }
+            if (summon == null || summon.IsSummon() == false) { return; }
 
             // Show damage and defense score
             if (summon.IsRated()) {
@@ -105,7 +105,7 @@ namespace OracleOfDereth
         }
         public new string ToString()
         {
-            return $"[{Id}] {Name()} ({ObjectClass()}) {IsSummon()}";
+            return $"[{Id}] {Name()} {Item().HasIdData}";
         }
 
         // Instance methods

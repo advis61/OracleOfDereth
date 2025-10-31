@@ -29,6 +29,7 @@ namespace OracleOfDereth
     {
         private static string _assemblyDirectory = null;
         private bool didInit = false;
+        private ItemIdentifier itemIdentifier;
 
         /// <summary>
         /// Assembly directory containing the plugin dll
@@ -72,10 +73,14 @@ namespace OracleOfDereth
                 CoreManager.Current.CommandLineText += Current_CommandLineText;
                 CoreManager.Current.ChatBoxMessage += Current_ChatBoxMessage;
                 CoreManager.Current.ItemSelected += Current_ItemSelected;
+                //CoreManager.Current.WorldFilter.ChangeObject += WorldFilter_ChangeObject;
+
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete; // Not run on hot reload
                 CoreManager.Current.CharacterFilter.SpellCast += CharacterFilter_SpellCast;
                 CoreManager.Current.EchoFilter.ServerDispatch += EchoFilter_ServerDispatch;
 
+                itemIdentifier = new ItemIdentifier();
+                itemIdentifier.ItemIdentified += ItemIdentifier_ItemIdentified;
 
                 // Initialize
                 if (CoreManager.Current.CharacterFilter.LoginStatus >= 1) {
@@ -160,9 +165,11 @@ namespace OracleOfDereth
                 CoreManager.Current.CommandLineText -= Current_CommandLineText;
                 CoreManager.Current.ChatBoxMessage -= Current_ChatBoxMessage;
                 CoreManager.Current.ItemSelected -= Current_ItemSelected;
+                //CoreManager.Current.WorldFilter.ChangeObject -= WorldFilter_ChangeObject;
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
                 CoreManager.Current.CharacterFilter.SpellCast -= CharacterFilter_SpellCast;
                 CoreManager.Current.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch;
+                itemIdentifier.ItemIdentified -= ItemIdentifier_ItemIdentified;
 
                 // Shutdown timer
                 if (timer != null)
@@ -176,6 +183,8 @@ namespace OracleOfDereth
                 // Dispose all views
                 mainView?.Dispose();
                 targetView?.Dispose();
+
+                itemIdentifier?.Dispose();
 
             } catch (Exception ex) { Util.Log(ex); }
         }
@@ -243,10 +252,14 @@ namespace OracleOfDereth
             try
             {
                 Target.SetCurrent(e.ItemGuid);
-                Summon.SetCurrent(e.ItemGuid);
                 targetView.Update();
             }
             catch (Exception ex) { Util.Log(ex); }
+        }
+
+        private void ItemIdentifier_ItemIdentified(object sender, int id)
+        {
+            Summon.ItemIdentified(id);
         }
 
         private void CharacterFilter_SpellCast(object sender, SpellCastEventArgs e)
