@@ -15,6 +15,7 @@ using System.Windows.Forms;
 
 namespace OracleOfDereth
 {
+    // From MagTools DetectItemsIdentifiedByUser
     public class WorldObjectIdentifier : IDisposable
     {
         public event EventHandler<WorldObject> Identified;

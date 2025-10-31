@@ -19,43 +19,34 @@ namespace OracleOfDereth
 {
     public class Summon
     {
-        // Instance properties
-        public static WorldObject CurrentSelection;
-
         // Instance variables
-        public WorldObject Current;
+        public WorldObject Item;
 
         public static void SetCurrent(WorldObject item)
         {
-            CurrentSelection = item;
-            if (item == null || item.Id == 0) { return; }
-
-            Summon summon = GetCurrent();
+            Summon summon = new() { Item = item };
             if (summon.IsSummon() == false) { return; }
 
             Util.Chat(summon.ToString(), Util.ColorCyan, "");
-        }
-        public static Summon GetCurrent()
-        {
-            return new() { Current = CurrentSelection };
         }
 
         public new string ToString()
         {
             if (IsRated()) {
-                return $"{Current.Name} [DMG {Math.Round(DamageScore())} | DEF {Math.Round(DefenseScore())}]";
+                return $"{Item.Name} [DMG {DamageScore()} | DEF {DefenseScore()}]";
             } else {
-                return Current.Name;
+                return Item.Name;
             }
         }
 
         public bool IsSummon()
         {
-            if (Current == null) return false;
-            if (Current.ObjectClass != Decal.Adapter.Wrappers.ObjectClass.Misc) { return false; }
+            if (Item == null) return false;
+            if (Item.Id == 0) return false;
+            if (Item.ObjectClass != ObjectClass.Misc) { return false; }
 
-            if (Current.Name.EndsWith("Essence")) { return true; }
-            if (Current.Name.Contains("Essence (")) { return true; }
+            if (Item.Name.EndsWith("Essence")) { return true; }
+            if (Item.Name.Contains("Essence (")) { return true; }
 
             return false;
         }
@@ -65,25 +56,25 @@ namespace OracleOfDereth
         // $C = wobjectgetintprop[wobjectgetselection[], 372];
         // $CD = wobjectgetintprop[wobjectgetselection[], 374];
         // (0.625 * (1 +$D / 100)*(.9 -$C / 100)+2 * (1 + ($D +$CD)/ 100)*(.1 +$C / 100))/ 0.01365
-        public float DamageScore()
+        public double DamageScore()
         {
-            return (float)(0.625 * (1 + D() / 100.0f) * (0.9 - C() / 100.0f) + 2 * (1 + (D() + CD()) / 100.0f) * (0.1 + C() / 100.0f)) / 0.01365f;
+            return Math.Round((float)(0.625 * (1 + D() / 100.0f) * (0.9 - C() / 100.0f) + 2 * (1 + (D() + CD()) / 100.0f) * (0.1 + C() / 100.0f)) / 0.01365f);
         }
-        public float DefenseScore()
+        public double DefenseScore()
         {
-            return (float)(0.625 * (1 + DR() / 100.0f) * (0.9 - CR() / 100.0f) + 2 * (1 + (DR() + CDR()) / 100.0f) * (0.1 + CR() / 100.0f)) / 0.01365f;
+            return Math.Round((float)(0.625 * (1 + DR() / 100.0f) * (0.9 - CR() / 100.0f) + 2 * (1 + (DR() + CDR()) / 100.0f) * (0.1 + CR() / 100.0f)) / 0.01365f);
         }
 
         public bool IsRated() { 
             return (D() > 0 || C() > 0 || CD() > 0 || DR() > 0 || CR() > 0 || CDR() > 0); 
         }
 
-        public int D() { return Current.Values((LongValueKey)370); }
-        public int C() { return Current.Values((LongValueKey)372); }
-        public int CD() { return Current.Values((LongValueKey)374); }
-        public int DR() { return Current.Values((LongValueKey)371); }
-        public int CR() { return Current.Values((LongValueKey)373); }
-        public int CDR() { return Current.Values((LongValueKey)375); }
+        public int D() { return Item.Values((LongValueKey)370); }
+        public int C() { return Item.Values((LongValueKey)372); }
+        public int CD() { return Item.Values((LongValueKey)374); }
+        public int DR() { return Item.Values((LongValueKey)371); }
+        public int CR() { return Item.Values((LongValueKey)373); }
+        public int CDR() { return Item.Values((LongValueKey)375); }
     }
 }
 

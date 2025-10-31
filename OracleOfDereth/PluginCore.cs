@@ -15,8 +15,8 @@ using WindowsTimer = System.Windows.Forms.Timer;
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
 // Remember to update installer.nsi to match
-[assembly: AssemblyVersion("1.9.0.0")]
-[assembly: AssemblyFileVersion("1.9.0.0")]
+[assembly: AssemblyVersion("1.9.1.0")]
+[assembly: AssemblyFileVersion("1.9.1.0")]
 
 namespace OracleOfDereth
 {
@@ -29,7 +29,6 @@ namespace OracleOfDereth
     {
         private static string _assemblyDirectory = null;
         private bool didInit = false;
-        private WorldObjectIdentifier worldObjectIdentifier;
 
         /// <summary>
         /// Assembly directory containing the plugin dll
@@ -59,6 +58,9 @@ namespace OracleOfDereth
 
         private WindowsTimer timer;
 
+        // Tools
+        private WorldObjectIdentifier worldObjectIdentifier;
+
         // Views, depends on VirindiViewService.dll
         private MainView mainView;
         private TargetView targetView;
@@ -73,8 +75,6 @@ namespace OracleOfDereth
                 CoreManager.Current.CommandLineText += Current_CommandLineText;
                 CoreManager.Current.ChatBoxMessage += Current_ChatBoxMessage;
                 CoreManager.Current.ItemSelected += Current_ItemSelected;
-                //CoreManager.Current.WorldFilter.ChangeObject += WorldFilter_ChangeObject;
-
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete; // Not run on hot reload
                 CoreManager.Current.CharacterFilter.SpellCast += CharacterFilter_SpellCast;
                 CoreManager.Current.EchoFilter.ServerDispatch += EchoFilter_ServerDispatch;
@@ -257,11 +257,6 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
-        {
-            Summon.SetCurrent(item);
-        }
-
         private void CharacterFilter_SpellCast(object sender, SpellCastEventArgs e)
         {
             try
@@ -269,6 +264,10 @@ namespace OracleOfDereth
                 Target.SpellCast(e.TargetId, e.SpellId);
             }
             catch (Exception ex) { Util.Log(ex); }
+        }
+        private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
+        {
+            Summon.SetCurrent(item);
         }
 
         // https://github.com/ACEmulator/ACE/blob/master/Source/ACE.Server/Network/GameEvent/GameEventType.cs
