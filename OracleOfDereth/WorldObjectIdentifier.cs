@@ -15,11 +15,11 @@ using System.Windows.Forms;
 
 namespace OracleOfDereth
 {
-    public class ItemIdentifier : IDisposable
+    public class WorldObjectIdentifier : IDisposable
     {
-        public event EventHandler<int> ItemIdentified;
+        public event EventHandler<WorldObject> Identified;
 
-        public ItemIdentifier()
+        public WorldObjectIdentifier()
         {
             try
             {
@@ -135,7 +135,7 @@ namespace OracleOfDereth
                     e.Changed.ObjectClass == ObjectClass.Vendor)
                     return;
 
-                if (ItemIdentified != null) { ItemIdentified(this, e.Changed.Id); }
+                if (Identified != null) { Identified(this, e.Changed); }
             }
             catch (Exception ex) { Util.Log(ex); }
         }

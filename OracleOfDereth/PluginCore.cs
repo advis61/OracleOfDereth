@@ -29,7 +29,7 @@ namespace OracleOfDereth
     {
         private static string _assemblyDirectory = null;
         private bool didInit = false;
-        private ItemIdentifier itemIdentifier;
+        private WorldObjectIdentifier worldObjectIdentifier;
 
         /// <summary>
         /// Assembly directory containing the plugin dll
@@ -79,8 +79,8 @@ namespace OracleOfDereth
                 CoreManager.Current.CharacterFilter.SpellCast += CharacterFilter_SpellCast;
                 CoreManager.Current.EchoFilter.ServerDispatch += EchoFilter_ServerDispatch;
 
-                itemIdentifier = new ItemIdentifier();
-                itemIdentifier.ItemIdentified += ItemIdentifier_ItemIdentified;
+                worldObjectIdentifier = new WorldObjectIdentifier();
+                worldObjectIdentifier.Identified += WorldObjectIdentifier_Identified;
 
                 // Initialize
                 if (CoreManager.Current.CharacterFilter.LoginStatus >= 1) {
@@ -165,11 +165,10 @@ namespace OracleOfDereth
                 CoreManager.Current.CommandLineText -= Current_CommandLineText;
                 CoreManager.Current.ChatBoxMessage -= Current_ChatBoxMessage;
                 CoreManager.Current.ItemSelected -= Current_ItemSelected;
-                //CoreManager.Current.WorldFilter.ChangeObject -= WorldFilter_ChangeObject;
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
                 CoreManager.Current.CharacterFilter.SpellCast -= CharacterFilter_SpellCast;
                 CoreManager.Current.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch;
-                itemIdentifier.ItemIdentified -= ItemIdentifier_ItemIdentified;
+                worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
 
                 // Shutdown timer
                 if (timer != null)
@@ -180,11 +179,12 @@ namespace OracleOfDereth
                     timer = null;
                 }
 
+                // Dispose all tools
+                worldObjectIdentifier?.Dispose();
+
                 // Dispose all views
                 mainView?.Dispose();
                 targetView?.Dispose();
-
-                itemIdentifier?.Dispose();
 
             } catch (Exception ex) { Util.Log(ex); }
         }
@@ -257,9 +257,9 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        private void ItemIdentifier_ItemIdentified(object sender, int id)
+        private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
         {
-            Summon.ItemIdentified(id);
+            Summon.SetCurrent(item);
         }
 
         private void CharacterFilter_SpellCast(object sender, SpellCastEventArgs e)

@@ -19,31 +19,45 @@ namespace OracleOfDereth
 {
     public class Summon
     {
-
-        // My current target
-        public static int CurrentTargetId = 0;
-
         // Instance properties
-        public int Id = 0;
+        public static WorldObject CurrentSelection;
 
-        public static void Init()
-        {
-            CurrentTargetId = 0;
-        }
+        // Instance variables
+        public WorldObject Current;
 
-        public static void ItemIdentified(int id)
+        public static void SetCurrent(WorldObject item)
         {
-            CurrentTargetId = id;
+            CurrentSelection = item;
+            if (item == null || item.Id == 0) { return; }
 
             Summon summon = GetCurrent();
-            if (summon == null || summon.IsSummon() == false) { return; }
+            if (summon.IsSummon() == false) { return; }
 
-            // Show damage and defense score
-            if (summon.IsRated()) {
-                Util.Chat($"{summon.Name()} [DMG {Math.Round(summon.DamageScore())} | DEF {Math.Round(summon.DefenseScore())}]", Util.ColorCyan, "");
+            Util.Chat(summon.ToString(), Util.ColorCyan, "");
+        }
+        public static Summon GetCurrent()
+        {
+            return new() { Current = CurrentSelection };
+        }
+
+        public new string ToString()
+        {
+            if (IsRated()) {
+                return $"{Current.Name} [DMG {Math.Round(DamageScore())} | DEF {Math.Round(DefenseScore())}]";
             } else {
-                Util.Chat($"{summon.Name()}", Util.ColorCyan, "");
+                return Current.Name;
             }
+        }
+
+        public bool IsSummon()
+        {
+            if (Current == null) return false;
+            if (Current.ObjectClass != Decal.Adapter.Wrappers.ObjectClass.Misc) { return false; }
+
+            if (Current.Name.EndsWith("Essence")) { return true; }
+            if (Current.Name.Contains("Essence (")) { return true; }
+
+            return false;
         }
 
         // From an old /mb exec passed around on Discord
@@ -60,88 +74,16 @@ namespace OracleOfDereth
             return (float)(0.625 * (1 + DR() / 100.0f) * (0.9 - CR() / 100.0f) + 2 * (1 + (DR() + CDR()) / 100.0f) * (0.1 + CR() / 100.0f)) / 0.01365f;
         }
 
-        public int D()
-        {
-            if (Item() == null) return 0;
-            return Item().Values((LongValueKey)370);
-        }
-        public int C()
-        {
-            if (Item() == null) return 0;
-            return Item().Values((LongValueKey)372);
+        public bool IsRated() { 
+            return (D() > 0 || C() > 0 || CD() > 0 || DR() > 0 || CR() > 0 || CDR() > 0); 
         }
 
-        public int CD()
-        {
-            if (Item() == null) return 0;
-            return Item().Values((LongValueKey)374);
-        }
-
-        public int DR()
-        {
-            if (Item() == null) return 0;
-            return Item().Values((LongValueKey)371);
-        }
-
-        public int CR()
-        {
-            if (Item() == null) return 0;
-            return Item().Values((LongValueKey)373);
-        }
-
-        public int CDR()
-        {
-            if (Item() == null) return 0;
-            return Item().Values((LongValueKey)375);
-        }
-
-        public bool IsRated() {
-            return (D() > 0 || C() > 0 || CD() > 0 || DR() > 0 || CR() > 0 || CDR() > 0);
-        }
-
-        public static Summon GetCurrent()
-        {
-            return new() { Id = CurrentTargetId };
-        }
-        public new string ToString()
-        {
-            return $"[{Id}] {Name()} {Item().HasIdData}";
-        }
-
-        // Instance methods
-
-        public bool IsSummon()
-        {
-            if (Item() == null) return false;
-            if(ObjectClass() != "Misc") { return false; }
-
-            if(Name().EndsWith("Essence")) { return true; }
-            if(Name().Contains("Essence (")) { return true; }
-
-            return false;
-        }
-
-        private WorldObject? Item()
-        {
-            if (Id == 0) { return null; }
-
-            try {
-                return CoreManager.Current.WorldFilter[Id];
-            } catch {
-                return null;
-            }
-        }
-        public string Name()
-        {
-            if (Item() == null) return "";
-            return Item().Name;
-        }
-
-        private string ObjectClass()
-        {
-            if (Item() == null) return "";
-            return Item().ObjectClass.ToString();
-        }    
+        public int D() { return Current.Values((LongValueKey)370); }
+        public int C() { return Current.Values((LongValueKey)372); }
+        public int CD() { return Current.Values((LongValueKey)374); }
+        public int DR() { return Current.Values((LongValueKey)371); }
+        public int CR() { return Current.Values((LongValueKey)373); }
+        public int CDR() { return Current.Values((LongValueKey)375); }
     }
 }
 
