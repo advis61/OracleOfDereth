@@ -199,5 +199,17 @@ namespace OracleOfDereth
 
             return string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
         }
+
+        public static string CisText()
+        {
+            List<EnchantmentWrapper> enchantments = CoreManager.Current.CharacterFilter.Enchantments.Where(x => Spell.CisSpellIds.Contains(x.SpellId)).ToList();
+            if (enchantments.Count == 0) { return "-"; }
+
+            double duration = enchantments.Min(x => x.TimeRemaining);
+            TimeSpan time = TimeSpan.FromSeconds(duration);
+            if (time.Seconds < 0) { return "-"; }
+
+            return string.Format("{0:D1}:{1:D2}", time.Minutes, time.Seconds);
+        }
     }
 }

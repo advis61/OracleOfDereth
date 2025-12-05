@@ -178,6 +178,10 @@ namespace OracleOfDereth
             5206, // Surge of Protection
          };
 
+        public static readonly List<int> CisSpellIds = new List<int> {
+            5753, // Cloaked in Skill
+         };
+
         public static readonly List<int> CorrosionSpellIds = new List<int> {
             5387, 5388, 5389, 5390, 5391, 5392, 5393, 5394 // Corrosion
         };

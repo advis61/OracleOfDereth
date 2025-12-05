@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0"?>
-<view icon="8894" title="Oracle Of Dereth" width="200" height="325">
+<view icon="8894" title="Oracle Of Dereth" width="200" height="345">
 	<control progid="DecalControls.Notebook" name="MainViewNotebook">
 		<page label="Status">
 			<control progid="DecalControls.Notebook" name="StatusViewNotebook">
@@ -27,12 +27,14 @@
 						<control progid="DecalControls.StaticText" name="SummoningLabel" left="5" top="175" width="200" height="20" text="Summon"/>
 						<control progid="DecalControls.StaticText" name="SummoningText" left="70" top="175" width="200" height="20" text="-"/>
 
-						<control progid="DecalControls.StaticText" name="DestructionLabel" left="5" top="200" width="200" height="20" text="Dest"/>
+						<control progid="DecalControls.StaticText" name="DestructionLabel" left="5" top="202" width="200" height="20" text="Dest"/>
 						<control progid="DecalControls.StaticText" name="DestructionText" left="70" top="200" width="200" height="20" text="-" />
-						<control progid="DecalControls.StaticText" name="ProtectionLabel" left="5" top="220" width="200" height="20" text="Prot"/>
+						<control progid="DecalControls.StaticText" name="ProtectionLabel" left="5" top="222" width="200" height="20" text="Prot"/>
 						<control progid="DecalControls.StaticText" name="ProtectionText" left="70" top="220" width="200" height="20" text="-" />
-						<control progid="DecalControls.StaticText" name="RegenLabel" left="5" top="240" width="200" height="20" text="Regen"/>
+						<control progid="DecalControls.StaticText" name="RegenLabel" left="5" top="242" width="200" height="20" text="Regen"/>
 						<control progid="DecalControls.StaticText" name="RegenText" left="70" top="240" width="200" height="20" text="-" />
+						<control progid="DecalControls.StaticText" name="CisLabel" left="5" top="262" width="200" height="20" text="CiS"/>
+						<control progid="DecalControls.StaticText" name="CisText" left="70" top="260" width="200" height="20" text="-" />
 
 					</control>
 				</page>

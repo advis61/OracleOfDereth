@@ -48,6 +48,7 @@ namespace OracleOfDereth
         public HudStaticText DestructionText { get; private set; }
         public HudStaticText RegenText { get; private set; }
         public HudStaticText ProtectionText { get; private set; }
+        public HudStaticText CisText { get; private set; }
 
         // Buffs
         public HudList BuffsList { get; private set; }
@@ -146,7 +147,7 @@ namespace OracleOfDereth
         {
 
             // Status Tab
-            { 1_00, 300 }, // HUD
+            { 1_00, 320 }, // HUD
             { 1_01, 545 }, // Buffs
 
             // Character Tab
@@ -218,9 +219,9 @@ namespace OracleOfDereth
 
                 RareText = (HudStaticText)view["RareText"];
                 DestructionText = (HudStaticText)view["DestructionText"];
-
                 RegenText = (HudStaticText)view["RegenText"];
                 ProtectionText = (HudStaticText)view["ProtectionText"];
+                CisText = (HudStaticText)view["CisText"];
 
                 BuffsText.FontHeight = 10;
                 BeersText.FontHeight = 10;
@@ -236,6 +237,7 @@ namespace OracleOfDereth
                 DestructionText.FontHeight = 10;
                 RegenText.FontHeight = 10;
                 ProtectionText.FontHeight = 10;
+                CisText.FontHeight = 10;
 
                 // Buffs Tab
                 BuffsList = (HudList)view["BuffsList"];
@@ -485,6 +487,7 @@ namespace OracleOfDereth
             DestructionText.Text = Hud.DestructionText();
             RegenText.Text = Hud.RegenText();
             ProtectionText.Text = Hud.ProtectionText();
+            CisText.Text = Hud.CisText();
         }
 
         // Buffs Tab
