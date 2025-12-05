@@ -51,11 +51,12 @@ namespace OracleOfDereth
             return false;
         }
 
-        // From an old /mb exec passed around on Discord
+        // Originally from an old /mb exec passed around on Discord
         // $D = wobjectgetintprop[wobjectgetselection[], 370];
         // $C = wobjectgetintprop[wobjectgetselection[], 372];
         // $CD = wobjectgetintprop[wobjectgetselection[], 374];
         // (0.625 * (1 +$D / 100)*(.9 -$C / 100)+2 * (1 + ($D +$CD)/ 100)*(.1 +$C / 100))/ 0.01365
+        // Updated to work on %'s by Aunrela 
         public double DamageScore()
         {
             return Math.Round((float)((0.625f * (1 + D() / 100.0f) * (0.9 - C() / 100.0f) + 2 * (1 + (D() + CD()) / 100.0f) * (0.1 + C() / 100.0f)) - 0.7625f) * 165.9751f);
