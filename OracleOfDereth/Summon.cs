@@ -33,7 +33,7 @@ namespace OracleOfDereth
         public new string ToString()
         {
             if (IsRated()) {
-                return $"{Item.Name} [DMG {DamageScore()} | DEF {DefenseScore()}]";
+                return $"{Item.Name} [DMG {DamageScore()}% | DEF {DefenseScore()}%]";
             } else {
                 return Item.Name;
             }
@@ -58,11 +58,11 @@ namespace OracleOfDereth
         // (0.625 * (1 +$D / 100)*(.9 -$C / 100)+2 * (1 + ($D +$CD)/ 100)*(.1 +$C / 100))/ 0.01365
         public double DamageScore()
         {
-            return Math.Round((float)(0.625 * (1 + D() / 100.0f) * (0.9 - C() / 100.0f) + 2 * (1 + (D() + CD()) / 100.0f) * (0.1 + C() / 100.0f)) / 0.01365f);
+            return Math.Round((float)((0.625f * (1 + D() / 100.0f) * (0.9 - C() / 100.0f) + 2 * (1 + (D() + CD()) / 100.0f) * (0.1 + C() / 100.0f)) - 0.7625f) * 165.9751f);
         }
         public double DefenseScore()
         {
-            return Math.Round((float)(0.625 * (1 + DR() / 100.0f) * (0.9 - CR() / 100.0f) + 2 * (1 + (DR() + CDR()) / 100.0f) * (0.1 + CR() / 100.0f)) / 0.01365f);
+            return Math.Round((float)((0.7625f - (0.625f * (1 - DR() / 100.0f) * (0.9f + CR() / 1000.0f) + 2 * (1 - (DR() + CDR()) / 100.0f) * (0.1f - CR() / 1000.0f))) / 0.002065f));
         }
 
         public bool IsRated() { 
