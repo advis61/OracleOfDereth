@@ -47,7 +47,6 @@ namespace OracleOfDereth
 
         public static void Init()
         {
-            Util.Chat("Clearing known titles data.", Util.ColorPink);
             Titles.Clear();
             LoadTitlesCSV();
         }
@@ -63,7 +62,7 @@ namespace OracleOfDereth
                 if (!KnownTitleIds.Contains(titleId)) { KnownTitleIds.Add(titleId); }
             }
             
-            Util.Chat($"Titles data updated. {KnownTitleIds.Count} titles completed.", Util.ColorPink);
+            //Util.Chat($"Titles data updated. {KnownTitleIds.Count} titles completed.", Util.ColorPink);
         }
 
         public static void ParseUpdate(int titleId)

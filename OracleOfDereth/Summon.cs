@@ -32,11 +32,7 @@ namespace OracleOfDereth
 
         public new string ToString()
         {
-            if (IsRated()) {
-                return $"{Item.Name} [DMG {DamageScore()}% | DEF {DefenseScore()}%]";
-            } else {
-                return Item.Name;
-            }
+            return $"{Item.Name} [DMG {DamageScore()}% | DEF {DefenseScore()}%]";
         }
 
         public bool IsSummon()
@@ -44,6 +40,7 @@ namespace OracleOfDereth
             if (Item == null) return false;
             if (Item.Id == 0) return false;
             if (Item.ObjectClass != ObjectClass.Misc) { return false; }
+            if (Item.Values(LongValueKey.UsesTotal) != 50) { return false; }
 
             if (Item.Name.EndsWith("Essence")) { return true; }
             if (Item.Name.Contains("Essence (")) { return true; }
