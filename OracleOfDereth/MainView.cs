@@ -53,6 +53,10 @@ namespace OracleOfDereth
         // Buffs
         public HudList BuffsList { get; private set; }
 
+        // Fellows
+        public HudList FellowsList { get; private set; }
+        public HudCheckBox FellowsRecruit { get; private set; }
+
         // John
         public HudStaticText JohnLabel { get; private set; }
         public HudStaticText JohnText { get; private set; }
@@ -122,6 +126,7 @@ namespace OracleOfDereth
             // Status Tab
             { 1_00, 200 }, // HUD
             { 1_01, 460 }, // Buffs
+            { 1_02, 460 }, // Fellows
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -149,6 +154,7 @@ namespace OracleOfDereth
             // Status Tab
             { 1_00, 320 }, // HUD
             { 1_01, 545 }, // Buffs
+            { 1_02, 545 }, // Fellows
 
             // Character Tab
             { 2_00, 550 }, // Augmentations
@@ -242,6 +248,12 @@ namespace OracleOfDereth
                 // Buffs Tab
                 BuffsList = (HudList)view["BuffsList"];
                 BuffsList.ClearRows();
+
+                // Fellows Tab
+                FellowsList = (HudList)view["FellowsList"];
+                FellowsList.ClearRows();
+
+                FellowsRecruit = (HudCheckBox)view["FellowsRecruit"];
 
                 // John Tab
                 JohnText = (HudStaticText)view["JohnText"];
@@ -405,7 +417,6 @@ namespace OracleOfDereth
             QuestFlag.Refresh();
         }
 
-
         private void AssignImage(HudPictureBox row, int icon)
         {
             if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
@@ -423,12 +434,14 @@ namespace OracleOfDereth
         public void Update()
         {
             if(QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
+            //if(FellowsRecruit.Checked) { Fellow.Recruit(); }
 
             int currentTab = CurrentTab();
 
             // Status Tab
             if (currentTab == 1_00) { UpdateHud(); }
             if (currentTab == 1_01) { UpdateBuffs(); }
+            if (currentTab == 1_02) { UpdateFellows(); }
 
             // Character Tab
             if (currentTab == 2_00) { UpdateAugmentations(); }
@@ -493,6 +506,13 @@ namespace OracleOfDereth
         // Buffs Tab
         public void UpdateBuffs() { 
             UpdateBuffsList(); 
+        }
+
+        // Fellows Tab
+
+        public void UpdateFellows()
+        {
+            UpdateFellowsList();
         }
 
         // John Tab
@@ -597,6 +617,55 @@ namespace OracleOfDereth
             }
 
             while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount-1); }
+        }
+
+        private void UpdateFellowsList()
+        {
+            List<IGrouping<string, Fellow>> fellowships = Fellow.Fellowships();
+
+            int index = 0;
+            HudList.HudListRowAccessor row;
+
+            // Fellowships
+            for (int x = 0; x < fellowships.Count; x++)
+            {
+                var fellowship = fellowships[x];
+                if (index >= FellowsList.RowCount) { row = FellowsList.AddRow(); } else { row = FellowsList[index]; }
+
+                string key = fellowship.Key;
+                if(key == "" || key.Length < 1) { key = "(none)"; }
+
+                ((HudStaticText)row[0]).Text = $"Fellowship: {key} ({fellowship.Count()})";
+                ((HudStaticText)row[1]).Text = "";
+                ((HudStaticText)row[2]).Text = "";
+
+                index++;
+
+                // Fellows
+                List<Fellow> fellows = fellowship.OrderBy(f => f.Name).ToList();
+
+                for (int y = 0; y < fellows.Count; y++)
+                {
+                    var fellow = fellows[y];
+                    if (index >= FellowsList.RowCount) { row = FellowsList.AddRow(); } else { row = FellowsList[index]; }
+
+                    ((HudStaticText)row[0]).Text = "  " + fellow.Name;
+                    ((HudStaticText)row[1]).Text = fellow.Id.ToString();
+                    ((HudStaticText)row[2]).Text = fellow.LastSeenAgo().ToString();
+
+                    index++;
+                }
+
+                // Blank row
+                if (index >= FellowsList.RowCount) { row = FellowsList.AddRow(); } else { row = FellowsList[index]; }
+                ((HudStaticText)row[0]).Text = "";
+                ((HudStaticText)row[1]).Text = "";
+                ((HudStaticText)row[2]).Text = "";
+                
+                index++;
+            }
+
+            while (FellowsList.RowCount > index) { FellowsList.RemoveRow(FellowsList.RowCount - 1); }
         }
 
         private void UpdateCantripsList()

@@ -132,6 +132,7 @@ namespace OracleOfDereth
                     e.Changed.ObjectClass == ObjectClass.Housing ||
                     e.Changed.ObjectClass == ObjectClass.Lifestone ||
                     e.Changed.ObjectClass == ObjectClass.Npc ||
+                    e.Changed.ObjectClass == ObjectClass.Player ||
                     e.Changed.ObjectClass == ObjectClass.Portal ||
                     e.Changed.ObjectClass == ObjectClass.Vendor)
                     return;

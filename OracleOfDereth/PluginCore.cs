@@ -124,6 +124,7 @@ namespace OracleOfDereth
             Cantrip.Init();
             CreditQuest.Init();
             FacilityQuest.Init();
+            Fellow.Init();
             FlagQuest.Init();
             JohnQuest.Init();
             Marker.Init();
@@ -148,6 +149,7 @@ namespace OracleOfDereth
             try
             {
                 Target.RemoveAllExpired();
+                if(mainView.FellowsRecruit.Checked) { Fellow.Update(); }
 
                 mainView.Update();
                 targetView.Update();
@@ -219,7 +221,7 @@ namespace OracleOfDereth
                 if(command == "/od society")
                 {
                     int thing = CoreManager.Current.CharacterFilter.GetCharProperty(287);
-                    Util.Chat($"Thing is {thing}");
+                    Util.Chat($"Society property is {thing}");
                 }
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -267,14 +269,13 @@ namespace OracleOfDereth
         }
         private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
         {
-            Summon.SetCurrent(item);
+            Summon.Identified(item);
         }
 
         // https://github.com/ACEmulator/ACE/blob/master/Source/ACE.Server/Network/GameEvent/GameEventType.cs
         private void EchoFilter_ServerDispatch(object sender, NetworkMessageEventArgs e)
         {
             try {
-
                 if (e.Message.Type != 0xF7B0) { return; } // Game Event
 
                 if ((int)e.Message["event"] == 0x0029) // Titles list
@@ -285,6 +286,11 @@ namespace OracleOfDereth
                 if ((int)e.Message["event"] == 0x002B) // Update titles
                 {
                     Title.ParseUpdate(e.Message.Value<Int32>("title"));
+                }
+
+                if ((int)e.Message["event"] == 0x00C9) // Identify Response
+                {
+                    Fellow.Parse(e.Message.RawData);
                 }
             }
             catch (Exception ex) { Util.Log(ex); }
