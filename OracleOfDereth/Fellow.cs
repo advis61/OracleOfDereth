@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -59,8 +60,6 @@ namespace OracleOfDereth
             // Update fellows we can see
             foreach (Fellow fellow in Fellows)
             {
-                if(fellow.Name != "Igmo Baggins" && fellow.Name != "C-mule" && fellow.Name != "Locke Eveldan") { continue; }
-                if(fellow.Name != "Igmo Baggins") { continue; }
                 if (fellow.LastSeenAgo() >= RescanAfterSeconds) { Request(fellow); }
             }
         }
@@ -106,14 +105,14 @@ namespace OracleOfDereth
             Fellow fellow = Add(CoreManager.Current.WorldFilter[id]);
             if(fellow == null) { return; }
 
+            //Util.Chat("============");
+            //Util.Chat($"Appraised {fellow.Item.Name}");
+            //Util.Chat(BitConverter.ToString(packet));
+            //Util.Chat("============");
+
             // Update
             fellow.Fellowship = GetFellowshipName(packet);
             fellow.LastSeenAt = DateTime.Now;
-
-            Util.Chat("============");
-            Util.Chat($"Updating {fellow.ToString()}");
-            Util.Chat(BitConverter.ToString(packet));
-            Util.Chat("============");
         }
 
         public static Fellow Find(int id) { return Fellows.Find(f => f.Item.Id == id); }
@@ -149,54 +148,16 @@ namespace OracleOfDereth
             if(LastSeenAt == DateTime.MinValue) { return -1; }
             return (int)(DateTime.Now - LastSeenAt).TotalSeconds;
         }
-
-        private static string GetFellowshipName(byte[] packet)
+        private static bool GetSuccess(byte[] packet)
         {
-            uint targetKey = (uint)StringValueKey.FellowshipName;
+            if (packet == null || packet.Length < 9) { return false; } // ObjectID(4) + Flags(4) + Success(1)
 
             using (var br = new BinaryReader(new MemoryStream(packet)))
             {
-                while (br.BaseStream.Position < br.BaseStream.Length - 6)
-                {
-                    long start = br.BaseStream.Position;
-
-                    ushort count = br.ReadUInt16();
-                    ushort unknown = br.ReadUInt16();
-
-                    if (count == 0 || count >= 500 || unknown >= 0x0100)
-                    {
-                        br.BaseStream.Position = start + 1;
-                        continue;
-                    }
-
-                    bool valid = true;
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        if (br.BaseStream.Position + 6 > br.BaseStream.Length)
-                        {
-                            valid = false;
-                            break;
-                        }
-
-                        uint key = br.ReadUInt32();
-                        ushort len = br.ReadUInt16();
-
-                        if (len > 512 || br.BaseStream.Position + len > br.BaseStream.Length)
-                        {
-                            valid = false;
-                            break;
-                        }
-
-                        string value = Encoding.UTF8.GetString(br.ReadBytes(len)).TrimEnd('\0');
-                        if (key == targetKey) return value;
-                    }
-
-                    br.BaseStream.Position = valid ? br.BaseStream.Position : start + 1;
-                }
+                br.ReadUInt32(); // skip ObjectID
+                br.ReadUInt32(); // skip Flags
+                return br.ReadBoolean(); // success
             }
-
-            return "";
         }
 
         private static int GetObjectId(byte[] packet)
@@ -218,16 +179,77 @@ namespace OracleOfDereth
             return (int)objectId;
         }
 
-        private static bool GetSuccess(byte[] packet)
+        public static string GetFellowshipName(byte[] packet)
         {
-            if (packet == null || packet.Length < 9) { return false; } // ObjectID(4) + Flags(4) + Success(1)
-
-            using (var br = new BinaryReader(new MemoryStream(packet)))
+            using (var ms = new MemoryStream(packet))
+            using (var br = new BinaryReader(ms))
             {
-                br.ReadUInt32(); // skip ObjectID
-                br.ReadUInt32(); // skip Flags
-                return br.ReadBoolean(); // success
+                // 1. Jump to OpCode (Index 12)
+                if (packet.Length < 32) return "";
+                br.BaseStream.Position = 12;
+
+                uint opCode = br.ReadUInt32(); // 0x00C9
+                uint targetID = br.ReadUInt32();
+                uint flags = br.ReadUInt32();
+                uint success = br.ReadUInt32();
+
+                if (success == 0) return "";
+
+                // 2. Table Navigation (Order is critical)
+                // Check mask -> Check if enough bytes exist -> Skip
+
+                // 0x01: Int
+                if ((flags & 0x00000001) != 0) SafeSkip(br, 4, 4);
+                // 0x2000: Int64
+                if ((flags & 0x00002000) != 0) SafeSkip(br, 4, 8);
+                // 0x02: Bool
+                if ((flags & 0x00000002) != 0) SafeSkip(br, 4, 4);
+                // 0x04: Float (Appraisal uses 8-byte Doubles)
+                if ((flags & 0x00000004) != 0) SafeSkip(br, 4, 8);
+
+                // 0x08: String Table (OUR TARGET)
+                if ((flags & 0x00000008) != 0)
+                {
+                    if (br.BaseStream.Position + 4 <= br.BaseStream.Length)
+                    {
+                        ushort count = br.ReadUInt16();
+                        br.ReadUInt16(); // Padding
+
+                        for (int i = 0; i < count; i++)
+                        {
+                            if (br.BaseStream.Position + 6 > br.BaseStream.Length) break;
+
+                            uint key = br.ReadUInt32();
+                            ushort len = br.ReadUInt16();
+
+                            if (br.BaseStream.Position + len > br.BaseStream.Length) break;
+
+                            byte[] strBytes = br.ReadBytes(len);
+
+                            // AC String Alignment (4-byte)
+                            int pad = (4 - (len % 4)) % 4;
+                            if (br.BaseStream.Position + pad <= br.BaseStream.Length)
+                                br.BaseStream.Position += pad;
+
+                            if (key == 0x000A) // Fellowship Property
+                                return Encoding.UTF8.GetString(strBytes).TrimEnd('\0');
+                        }
+                    }
+                }
+
+                // If you still get errors, it's because flags like 0x1000 or 0x0010 
+                // are set and shifting the data before you reach the strings.
+                return "";
             }
+        }
+
+        private static void SafeSkip(BinaryReader br, int keySize, int valSize)
+        {
+            if (br.BaseStream.Position + 4 > br.BaseStream.Length) return;
+            ushort count = br.ReadUInt16();
+            br.ReadUInt16();
+            long totalToSkip = (long)count * (keySize + valSize);
+            br.BaseStream.Position = Math.Min(br.BaseStream.Position + totalToSkip, br.BaseStream.Length);
         }
     }
 }
