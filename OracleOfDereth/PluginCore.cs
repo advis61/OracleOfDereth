@@ -1,16 +1,11 @@
-﻿using Decal.Adapter;
-using Decal.Adapter.Wrappers;
-using MyClasses.MetaViewWrappers;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 using WindowsTimer = System.Windows.Forms.Timer;
+
+using Decal.Adapter;
+using Decal.Adapter.Wrappers;
+using System.Threading;
 
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
@@ -191,7 +186,7 @@ namespace OracleOfDereth
             } catch (Exception ex) { Util.Log(ex); }
         }
 
-        private void Current_CommandLineText(object sender, ChatParserInterceptEventArgs e)
+        public void Current_CommandLineText(object sender, ChatParserInterceptEventArgs e)
         {
             if (e.Text == null) return;
             string command = e.Text.ToLower().Trim();
@@ -202,27 +197,29 @@ namespace OracleOfDereth
                 {
                     Version version = Assembly.GetExecutingAssembly().GetName().Version;
                     Util.Chat($"Oracle of Dereth v{version}", 1);
-                    e.Eat = true;
                 }
 
-                if (command == "/od exception")
+                else if (command == "/od exception")
                 {
                     Util.Chat($"Oracle of Dereth EXCEPTION", 1);
-                    e.Eat = true;
                     throw new InvalidOperationException("An error occurred.");
                 }
 
-                if(command == "/od markers" || command == "/markers")
-                {
-                    Marker.Info();
-                    e.Eat = true;
-                }
+                else if(command == "/od markers") { Marker.Info(); }
+                else if(command == "/od logout") { CoreManager.Current.Actions.Logout(); }
+                else if(command == "/od fellow open") { CoreManager.Current.Actions.FellowshipSetOpen(true); }
+                else if(command == "/od fellow close") { CoreManager.Current.Actions.FellowshipSetOpen(false); }
+                else if(command == "/od fellow disband") { CoreManager.Current.Actions.FellowshipDisband(); }
+                else if(command == "/od fellow quit") { CoreManager.Current.Actions.FellowshipQuit(); }
 
-                if(command == "/od society")
+                else if (command.StartsWith("/od fellow recruit ") && command.Length > 19)
                 {
-                    int thing = CoreManager.Current.CharacterFilter.GetCharProperty(287);
-                    Util.Chat($"Society property is {thing}");
+                    string name = command.Substring(19, command.Length - 19);
+                    Fellow.Recruit(name);
                 }
+                else { return; }
+
+                e.Eat = true;
             }
             catch (Exception ex) { Util.Log(ex); }
         }

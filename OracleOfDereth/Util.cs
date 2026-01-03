@@ -1,11 +1,12 @@
 ﻿using Decal.Adapter;
+using Decal.Adapter.Wrappers;
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.NetworkInformation;
 
 namespace OracleOfDereth
 {
@@ -110,6 +111,48 @@ namespace OracleOfDereth
 
             return output.Trim();
         }
+        public static double GetDistance(WorldObject obj1, WorldObject obj2)
+        {
+            if (obj1.Id == 0) throw new ArgumentOutOfRangeException("obj1", "Object passed with an Id of 0");
+            if (obj2.Id == 0) throw new ArgumentOutOfRangeException("obj2", "Object passed with an Id of 0");
 
+            return CoreManager.Current.WorldFilter.Distance(obj1.Id, obj2.Id) * 240;
+        }
+
+        public static double GetDistanceFromPlayer(WorldObject destObj)
+        {
+            if (CoreManager.Current.CharacterFilter.Id == 0) throw new ArgumentOutOfRangeException("destObj", "CharacterFilter.Id of 0");
+            if (destObj.Id == 0) throw new ArgumentOutOfRangeException("destObj", "Object passed with an Id of 0");
+
+            return CoreManager.Current.WorldFilter.Distance(CoreManager.Current.CharacterFilter.Id, destObj.Id) * 240;
+        }
+
+        public static WorldObject GetClosestObject(ObjectClass objectClass)
+        {
+            WorldObject closest = null;
+
+            foreach (WorldObject obj in CoreManager.Current.WorldFilter.GetLandscape())
+            {
+                if (obj.ObjectClass != objectClass) continue;
+                if (closest == null || GetDistanceFromPlayer(obj) < GetDistanceFromPlayer(closest)) closest = obj;
+            }
+
+            return closest;
+        }
+
+        public static WorldObject GetClosestObject(string objectName, bool partialMatch = false)
+        {
+            WorldObject closest = null;
+
+            foreach (WorldObject obj in CoreManager.Current.WorldFilter.GetLandscape())
+            {
+                if (!partialMatch && String.Compare(obj.Name, objectName, StringComparison.OrdinalIgnoreCase) != 0) continue;
+                if (partialMatch && !obj.Name.ToLower().Contains(objectName.ToLower())) continue;
+
+                if (closest == null || GetDistanceFromPlayer(obj) < GetDistanceFromPlayer(closest)) closest = obj;
+            }
+
+            return closest;
+        }
     }
 }

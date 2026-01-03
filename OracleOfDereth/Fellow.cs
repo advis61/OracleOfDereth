@@ -67,6 +67,24 @@ namespace OracleOfDereth
         {
             return Fellows.GroupBy(f => f.Fellowship).OrderBy(g => g.Key).ToList();
         }
+        public static void Recruit(string name)
+        {
+            WorldObject closest = Util.GetClosestObject(name);
+
+            if(closest == null) { 
+                Util.Chat($"Could not find fellow: {name}"); 
+                return;
+            }
+
+            Util.Chat($"Recruiting: {name}");
+
+            try
+            {
+                CoreManager.Current.Actions.FellowshipRecruit(closest.Id);
+            }
+            catch (Exception) { } // Eat the decal error
+        }
+
 
         public static void Recruit()
         {
