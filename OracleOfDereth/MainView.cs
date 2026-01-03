@@ -118,15 +118,12 @@ namespace OracleOfDereth
         public HudList FacilityList { get; private set; }
         public HudButton FacilityRefresh { get; private set; }
 
-        // Resize Tracking
-        public bool wasResized = false;
-
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
         {
             // Status Tab
             { 1_00, 200 }, // HUD
             { 1_01, 460 }, // Buffs
-            { 1_02, 460 }, // Fellows
+            { 1_02, 300 }, // Fellows
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -150,7 +147,6 @@ namespace OracleOfDereth
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
         {
-
             // Status Tab
             { 1_00, 320 }, // HUD
             { 1_01, 545 }, // Buffs
@@ -251,6 +247,7 @@ namespace OracleOfDereth
 
                 // Fellows Tab
                 FellowsList = (HudList)view["FellowsList"];
+                FellowsList.Click += FellowsList_Click;
                 FellowsList.ClearRows();
 
                 FellowsRecruit = (HudCheckBox)view["FellowsRecruit"];
@@ -668,6 +665,14 @@ namespace OracleOfDereth
             while (FellowsList.RowCount > index) { FellowsList.RemoveRow(FellowsList.RowCount - 1); }
         }
 
+        private void FellowsList_Click(object sender, int row, int col)
+        {
+            string id = ((HudStaticText)FellowsList[row][1]).Text;
+            if (id == null || id.Length < 1) { return; }
+
+            CoreManager.Current.Actions.SelectItem(int.Parse(id));
+        }
+
         private void UpdateCantripsList()
         {
             List<Cantrip> cantrips = Cantrip.Cantrips.Where(x => x.SkillIsKnown()).ToList();
@@ -1076,6 +1081,7 @@ namespace OracleOfDereth
                 ((HudStaticText)row[3]).Text = creditQuest.Flag;
             }
         }
+
 
         private void CreditsList_Click(object sender, int row, int col)
         {
@@ -1516,6 +1522,8 @@ namespace OracleOfDereth
             {
                 MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+
+                FellowsList.Click -= FellowsList_Click;
 
                 JohnList.Click -= JohnList_Click;
                 JohnListSortCompleteIcon.Hit -= JohnListSortComplete_Click;

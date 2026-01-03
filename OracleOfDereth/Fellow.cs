@@ -19,7 +19,7 @@ namespace OracleOfDereth
     {
         // Constants
         public static readonly int RemoveAfterSeconds = 10;
-        public static readonly int RescanAfterSeconds = 3;
+        public static readonly int RescanAfterSeconds = 2;
 
         // Collection
         public static List<Fellow> Fellows = new List<Fellow>();
@@ -30,7 +30,6 @@ namespace OracleOfDereth
         public string Name = "";
         public string Fellowship = "";
         public DateTime LastSeenAt = DateTime.MinValue;
-        public bool Recruited = false;
 
         public static void Init()
         {
@@ -58,7 +57,7 @@ namespace OracleOfDereth
             Fellows.RemoveAll(f => CoreManager.Current.WorldFilter[f.Id] == null && f.LastSeenAgo() >= RemoveAfterSeconds);
 
             // Update fellows we can see
-            foreach (Fellow fellow in Fellows)
+            foreach (Fellow fellow in Fellows.OrderByDescending(f => f.LastSeenAgo()).ToList())
             {
                 if (fellow.LastSeenAgo() >= RescanAfterSeconds) { Request(fellow); }
             }
@@ -129,11 +128,21 @@ namespace OracleOfDereth
             Fellow existing = Find(item);
             if(existing != null) { return existing; }
 
+            string fellowship = item.Values(StringValueKey.FellowshipName);
+            if(fellowship == null || fellowship.Length == 0) { fellowship = "???"; }
+
             // Create new
-            Fellow fellow = new() { Item = item, Id = item.Id, Name = item.Name, Fellowship = "???", LastSeenAt = DateTime.Now };
+            Fellow fellow = new() { 
+                Item = item, 
+                Id = item.Id, 
+                Name = item.Name, 
+                Fellowship = fellowship, 
+                LastSeenAt = DateTime.Now 
+            };
+
             Fellows.Add(fellow);
 
-            Util.Chat($"Adding {fellow.ToString()}");
+            //Util.Chat($"Adding {fellow.ToString()}");
             
             return fellow;
         }
@@ -181,30 +190,24 @@ namespace OracleOfDereth
 
         public static string GetFellowshipName(byte[] packet)
         {
+            if (packet.Length < 32) return "";
+
             using (var ms = new MemoryStream(packet))
             using (var br = new BinaryReader(ms))
             {
-                // 1. Jump to OpCode (Index 12)
-                if (packet.Length < 32) return "";
                 br.BaseStream.Position = 12;
 
                 uint opCode = br.ReadUInt32(); // 0x00C9
-                uint targetID = br.ReadUInt32();
+                uint objectID = br.ReadUInt32();
                 uint flags = br.ReadUInt32();
                 uint success = br.ReadUInt32();
 
                 if (success == 0) return "";
 
-                // 2. Table Navigation (Order is critical)
-                // Check mask -> Check if enough bytes exist -> Skip
-
-                // 0x01: Int
+                // 2. Table Navigation
                 if ((flags & 0x00000001) != 0) SafeSkip(br, 4, 4);
-                // 0x2000: Int64
                 if ((flags & 0x00002000) != 0) SafeSkip(br, 4, 8);
-                // 0x02: Bool
                 if ((flags & 0x00000002) != 0) SafeSkip(br, 4, 4);
-                // 0x04: Float (Appraisal uses 8-byte Doubles)
                 if ((flags & 0x00000004) != 0) SafeSkip(br, 4, 8);
 
                 // 0x08: String Table (OUR TARGET)
@@ -237,12 +240,9 @@ namespace OracleOfDereth
                     }
                 }
 
-                // If you still get errors, it's because flags like 0x1000 or 0x0010 
-                // are set and shifting the data before you reach the strings.
                 return "";
             }
         }
-
         private static void SafeSkip(BinaryReader br, int keySize, int valSize)
         {
             if (br.BaseStream.Position + 4 > br.BaseStream.Length) return;
