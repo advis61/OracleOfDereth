@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Decal.Adapter;
+using Decal.Adapter.Wrappers;
+using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using WindowsTimer = System.Windows.Forms.Timer;
-
-using Decal.Adapter;
-using Decal.Adapter.Wrappers;
 using System.Threading;
+using WindowsTimer = System.Windows.Forms.Timer;
 
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
@@ -205,12 +205,29 @@ namespace OracleOfDereth
                     throw new InvalidOperationException("An error occurred.");
                 }
 
-                else if(command == "/od markers") { Marker.Info(); }
-                else if(command == "/od logout") { CoreManager.Current.Actions.Logout(); }
-                else if(command == "/od fellow open") { CoreManager.Current.Actions.FellowshipSetOpen(true); }
-                else if(command == "/od fellow close") { CoreManager.Current.Actions.FellowshipSetOpen(false); }
-                else if(command == "/od fellow disband") { CoreManager.Current.Actions.FellowshipDisband(); }
-                else if(command == "/od fellow quit") { CoreManager.Current.Actions.FellowshipQuit(); }
+                else if(command == "/od markers") { 
+                    Marker.Info(); 
+                }
+
+                else if(command == "/od logout") { 
+                    CoreManager.Current.Actions.Logout(); 
+                }
+
+                else if(command == "/od fellow open") { 
+                    CoreManager.Current.Actions.FellowshipSetOpen(true); 
+                }
+
+                else if(command == "/od fellow close") { 
+                    CoreManager.Current.Actions.FellowshipSetOpen(false); 
+                }
+
+                else if(command == "/od fellow disband") { 
+                    CoreManager.Current.Actions.FellowshipDisband(); 
+                }
+
+                else if(command == "/od fellow quit") { 
+                    CoreManager.Current.Actions.FellowshipQuit(); 
+                }
 
                 else if (command.StartsWith("/od fellow recruit ") && command.Length > 19)
                 {
@@ -275,17 +292,19 @@ namespace OracleOfDereth
             try {
                 if (e.Message.Type != 0xF7B0) { return; } // Game Event
 
-                if ((int)e.Message["event"] == 0x0029) // Titles list
+                int eventType = (int)e.Message["event"];
+
+                if (eventType == 0x0029) // Titles list
                 {
                     Title.Parse(e.Message.Struct("titles"));
                 }
 
-                if ((int)e.Message["event"] == 0x002B) // Update titles
+                else if (eventType == 0x002B) // Update titles
                 {
                     Title.ParseUpdate(e.Message.Value<Int32>("title"));
                 }
 
-                if ((int)e.Message["event"] == 0x00C9) // Identify Response
+                else if (eventType == 0x00C9) // Identify Response
                 {
                     Fellow.Parse(e.Message.RawData);
                 }

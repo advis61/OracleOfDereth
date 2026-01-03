@@ -61,6 +61,9 @@
     <Reference Include="Decal.FileService">
       <HintPath>..\deps\Decal.FileService.dll</HintPath>
     </Reference>
+    <Reference Include="Decal.Interop.Core">
+      <HintPath>..\deps\Decal.Interop.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="VirindiViewService">
       <HintPath>..\deps\VirindiViewService.dll</HintPath>
