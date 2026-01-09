@@ -13,6 +13,7 @@
     <RootNamespace>OracleOfDereth</RootNamespace>
     <AssemblyName>OracleOfDereth</AssemblyName>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);VVS_REFERENCED</DefineConstants>

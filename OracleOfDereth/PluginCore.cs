@@ -213,20 +213,20 @@ namespace OracleOfDereth
                     CoreManager.Current.Actions.Logout(); 
                 }
 
-                else if(command == "/od fellow open") { 
-                    CoreManager.Current.Actions.FellowshipSetOpen(true); 
+                else if(command == "/od fellow open") {
+                    Fellow.Open();
                 }
 
-                else if(command == "/od fellow close") { 
-                    CoreManager.Current.Actions.FellowshipSetOpen(false); 
+                else if(command == "/od fellow close") {
+                    Fellow.Close();
                 }
 
                 else if(command == "/od fellow disband") {
-                    try { myCoreManager.Actions.FellowshipDisband(); } catch (Exception ex) { }
+                    Fellow.Disband();
                 }
 
-                else if(command == "/od fellow quit") { 
-                    CoreManager.Current.Actions.FellowshipQuit(); 
+                else if(command == "/od fellow quit") {
+                    Fellow.Quit();
                 }
 
                 else if (command.StartsWith("/od fellow recruit ") && command.Length > 19)

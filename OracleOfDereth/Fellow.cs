@@ -40,6 +40,15 @@ namespace OracleOfDereth
         {
             Scan();
         }
+
+        public unsafe bool InFellowship { get => ((*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship != null); }
+
+        public unsafe static void Disband() { ((delegate* unmanaged[Cdecl]<int, byte>)6975808)(1); }
+        public unsafe static void Quit() { ((delegate* unmanaged[Cdecl]<int, byte>)6975808)(0); }
+        public unsafe static void Open() { ((delegate* unmanaged[Cdecl]<int, byte>)6975392)(1); }
+        public unsafe static void Close() { ((delegate* unmanaged[Cdecl]<int, byte>)6975392)(0); }
+
+
         public static void Scan()
         {
             // Add all fellows
@@ -67,7 +76,7 @@ namespace OracleOfDereth
         {
             return Fellows.GroupBy(f => f.Fellowship).OrderBy(g => g.Key).ToList();
         }
-        public static void Recruit(string name)
+        public unsafe static void Recruit(string name)
         {
             WorldObject closest = Util.GetClosestObject(name);
 
@@ -80,7 +89,7 @@ namespace OracleOfDereth
 
             try
             {
-                CoreManager.Current.Actions.FellowshipRecruit(closest.Id);
+                ((delegate* unmanaged[Cdecl]<uint, byte>)6976016)((uint)closest.Id);
             }
             catch (Exception) { } // Eat the decal error
         }
