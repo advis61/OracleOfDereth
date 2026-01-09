@@ -221,8 +221,8 @@ namespace OracleOfDereth
                     CoreManager.Current.Actions.FellowshipSetOpen(false); 
                 }
 
-                else if(command == "/od fellow disband") { 
-                    CoreManager.Current.Actions.FellowshipDisband(); 
+                else if(command == "/od fellow disband") {
+                    try { myCoreManager.Actions.FellowshipDisband(); } catch (Exception ex) { }
                 }
 
                 else if(command == "/od fellow quit") { 
