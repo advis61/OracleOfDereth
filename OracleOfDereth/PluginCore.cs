@@ -225,6 +225,10 @@ namespace OracleOfDereth
                     Fellow.Disband();
                 }
 
+                else if(command == "/od fellow create") {
+                    Fellow.Create("eveldan");
+                }
+
                 else if(command == "/od fellow quit") {
                     Fellow.Quit();
                 }
