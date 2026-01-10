@@ -1,4 +1,5 @@
-﻿using Decal.Adapter;
+﻿using AcClient;
+using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using System;
 using System.Collections.Generic;
@@ -153,6 +154,22 @@ namespace OracleOfDereth
             }
 
             return closest;
+        }
+
+        public unsafe static string ReadPStringFromBuffer(PStringBase<char> pstr)
+        {
+            if (pstr.m_buffer == null) return null;
+
+            byte* raw = (byte*)pstr.m_buffer;
+
+            // Based on your dump, real string starts at offset 16 (plus 4 fixes this)
+            byte* strPtr = raw + 16 + 4;
+
+            // Compute length until null terminator
+            int len = 0;
+            while (strPtr[len] != 0) len++;
+
+            return new string((sbyte*)strPtr, 0, len);
         }
     }
 }

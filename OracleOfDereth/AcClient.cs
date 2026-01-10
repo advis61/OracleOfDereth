@@ -32,19 +32,37 @@ public struct PStringBase<T> where T : unmanaged
 
     public unsafe static PStringBase<ushort>* whitespace_string_w = (PStringBase<ushort>*)9367860;
 
+    //public unsafe override string ToStringOriginalFromUtilityBelt()
+    //{
+    //    if (m_buffer == null || m_buffer->m_len == 0)
+    //    {
+    //        return "null";
+    //    }
+
+    //    if (typeof(T) == typeof(ushort))
+    //    {
+    //        return new string((char*)(&m_buffer->m_data), 0, m_buffer->m_len - 1);
+    //    }
+
+    //    return new string((sbyte*)(&m_buffer->m_data), 0, m_buffer->m_len - 1);
+    //}
+
     public unsafe override string ToString()
     {
-        if (m_buffer == null || m_buffer->m_len == 0)
-        {
-            return "null";
-        }
+        if (m_buffer == null || m_buffer->m_len == 0) return "null";
 
-        if (typeof(T) == typeof(ushort))
-        {
-            return new string((char*)(&m_buffer->m_data), 0, m_buffer->m_len - 1);
-        }
+        // Handle ushort (wide char) strings
+        if (typeof(T) == typeof(ushort)) { return new string((char*)(&m_buffer->m_data), 0, m_buffer->m_len - 1); }
 
-        return new string((sbyte*)(&m_buffer->m_data), 0, m_buffer->m_len - 1);
+        // Handle char strings using your working offset
+        // Based on your dump, the real string starts at offset 16 + 4
+        byte* raw = (byte*)m_buffer;
+        byte* strPtr = raw + 16 + 4;
+
+        int len = 0;
+        while (strPtr[len] != 0) len++;
+
+        return new string((sbyte*)strPtr, 0, len);
     }
 
     public unsafe static implicit operator PStringBase<T>(string inStr)

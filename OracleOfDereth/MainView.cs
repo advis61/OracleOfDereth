@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using VirindiViewService;
 using VirindiViewService.Controls;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace OracleOfDereth
@@ -54,8 +55,8 @@ namespace OracleOfDereth
         public HudList BuffsList { get; private set; }
 
         // Fellows
-        public HudList FellowsList { get; private set; }
-        public HudCheckBox FellowsRecruit { get; private set; }
+        public HudList FellowshipList { get; private set; }
+        public HudCheckBox FellowshipRecruit { get; private set; }
 
         // Nearbys
         public HudList NearbysList { get; private set; }
@@ -128,7 +129,7 @@ namespace OracleOfDereth
             { 1_00, 200 }, // HUD
             { 1_01, 460 }, // Buffs
             { 1_02, 300 }, // Nearby
-            { 1_03, 300 }, // Fellows
+            { 1_03, 300 }, // Fellowship
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -156,7 +157,7 @@ namespace OracleOfDereth
             { 1_00, 320 }, // HUD
             { 1_01, 545 }, // Buffs
             { 1_02, 545 }, // Nearbys
-            { 1_03, 545 }, // Fellows
+            { 1_03, 545 }, // Fellowship 
 
             // Character Tab
             { 2_00, 550 }, // Augmentations
@@ -252,11 +253,11 @@ namespace OracleOfDereth
                 BuffsList.ClearRows();
 
                 // Fellows Tab
-                FellowsList = (HudList)view["FellowsList"];
-                FellowsList.Click += FellowsList_Click;
-                FellowsList.ClearRows();
+                FellowshipList = (HudList)view["FellowshipList"];
+                FellowshipList.Click += FellowshipList_Click;
+                FellowshipList.ClearRows();
 
-                FellowsRecruit = (HudCheckBox)view["FellowsRecruit"];
+                FellowshipRecruit = (HudCheckBox)view["FellowshipRecruit"];
 
                 // Nearbys Tab
                 NearbysList = (HudList)view["NearbysList"];
@@ -452,7 +453,7 @@ namespace OracleOfDereth
             if (currentTab == 1_00) { UpdateHud(); }
             if (currentTab == 1_01) { UpdateBuffs(); }
             if (currentTab == 1_02) { UpdateNearbys(); }
-            if (currentTab == 1_03) { UpdateFellows(); }
+            if (currentTab == 1_03) { UpdateFellowship(); }
 
             // Character Tab
             if (currentTab == 2_00) { UpdateAugmentations(); }
@@ -528,9 +529,9 @@ namespace OracleOfDereth
 
         // Fellows Tab
 
-        public void UpdateFellows()
+        public void UpdateFellowship()
         {
-            UpdateFellowsList();
+            UpdateFellowshipList();
         }
 
         // John Tab
@@ -637,7 +638,6 @@ namespace OracleOfDereth
             while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount-1); }
         }
 
-
         private void UpdateNearbysList()
         {
             List<IGrouping<string, Fellow>> fellowships = Fellow.Fellowships();
@@ -695,61 +695,25 @@ namespace OracleOfDereth
             CoreManager.Current.Actions.SelectItem(int.Parse(id));
         }
 
-        private void UpdateFellowsList()
+        private void UpdateFellowshipList()
         {
-            List<IGrouping<string, Fellow>> fellowships = Fellow.Fellowships();
+            List<KeyValuePair<string, string>> items = Fellow.FellowshipStatus();
 
-            int index = 0;
-            HudList.HudListRowAccessor row;
-
-            // Fellowships
-            for (int x = 0; x < fellowships.Count; x++)
+            for (int x = 0; x < items.Count(); x++)
             {
-                var fellowship = fellowships[x];
-                if (index >= FellowsList.RowCount) { row = FellowsList.AddRow(); } else { row = FellowsList[index]; }
+                HudList.HudListRowAccessor row;
+                if (x >= FellowshipList.RowCount) { row = FellowshipList.AddRow(); } else { row = FellowshipList[x]; }
 
-                string key = fellowship.Key;
-                if(key == "" || key.Length < 1) { key = "(none)"; }
-
-                ((HudStaticText)row[0]).Text = $"Fellowship: {key} ({fellowship.Count()})";
-                ((HudStaticText)row[1]).Text = "";
-                ((HudStaticText)row[2]).Text = "";
-
-                index++;
-
-                // Fellows
-                List<Fellow> fellows = fellowship.OrderBy(f => f.Name).ToList();
-
-                for (int y = 0; y < fellows.Count; y++)
-                {
-                    var fellow = fellows[y];
-                    if (index >= FellowsList.RowCount) { row = FellowsList.AddRow(); } else { row = FellowsList[index]; }
-
-                    ((HudStaticText)row[0]).Text = "  " + fellow.Name;
-                    ((HudStaticText)row[1]).Text = fellow.Id.ToString();
-                    ((HudStaticText)row[2]).Text = fellow.LastSeenAgo().ToString();
-
-                    index++;
-                }
-
-                // Blank row
-                if (index >= FellowsList.RowCount) { row = FellowsList.AddRow(); } else { row = FellowsList[index]; }
-                ((HudStaticText)row[0]).Text = "";
-                ((HudStaticText)row[1]).Text = "";
-                ((HudStaticText)row[2]).Text = "";
-                
-                index++;
+                // Update
+                ((HudStaticText)row[0]).Text = items[x].Key;
+                ((HudStaticText)row[1]).Text = items[x].Value;
             }
 
-            while (FellowsList.RowCount > index) { FellowsList.RemoveRow(FellowsList.RowCount - 1); }
+            while (FellowshipList.RowCount > items.Count()) { FellowshipList.RemoveRow(FellowshipList.RowCount - 1); }
         }
 
-        private void FellowsList_Click(object sender, int row, int col)
+        private void FellowshipList_Click(object sender, int row, int col)
         {
-            string id = ((HudStaticText)FellowsList[row][1]).Text;
-            if (id == null || id.Length < 1) { return; }
-
-            CoreManager.Current.Actions.SelectItem(int.Parse(id));
         }
 
         private void UpdateCantripsList()
@@ -1603,7 +1567,7 @@ namespace OracleOfDereth
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
                 NearbysList.Click -= NearbysList_Click;
-                FellowsList.Click -= FellowsList_Click;
+                FellowshipList.Click -= FellowshipList_Click;
 
                 JohnList.Click -= JohnList_Click;
                 JohnListSortCompleteIcon.Hit -= JohnListSortComplete_Click;

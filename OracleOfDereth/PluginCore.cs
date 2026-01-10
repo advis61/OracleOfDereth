@@ -73,6 +73,8 @@ namespace OracleOfDereth
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete; // Not run on hot reload
                 CoreManager.Current.CharacterFilter.SpellCast += CharacterFilter_SpellCast;
                 CoreManager.Current.EchoFilter.ServerDispatch += EchoFilter_ServerDispatch;
+                CoreManager.Current.WorldFilter.CreateObject += WorldFilter_CreateObject;
+                CoreManager.Current.WorldFilter.ReleaseObject += WorldFilter_ReleaseObject;
 
                 worldObjectIdentifier = new WorldObjectIdentifier();
                 worldObjectIdentifier.Identified += WorldObjectIdentifier_Identified;
@@ -165,6 +167,9 @@ namespace OracleOfDereth
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
                 CoreManager.Current.CharacterFilter.SpellCast -= CharacterFilter_SpellCast;
                 CoreManager.Current.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch;
+                CoreManager.Current.WorldFilter.CreateObject -= WorldFilter_CreateObject;
+                CoreManager.Current.WorldFilter.ReleaseObject -= WorldFilter_ReleaseObject;
+
                 worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
 
                 // Shutdown timer
@@ -254,6 +259,17 @@ namespace OracleOfDereth
             }
             catch (Exception ex) { Util.Log(ex); }
         }
+
+        private void WorldFilter_CreateObject(object sender, CreateObjectEventArgs e)
+        {
+            Util.Chat("CreateObject " + e.New.Name + " has data? " + e.New.HasIdData);
+        }
+
+        private void WorldFilter_ReleaseObject(object sender, ReleaseObjectEventArgs e)
+        {
+            Util.Chat("ReleaseObject " + e.Released.Name);
+        }
+
         private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
         {
             Summon.Identified(item);
