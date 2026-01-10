@@ -205,32 +205,64 @@ namespace OracleOfDereth
                     throw new InvalidOperationException("An error occurred.");
                 }
 
-                else if(command == "/od markers") { 
-                    Marker.Info(); 
+                else if (command == "/od markers")
+                {
+                    Marker.Info();
                 }
 
-                else if(command == "/od logout") { 
-                    CoreManager.Current.Actions.Logout(); 
+                else if (command == "/od logout")
+                {
+                    CoreManager.Current.Actions.Logout();
                 }
 
-                else if(command == "/od fellow open") {
+                else if (command == "/od fellow open")
+                {
                     Fellow.Open();
                 }
 
-                else if(command == "/od fellow close") {
+                else if (command == "/od fellow close")
+                {
                     Fellow.Close();
                 }
 
-                else if(command == "/od fellow disband") {
+                else if (command == "/od fellow disband")
+                {
                     Fellow.Disband();
                 }
 
-                else if(command == "/od fellow create") {
+                else if (command == "/od fellow create")
+                {
                     Fellow.Create("eveldan");
                 }
 
-                else if(command == "/od fellow quit") {
+                else if (command == "/od fellow quit")
+                {
                     Fellow.Quit();
+                }
+
+                else if (command == "/od fellow in")
+                {
+                    Util.Chat($"In fellow? {Fellow.InFellowship}");
+                }
+
+                else if (command == "/od fellow isin")
+                {
+                    Util.Chat($"1342211939 IsIn fellow? {Fellow.IsInFellowship(1342211939)}");
+                }
+
+                else if (command == "/od fellow isopen")
+                {
+                    Util.Chat($"Is open? {Fellow.IsOpen}");
+                }
+
+                else if (command == "/od fellow leader")
+                {
+                    Util.Chat($"Is leader? {Fellow.IsLeader}");
+                }
+
+                else if (command == "/od fellow count")
+                {
+                    Util.Chat($"Fellow count {Fellow.FellowCount}");
                 }
 
                 else if (command.StartsWith("/od fellow recruit ") && command.Length > 19)
