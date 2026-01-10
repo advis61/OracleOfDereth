@@ -1,5 +1,4 @@
-﻿using AcClient;
-using Decal.Adapter;
+﻿using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Microsoft.SqlServer.Server;
 using System;
@@ -10,11 +9,14 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
+
+using AcClient;
 
 namespace OracleOfDereth
 {
@@ -50,35 +52,42 @@ namespace OracleOfDereth
         public unsafe static void Open() { ((delegate* unmanaged[Cdecl]<int, byte>)6975392)(1); }
         public unsafe static void Close() { ((delegate* unmanaged[Cdecl]<int, byte>)6975392)(0); }
 
-        public unsafe static void Create(string name)
+        public unsafe static void Create(string name = "")
         {
+            if(name == "") { name = "eveldan"; }
+
             AcClient.PStringBase<char> pStringBase = name.TrimEnd('\0') + '\0';
             ((delegate* unmanaged[Cdecl]<AcClient.PStringBase<char>*, int, byte>)6977280)(&pStringBase, 1);
         }
 
-        public unsafe static bool InFellowship
-        {
-            get => ((*AcClient.ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship != null);
+        public unsafe static bool IsInFellowship() {
+            return ((*AcClient.ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship != null);
         }
+
         public unsafe static bool IsInFellowship(uint character_id)
         {
-            if (!InFellowship) return false;
-            return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0.IsFellow(character_id) != 0;
+            return IsInFellowship() && (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0.IsFellow(character_id) != 0;
         }
 
-        public unsafe static uint IsLeader
+        public unsafe static uint LeaderId()
         {
-           get => (InFellowship ? (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._leader : 0);
+            if(!IsInFellowship()) { return 0; }
+            return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._leader;
         }
 
-        public unsafe static bool IsOpen
+        public unsafe static bool IsLeader()
         {
-            get => (InFellowship ? (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._open_fellow == 1 : false);
+           return IsInFellowship() && LeaderId() == CoreManager.Current.CharacterFilter.Id;
         }
 
-        public unsafe static uint FellowCount
+        public unsafe static bool IsOpen()
         {
-            get => (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table._currNum;
+           return IsInFellowship() && (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._open_fellow == 1;
+        }
+
+        public unsafe static uint FellowCount()
+        {
+            return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table._currNum;
         }
 
         public static void Scan()

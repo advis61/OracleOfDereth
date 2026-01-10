@@ -57,6 +57,10 @@ namespace OracleOfDereth
         public HudList FellowsList { get; private set; }
         public HudCheckBox FellowsRecruit { get; private set; }
 
+        // Nearbys
+        public HudList NearbysList { get; private set; }
+        public HudCheckBox NearbysRecruit { get; private set; }
+
         // John
         public HudStaticText JohnLabel { get; private set; }
         public HudStaticText JohnText { get; private set; }
@@ -123,7 +127,8 @@ namespace OracleOfDereth
             // Status Tab
             { 1_00, 200 }, // HUD
             { 1_01, 460 }, // Buffs
-            { 1_02, 300 }, // Fellows
+            { 1_02, 300 }, // Nearby
+            { 1_03, 300 }, // Fellows
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -150,7 +155,8 @@ namespace OracleOfDereth
             // Status Tab
             { 1_00, 320 }, // HUD
             { 1_01, 545 }, // Buffs
-            { 1_02, 545 }, // Fellows
+            { 1_02, 545 }, // Nearbys
+            { 1_03, 545 }, // Fellows
 
             // Character Tab
             { 2_00, 550 }, // Augmentations
@@ -251,6 +257,13 @@ namespace OracleOfDereth
                 FellowsList.ClearRows();
 
                 FellowsRecruit = (HudCheckBox)view["FellowsRecruit"];
+
+                // Nearbys Tab
+                NearbysList = (HudList)view["NearbysList"];
+                NearbysList.Click += NearbysList_Click;
+                NearbysList.ClearRows();
+
+                NearbysRecruit = (HudCheckBox)view["NearbysRecruit"];
 
                 // John Tab
                 JohnText = (HudStaticText)view["JohnText"];
@@ -438,7 +451,8 @@ namespace OracleOfDereth
             // Status Tab
             if (currentTab == 1_00) { UpdateHud(); }
             if (currentTab == 1_01) { UpdateBuffs(); }
-            if (currentTab == 1_02) { UpdateFellows(); }
+            if (currentTab == 1_02) { UpdateNearbys(); }
+            if (currentTab == 1_03) { UpdateFellows(); }
 
             // Character Tab
             if (currentTab == 2_00) { UpdateAugmentations(); }
@@ -503,6 +517,13 @@ namespace OracleOfDereth
         // Buffs Tab
         public void UpdateBuffs() { 
             UpdateBuffsList(); 
+        }
+
+        // Nearbys Tab
+
+        public void UpdateNearbys()
+        {
+            UpdateNearbysList();
         }
 
         // Fellows Tab
@@ -614,6 +635,64 @@ namespace OracleOfDereth
             }
 
             while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount-1); }
+        }
+
+
+        private void UpdateNearbysList()
+        {
+            List<IGrouping<string, Fellow>> fellowships = Fellow.Fellowships();
+
+            int index = 0;
+            HudList.HudListRowAccessor row;
+
+            // Fellowships
+            for (int x = 0; x < fellowships.Count; x++)
+            {
+                var fellowship = fellowships[x];
+                if (index >= NearbysList.RowCount) { row = NearbysList.AddRow(); } else { row = NearbysList[index]; }
+
+                string key = fellowship.Key;
+                if (key == "" || key.Length < 1) { key = "(none)"; }
+
+                ((HudStaticText)row[0]).Text = $"Fellowship: {key} ({fellowship.Count()})";
+                ((HudStaticText)row[1]).Text = "";
+                ((HudStaticText)row[2]).Text = "";
+
+                index++;
+
+                // Fellows
+                List<Fellow> fellows = fellowship.OrderBy(f => f.Name).ToList();
+
+                for (int y = 0; y < fellows.Count; y++)
+                {
+                    var fellow = fellows[y];
+                    if (index >= NearbysList.RowCount) { row = NearbysList.AddRow(); } else { row = NearbysList[index]; }
+
+                    ((HudStaticText)row[0]).Text = "  " + fellow.Name;
+                    ((HudStaticText)row[1]).Text = fellow.Id.ToString();
+                    ((HudStaticText)row[2]).Text = fellow.LastSeenAgo().ToString();
+
+                    index++;
+                }
+
+                // Blank row
+                if (index >= NearbysList.RowCount) { row = NearbysList.AddRow(); } else { row = NearbysList[index]; }
+                ((HudStaticText)row[0]).Text = "";
+                ((HudStaticText)row[1]).Text = "";
+                ((HudStaticText)row[2]).Text = "";
+
+                index++;
+            }
+
+            while (NearbysList.RowCount > index) { NearbysList.RemoveRow(NearbysList.RowCount - 1); }
+        }
+
+        private void NearbysList_Click(object sender, int row, int col)
+        {
+            string id = ((HudStaticText)NearbysList[row][1]).Text;
+            if (id == null || id.Length < 1) { return; }
+
+            CoreManager.Current.Actions.SelectItem(int.Parse(id));
         }
 
         private void UpdateFellowsList()
@@ -1523,6 +1602,7 @@ namespace OracleOfDereth
                 MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
+                NearbysList.Click -= NearbysList_Click;
                 FellowsList.Click -= FellowsList_Click;
 
                 JohnList.Click -= JohnList_Click;

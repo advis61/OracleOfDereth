@@ -189,87 +189,24 @@ namespace OracleOfDereth
         public void Current_CommandLineText(object sender, ChatParserInterceptEventArgs e)
         {
             if (e.Text == null) return;
-            string command = e.Text.ToLower().Trim();
+            string cmd = e.Text.ToLower().Trim();
 
             try 
             {
-                if (command == "/od" || command == "/ood")
-                {
-                    Version version = Assembly.GetExecutingAssembly().GetName().Version;
-                    Util.Chat($"Oracle of Dereth v{version}", 1);
-                }
+                if (cmd == "/od" || cmd == "/ood") { Util.Chat($"Oracle of Dereth v{Assembly.GetExecutingAssembly().GetName().Version}", 1); }
+                else if (cmd == "/od exception") { throw new InvalidOperationException("An error occurred."); }
+                else if (cmd == "/od logout") { CoreManager.Current.Actions.Logout(); }
+                else if (cmd == "/od fellow open") { Fellow.Open(); }
+                else if (cmd == "/od fellow close") { Fellow.Close(); }
+                else if (cmd == "/od fellow disband") { Fellow.Disband(); }
+                else if (cmd == "/od fellow create") { Fellow.Create("eveldan"); }
+                else if (cmd == "/od fellow quit") { Fellow.Quit(); }
+                else if (cmd == "/od fellow isin") { Util.Chat($"In fellow? {Fellow.IsInFellowship()}"); }
+                else if (cmd == "/od fellow isopen") { Util.Chat($"Is open? {Fellow.IsOpen()}"); }
+                else if (cmd == "/od fellow isleader") { Util.Chat($"Is leader? {Fellow.IsLeader()}"); }
+                else if (cmd == "/od fellow count") { Util.Chat($"Fellow count {Fellow.FellowCount()}"); }
+                else if (cmd.StartsWith("/od fellow recruit ")) { Fellow.Recruit(cmd.Substring(19, cmd.Length - 19)); }
 
-                else if (command == "/od exception")
-                {
-                    Util.Chat($"Oracle of Dereth EXCEPTION", 1);
-                    throw new InvalidOperationException("An error occurred.");
-                }
-
-                else if (command == "/od markers")
-                {
-                    Marker.Info();
-                }
-
-                else if (command == "/od logout")
-                {
-                    CoreManager.Current.Actions.Logout();
-                }
-
-                else if (command == "/od fellow open")
-                {
-                    Fellow.Open();
-                }
-
-                else if (command == "/od fellow close")
-                {
-                    Fellow.Close();
-                }
-
-                else if (command == "/od fellow disband")
-                {
-                    Fellow.Disband();
-                }
-
-                else if (command == "/od fellow create")
-                {
-                    Fellow.Create("eveldan");
-                }
-
-                else if (command == "/od fellow quit")
-                {
-                    Fellow.Quit();
-                }
-
-                else if (command == "/od fellow in")
-                {
-                    Util.Chat($"In fellow? {Fellow.InFellowship}");
-                }
-
-                else if (command == "/od fellow isin")
-                {
-                    Util.Chat($"1342211939 IsIn fellow? {Fellow.IsInFellowship(1342211939)}");
-                }
-
-                else if (command == "/od fellow isopen")
-                {
-                    Util.Chat($"Is open? {Fellow.IsOpen}");
-                }
-
-                else if (command == "/od fellow leader")
-                {
-                    Util.Chat($"Is leader? {Fellow.IsLeader}");
-                }
-
-                else if (command == "/od fellow count")
-                {
-                    Util.Chat($"Fellow count {Fellow.FellowCount}");
-                }
-
-                else if (command.StartsWith("/od fellow recruit ") && command.Length > 19)
-                {
-                    string name = command.Substring(19, command.Length - 19);
-                    Fellow.Recruit(name);
-                }
                 else { return; }
 
                 e.Eat = true;

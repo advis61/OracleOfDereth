@@ -258,8 +258,7 @@ public struct ClientFellowshipSystem
 
     public unsafe override string ToString()
     {
-        return "";
-        //return $"a0(ClientSystem):{a0}, m_cTurbineRefCount(Turbine_RefCount):{m_cTurbineRefCount}, m_pFellowship:->(CFellowship*)0x{(int)m_pFellowship:X8}";
+        return $"a0(ClientSystem):{a0}, m_cTurbineRefCount(Turbine_RefCount):{m_cTurbineRefCount}, m_pFellowship:->(CFellowship*)0x{(int)m_pFellowship:X8}";
     }
 
     public unsafe void __Ctor()
