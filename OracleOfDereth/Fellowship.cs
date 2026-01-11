@@ -213,7 +213,7 @@ namespace OracleOfDereth
             else if (IsShareXp() && !IsEvenXPSplit()) { status.Add("Experience", "Uneven split"); }
             else { status.Add("Experience", "Not shared"); }
 
-            status.Add("Fellows", FellowCount().ToString());
+            status.Add("Fellows", FellowCount().ToString() + " / 9");
 
             if(IsFull()) { 
                 status.Add("Status", "Fellowship full"); 

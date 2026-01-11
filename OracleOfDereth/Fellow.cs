@@ -35,8 +35,9 @@ namespace OracleOfDereth
         public WorldObject Item;
         public int Id = 0;
         public string Name = "";
-        public string Fellowship = "";
+        public string FellowshipName = "";
         public DateTime LastSeenAt = DateTime.MinValue;
+        public DateTime LastRequestedAt = DateTime.MinValue;
         public bool Identified = false;
 
         public static void Init()
@@ -50,21 +51,21 @@ namespace OracleOfDereth
             Fellows.RemoveAll(f => CoreManager.Current.WorldFilter[f.Id] == null);
 
             // Refresh fellows
-            foreach (Fellow fellow in Fellows.OrderByDescending(f => f.LastSeenAgo()).ToList())
+            foreach (Fellow fellow in Fellows.OrderBy(f => f.LastRequestedAt).Take(3).ToList())
             {
-                if (fellow.LastSeenAgo() >= RescanAfterSeconds) { Request(fellow); }
+                if (fellow.LastRequestedAgo() >= RescanAfterSeconds) { Request(fellow); }
             }
         }
 
         // Fellows without a Fellowship
         public static List<Fellow> Players()
         {
-            return Fellows.Where(f => string.IsNullOrEmpty(f.Fellowship)).OrderBy(f => f.Name).ToList();
+            return Fellows.Where(f => string.IsNullOrEmpty(f.FellowshipName)).OrderBy(f => f.Name).ToList();
         }
 
         public static List<IGrouping<string, Fellow>> Fellowships()
         {
-            return Fellows.Where(f => !string.IsNullOrEmpty(f.Fellowship)).GroupBy(f => f.Fellowship).OrderBy(g => g.Key).ToList();
+            return Fellows.Where(f => !string.IsNullOrEmpty(f.FellowshipName)).GroupBy(f => f.FellowshipName).OrderBy(g => g.Key).ToList();
         }
 
         // Once a player is identified, this packet is received with fellowship info
@@ -84,15 +85,37 @@ namespace OracleOfDereth
             //Util.Chat(BitConverter.ToString(packet));
             //Util.Chat("============");
 
-            // Update
-            fellow.Fellowship = GetFellowshipName(packet);
+            UpdateFellowshipName(fellow, GetFellowshipName(packet));
+        }
+
+        public static void UpdateFellowshipName(Fellow fellow, string fellowshipName)
+        {
+            fellow.FellowshipName = fellowshipName;
             fellow.LastSeenAt = DateTime.Now;
             fellow.Identified = true;
         }
 
         public static Fellow Find(int id) { return Fellows.Find(f => f.Item.Id == id); }
         public static Fellow Find(WorldObject item) { return Fellows.Find(f => f.Id == item.Id); }
-        public static void Request(Fellow fellow) { CoreManager.Current.Actions.RequestId(fellow.Id); }
+        public static void Request(Fellow fellow) {
+
+            if(fellow.Id == CoreManager.Current.CharacterFilter.Id) {
+                Util.Chat($"Myself {fellow.Name}");
+                UpdateFellowshipName(fellow, Fellowship.Name());
+            }
+            else if (Fellowship.IsInFellowship(fellow.Id))
+            {
+                Util.Chat($"Known Fellow {fellow.Name}");
+                UpdateFellowshipName(fellow, Fellowship.Name());
+            }
+            else
+            {
+                Util.Chat($"Requesting {fellow.Name}");
+                CoreManager.Current.Actions.RequestId(fellow.Id);
+            }
+
+            fellow.LastRequestedAt = DateTime.Now;
+        }
         public static Fellow Add(WorldObject item)
         {
             if (item == null) { return null; }
@@ -111,7 +134,7 @@ namespace OracleOfDereth
                 Item = item, 
                 Id = item.Id, 
                 Name = item.Name, 
-                Fellowship = fellowship, 
+                FellowshipName = fellowship, 
                 LastSeenAt = DateTime.Now,
                 Identified = false
             };
@@ -126,8 +149,15 @@ namespace OracleOfDereth
 
         public new string ToString()
         {
-            return $"{Name} Fellowship {Fellowship}";
+            return $"{Name} Fellowship {FellowshipName}";
         }
+
+        public int LastRequestedAgo()
+        {
+            if (LastRequestedAt == DateTime.MinValue) { return -1; }
+            return (int)(DateTime.Now - LastRequestedAt).TotalSeconds;
+        }
+
         public int LastSeenAgo()
         {
             if(LastSeenAt == DateTime.MinValue) { return -1; }
