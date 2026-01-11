@@ -156,6 +156,14 @@ namespace OracleOfDereth
             return closest;
         }
 
+        public unsafe static string CurrentLandblock()
+        {
+            var p = CoreManager.Current.Actions.Underlying.GetPhysicsObjectPtr(CoreManager.Current.CharacterFilter.Id);
+            int landblock = *(int*)(p + 0x4C);
+
+            return $"0x{landblock:X8}";
+        }
+
         public unsafe static string ReadPStringFromBuffer(PStringBase<char> pstr)
         {
             if (pstr.m_buffer == null) return null;
