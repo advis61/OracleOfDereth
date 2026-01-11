@@ -793,7 +793,7 @@ namespace OracleOfDereth
 
                     ((HudStaticText)row[0]).Text = "  " + player.Name;
                     ((HudStaticText)row[1]).Text = player.Id.ToString();
-                    ((HudStaticText)row[2]).Text = player.LastSeenAgo().ToString();
+                    ((HudStaticText)row[2]).Text = player.LastUpdatedAgo().ToString();
                     index++;
                 }
 
@@ -831,7 +831,7 @@ namespace OracleOfDereth
 
                         ((HudStaticText)row[0]).Text = "  " + fellow.Name;
                         ((HudStaticText)row[1]).Text = fellow.Id.ToString();
-                        ((HudStaticText)row[2]).Text = fellow.LastSeenAgo().ToString();
+                        ((HudStaticText)row[2]).Text = fellow.LastUpdatedAgo().ToString();
                         index++;
                     }
 

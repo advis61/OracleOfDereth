@@ -27,6 +27,7 @@ namespace OracleOfDereth
     {
         // Constants
         public static readonly int RescanAfterSeconds = 2;
+        public static readonly int RescanPlayersCount = 2;
 
         // Collection
         public static List<Fellow> Fellows = new List<Fellow>();
@@ -36,9 +37,10 @@ namespace OracleOfDereth
         public int Id = 0;
         public string Name = "";
         public string FellowshipName = "";
-        public DateTime LastSeenAt = DateTime.MinValue;
-        public DateTime LastRequestedAt = DateTime.MinValue;
+        public bool Requestable = true;
         public bool Identified = false;
+        public DateTime LastRequestedAt = DateTime.MinValue;
+        public DateTime LastUpdatedAt = DateTime.MinValue;
 
         public static void Init()
         {
@@ -50,11 +52,12 @@ namespace OracleOfDereth
             // Remove old fellows we can no longer track
             Fellows.RemoveAll(f => CoreManager.Current.WorldFilter[f.Id] == null);
 
-            // Refresh fellows
-            foreach (Fellow fellow in Fellows.OrderBy(f => f.LastRequestedAt).Take(3).ToList())
-            {
-                if (fellow.LastRequestedAgo() >= RescanAfterSeconds) { Request(fellow); }
-            }
+            // Update all fellows
+            foreach (Fellow fellow in Fellows) { Update(fellow); }
+
+            // Request ident for oldest players outside my felloship
+            List<Fellow> RequestableFellows = Fellows.Where(f => f.Requestable && f.LastRequestedAgo() >= RescanAfterSeconds).OrderBy(f => f.LastRequestedAt).ToList();
+            foreach (Fellow fellow in RequestableFellows.Take(RescanPlayersCount)) { Request(fellow); }
         }
 
         // Fellows without a Fellowship
@@ -87,35 +90,40 @@ namespace OracleOfDereth
 
             UpdateFellowshipName(fellow, GetFellowshipName(packet));
         }
+        public static void Update(Fellow fellow)
+        {
+            if (fellow.Id == CoreManager.Current.CharacterFilter.Id)
+            {
+                UpdateFellowshipName(fellow, Fellowship.Name());
+                fellow.Requestable = false;
+            }
+            else if (Fellowship.IsInFellowship(fellow.Id))
+            {
+                UpdateFellowshipName(fellow, Fellowship.Name());
+                fellow.Requestable = false;
+            }
+            else
+            {
+                fellow.Requestable = true;
+            }
+        }
 
         public static void UpdateFellowshipName(Fellow fellow, string fellowshipName)
         {
             fellow.FellowshipName = fellowshipName;
-            fellow.LastSeenAt = DateTime.Now;
+            fellow.LastUpdatedAt = DateTime.Now;
             fellow.Identified = true;
         }
 
         public static Fellow Find(int id) { return Fellows.Find(f => f.Item.Id == id); }
         public static Fellow Find(WorldObject item) { return Fellows.Find(f => f.Id == item.Id); }
-        public static void Request(Fellow fellow) {
 
-            if(fellow.Id == CoreManager.Current.CharacterFilter.Id) {
-                Util.Chat($"Myself {fellow.Name}");
-                UpdateFellowshipName(fellow, Fellowship.Name());
-            }
-            else if (Fellowship.IsInFellowship(fellow.Id))
-            {
-                Util.Chat($"Known Fellow {fellow.Name}");
-                UpdateFellowshipName(fellow, Fellowship.Name());
-            }
-            else
-            {
-                Util.Chat($"Requesting {fellow.Name}");
-                CoreManager.Current.Actions.RequestId(fellow.Id);
-            }
-
+        public static void Request(Fellow fellow)
+        {
+            CoreManager.Current.Actions.RequestId(fellow.Id);
             fellow.LastRequestedAt = DateTime.Now;
         }
+
         public static Fellow Add(WorldObject item)
         {
             if (item == null) { return null; }
@@ -135,12 +143,11 @@ namespace OracleOfDereth
                 Id = item.Id, 
                 Name = item.Name, 
                 FellowshipName = fellowship, 
-                LastSeenAt = DateTime.Now,
-                Identified = false
             };
 
             Fellows.Add(fellow);
-            Request(fellow);
+            Update(fellow);
+            if (fellow.Requestable) { Request(fellow); }
 
             //Util.Chat($"Adding {fellow.ToString()}");
             
@@ -158,10 +165,10 @@ namespace OracleOfDereth
             return (int)(DateTime.Now - LastRequestedAt).TotalSeconds;
         }
 
-        public int LastSeenAgo()
+        public int LastUpdatedAgo()
         {
-            if(LastSeenAt == DateTime.MinValue) { return -1; }
-            return (int)(DateTime.Now - LastSeenAt).TotalSeconds;
+            if(LastUpdatedAt == DateTime.MinValue) { return -1; }
+            return (int)(DateTime.Now - LastUpdatedAt).TotalSeconds;
         }
         private static bool GetSuccess(byte[] packet)
         {
