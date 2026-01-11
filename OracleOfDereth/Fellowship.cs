@@ -122,12 +122,33 @@ namespace OracleOfDereth
             "Yaraq Caravaneers"
         };
 
-        public static int SelectedFellowId = 0; // Selected by clicking in the FellowsList
+        public static int CurrentFellowId = 0; // Selected by clicking in the FellowsList
         public static bool AutoRecruitEnabled = false;
 
         public static void Init()
         {
             // Nothing to do
+        }
+
+        // IF my current target is in the fellow, return that.
+        // Otherwise last selected fellow on the FellowsList UI
+        public static int SelectedFellowId()
+        {
+            int targetId = 0;
+            int fellowId = Fellowship.CurrentFellowId;
+
+            WorldObject target = Target.GetCurrent().Item();
+            if (target != null && target.ObjectClass == ObjectClass.Player) { targetId = target.Id; }
+
+            if (Fellowship.IsInFellowship(targetId)) { return targetId; }
+            if (Fellowship.IsInFellowship(fellowId)) { return fellowId; }
+
+            return 0;
+        }
+
+        public static void SelectFellow(int id)
+        {
+            CurrentFellowId = id;
         }
 
         public unsafe static void AutoRecruit()

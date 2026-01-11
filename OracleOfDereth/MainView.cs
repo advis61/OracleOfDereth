@@ -32,6 +32,7 @@ namespace OracleOfDereth
         readonly int IconNotComplete = 0x60011F8;    // Red Circle
         readonly int IconSort = 0x60011F7;    // Sort Icon 6D76
         readonly ACImage ImageDisabled = new ACImage(Color.FromArgb(255, 75, 75, 75));
+        readonly Color ColorSelected = Color.Orange;
 
         public HudTabView MainViewNotebook { get; private set; }
         public HudTabView StatusViewNotebook { get; private set; }
@@ -544,8 +545,13 @@ namespace OracleOfDereth
         {
             if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
 
-            row.Image = icon;
-            AssignedImages[row] = icon;
+            if (icon == 0) {
+                row.Image = null;
+                AssignedImages.Remove(row);
+            } else {
+                row.Image = icon;
+                AssignedImages[row] = icon;
+            }
         }
 
         private void AssignImage(HudPictureBox row, bool completed)
@@ -553,12 +559,10 @@ namespace OracleOfDereth
             if (completed) { AssignImage(row, IconComplete); } else { AssignImage(row, IconNotComplete); }
         }
 
-
         // The Tick
         public void Update()
         {
             if (QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
-            //if(FellowsRecruit.Checked) { Fellow.Recruit(); }
 
             int currentTab = CurrentTab();
 
@@ -894,70 +898,71 @@ namespace OracleOfDereth
         {
             if (Fellowship.IsLeader() == false) { return false; }
 
-            int targetId = 0;
-            int fellowId = Fellowship.SelectedFellowId;
+            int id = Fellowship.SelectedFellowId();
+            if(id == 0) { return false; }
 
-            WorldObject target = Target.GetCurrent().Item();
-            if (target != null && target.ObjectClass == ObjectClass.Player) { targetId = target.Id; }
-
-            if (Fellowship.IsInFellowship(targetId) && Fellowship.IsLeader(targetId)) { return false; }
-            if (Fellowship.IsInFellowship(fellowId) && Fellowship.IsLeader(fellowId)) { return false; }
-
-            return Fellowship.IsInFellowship(targetId) || Fellowship.IsInFellowship(fellowId);
+            return !Fellowship.IsLeader(id);
         }
 
         private bool FellowshipDismissEnabled()
         {
             if(Fellowship.IsLeader() == false) { return false; }
 
-            int targetId = 0;
-            int fellowId = Fellowship.SelectedFellowId;
+            int id = Fellowship.SelectedFellowId();
+            if(id == 0) { return false; }
 
-            WorldObject target = Target.GetCurrent().Item();
-            if (target != null && target.ObjectClass == ObjectClass.Player) { targetId = target.Id; }
-
-            if(Fellowship.IsInFellowship(targetId) && Fellowship.IsLeader(targetId)) { return false; }
-            if(Fellowship.IsInFellowship(fellowId) && Fellowship.IsLeader(fellowId)) { return false; }
-
-            return Fellowship.IsInFellowship(targetId) || Fellowship.IsInFellowship(fellowId);
+            return !Fellowship.IsLeader(id);
         }
 
         private void UpdateFellowsList()
         {
             List<KeyValuePair<int, string>> items = Fellowship.Fellows().ToList();
+            int selectedFellowId = Fellowship.SelectedFellowId();
 
             for (int x = 0; x < items.Count(); x++)
             {
                 HudList.HudListRowAccessor row;
                 if (x >= FellowsList.RowCount) { row = FellowsList.AddRow(); } else { row = FellowsList[x]; }
 
+                int fellowId = items[x].Key;
+
+                if (fellowId == selectedFellowId && fellowId != 0) {
+                    ((HudStaticText)row[0]).TextColor = ColorSelected;
+                    ((HudStaticText)row[1]).TextColor = ColorSelected;
+                } else {
+                    ((HudStaticText)row[0]).ResetTextColor();
+                    ((HudStaticText)row[1]).ResetTextColor();
+                }
+
                 ((HudStaticText)row[0]).Text = items[x].Value;
 
                 if (items[x].Key == 0) {
                     ((HudStaticText)row[1]).Text = "";
                 } else {
-                    ((HudStaticText)row[1]).Text = CoreManager.Current.WorldFilter[items[x].Key] == null ? "Out of Range" : "";
+                    ((HudStaticText)row[1]).Text = CoreManager.Current.WorldFilter[fellowId] == null ? "Out of Range" : "";
                 }
 
-                ((HudStaticText)row[2]).Text = items[x].Key.ToString();
+                ((HudStaticText)row[2]).Text = fellowId.ToString();
             }
 
             while (FellowsList.RowCount > items.Count()) { FellowsList.RemoveRow(FellowsList.RowCount - 1); }
         }
-
         private void FellowsList_Click(object sender, int row, int col)
         {
             string text = ((HudStaticText)FellowsList[row][2]).Text;
 
-            if(text == null || text == "") { 
-                Fellowship.SelectedFellowId = 0;
+            if(text == null || text == "") {
+                Fellowship.SelectFellow(0);
+                UpdateFellowsList();
                 return; 
             }
 
             int id = int.Parse(text);
 
-            Fellowship.SelectedFellowId = id;
+            Fellowship.SelectFellow(id);
             CoreManager.Current.Actions.SelectItem(id);
+
+            UpdateFellowsList();
         }
 
         private void FellowshipCreate_Hit(object sender, EventArgs e)
@@ -977,14 +982,8 @@ namespace OracleOfDereth
         {
             if (FellowshipLeaderEnabled() == false) { return; }
 
-            int targetId = 0;
-            int fellowId = Fellowship.SelectedFellowId;
-
-            WorldObject target = Target.GetCurrent().Item();
-            if (target != null && target.ObjectClass == ObjectClass.Player) { targetId = target.Id; }
-
-            if (Fellowship.IsInFellowship(targetId)) { Fellowship.Leader(targetId); }
-            else if (Fellowship.IsInFellowship(fellowId)) { Fellowship.Leader(fellowId); }
+            int id = Fellowship.SelectedFellowId();
+            if(id != 0) { Fellowship.Leader(id); }
 
             UpdateFellowship();
         }
@@ -993,14 +992,8 @@ namespace OracleOfDereth
         {
             if(FellowshipDismissEnabled() == false) { return; }
 
-            int targetId = 0;
-            int fellowId = Fellowship.SelectedFellowId;
-
-            WorldObject target = Target.GetCurrent().Item();
-            if (target != null && target.ObjectClass == ObjectClass.Player) { targetId = target.Id; }
-
-            if (Fellowship.IsInFellowship(targetId)) { Fellowship.Dismiss(targetId); }
-            else if (Fellowship.IsInFellowship(fellowId)) { Fellowship.Dismiss(fellowId); }
+            int id = Fellowship.SelectedFellowId();
+            if(id != 0) { Fellowship.Dismiss(id); }
 
             UpdateFellowship();
         }
@@ -1032,7 +1025,6 @@ namespace OracleOfDereth
             Fellowship.Quit();
             UpdateFellowship();
         }
-
 
         private void UpdateCantripsList()
         {
