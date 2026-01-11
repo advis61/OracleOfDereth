@@ -63,10 +63,24 @@
 				<page label="Fellowship">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="FellowshipName" left="1" top="5" width="150" height="17" text="My Fellowship"/>
-						<control progid="DecalControls.CheckBox" name="FellowshipRecruit" left="200" top="5" width="180" height="20" text="Auto Recruit" checked="false"/>
-						<control progid="DecalControls.List" name="FellowshipList" left="0" top="23" width="640" height="2000">
-							<column progid="DecalControls.TextColumn" name="Key" fixedwidth="180" />
-							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="180" />
+						<control progid="DecalControls.CheckBox" name="FellowshipAutoRecruit" left="147" top="6" width="180" height="20" text="Auto Recruit" checked="false"/>
+						<control progid="DecalControls.List" name="FellowshipList" left="0" top="23" width="640" height="115">
+							<column progid="DecalControls.TextColumn" name="Key" fixedwidth="80" />
+							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="120" />
+						</control>
+
+						<control progid="DecalControls.PushButton" name="FellowshipCreate" left="5" top="145" width="235" height="24" text="Create"/>
+						<control progid="DecalControls.PushButton" name="FellowshipLeader" left="5" top="145" width="75" height="24" text="Leader" hidden="true"/>
+						<control progid="DecalControls.PushButton" name="FellowshipQuit" left="85" top="145" width="75" height="24" text="Quit" hidden="true"/>
+						<control progid="DecalControls.PushButton" name="FellowshipOpen" left="165" top="145" width="75" height="24" text="Open" visible="false"/>
+						<control progid="DecalControls.PushButton" name="FellowshipRecruit" left="5" top="175" width="75" height="24" text="Recruit" visible="false"/>
+						<control progid="DecalControls.PushButton" name="FellowshipDismiss" left="85" top="175" width="75" height="24" text="Dismiss" visible="false"/>
+						<control progid="DecalControls.PushButton" name="FellowshipDisband" left="165" top="175" width="75" height="24" text="Disband" visible="false"/>
+
+						<control progid="DecalControls.StaticText" name="FellowsName" left="1" top="205" width="150" height="17" text="My Fellows"/>
+						<control progid="DecalControls.List" name="FellowsList" left="0" top="225" width="640" height="165">
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="120" />
+							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="80" />
 						</control>
 					</control>
 				</page>

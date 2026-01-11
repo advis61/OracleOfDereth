@@ -56,7 +56,17 @@ namespace OracleOfDereth
 
         // Fellows
         public HudList FellowshipList { get; private set; }
-        public HudCheckBox FellowshipRecruit { get; private set; }
+        public HudCheckBox FellowshipAutoRecruit { get; private set; }
+
+        public HudButton FellowshipCreate { get; private set; }
+        public HudButton FellowshipLeader { get; private set; }
+        public HudButton FellowshipQuit { get; private set; }
+        public HudButton FellowshipOpen { get; private set; }
+        public HudButton FellowshipRecruit { get; private set; }
+        public HudButton FellowshipDismiss { get; private set; }
+        public HudButton FellowshipDisband { get; private set; }
+
+        public HudList FellowsList { get; private set; }
 
         // Nearbys
         public HudList NearbysList { get; private set; }
@@ -129,7 +139,7 @@ namespace OracleOfDereth
             { 1_00, 200 }, // HUD
             { 1_01, 460 }, // Buffs
             { 1_02, 300 }, // Nearby
-            { 1_03, 300 }, // Fellowship
+            { 1_03, 245 }, // Fellowship
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -157,7 +167,7 @@ namespace OracleOfDereth
             { 1_00, 320 }, // HUD
             { 1_01, 545 }, // Buffs
             { 1_02, 545 }, // Nearbys
-            { 1_03, 545 }, // Fellowship 
+            { 1_03, 420 }, // Fellowship 
 
             // Character Tab
             { 2_00, 550 }, // Augmentations
@@ -257,7 +267,32 @@ namespace OracleOfDereth
                 FellowshipList.Click += FellowshipList_Click;
                 FellowshipList.ClearRows();
 
-                FellowshipRecruit = (HudCheckBox)view["FellowshipRecruit"];
+                FellowshipAutoRecruit = (HudCheckBox)view["FellowshipAutoRecruit"];
+
+                FellowshipCreate = (HudButton)view["FellowshipCreate"];
+                FellowshipCreate.Visible = true;
+
+                FellowshipLeader = (HudButton)view["FellowshipLeader"];
+                FellowshipLeader.Visible = false;
+
+                FellowshipQuit = (HudButton)view["FellowshipQuit"];
+                FellowshipQuit.Visible = false;
+
+                FellowshipOpen = (HudButton)view["FellowshipOpen"];
+                FellowshipOpen.Visible = false;
+
+                FellowshipRecruit = (HudButton)view["FellowshipRecruit"];
+                FellowshipRecruit.Visible = false;
+
+                FellowshipDismiss = (HudButton)view["FellowshipDismiss"];
+                FellowshipDismiss.Visible = false;
+
+                FellowshipDisband = (HudButton)view["FellowshipDisband"];
+                FellowshipDisband.Visible = false;
+
+                FellowsList = (HudList)view["FellowsList"];
+                FellowsList.Click += FellowsList_Click;
+                FellowsList.ClearRows();
 
                 // Nearbys Tab
                 NearbysList = (HudList)view["NearbysList"];
@@ -532,6 +567,7 @@ namespace OracleOfDereth
         public void UpdateFellowship()
         {
             UpdateFellowshipList();
+            UpdateFellowsList();
         }
 
         // John Tab
@@ -697,7 +733,7 @@ namespace OracleOfDereth
 
         private void UpdateFellowshipList()
         {
-            List<KeyValuePair<string, string>> items = Fellow.FellowshipStatus();
+            List<KeyValuePair<string, string>> items = Fellowship.Status();
 
             for (int x = 0; x < items.Count(); x++)
             {
@@ -713,6 +749,27 @@ namespace OracleOfDereth
         }
 
         private void FellowshipList_Click(object sender, int row, int col)
+        {
+        }
+
+        private void UpdateFellowsList()
+        {
+            List<KeyValuePair<string, string>> items = Fellowship.Fellows();
+
+            for (int x = 0; x < items.Count(); x++)
+            {
+                HudList.HudListRowAccessor row;
+                if (x >= FellowsList.RowCount) { row = FellowsList.AddRow(); } else { row = FellowsList[x]; }
+
+                // Update
+                ((HudStaticText)row[0]).Text = items[x].Key;
+                ((HudStaticText)row[1]).Text = items[x].Value;
+            }
+
+            while (FellowsList.RowCount > items.Count()) { FellowsList.RemoveRow(FellowsList.RowCount - 1); }
+        }
+
+        private void FellowsList_Click(object sender, int row, int col)
         {
         }
 

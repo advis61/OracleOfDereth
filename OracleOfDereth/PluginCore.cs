@@ -201,16 +201,16 @@ namespace OracleOfDereth
                 if (cmd == "/od" || cmd == "/ood") { Util.Chat($"Oracle of Dereth v{Assembly.GetExecutingAssembly().GetName().Version}", 1); }
                 else if (cmd == "/od exception") { throw new InvalidOperationException("An error occurred."); }
                 else if (cmd == "/od logout") { CoreManager.Current.Actions.Logout(); }
-                else if (cmd == "/od fellow open") { Fellow.Open(); }
-                else if (cmd == "/od fellow close") { Fellow.Close(); }
-                else if (cmd == "/od fellow disband") { Fellow.Disband(); }
-                else if (cmd == "/od fellow create") { Fellow.Create("eveldan"); }
-                else if (cmd == "/od fellow quit") { Fellow.Quit(); }
-                else if (cmd == "/od fellow isin") { Util.Chat($"In fellow? {Fellow.IsInFellowship()}"); }
-                else if (cmd == "/od fellow isopen") { Util.Chat($"Is open? {Fellow.IsOpen()}"); }
-                else if (cmd == "/od fellow isleader") { Util.Chat($"Is leader? {Fellow.IsLeader()}"); }
-                else if (cmd == "/od fellow count") { Util.Chat($"Fellow count {Fellow.FellowCount()}"); }
-                else if (cmd.StartsWith("/od fellow recruit ")) { Fellow.Recruit(cmd.Substring(19, cmd.Length - 19)); }
+                else if (cmd == "/od fellow open") { Fellowship.Open(); }
+                else if (cmd == "/od fellow close") { Fellowship.Close(); }
+                else if (cmd == "/od fellow disband") { Fellowship.Disband(); }
+                else if (cmd == "/od fellow create") { Fellowship.Create(); }
+                else if (cmd == "/od fellow quit") { Fellowship.Quit(); }
+                else if (cmd == "/od fellow isin") { Util.Chat($"In fellow? {Fellowship.IsInFellowship()}"); }
+                else if (cmd == "/od fellow isopen") { Util.Chat($"Is open? {Fellowship.IsOpen()}"); }
+                else if (cmd == "/od fellow isleader") { Util.Chat($"Is leader? {Fellowship.IsLeader()}"); }
+                else if (cmd == "/od fellow count") { Util.Chat($"Fellow count {Fellowship.FellowCount()}"); }
+                else if (cmd.StartsWith("/od fellow recruit ")) { Fellowship.Recruit(cmd.Substring(19, cmd.Length - 19)); }
 
                 else { return; }
 

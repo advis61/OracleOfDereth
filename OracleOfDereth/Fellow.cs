@@ -49,131 +49,6 @@ namespace OracleOfDereth
             Scan();
         }
 
-        public static List<KeyValuePair<string, string>> FellowshipStatus()
-        {
-            var status = new Dictionary<string, string>();
-
-            if(IsInFellowship() == false)
-            {
-                status.Add("None", "");
-                return status.ToList();
-            }
-
-            // Your current fellowship, "eveldan", has 1 member, Sharing XP, Uneven Split.Closed, Not Locked.
-
-            status.Add("Name", FellowshipName());
-            status.Add("Fellows", FellowCount().ToString());
-            status.Add("Leader", LeaderName());
-            status.Add("Open", IsOpen().ToString());
-
-            if(ShareXP() && FellowCount() == 1) { status.Add("Sharing", "Yes"); }
-            else if (ShareXP() && EvenXPSplit()) { status.Add("Sharing", "Even split"); }
-            else if (ShareXP() && !EvenXPSplit()) { status.Add("Sharing", "Uneven split"); }
-            else { status.Add("Sharing", "None"); }
-
-            status.Add("Can Recruit", CanRecruit().ToString());
-
-            var names = FellowshipNames();
-            foreach(var name in names) { status.Add($"Fellow {name.Key + 1}", name.Value); }
-
-            return status.ToList();
-        }
-
-        public unsafe static List<KeyValuePair<int, string>> FellowshipNames()
-        {
-            List<KeyValuePair<int, string>> names = new List<KeyValuePair<int, string>>();
-
-            for (int x = 0; x < FellowCount(); x++)
-            {
-                string name = (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table.GetByIndex(x)->_data._name.ToString();
-                names.Add(new KeyValuePair<int, string>(x, name));
-            }
-
-            return names;
-        }
-
-        public unsafe static string LeaderName()
-        {
-            if (IsInFellowship() == false) { return ""; }
-
-            for (int x = 0; x < FellowCount(); x++)
-            {
-                var fellow = (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table.GetByIndex(x);
-                if(fellow->_key == LeaderId()) { return fellow->_data._name.ToString(); }
-            }
-
-            return "";
-        }
-
-        public unsafe static void Disband() { ((delegate* unmanaged[Cdecl]<int, byte>)6975808)(1); }
-        public unsafe static void Quit() { ((delegate* unmanaged[Cdecl]<int, byte>)6975808)(0); }
-        public unsafe static void Open() { ((delegate* unmanaged[Cdecl]<int, byte>)6975392)(1); }
-        public unsafe static void Close() { ((delegate* unmanaged[Cdecl]<int, byte>)6975392)(0); }
-
-        public unsafe static string FellowshipName() {
-            if (IsInFellowship() == false) { return ""; }
-            return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._name.ToString();
-        }
-
-        public unsafe static void Create(string name = "")
-        {
-            if(name == "") { name = "eveldan"; }
-
-            AcClient.PStringBase<char> pStringBase = name.TrimEnd('\0') + '\0';
-            ((delegate* unmanaged[Cdecl]<AcClient.PStringBase<char>*, int, byte>)6977280)(&pStringBase, 1);
-        }
-
-        public unsafe static bool IsInFellowship() {
-            return ((*AcClient.ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship != null);
-        }
-
-        public unsafe static bool IsInFellowship(uint character_id)
-        {
-            return IsInFellowship() && (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0.IsFellow(character_id) != 0;
-        }
-
-        public unsafe static uint LeaderId()
-        {
-            if(!IsInFellowship()) { return 0; }
-            return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._leader;
-        }
-
-        public unsafe static bool IsLeader()
-        {
-           return IsInFellowship() && LeaderId() == CoreManager.Current.CharacterFilter.Id;
-        }
-
-        public unsafe static bool IsOpen()
-        {
-           return IsInFellowship() && (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._open_fellow == 1;
-        }
-
-        public unsafe static uint FellowCount()
-        {
-            if(!IsInFellowship()) { return 0; }
-            return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table._currNum;
-        }
-
-        public unsafe static bool EvenXPSplit()
-        { 
-            return IsInFellowship() && (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._even_xp_split == 1;
-        }
-
-        public unsafe static bool ShareXP()
-        { 
-            return IsInFellowship() && (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._share_xp == 1;
-        }
-
-        public unsafe static bool CanRecruit()
-        { 
-            return IsInFellowship() && (IsLeader() || IsOpen()) && !IsFull();
-        }
-
-        public unsafe static bool IsFull()
-        { 
-            return FellowCount() >= 9;
-        }
-
         public static void Scan()
         {
             // Add all fellows
@@ -200,23 +75,6 @@ namespace OracleOfDereth
         public static List<IGrouping<string, Fellow>> Fellowships()
         {
             return Fellows.GroupBy(f => f.Fellowship).OrderBy(g => g.Key).ToList();
-        }
-        public unsafe static void Recruit(string name)
-        {
-            WorldObject closest = Util.GetClosestObject(name);
-
-            if(closest == null) { 
-                Util.Chat($"Could not find fellow: {name}"); 
-                return;
-            }
-
-            Util.Chat($"Recruiting: {name}");
-
-            try
-            {
-                ((delegate* unmanaged[Cdecl]<uint, byte>)6976016)((uint)closest.Id);
-            }
-            catch (Exception) { } // Eat the decal error
         }
 
 
@@ -269,7 +127,6 @@ namespace OracleOfDereth
         public static Fellow Find(int id) { return Fellows.Find(f => f.Item.Id == id); }
         public static Fellow Find(WorldObject item) { return Fellows.Find(f => f.Id == item.Id); }
         public static void Request(Fellow fellow) { CoreManager.Current.Actions.RequestId(fellow.Id); }
-
         public static Fellow Add(WorldObject item)
         {
             if (item == null) { return null; }
@@ -303,7 +160,6 @@ namespace OracleOfDereth
         {
             return $"{Name} Fellowship {Fellowship}";
         }
-
         public int LastSeenAgo()
         {
             if(LastSeenAt == DateTime.MinValue) { return -1; }
