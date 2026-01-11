@@ -68,22 +68,17 @@ namespace OracleOfDereth
                 return status.ToList();
             }
 
-            // Your current fellowship, "eveldan", has 1 member, Sharing XP, Uneven Split.Closed, Not Locked.
-
             status.Add("Name", Name());
             status.Add("Fellows", FellowCount().ToString());
             status.Add("Leader", LeaderName());
             status.Add("Open", IsOpen().ToString());
 
-            if (IsShareXp() && FellowCount() == 1) { status.Add("Sharing", "Yes"); }
-            else if (IsShareXp() && IsEvenXPSplit()) { status.Add("Sharing", "Even split"); }
-            else if (IsShareXp() && !IsEvenXPSplit()) { status.Add("Sharing", "Uneven split"); }
-            else { status.Add("Sharing", "None"); }
+            if (IsShareXp() && FellowCount() == 1) { status.Add("XP Sharing", "Shared"); }
+            else if (IsShareXp() && IsEvenXPSplit()) { status.Add("XP Sharing", "Even split"); }
+            else if (IsShareXp() && !IsEvenXPSplit()) { status.Add("XP Sharing", "Uneven split"); }
+            else { status.Add("XP Sharing", "Not shared"); }
 
-            status.Add("Status", (CanRecruit() ? "Can Recruit" : "Cannot Recruit"));
-
-            //var names = FellowNames();
-            //foreach (var name in names) { status.Add(name, ""); }
+            status.Add("Status", (CanRecruit() ? "Can recruit" : "Cannot recruit"));
 
             return status.ToList();
         }
@@ -94,17 +89,24 @@ namespace OracleOfDereth
             return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table._currNum;
         }
 
-        public unsafe static List<KeyValuePair<string, string>> Fellows()
+        public unsafe static Dictionary<int, string> Fellows()
         {
-            var names = new Dictionary<string, string>();
+            var fellows = new Dictionary<int, string>();
+
+            if (IsInFellowship() == false)
+            {
+                fellows.Add(0, "None");
+                return fellows;
+            }
 
             for (int x = 0; x < FellowCount(); x++)
             {
+                int id = (int)(*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table.GetByIndex(x)->_key;
                 string name = (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table.GetByIndex(x)->_data._name.ToString();
-                names.Add(name, "In Range");
+                fellows.Add(id, name);
             }
 
-            return names.ToList();
+            return fellows;
         }
 
         public unsafe static string Name()

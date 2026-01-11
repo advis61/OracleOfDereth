@@ -833,16 +833,22 @@ namespace OracleOfDereth
 
         private void UpdateFellowsList()
         {
-            List<KeyValuePair<string, string>> items = Fellowship.Fellows();
+            List<KeyValuePair<int, string>> items = Fellowship.Fellows().ToList();
 
             for (int x = 0; x < items.Count(); x++)
             {
                 HudList.HudListRowAccessor row;
                 if (x >= FellowsList.RowCount) { row = FellowsList.AddRow(); } else { row = FellowsList[x]; }
 
-                // Update
-                ((HudStaticText)row[0]).Text = items[x].Key;
-                ((HudStaticText)row[1]).Text = items[x].Value;
+                ((HudStaticText)row[0]).Text = items[x].Value;
+
+                if (items[x].Key == 0) {
+                    ((HudStaticText)row[1]).Text = "";
+                } else {
+                    ((HudStaticText)row[1]).Text = CoreManager.Current.WorldFilter[items[x].Key] == null ? "Too Far" : "";
+                }
+
+                ((HudStaticText)row[2]).Text = items[x].Key.ToString();
             }
 
             while (FellowsList.RowCount > items.Count()) { FellowsList.RemoveRow(FellowsList.RowCount - 1); }
@@ -850,7 +856,10 @@ namespace OracleOfDereth
 
         private void FellowsList_Click(object sender, int row, int col)
         {
-            Util.Chat("Fellow list click");
+            string text = ((HudStaticText)FellowsList[row][2]).Text;
+            if(text == null || text == "") { return; }
+
+            CoreManager.Current.Actions.SelectItem(int.Parse(text));
         }
 
         private void FellowshipCreate_Hit(object sender, EventArgs e)

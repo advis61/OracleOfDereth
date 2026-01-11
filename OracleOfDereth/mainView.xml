@@ -80,8 +80,9 @@
 
 						<control progid="DecalControls.StaticText" name="FellowsName" left="1" top="205" width="150" height="17" text="My Fellows"/>
 						<control progid="DecalControls.List" name="FellowsList" left="0" top="225" width="640" height="165">
-							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="120" />
-							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="80" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="160" />
+							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="60" />
+							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="1" />
 						</control>
 					</control>
 				</page>
