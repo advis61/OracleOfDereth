@@ -47,9 +47,12 @@ namespace OracleOfDereth
                 return;
             }
 
-            ((delegate* unmanaged[Cdecl]<uint, byte>)6976016)((uint)closest.Id);
+            Recruit(closest.Id);
         }
 
+        public unsafe static void Recruit(int id) { ((delegate* unmanaged[Cdecl]<uint, byte>)6976016)((uint)id); }
+        public unsafe static void Dismiss(int id) { ((delegate* unmanaged[Cdecl]<uint, byte>)6975600)((uint)id); }
+        public unsafe static void Leader(int id) { ((delegate* unmanaged[Cdecl]<uint, byte>)6975184)((uint)id); }
         public unsafe static void Disband() { ((delegate* unmanaged[Cdecl]<int, byte>)6975808)(1); }
         public unsafe static void Quit() { ((delegate* unmanaged[Cdecl]<int, byte>)6975808)(0); }
         public unsafe static void Open() { ((delegate* unmanaged[Cdecl]<int, byte>)6975392)(1); }
@@ -142,6 +145,11 @@ namespace OracleOfDereth
         public unsafe static bool IsLeader()
         {
             return IsInFellowship() && LeaderId() == CoreManager.Current.CharacterFilter.Id;
+        }
+
+        public unsafe static bool IsLeader(uint id)
+        {
+            return IsInFellowship() && LeaderId() == id;
         }
 
         public unsafe static bool IsOpen()

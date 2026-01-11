@@ -247,6 +247,7 @@ namespace OracleOfDereth
             {
                 Target.SetCurrent(e.ItemGuid);
                 targetView.Update();
+                mainView.UpdateTarget();
             }
             catch (Exception ex) { Util.Log(ex); }
         }

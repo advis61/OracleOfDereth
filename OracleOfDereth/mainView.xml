@@ -73,6 +73,7 @@
 						<control progid="DecalControls.PushButton" name="FellowshipLeader" left="5" top="145" width="75" height="24" text="Leader" hidden="true"/>
 						<control progid="DecalControls.PushButton" name="FellowshipQuit" left="85" top="145" width="75" height="24" text="Quit" hidden="true"/>
 						<control progid="DecalControls.PushButton" name="FellowshipOpen" left="165" top="145" width="75" height="24" text="Open" visible="false"/>
+						<control progid="DecalControls.PushButton" name="FellowshipClose" left="165" top="145" width="75" height="24" text="Close" visible="false"/>
 						<control progid="DecalControls.PushButton" name="FellowshipRecruit" left="5" top="175" width="75" height="24" text="Recruit" visible="false"/>
 						<control progid="DecalControls.PushButton" name="FellowshipDismiss" left="85" top="175" width="75" height="24" text="Dismiss" visible="false"/>
 						<control progid="DecalControls.PushButton" name="FellowshipDisband" left="165" top="175" width="75" height="24" text="Disband" visible="false"/>

@@ -30,6 +30,7 @@ namespace OracleOfDereth
         readonly int IconComplete = 0x60011F9;   // Green Circle
         readonly int IconNotComplete = 0x60011F8;    // Red Circle
         readonly int IconSort = 0x60011F7;    // Sort Icon 6D76
+        readonly ACImage ImageDisabled = new ACImage(Color.FromArgb(255, 75, 75, 75));
 
         public HudTabView MainViewNotebook { get; private set; }
         public HudTabView StatusViewNotebook { get; private set; }
@@ -62,6 +63,7 @@ namespace OracleOfDereth
         public HudButton FellowshipLeader { get; private set; }
         public HudButton FellowshipQuit { get; private set; }
         public HudButton FellowshipOpen { get; private set; }
+        public HudButton FellowshipClose { get; private set; }
         public HudButton FellowshipRecruit { get; private set; }
         public HudButton FellowshipDismiss { get; private set; }
         public HudButton FellowshipDisband { get; private set; }
@@ -190,7 +192,7 @@ namespace OracleOfDereth
         };
 
         // Assign Images Tracking
-        private Dictionary<HudPictureBox,int> AssignedImages = new Dictionary<HudPictureBox, int>();
+        private Dictionary<HudPictureBox, int> AssignedImages = new Dictionary<HudPictureBox, int>();
 
         public MainView()
         {
@@ -270,24 +272,35 @@ namespace OracleOfDereth
                 FellowshipAutoRecruit = (HudCheckBox)view["FellowshipAutoRecruit"];
 
                 FellowshipCreate = (HudButton)view["FellowshipCreate"];
+                FellowshipCreate.Hit += FellowshipCreate_Hit;
                 FellowshipCreate.Visible = true;
 
                 FellowshipLeader = (HudButton)view["FellowshipLeader"];
+                FellowshipLeader.Hit += FellowshipLeader_Hit;
                 FellowshipLeader.Visible = false;
 
                 FellowshipQuit = (HudButton)view["FellowshipQuit"];
+                FellowshipQuit.Hit += FellowshipQuit_Hit;
                 FellowshipQuit.Visible = false;
 
                 FellowshipOpen = (HudButton)view["FellowshipOpen"];
+                FellowshipOpen.Hit += FellowshipOpen_Hit;
                 FellowshipOpen.Visible = false;
 
+                FellowshipClose = (HudButton)view["FellowshipClose"];
+                FellowshipClose.Hit += FellowshipClose_Hit;
+                FellowshipClose.Visible = false;
+
                 FellowshipRecruit = (HudButton)view["FellowshipRecruit"];
+                FellowshipRecruit.Hit += FellowshipRecruit_Hit;
                 FellowshipRecruit.Visible = false;
 
                 FellowshipDismiss = (HudButton)view["FellowshipDismiss"];
+                FellowshipDismiss.Hit += FellowshipDismiss_Hit;
                 FellowshipDismiss.Visible = false;
 
                 FellowshipDisband = (HudButton)view["FellowshipDisband"];
+                FellowshipDisband.Hit += FellowshipDisband_Hit;
                 FellowshipDisband.Visible = false;
 
                 FellowsList = (HudList)view["FellowsList"];
@@ -434,9 +447,9 @@ namespace OracleOfDereth
         {
             int mainTab = MainViewNotebook.CurrentTab + 1;
 
-            if(mainTab == 1) { return (mainTab * 100) + StatusViewNotebook.CurrentTab; }
-            if(mainTab == 2) { return (mainTab * 100) + CharacterViewNotebook.CurrentTab; }
-            if(mainTab == 3) { return (mainTab * 100) + QuestsViewNotebook.CurrentTab; }
+            if (mainTab == 1) { return (mainTab * 100) + StatusViewNotebook.CurrentTab; }
+            if (mainTab == 2) { return (mainTab * 100) + CharacterViewNotebook.CurrentTab; }
+            if (mainTab == 3) { return (mainTab * 100) + QuestsViewNotebook.CurrentTab; }
 
             // Main Tab
             return mainTab * 100;
@@ -479,7 +492,7 @@ namespace OracleOfDereth
         // The Tick
         public void Update()
         {
-            if(QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
+            if (QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
             //if(FellowsRecruit.Checked) { Fellow.Recruit(); }
 
             int currentTab = CurrentTab();
@@ -508,7 +521,15 @@ namespace OracleOfDereth
             if (currentTab == 4_01) { UpdateTitles(); }
 
             // About
-            if (currentTab == 5_00) { ; }
+            if (currentTab == 5_00) {; }
+        }
+
+        // Selected target changed
+        public void UpdateTarget()
+        {
+            int currentTab = CurrentTab();
+
+            if (currentTab == 1_03) { UpdateFellowshipButtons(); }
         }
 
         // Quest Flag Changes
@@ -551,8 +572,8 @@ namespace OracleOfDereth
         }
 
         // Buffs Tab
-        public void UpdateBuffs() { 
-            UpdateBuffsList(); 
+        public void UpdateBuffs() {
+            UpdateBuffsList();
         }
 
         // Nearbys Tab
@@ -567,6 +588,7 @@ namespace OracleOfDereth
         public void UpdateFellowship()
         {
             UpdateFellowshipList();
+            UpdateFellowshipButtons();
             UpdateFellowsList();
         }
 
@@ -593,8 +615,8 @@ namespace OracleOfDereth
         }
 
         // Character: Cantrips
-        public void UpdateCantrips() { 
-            UpdateCantripsList(); 
+        public void UpdateCantrips() {
+            UpdateCantripsList();
         }
 
         // Character: Credits
@@ -671,7 +693,7 @@ namespace OracleOfDereth
                 ((HudStaticText)row[3]).Text = spell.Name;
             }
 
-            while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount-1); }
+            while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount - 1); }
         }
 
         private void UpdateNearbysList()
@@ -750,6 +772,63 @@ namespace OracleOfDereth
 
         private void FellowshipList_Click(object sender, int row, int col)
         {
+            Util.Chat("Fellowship list click");
+        }
+
+        private void UpdateFellowshipButtons()
+        {
+            bool isInFellowship = Fellowship.IsInFellowship();
+
+            FellowshipCreate.Visible = !isInFellowship;
+            FellowshipLeader.Visible = isInFellowship;
+            FellowshipQuit.Visible = isInFellowship;
+            FellowshipOpen.Visible = isInFellowship && !Fellowship.IsOpen();
+            FellowshipClose.Visible = isInFellowship && Fellowship.IsOpen();
+            FellowshipRecruit.Visible = isInFellowship;
+            FellowshipDismiss.Visible = isInFellowship;
+            FellowshipDisband.Visible = isInFellowship;
+
+            FellowshipLeader.Image = (FellowshipLeaderEnabled()) ? null : ImageDisabled;
+            FellowshipOpen.Image = (FellowshipOpenEnabled()) ? null : ImageDisabled;
+            FellowshipClose.Image = (FellowshipCloseEnabled()) ? null : ImageDisabled;
+            FellowshipRecruit.Image = (FellowshipRecruitEnabled()) ? null : ImageDisabled;
+            FellowshipDismiss.Image = (FellowshipDismissEnabled()) ? null : ImageDisabled;
+            FellowshipDisband.Image = (FellowshipDisbandEnabled()) ? null : ImageDisabled;
+        }
+
+        private bool FellowshipOpenEnabled() { return Fellowship.IsLeader() && !Fellowship.IsOpen(); }
+        private bool FellowshipCloseEnabled() { return Fellowship.IsLeader() && Fellowship.IsOpen(); }
+        private bool FellowshipDisbandEnabled() { return Fellowship.IsLeader(); }
+
+        private bool FellowshipLeaderEnabled()
+        {
+            WorldObject target = Target.GetCurrent().Item();
+            if (target == null || target.ObjectClass != ObjectClass.Player) { return false; }
+
+            if(Fellowship.IsLeader() == false) { return false;  }
+            if(Fellowship.IsLeader((uint)target.Id)) { return false; }
+
+            return Fellowship.IsInFellowship((uint)target.Id);
+        }
+        private bool FellowshipRecruitEnabled()
+        {
+            WorldObject target = Target.GetCurrent().Item();
+            if (target == null || target.ObjectClass != ObjectClass.Player) { return false; }
+
+            if(Fellowship.IsInFellowship((uint)target.Id)) { return false; }
+
+            return Fellowship.CanRecruit();
+        }
+
+        private bool FellowshipDismissEnabled()
+        {
+            WorldObject target = Target.GetCurrent().Item();
+            if (target == null || target.ObjectClass != ObjectClass.Player) { return false; }
+
+            if(Fellowship.IsLeader() == false) { return false; }
+            if(Fellowship.IsLeader((uint)target.Id)) { return false; }
+
+            return Fellowship.IsInFellowship((uint)target.Id);
         }
 
         private void UpdateFellowsList()
@@ -771,6 +850,62 @@ namespace OracleOfDereth
 
         private void FellowsList_Click(object sender, int row, int col)
         {
+            Util.Chat("Fellow list click");
+        }
+
+        private void FellowshipCreate_Hit(object sender, EventArgs e)
+        {
+            Fellowship.Create();
+            UpdateFellowship();
+        }
+
+        private void FellowshipDisband_Hit(object sender, EventArgs e)
+        {
+            if(FellowshipDisbandEnabled() == false) { return; }
+            Fellowship.Disband();
+            UpdateFellowship();
+        }
+
+        private void FellowshipDismiss_Hit(object sender, EventArgs e)
+        {
+            if(FellowshipDismissEnabled() == false) { return; }
+            Fellowship.Dismiss(Target.GetCurrent().Item().Id);
+            UpdateFellowship();
+        }
+
+        private void FellowshipRecruit_Hit(object sender, EventArgs e)
+        {
+            if(FellowshipRecruitEnabled() == false) { return; }
+
+            Fellowship.Recruit(Target.GetCurrent().Item().Id);
+            UpdateFellowship();
+        }
+
+        private void FellowshipOpen_Hit(object sender, EventArgs e)
+        {
+            if(FellowshipOpenEnabled() == false) { return; }
+            Fellowship.Open();
+            UpdateFellowship();
+        }
+
+        private void FellowshipClose_Hit(object sender, EventArgs e)
+        {
+            if(FellowshipCloseEnabled() == false) { return; }
+            Fellowship.Close();
+            UpdateFellowship();
+        }
+
+        private void FellowshipQuit_Hit(object sender, EventArgs e)
+        {
+            Fellowship.Quit();
+            UpdateFellowship();
+        }
+
+        private void FellowshipLeader_Hit(object sender, EventArgs e)
+        {
+            if(FellowshipLeaderEnabled() == false) { return; }
+            Fellowship.Leader(Target.GetCurrent().Item().Id);
+            UpdateFellowship();
         }
 
         private void UpdateCantripsList()
@@ -1362,7 +1497,6 @@ namespace OracleOfDereth
             UpdateTitlesList();
         }
 
-
         void TitlesListSortCategory_Click(object sender, EventArgs e)
         {
             if (Title.CurrentSortType == Title.SortType.CategoryAscending)
@@ -1624,7 +1758,18 @@ namespace OracleOfDereth
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
                 NearbysList.Click -= NearbysList_Click;
+
                 FellowshipList.Click -= FellowshipList_Click;
+                FellowsList.Click -= FellowsList_Click;
+
+                FellowshipCreate.Hit -= FellowshipCreate_Hit;
+                FellowshipDisband.Hit -= FellowshipDisband_Hit;
+                FellowshipDismiss.Hit -= FellowshipDismiss_Hit;
+                FellowshipRecruit.Hit -= FellowshipRecruit_Hit;
+                FellowshipOpen.Hit -= FellowshipOpen_Hit;
+                FellowshipClose.Hit -= FellowshipClose_Hit;
+                FellowshipQuit.Hit -= FellowshipQuit_Hit;
+                FellowshipLeader.Hit -= FellowshipLeader_Hit;
 
                 JohnList.Click -= JohnList_Click;
                 JohnListSortCompleteIcon.Hit -= JohnListSortComplete_Click;

@@ -140,6 +140,11 @@ namespace OracleOfDereth
             return Item().Name;
         }
 
+        public bool IsPlayer() { 
+            if (Item() == null) return false;
+            return Item().ObjectClass == Decal.Adapter.Wrappers.ObjectClass.Player;
+        }
+
         public bool IsPk()
         {
             if (Item() == null) return false;
@@ -163,7 +168,7 @@ namespace OracleOfDereth
             return false;
         }
 
-        private WorldObject? Item()
+        public WorldObject? Item()
         {
             if(Id == 0) { return null; }
 
