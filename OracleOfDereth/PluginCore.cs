@@ -147,7 +147,7 @@ namespace OracleOfDereth
             {
                 Target.RemoveAllExpired();
                 Fellow.Update();
-                if(mainView.FellowshipAutoRecruit.Checked) { Fellowship.AutoRecruit(); }
+                Fellowship.AutoRecruit();
 
                 mainView.Update();
                 targetView.Update();
@@ -264,12 +264,14 @@ namespace OracleOfDereth
 
         private void WorldFilter_CreateObject(object sender, CreateObjectEventArgs e)
         {
-            Util.Chat("CreateObject " + e.New.Name + " has data? " + e.New.HasIdData);
+            //Util.Chat("CreateObject " + e.New.Name + " has data? " + e.New.HasIdData);
+
+            Fellow.Add(e.New);
         }
 
         private void WorldFilter_ReleaseObject(object sender, ReleaseObjectEventArgs e)
         {
-            Util.Chat("ReleaseObject " + e.Released.Name);
+            //Util.Chat("ReleaseObject " + e.Released.Name);
         }
 
         private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
@@ -285,19 +287,16 @@ namespace OracleOfDereth
 
                 int eventType = (int)e.Message["event"];
 
-                if (eventType == 0x0029) // Titles list
-                {
-                    Title.Parse(e.Message.Struct("titles"));
+                if (eventType == 0x0029) {
+                    Title.Parse(e.Message.Struct("titles")); // Titles list
                 }
 
-                else if (eventType == 0x002B) // Update titles
-                {
-                    Title.ParseUpdate(e.Message.Value<Int32>("title"));
+                else if (eventType == 0x002B) {
+                    Title.ParseUpdate(e.Message.Value<Int32>("title")); // Update titles
                 }
 
-                else if (eventType == 0x00C9) // Identify Response
-                {
-                    Fellow.Parse(e.Message.RawData);
+                else if (eventType == 0x00C9) {
+                    Fellow.Parse(e.Message.RawData); // Identify Response
                 }
             }
             catch (Exception ex) { Util.Log(ex); }

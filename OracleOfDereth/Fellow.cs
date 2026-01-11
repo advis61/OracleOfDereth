@@ -26,7 +26,6 @@ namespace OracleOfDereth
     public class Fellow
     {
         // Constants
-        public static readonly int RemoveAfterSeconds = 10;
         public static readonly int RescanAfterSeconds = 2;
 
         // Collection
@@ -38,6 +37,7 @@ namespace OracleOfDereth
         public string Name = "";
         public string Fellowship = "";
         public DateTime LastSeenAt = DateTime.MinValue;
+        public bool Identified = false;
 
         public static void Init()
         {
@@ -46,60 +46,25 @@ namespace OracleOfDereth
 
         public static void Update()
         {
-            Scan();
-        }
-
-        public static void Scan()
-        {
-            // Add all fellows
-            WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByObjectClass(ObjectClass.Player);
-
-            foreach (var item in items) {
-                Fellow fellow = Find(item);
-                if(fellow != null) { continue; }
-
-                fellow = Add(item);
-                Request(fellow);
-            }
-
             // Remove old fellows we can no longer track
-            Fellows.RemoveAll(f => CoreManager.Current.WorldFilter[f.Id] == null && f.LastSeenAgo() >= RemoveAfterSeconds);
+            Fellows.RemoveAll(f => CoreManager.Current.WorldFilter[f.Id] == null);
 
-            // Update fellows we can see
+            // Refresh fellows
             foreach (Fellow fellow in Fellows.OrderByDescending(f => f.LastSeenAgo()).ToList())
             {
                 if (fellow.LastSeenAgo() >= RescanAfterSeconds) { Request(fellow); }
             }
         }
 
-        public static List<IGrouping<string, Fellow>> Fellowships()
+        // Fellows without a Fellowship
+        public static List<Fellow> Players()
         {
-            return Fellows.GroupBy(f => f.Fellowship).OrderBy(g => g.Key).ToList();
+            return Fellows.Where(f => string.IsNullOrEmpty(f.Fellowship)).OrderBy(f => f.Name).ToList();
         }
 
-
-        public static void Recruit()
+        public static List<IGrouping<string, Fellow>> Fellowships()
         {
-            //foreach (Fellow fellow in Fellows)
-            //{
-            //    if (fellow.Id == CoreManager.Current.CharacterFilter.Id) { continue; }
-            //    if (fellow.Recruited == true) { continue; }
-
-            //    if (fellow.Fellowship == "" || fellow.Fellowship == "(none)")
-            //    {
-
-            //        fellow.Recruited = true;
-
-            //        try
-            //        {
-            //            WorldObject item = CoreManager.Current.WorldFilter[fellow.Id];
-            //            CoreManager.Current.Actions.FellowshipRecruit(item.Id);
-            //        }
-            //        catch (AccessViolationException) { } // Eat the decal error
-
-            //        //Util.Chat($"/ub fellow recruit {fellow.Name}", 1, "");
-            //    }
-            //}
+            return Fellows.Where(f => !string.IsNullOrEmpty(f.Fellowship)).GroupBy(f => f.Fellowship).OrderBy(g => g.Key).ToList();
         }
 
         // Once a player is identified, this packet is received with fellowship info
@@ -122,6 +87,7 @@ namespace OracleOfDereth
             // Update
             fellow.Fellowship = GetFellowshipName(packet);
             fellow.LastSeenAt = DateTime.Now;
+            fellow.Identified = true;
         }
 
         public static Fellow Find(int id) { return Fellows.Find(f => f.Item.Id == id); }
@@ -138,7 +104,7 @@ namespace OracleOfDereth
             if(existing != null) { return existing; }
 
             string fellowship = item.Values(StringValueKey.FellowshipName);
-            if(fellowship == null || fellowship.Length == 0) { fellowship = "???"; }
+            if(fellowship == null || fellowship.Length == 0) { fellowship = ""; }
 
             // Create new
             Fellow fellow = new() { 
@@ -146,10 +112,12 @@ namespace OracleOfDereth
                 Id = item.Id, 
                 Name = item.Name, 
                 Fellowship = fellowship, 
-                LastSeenAt = DateTime.Now 
+                LastSeenAt = DateTime.Now,
+                Identified = false
             };
 
             Fellows.Add(fellow);
+            Request(fellow);
 
             //Util.Chat($"Adding {fellow.ToString()}");
             
@@ -176,7 +144,6 @@ namespace OracleOfDereth
                 return br.ReadBoolean(); // success
             }
         }
-
         private static int GetObjectId(byte[] packet)
         {
             if (packet == null) { return 0; }

@@ -5,6 +5,7 @@ using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -121,6 +122,9 @@ namespace OracleOfDereth
             "Yaraq Caravaneers"
         };
 
+        public static int SelectedFellowId = 0; // Selected by clicking in the FellowsList
+        public static bool AutoRecruitEnabled = false;
+
         public static void Init()
         {
             // Nothing to do
@@ -128,9 +132,15 @@ namespace OracleOfDereth
 
         public unsafe static void AutoRecruit()
         {
+            if(AutoRecruitEnabled == false) { return; }
+
             if (IsInFellowship() == false) { Create(); }
             if (IsLeader() && !IsOpen()) { Open(); }
             if (CanRecruit() == false) { return; }
+
+            foreach(Fellow player in Fellow.Players().Where(f => f.Identified).ToList()) { 
+                if(IsInFellowship(player.Id) == false) { Recruit(player.Id); }
+            }
         }
 
         public unsafe static void Create(string name = "")
@@ -139,6 +149,8 @@ namespace OracleOfDereth
 
             AcClient.PStringBase<char> pStringBase = name.TrimEnd('\0') + '\0';
             ((delegate* unmanaged[Cdecl]<AcClient.PStringBase<char>*, int, byte>)6977280)(&pStringBase, 1);
+
+            Open();
         }
 
         public unsafe static void Recruit(string name)
@@ -181,7 +193,19 @@ namespace OracleOfDereth
             else { status.Add("Experience", "Not shared"); }
 
             status.Add("Fellows", FellowCount().ToString());
-            status.Add("Status", (CanRecruit() ? "Can recruit" : "Cannot recruit"));
+
+            if(IsFull()) { 
+                status.Add("Status", "Fellowship full"); 
+            }
+            else if(AutoRecruitEnabled && CanRecruit()) { 
+                status.Add("Status", "Auto recruiting players"); 
+            }
+            else if(CanRecruit()) {
+                status.Add("Status", "Can recruit players"); 
+            }
+            else {
+                status.Add("Status", "Must be open to recruit");
+            }
 
             return status.ToList();
         }
@@ -204,8 +228,11 @@ namespace OracleOfDereth
 
             for (int x = 0; x < FellowCount(); x++)
             {
-                int id = (int)(*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table.GetByIndex(x)->_key;
-                string name = (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table.GetByIndex(x)->_data._name.ToString();
+                var fellow = (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table.GetByIndex(x);
+
+                int id = (int)fellow->_key;
+                string name = fellow->_data._name.ToString();
+
                 fellows.Add(id, name);
             }
 
@@ -223,9 +250,9 @@ namespace OracleOfDereth
             return ((*AcClient.ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship != null);
         }
 
-        public unsafe static bool IsInFellowship(uint character_id)
+        public unsafe static bool IsInFellowship(int character_id)
         {
-            return IsInFellowship() && (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0.IsFellow(character_id) != 0;
+            return IsInFellowship() && (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0.IsFellow((uint)character_id) != 0;
         }
 
         public unsafe static uint LeaderId()
@@ -252,9 +279,9 @@ namespace OracleOfDereth
             return IsInFellowship() && LeaderId() == CoreManager.Current.CharacterFilter.Id;
         }
 
-        public unsafe static bool IsLeader(uint id)
+        public unsafe static bool IsLeader(int id)
         {
-            return IsInFellowship() && LeaderId() == id;
+            return IsInFellowship() && LeaderId() == (uint)id;
         }
 
         public unsafe static bool IsOpen()
