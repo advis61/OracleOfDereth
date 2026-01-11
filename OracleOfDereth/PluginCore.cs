@@ -147,6 +147,7 @@ namespace OracleOfDereth
             {
                 Target.RemoveAllExpired();
                 Fellow.Update();
+                if(mainView.FellowshipAutoRecruit.Checked) { Fellowship.AutoRecruit(); }
 
                 mainView.Update();
                 targetView.Update();

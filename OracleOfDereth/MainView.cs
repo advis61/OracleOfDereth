@@ -71,8 +71,7 @@ namespace OracleOfDereth
         public HudList FellowsList { get; private set; }
 
         // Nearbys
-        public HudList NearbysList { get; private set; }
-        public HudCheckBox NearbysRecruit { get; private set; }
+        public HudList NearbyList { get; private set; }
 
         // John
         public HudStaticText JohnLabel { get; private set; }
@@ -140,8 +139,8 @@ namespace OracleOfDereth
             // Status Tab
             { 1_00, 200 }, // HUD
             { 1_01, 460 }, // Buffs
-            { 1_02, 300 }, // Nearby
-            { 1_03, 245 }, // Fellowship
+            { 1_02, 320 }, // Nearby
+            { 1_03, 290 }, // Fellowship
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -266,10 +265,10 @@ namespace OracleOfDereth
 
                 // Fellows Tab
                 FellowshipList = (HudList)view["FellowshipList"];
-                FellowshipList.Click += FellowshipList_Click;
                 FellowshipList.ClearRows();
 
                 FellowshipAutoRecruit = (HudCheckBox)view["FellowshipAutoRecruit"];
+                FellowshipAutoRecruit.Change += FellowshipAutoRecruit_Change;
 
                 FellowshipCreate = (HudButton)view["FellowshipCreate"];
                 FellowshipCreate.Hit += FellowshipCreate_Hit;
@@ -308,11 +307,9 @@ namespace OracleOfDereth
                 FellowsList.ClearRows();
 
                 // Nearbys Tab
-                NearbysList = (HudList)view["NearbysList"];
-                NearbysList.Click += NearbysList_Click;
-                NearbysList.ClearRows();
-
-                NearbysRecruit = (HudCheckBox)view["NearbysRecruit"];
+                NearbyList = (HudList)view["NearbyList"];
+                NearbyList.Click += NearbyList_Click;
+                NearbyList.ClearRows();
 
                 // John Tab
                 JohnText = (HudStaticText)view["JohnText"];
@@ -443,6 +440,72 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
+        // Shutdown
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+
+                NearbyList.Click -= NearbyList_Click;
+
+                FellowsList.Click -= FellowsList_Click;
+                FellowshipAutoRecruit.Change -= FellowshipAutoRecruit_Change;
+
+                FellowshipCreate.Hit -= FellowshipCreate_Hit;
+                FellowshipDisband.Hit -= FellowshipDisband_Hit;
+                FellowshipDismiss.Hit -= FellowshipDismiss_Hit;
+                FellowshipRecruit.Hit -= FellowshipRecruit_Hit;
+                FellowshipOpen.Hit -= FellowshipOpen_Hit;
+                FellowshipClose.Hit -= FellowshipClose_Hit;
+                FellowshipQuit.Hit -= FellowshipQuit_Hit;
+                FellowshipLeader.Hit -= FellowshipLeader_Hit;
+
+                JohnList.Click -= JohnList_Click;
+                JohnListSortCompleteIcon.Hit -= JohnListSortComplete_Click;
+                JohnListSortName.Hit -= JohnListSortName_Click;
+                JohnListSortReady.Hit -= JohnListSortReady_Click;
+                JohnListSortSolves.Hit -= JohnListSortSolves_Click;
+
+                AugmentationsQuestsList.Click -= AugmentationsQuestsList_Click;
+                AugmentationsList.Click -= AugmentationsList_Click;
+                LuminanceList.Click -= LuminanceList_Click;
+                CreditsList.Click -= CreditsList_Click;
+                FacilityList.Click -= FacilityList_Click;
+                FlagsList.Click -= FlagsList_Click;
+                MarkersList.Click -= MarkersList_Click;
+                RecallsList.Click -= RecallsList_Click;
+                UnavailableTitlesList.Click -= UnavailableTitlesList_Click;
+
+                TitlesList.Click -= TitlesList_Click;
+                TitlesListSortCompleteIcon.Hit -= TitlesListSortComplete_Click;
+                TitlesListSortName.Hit -= TitlesListSortName_Click;
+                TitlesListSortLevel.Hit -= TitlesListSortLevel_Click;
+                TitlesListSortCategory.Hit -= TitlesListSortCategory_Click;
+
+                // Quest Flag Refresh Buttons
+                JohnRefresh.Hit -= QuestFlagsRefresh_Hit;
+                AugmentationsRefresh.Hit -= QuestFlagsRefresh_Hit;
+                LuminanceRefresh.Hit -= QuestFlagsRefresh_Hit;
+                CreditsRefresh.Hit -= QuestFlagsRefresh_Hit;
+                FacilityRefresh.Hit -= QuestFlagsRefresh_Hit;
+                FlagsRefresh.Hit -= QuestFlagsRefresh_Hit;
+                MarkersRefresh.Hit -= QuestFlagsRefresh_Hit;
+
+                // Other cleanup
+                AssignedImages.Clear();
+                view?.Dispose();
+            }
+        }
+
+
         private int CurrentTab()
         {
             int mainTab = MainViewNotebook.CurrentTab + 1;
@@ -500,7 +563,7 @@ namespace OracleOfDereth
             // Status Tab
             if (currentTab == 1_00) { UpdateHud(); }
             if (currentTab == 1_01) { UpdateBuffs(); }
-            if (currentTab == 1_02) { UpdateNearbys(); }
+            if (currentTab == 1_02) { UpdateNearby(); }
             if (currentTab == 1_03) { UpdateFellowship(); }
 
             // Character Tab
@@ -571,19 +634,14 @@ namespace OracleOfDereth
             CisText.Text = Hud.CisText();
         }
 
-        // Buffs Tab
         public void UpdateBuffs() {
             UpdateBuffsList();
         }
 
-        // Nearbys Tab
-
-        public void UpdateNearbys()
+        public void UpdateNearby()
         {
-            UpdateNearbysList();
+            UpdateNearbyList();
         }
-
-        // Fellows Tab
 
         public void UpdateFellowship()
         {
@@ -592,21 +650,18 @@ namespace OracleOfDereth
             UpdateFellowsList();
         }
 
-        // John Tab
         public void UpdateJohn()
         {
             if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
             UpdateJohnList();
         }
 
-        // Markers Tab
         public void UpdateMarkers()
         {
             if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
             UpdateMarkersList();
         }
 
-        // Character: Augmentations
         public void UpdateAugmentations()
         {
             if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
@@ -614,26 +669,21 @@ namespace OracleOfDereth
             UpdateAugmentationsList();
         }
 
-        // Character: Cantrips
         public void UpdateCantrips() {
             UpdateCantripsList();
         }
 
-        // Character: Credits
         public void UpdateCredits()
         {
             if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
             UpdateCreditsList();
         }
 
-        // Facility Hub Quests
         public void UpdateFacility()
         {
             if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
             UpdateFacilityList();
         }
-
-        // Flaggin Quests
 
         public void UpdateFlags()
         {
@@ -641,7 +691,6 @@ namespace OracleOfDereth
             UpdateFlagsList();
         }
 
-        // Character: Luminance
         public void UpdateLuminance()
         {
             UpdateLuminanceList();
@@ -696,7 +745,7 @@ namespace OracleOfDereth
             while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount - 1); }
         }
 
-        private void UpdateNearbysList()
+        private void UpdateNearbyList()
         {
             List<IGrouping<string, Fellow>> fellowships = Fellow.Fellowships();
 
@@ -707,7 +756,7 @@ namespace OracleOfDereth
             for (int x = 0; x < fellowships.Count; x++)
             {
                 var fellowship = fellowships[x];
-                if (index >= NearbysList.RowCount) { row = NearbysList.AddRow(); } else { row = NearbysList[index]; }
+                if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
 
                 string key = fellowship.Key;
                 if (key == "" || key.Length < 1) { key = "(none)"; }
@@ -724,7 +773,7 @@ namespace OracleOfDereth
                 for (int y = 0; y < fellows.Count; y++)
                 {
                     var fellow = fellows[y];
-                    if (index >= NearbysList.RowCount) { row = NearbysList.AddRow(); } else { row = NearbysList[index]; }
+                    if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
 
                     ((HudStaticText)row[0]).Text = "  " + fellow.Name;
                     ((HudStaticText)row[1]).Text = fellow.Id.ToString();
@@ -734,7 +783,7 @@ namespace OracleOfDereth
                 }
 
                 // Blank row
-                if (index >= NearbysList.RowCount) { row = NearbysList.AddRow(); } else { row = NearbysList[index]; }
+                if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
                 ((HudStaticText)row[0]).Text = "";
                 ((HudStaticText)row[1]).Text = "";
                 ((HudStaticText)row[2]).Text = "";
@@ -742,12 +791,12 @@ namespace OracleOfDereth
                 index++;
             }
 
-            while (NearbysList.RowCount > index) { NearbysList.RemoveRow(NearbysList.RowCount - 1); }
+            while (NearbyList.RowCount > index) { NearbyList.RemoveRow(NearbyList.RowCount - 1); }
         }
 
-        private void NearbysList_Click(object sender, int row, int col)
+        private void NearbyList_Click(object sender, int row, int col)
         {
-            string id = ((HudStaticText)NearbysList[row][1]).Text;
+            string id = ((HudStaticText)NearbyList[row][1]).Text;
             if (id == null || id.Length < 1) { return; }
 
             CoreManager.Current.Actions.SelectItem(int.Parse(id));
@@ -769,10 +818,9 @@ namespace OracleOfDereth
 
             while (FellowshipList.RowCount > items.Count()) { FellowshipList.RemoveRow(FellowshipList.RowCount - 1); }
         }
-
-        private void FellowshipList_Click(object sender, int row, int col)
+        private void FellowshipAutoRecruit_Change(object sender, EventArgs e)
         {
-            Util.Chat("Fellowship list click");
+            UpdateFellowship();
         }
 
         private void UpdateFellowshipButtons()
@@ -1752,69 +1800,5 @@ namespace OracleOfDereth
             }
         }
 
-        // Shutdown
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
-                CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
-
-                NearbysList.Click -= NearbysList_Click;
-
-                FellowshipList.Click -= FellowshipList_Click;
-                FellowsList.Click -= FellowsList_Click;
-
-                FellowshipCreate.Hit -= FellowshipCreate_Hit;
-                FellowshipDisband.Hit -= FellowshipDisband_Hit;
-                FellowshipDismiss.Hit -= FellowshipDismiss_Hit;
-                FellowshipRecruit.Hit -= FellowshipRecruit_Hit;
-                FellowshipOpen.Hit -= FellowshipOpen_Hit;
-                FellowshipClose.Hit -= FellowshipClose_Hit;
-                FellowshipQuit.Hit -= FellowshipQuit_Hit;
-                FellowshipLeader.Hit -= FellowshipLeader_Hit;
-
-                JohnList.Click -= JohnList_Click;
-                JohnListSortCompleteIcon.Hit -= JohnListSortComplete_Click;
-                JohnListSortName.Hit -= JohnListSortName_Click;
-                JohnListSortReady.Hit -= JohnListSortReady_Click;
-                JohnListSortSolves.Hit -= JohnListSortSolves_Click;
-
-                AugmentationsQuestsList.Click -= AugmentationsQuestsList_Click;
-                AugmentationsList.Click -= AugmentationsList_Click;
-                LuminanceList.Click -= LuminanceList_Click;
-                CreditsList.Click -= CreditsList_Click;
-                FacilityList.Click -= FacilityList_Click;
-                FlagsList.Click -= FlagsList_Click;
-                MarkersList.Click -= MarkersList_Click;
-                RecallsList.Click -= RecallsList_Click;
-                UnavailableTitlesList.Click -= UnavailableTitlesList_Click;
-
-                TitlesList.Click -= TitlesList_Click;
-                TitlesListSortCompleteIcon.Hit -= TitlesListSortComplete_Click;
-                TitlesListSortName.Hit -= TitlesListSortName_Click;
-                TitlesListSortLevel.Hit -= TitlesListSortLevel_Click;
-                TitlesListSortCategory.Hit -= TitlesListSortCategory_Click;
-
-                // Quest Flag Refresh Buttons
-                JohnRefresh.Hit -= QuestFlagsRefresh_Hit;
-                AugmentationsRefresh.Hit -= QuestFlagsRefresh_Hit;
-                LuminanceRefresh.Hit -= QuestFlagsRefresh_Hit;
-                CreditsRefresh.Hit -= QuestFlagsRefresh_Hit;
-                FacilityRefresh.Hit -= QuestFlagsRefresh_Hit;
-                FlagsRefresh.Hit -= QuestFlagsRefresh_Hit;
-                MarkersRefresh.Hit -= QuestFlagsRefresh_Hit;
-
-                // Other cleanup
-                AssignedImages.Clear();
-                view?.Dispose();
-            }
-        }
     }
 }
