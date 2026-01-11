@@ -47,6 +47,20 @@ namespace OracleOfDereth
             Fellows.Clear();
         }
 
+        // Fellows without a Fellowship
+        public static List<Fellow> Players()
+        {
+            return Fellows.Where(f => string.IsNullOrEmpty(f.FellowshipName)).OrderBy(f => f.Name).ToList();
+        }
+
+        public static List<IGrouping<string, Fellow>> Fellowships()
+        {
+            return Fellows.Where(f => !string.IsNullOrEmpty(f.FellowshipName)).GroupBy(f => f.FellowshipName).OrderBy(g => g.Key).ToList();
+        }
+
+        public static Fellow Find(int id) { return Fellows.Find(f => f.Item.Id == id); }
+        public static Fellow Find(WorldObject item) { return Fellows.Find(f => f.Id == item.Id); }
+
         public static void Update()
         {
             // Remove old fellows we can no longer track
@@ -60,37 +74,7 @@ namespace OracleOfDereth
             foreach (Fellow fellow in RequestableFellows.Take(RescanPlayersCount)) { Request(fellow); }
         }
 
-        // Fellows without a Fellowship
-        public static List<Fellow> Players()
-        {
-            return Fellows.Where(f => string.IsNullOrEmpty(f.FellowshipName)).OrderBy(f => f.Name).ToList();
-        }
-
-        public static List<IGrouping<string, Fellow>> Fellowships()
-        {
-            return Fellows.Where(f => !string.IsNullOrEmpty(f.FellowshipName)).GroupBy(f => f.FellowshipName).OrderBy(g => g.Key).ToList();
-        }
-
-        // Once a player is identified, this packet is received with fellowship info
-        public static void Parse(byte[] packet)
-        {
-            bool success = GetSuccess(packet);
-            if(success == false) { return; }
-
-            int id = GetObjectId(packet);
-            if(id == 0) { return; }
-
-            Fellow fellow = Add(CoreManager.Current.WorldFilter[id]);
-            if(fellow == null) { return; }
-
-            //Util.Chat("============");
-            //Util.Chat($"Appraised {fellow.Item.Name}");
-            //Util.Chat(BitConverter.ToString(packet));
-            //Util.Chat("============");
-
-            UpdateFellowshipName(fellow, GetFellowshipName(packet));
-        }
-        public static void Update(Fellow fellow)
+        private static void Update(Fellow fellow)
         {
             if (fellow.Id == CoreManager.Current.CharacterFilter.Id)
             {
@@ -108,20 +92,11 @@ namespace OracleOfDereth
             }
         }
 
-        public static void UpdateFellowshipName(Fellow fellow, string fellowshipName)
+        private static void UpdateFellowshipName(Fellow fellow, string fellowshipName)
         {
             fellow.FellowshipName = fellowshipName;
             fellow.LastUpdatedAt = DateTime.Now;
             fellow.Identified = true;
-        }
-
-        public static Fellow Find(int id) { return Fellows.Find(f => f.Item.Id == id); }
-        public static Fellow Find(WorldObject item) { return Fellows.Find(f => f.Id == item.Id); }
-
-        public static void Request(Fellow fellow)
-        {
-            CoreManager.Current.Actions.RequestId(fellow.Id);
-            fellow.LastRequestedAt = DateTime.Now;
         }
 
         public static Fellow Add(WorldObject item)
@@ -134,15 +109,15 @@ namespace OracleOfDereth
             Fellow existing = Find(item);
             if(existing != null) { return existing; }
 
-            string fellowship = item.Values(StringValueKey.FellowshipName);
-            if(fellowship == null || fellowship.Length == 0) { fellowship = ""; }
+            string fellowshipName = item.Values(StringValueKey.FellowshipName);
+            if(fellowshipName == null || fellowshipName.Length == 0) { fellowshipName = ""; }
 
             // Create new
             Fellow fellow = new() { 
                 Item = item, 
                 Id = item.Id, 
                 Name = item.Name, 
-                FellowshipName = fellowship, 
+                FellowshipName = fellowshipName, 
             };
 
             Fellows.Add(fellow);
@@ -152,6 +127,32 @@ namespace OracleOfDereth
             //Util.Chat($"Adding {fellow.ToString()}");
             
             return fellow;
+        }
+
+        public static void Request(Fellow fellow)
+        {
+            CoreManager.Current.Actions.RequestId(fellow.Id);
+            fellow.LastRequestedAt = DateTime.Now;
+        }
+
+        // Once a player is identified, this packet is received with fellowship info
+        public static void Parse(byte[] packet)
+        {
+            bool success = GetSuccess(packet);
+            if (success == false) { return; }
+
+            int id = GetObjectId(packet);
+            if (id == 0) { return; }
+
+            Fellow fellow = Add(CoreManager.Current.WorldFilter[id]);
+            if (fellow == null) { return; }
+
+            //Util.Chat("============");
+            //Util.Chat($"Appraised {fellow.Item.Name}");
+            //Util.Chat(BitConverter.ToString(packet));
+            //Util.Chat("============");
+
+            UpdateFellowshipName(fellow, GetFellowshipName(packet));
         }
 
         public new string ToString()
@@ -170,6 +171,7 @@ namespace OracleOfDereth
             if(LastUpdatedAt == DateTime.MinValue) { return -1; }
             return (int)(DateTime.Now - LastUpdatedAt).TotalSeconds;
         }
+
         private static bool GetSuccess(byte[] packet)
         {
             if (packet == null || packet.Length < 9) { return false; } // ObjectID(4) + Flags(4) + Success(1)
@@ -181,6 +183,7 @@ namespace OracleOfDereth
                 return br.ReadBoolean(); // success
             }
         }
+
         private static int GetObjectId(byte[] packet)
         {
             if (packet == null) { return 0; }
@@ -200,7 +203,7 @@ namespace OracleOfDereth
             return (int)objectId;
         }
 
-        public static string GetFellowshipName(byte[] packet)
+        private static string GetFellowshipName(byte[] packet)
         {
             if (packet.Length < 32) return "";
 
@@ -255,6 +258,7 @@ namespace OracleOfDereth
                 return "";
             }
         }
+
         private static void SafeSkip(BinaryReader br, int keySize, int valSize)
         {
             if (br.BaseStream.Position + 4 > br.BaseStream.Length) return;

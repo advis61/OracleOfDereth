@@ -130,7 +130,7 @@ namespace OracleOfDereth
             // Nothing to do
         }
 
-        // IF my current target is in the fellow, return that.
+        // If my current target is in the fellow, return that.
         // Otherwise last selected fellow on the FellowsList UI
         public static int SelectedFellowId()
         {
@@ -231,10 +231,10 @@ namespace OracleOfDereth
             return status.ToList();
         }
 
-        public unsafe static uint FellowCount()
+        public unsafe static int FellowCount()
         {
             if (!IsInFellowship()) { return 0; }
-            return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table._currNum;
+            return (int)(*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table._currNum;
         }
 
         public unsafe static Dictionary<int, string> Fellows()
@@ -268,7 +268,7 @@ namespace OracleOfDereth
 
         public unsafe static bool IsInFellowship()
         {
-            return ((*AcClient.ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship != null);
+            return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship != null;
         }
 
         public unsafe static bool IsInFellowship(int character_id)
