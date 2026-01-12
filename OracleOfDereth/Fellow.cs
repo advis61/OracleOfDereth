@@ -50,17 +50,14 @@ namespace OracleOfDereth
         // Fellows without a Fellowship
         public static List<Fellow> Players()
         {
-            return Fellows.Where(f => string.IsNullOrEmpty(f.FellowshipName)).OrderBy(f => f.Name).ToList();
+            int myId = CoreManager.Current.CharacterFilter.Id;
+            return Fellows.Where(f => string.IsNullOrEmpty(f.FellowshipName) && f.Id != myId).OrderBy(f => f.Name).ToList();
         }
 
         public static List<IGrouping<string, Fellow>> Fellowships()
         {
             return Fellows.Where(f => !string.IsNullOrEmpty(f.FellowshipName)).GroupBy(f => f.FellowshipName).OrderBy(g => g.Key).ToList();
         }
-
-
-
-
 
         public static Fellow Find(int id) { return Fellows.Find(f => f.Item.Id == id); }
         public static Fellow Find(WorldObject item) { return Fellows.Find(f => f.Id == item.Id); }

@@ -128,6 +128,12 @@ namespace OracleOfDereth
             return CoreManager.Current.WorldFilter.Distance(CoreManager.Current.CharacterFilter.Id, destObj.Id) * 240;
         }
 
+        public static string GetDistanceFromPlayerText(WorldObject obj)
+        {
+            double distance = GetDistanceFromPlayer(obj);
+            return (distance < 100.0) ? distance.ToString("0.0") : distance.ToString("0");
+        }
+
         public static WorldObject GetClosestObject(ObjectClass objectClass)
         {
             WorldObject closest = null;
@@ -163,6 +169,7 @@ namespace OracleOfDereth
 
             return $"0x{landblock:X8}";
         }
+
 
         public unsafe static string ReadPStringFromBuffer(PStringBase<char> pstr)
         {

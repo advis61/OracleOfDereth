@@ -141,7 +141,7 @@ namespace OracleOfDereth
             // Status Tab
             { 1_00, 200 }, // HUD
             { 1_01, 460 }, // Buffs
-            { 1_02, 320 }, // Nearby
+            { 1_02, 240 }, // Nearby
             { 1_03, 250 }, // Fellowship
 
             // Character Tab
@@ -169,7 +169,7 @@ namespace OracleOfDereth
             // Status Tab
             { 1_00, 320 }, // HUD
             { 1_01, 545 }, // Buffs
-            { 1_02, 545 }, // Nearbys
+            { 1_02, 320 }, // Nearbys
             { 1_03, 420 }, // Fellowship 
 
             // Character Tab
@@ -790,16 +790,17 @@ namespace OracleOfDereth
                 if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
                 index++;
 
-                ((HudStaticText)row[0]).Text = "  " + item.Name;
-                ((HudStaticText)row[1]).Text = item.Id.ToString();
+                ((HudStaticText)row[0]).Text = " " + item.Name;
 
                 if(item.Id == targetId) {
                     AssignSelected(row, true, NearbyListColumns);
-                    ((HudStaticText)row[2]).Text = Util.GetDistanceFromPlayer(item).ToString("0.0");
+                    ((HudStaticText)row[1]).Text = Util.GetDistanceFromPlayerText(item);
                 } else {
                     AssignSelected(row, false, NearbyListColumns);
-                    ((HudStaticText)row[2]).Text = "";
+                    ((HudStaticText)row[1]).Text = "";
                 }
+
+                ((HudStaticText)row[2]).Text = item.Id.ToString();
             }
 
             // Blank row
@@ -849,9 +850,9 @@ namespace OracleOfDereth
                     if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
                     AssignSelected(row, (player.Id == targetId), columns);
 
-                    ((HudStaticText)row[0]).Text = "  " + player.Name;
-                    ((HudStaticText)row[1]).Text = player.Id.ToString();
-                    ((HudStaticText)row[2]).Text = player.LastUpdatedAgo().ToString();
+                    ((HudStaticText)row[0]).Text = " " + player.Name;
+                    ((HudStaticText)row[1]).Text = player.LastUpdatedAgo().ToString();
+                    ((HudStaticText)row[2]).Text = player.Id.ToString();
                     index++;
                 }
 
@@ -871,7 +872,7 @@ namespace OracleOfDereth
                     // Header
                     if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
                     AssignSelected(row, false, columns);
-                    ((HudStaticText)row[0]).Text = $"Fellowship: {fellowship.Key} ({fellowship.Count()})";
+                    ((HudStaticText)row[0]).Text = $"{fellowship.Key} ({fellowship.Count()})";
                     ((HudStaticText)row[1]).Text = "";
                     ((HudStaticText)row[2]).Text = "";
                     index++;
@@ -885,9 +886,9 @@ namespace OracleOfDereth
                         if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
                         AssignSelected(row, fellow.Id == targetId, columns);
 
-                        ((HudStaticText)row[0]).Text = "  " + fellow.Name;
-                        ((HudStaticText)row[1]).Text = fellow.Id.ToString();
-                        ((HudStaticText)row[2]).Text = fellow.LastUpdatedAgo().ToString();
+                        ((HudStaticText)row[0]).Text = " " + fellow.Name;
+                        ((HudStaticText)row[1]).Text = fellow.LastUpdatedAgo().ToString();
+                        ((HudStaticText)row[2]).Text = fellow.Id.ToString();
                         index++;
                     }
 
@@ -901,7 +902,7 @@ namespace OracleOfDereth
 
         private void NearbyList_Click(object sender, int row, int col)
         {
-            string id = ((HudStaticText)NearbyList[row][1]).Text;
+            string id = ((HudStaticText)NearbyList[row][2]).Text;
             if (id == null || id.Length < 1) { return; }
 
             CoreManager.Current.Actions.SelectItem(int.Parse(id));

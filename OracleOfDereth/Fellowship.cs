@@ -185,26 +185,24 @@ namespace OracleOfDereth
 
             status.Add("Fellows", FellowCount().ToString() + " / 9");
 
-            //if (AutoRecruitEnabled && IsFull()) {
-            //    status.Add("Auto Recruit", "Fellowship full");
-            //}
-            //else if (AutoRecruitEnabled && NearbyLifestone()) {
-            //    status.Add("Auto Recruit", "Paused near Lifestone");
-            //}
-            //else if (AutoRecruitEnabled && CanRecruit()) {
-            //    status.Add("Auto Recruit", "Recruiting players");
-            //}
-            //else if (IsFull()) {
-            //    status.Add("Recruit", "Fellowship full");
-            //}
-            //else if (CanRecruit()) {
-            //    status.Add("Recruit", "Can recruit");
-            //} 
-            //else {
-            //    status.Add("Recruit", "Must be open or leader");
-            //}
-
-                status.Add("Auto Recruit", "Paused near Lifestone");
+            if (AutoRecruitEnabled && IsFull()) {
+                status.Add("Auto Recruit", "Fellowship full");
+            }
+            else if (AutoRecruitEnabled && NearbyLifestone()) {
+                status.Add("Auto Recruit", "Paused near Life Stone");
+            }
+            else if (AutoRecruitEnabled && CanRecruit()) {
+                status.Add("Auto Recruit", "Recruiting players");
+            }
+            else if (IsFull()) {
+                status.Add("Recruit", "Fellowship full");
+            }
+            else if (CanRecruit()) {
+                status.Add("Recruit", "Can recruit");
+            }
+            else {
+                status.Add("Recruit", "Must be open or leader");
+            }
 
             return status.ToList();
         }
