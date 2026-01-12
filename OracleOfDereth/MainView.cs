@@ -142,7 +142,7 @@ namespace OracleOfDereth
             { 1_00, 200 }, // HUD
             { 1_01, 460 }, // Buffs
             { 1_02, 320 }, // Nearby
-            { 1_03, 290 }, // Fellowship
+            { 1_03, 250 }, // Fellowship
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -763,18 +763,76 @@ namespace OracleOfDereth
             while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount - 1); }
         }
 
-        private void UpdateNearbyList()
+        private readonly List<int> NearbyListColumns = new List<int> { 0, 1, 2 };
+
+        private int NearbyListAdd(string section, List<WorldObject> items, int index)
         {
+            if (items.Count() == 0) { return index; }
+
+            WorldObject item;
+            HudList.HudListRowAccessor row;
             int targetId = Target.GetCurrent().Id;
-            List<int> columns = new List<int> { 0, 1, 2 };
 
-            List<Fellow> players = Fellow.Players();
-            List<IGrouping<string, Fellow>> fellowships = Fellow.Fellowships();
+            // Header
+            if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+            index++;
 
-            int index = 0;
+            AssignSelected(row, false, NearbyListColumns);
+
+            ((HudStaticText)row[0]).Text = section;
+            ((HudStaticText)row[1]).Text = "";
+            ((HudStaticText)row[2]).Text = "";
+
+            for (int x = 0; x < items.Count; x++)
+            {
+                item = items[x];
+
+                if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+                index++;
+
+                ((HudStaticText)row[0]).Text = "  " + item.Name;
+                ((HudStaticText)row[1]).Text = item.Id.ToString();
+
+                if(item.Id == targetId) {
+                    AssignSelected(row, true, NearbyListColumns);
+                    ((HudStaticText)row[2]).Text = Util.GetDistanceFromPlayer(item).ToString("0.0");
+                } else {
+                    AssignSelected(row, false, NearbyListColumns);
+                    ((HudStaticText)row[2]).Text = "";
+                }
+            }
+
+            // Blank row
+            return NearbyListAddBlank(index);
+        }
+
+        private int NearbyListAddBlank(int index)
+        {
             HudList.HudListRowAccessor row;
 
+            if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+            ((HudStaticText)row[0]).Text = "";
+            ((HudStaticText)row[1]).Text = "";
+            ((HudStaticText)row[2]).Text = "";
+
+            return (index + 1);
+        }
+
+        private void UpdateNearbyList()
+        {
+            HudList.HudListRowAccessor row;
+            List<int> columns = new List<int> { 0, 1, 2 };
+
+            int index = 0;
+            int targetId = Target.GetCurrent().Id;
+
+            index = NearbyListAdd("Monsters", Nearby.Monsters(), index);
+            index = NearbyListAdd("NPCs", Nearby.Npcs(), index);
+            index = NearbyListAdd("Items", Nearby.Items(), index);
+
             // Players
+            List<Fellow> players = Fellow.Players();
+
             if (players.Count() > 0)
             {
                 // Header
@@ -798,14 +856,12 @@ namespace OracleOfDereth
                 }
 
                 // Blank row
-                if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                ((HudStaticText)row[0]).Text = "";
-                ((HudStaticText)row[1]).Text = "";
-                ((HudStaticText)row[2]).Text = "";
-                index++;
+                index = NearbyListAddBlank(index);
             }
 
             // Fellowships
+            List<IGrouping<string, Fellow>> fellowships = Fellow.Fellowships();
+
             if (fellowships.Count() > 0)
             {
                 for (int x = 0; x < fellowships.Count; x++)
@@ -836,11 +892,7 @@ namespace OracleOfDereth
                     }
 
                     // Blank row
-                    if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                    ((HudStaticText)row[0]).Text = "";
-                    ((HudStaticText)row[1]).Text = "";
-                    ((HudStaticText)row[2]).Text = "";
-                    index++;
+                    index = NearbyListAddBlank(index);
                 }
             }
 

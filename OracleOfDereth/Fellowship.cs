@@ -27,99 +27,58 @@ namespace OracleOfDereth
     public class Fellowship
     {
         private static readonly Random random = new Random();
+
         private static readonly List<string> FellowshipNames = new List<string> {
-            "Aerlinthe Pyreal Forgers",
-            "Ancient Graveyard Wardens",
-            "Appraisal Artisans",
-            "Aphus Lassel Rangers",
-            "BaelZharons Bane",
-            "Black Isle Watch",
-            "Black Spear Fellowship",
-            "Blackmire Temple Delvers",
-            "Blood-Heart Trailblazers",
-            "Celestial Hand Vanguard",
-            "Code of Pwyll Enforcers",
-            "Dark Isle Shadows",
-            "Dereth Expeditionary Guard",
-            "Direlands Pioneers",
-            "Direlands Vanguard",
-            "Eldrytch Web Circle",
-            "Empyrean Echoes",
-            "Empyrean Relic Hunters",
-            "Falatacot Ruin Seekers",
-            "Falatacot Ruin Walkers",
-            "Filinuvekta Brotherhood",
-            "Floating City Expedition",
-            "Frore Founders Guild",
-            "Gelidite Crystal Bearers",
-            "Gelidite Crystal Keepers",
-            "Gelidite Frost Wardens",
-            "Gelidite Frostborn",
-            "Great Work Excavators",
-            "Haebrean Legacy Watch",
-            "Haebrous Legacy Watch",
-            "Halaetan Isles Watch",
-            "Halls of Lost Light Seekers",
-            "Heritage Keepers of Dereth",
-            "Holtburg Vanguard",
-            "Hopeslayer Hunters",
-            "Hopeslayers Reach Guard",
-            "House Aerfalle Wardens",
-            "House Mhoire Resurgence",
-            "House Mhoire Survivors",
-            "Ice Throne Remnant Guard",
-            "Ice Throne Remnants",
-            "Ireth Lassel Defenders",
-            "Ireth Lassel Explorers",
-            "Isin Dules Watch",
-            "Isparian Unity Fellowship",
-            "Ishilai Lyceum Keepers",
-            "Ishilai Lyceum Scholars",
-            "Jailne Lyceum Defenders",
-            "Jailne Lyceum Keepers",
-            "Knights of New Aluvia",
-            "Knights of the Shield",
-            "Knorr Lyceum Seekers",
-            "Lake Blessed Defenders",
-            "League of Merchants",
-            "Ley Line Guardians",
-            "Ley Line Seekers",
-            "Lost City Excavators",
-            "Lost City Guardians",
-            "Mage Academy Scholars",
-            "Menhir Ring Wardens",
-            "Nightwatch of Vesayen",
-            "Obsidian Nexus Circle",
-            "Obsidian Plains Scouts",
-            "Olthoi Bane Brotherhood",
-            "Olthoi Bane Vanguard",
-            "Order of the Golden Flame",
-            "Order of the Gharundim Ways",
-            "Portalforge Keep",
-            "Pyreal Forgers",
-            "Radiant Blood Cohort",
-            "Rithwic Protectors",
-            "Samsur Trade Council",
-            "Scholars of Pwyll",
-            "Shadow Spire Wardens",
-            "Shadowbane Fellowship",
-            "Shadowfall Covenant",
-            "Shoushi Clan",
-            "Singularity Caul Seekers",
-            "Sho Discipline Guard",
-            "Swamp Temple Raiders",
-            "Tenebrous Edge Guard",
-            "Undead Bane Hunters",
-            "Underground City Delvers",
-            "Underground City Scouts",
-            "Unarmed Masters Guild",
-            "Vasith Fortress Wardens",
-            "Vasith Sentinel Order",
-            "Vesayen Watch",
-            "Vissidal Sentinels",
-            "Yalaini Arcanum",
-            "Yanshi Discipline Circle",
-            "Yaraq Caravaneers"
+            "Aetherbound",
+            "Aluvian Coast",
+            "Ancient Dereth",
+            "Arcanum Cabal",
+            "Ashen Sigil",
+            "Black Mana Rising",
+            "Black Spawn Pact",
+            "Blade of Ispar",
+            "Crimson Order",
+            "Crystal Exiles",
+            "Dereth Forever",
+            "Drudge Reavers",
+            "Echoes of Ithaenc",
+            "Eldrytch Council",
+            "Empyrean Remnant",
+            "Essence Ward",
+            "Fallen Isparians",
+            "Glyphbound",
+            "Golemwatch",
+            "Holtburg Ward",
+            "Iron Fellowship",
+            "Last Empyreans",
+            "Leystone Keepers",
+            "Mana Forged",
+            "Mosswart Kin",
+            "Nightbound",
+            "Oblivion Tide",
+            "Obsidian Plains",
+            "Oathbound",
+            "Olthoi Bane",
+            "Plateau Watch",
+            "Portal Storm",
+            "Radiant Hand",
+            "Runic Accord",
+            "Sentinels of Light",
+            "Shadow Lugians",
+            "Shoushi Circle",
+            "Silver Dereth",
+            "Spawn of Bael",
+            "Spires of Dereth",
+            "Spellweavers",
+            "Stormwardens",
+            "The Virindi Eye",
+            "Tufa Stronghold",
+            "Tumerok Claw",
+            "Vanguard of Light",
+            "Virindi Enclave",
+            "Voidwalkers",
+            "Wardens of Dereth",
+            "Yaraq Vanguard"
         };
 
         public static int CurrentFellowId = 0; // Selected by clicking in the FellowsList
@@ -151,13 +110,24 @@ namespace OracleOfDereth
             CurrentFellowId = id;
         }
 
+        public static bool NearbyLifestone()
+        {
+            WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByObjectClass(ObjectClass.Lifestone);
+
+            foreach (WorldObject item in items) {
+                if(Util.GetDistanceFromPlayer(item) < 50.0) { return true; }
+            }
+
+            return false;
+        }
+
         public unsafe static void AutoRecruit()
         {
             if(AutoRecruitEnabled == false) { return; }
 
-            if (IsInFellowship() == false) { Create(); }
             if (IsLeader() && !IsOpen()) { Open(); }
             if (CanRecruit() == false) { return; }
+            if (NearbyLifestone()) { return; }
 
             foreach(Fellow player in Fellow.Players().Where(f => f.Identified).ToList()) { 
                 if(IsInFellowship(player.Id) == false) { Recruit(player.Id); }
@@ -215,18 +185,26 @@ namespace OracleOfDereth
 
             status.Add("Fellows", FellowCount().ToString() + " / 9");
 
-            if(IsFull()) { 
-                status.Add("Status", "Fellowship full"); 
-            }
-            else if(AutoRecruitEnabled && CanRecruit()) { 
-                status.Add("Status", "Auto recruiting players"); 
-            }
-            else if(CanRecruit()) {
-                status.Add("Status", "Can recruit players"); 
-            }
-            else {
-                status.Add("Status", "Must be open to recruit");
-            }
+            //if (AutoRecruitEnabled && IsFull()) {
+            //    status.Add("Auto Recruit", "Fellowship full");
+            //}
+            //else if (AutoRecruitEnabled && NearbyLifestone()) {
+            //    status.Add("Auto Recruit", "Paused near Lifestone");
+            //}
+            //else if (AutoRecruitEnabled && CanRecruit()) {
+            //    status.Add("Auto Recruit", "Recruiting players");
+            //}
+            //else if (IsFull()) {
+            //    status.Add("Recruit", "Fellowship full");
+            //}
+            //else if (CanRecruit()) {
+            //    status.Add("Recruit", "Can recruit");
+            //} 
+            //else {
+            //    status.Add("Recruit", "Must be open or leader");
+            //}
+
+                status.Add("Auto Recruit", "Paused near Lifestone");
 
             return status.ToList();
         }

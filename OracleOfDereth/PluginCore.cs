@@ -10,8 +10,8 @@ using WindowsTimer = System.Windows.Forms.Timer;
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
 // Remember to update installer.nsi to match
-[assembly: AssemblyVersion("1.10.0.0")]
-[assembly: AssemblyFileVersion("1.10.0.0")]
+[assembly: AssemblyVersion("1.11.0.0")]
+[assembly: AssemblyFileVersion("1.11.0.0")]
 
 namespace OracleOfDereth
 {
@@ -262,13 +262,13 @@ namespace OracleOfDereth
         private void WorldFilter_CreateObject(object sender, CreateObjectEventArgs e)
         {
             //Util.Chat("CreateObject " + e.New.Name + " has data? " + e.New.HasIdData);
-
             Fellow.Add(e.New);
+            Nearby.Add(e.New);
         }
 
         private void WorldFilter_ReleaseObject(object sender, ReleaseObjectEventArgs e)
         {
-            //Util.Chat("ReleaseObject " + e.Released.Name);
+            Nearby.Remove(e.Released);
         }
 
         private void WorldObjectIdentifier_Identified(object sender, WorldObject item)

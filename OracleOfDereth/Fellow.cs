@@ -58,6 +58,10 @@ namespace OracleOfDereth
             return Fellows.Where(f => !string.IsNullOrEmpty(f.FellowshipName)).GroupBy(f => f.FellowshipName).OrderBy(g => g.Key).ToList();
         }
 
+
+
+
+
         public static Fellow Find(int id) { return Fellows.Find(f => f.Item.Id == id); }
         public static Fellow Find(WorldObject item) { return Fellows.Find(f => f.Id == item.Id); }
 
@@ -84,7 +88,7 @@ namespace OracleOfDereth
             else if (Fellowship.IsInFellowship(fellow.Id))
             {
                 UpdateFellowshipName(fellow, Fellowship.Name());
-                fellow.Requestable = false;
+                fellow.Requestable = true; 
             }
             else
             {
