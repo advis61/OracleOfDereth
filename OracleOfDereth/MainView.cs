@@ -821,15 +821,14 @@ namespace OracleOfDereth
 
         private void UpdateNearbyList()
         {
-            HudList.HudListRowAccessor row;
-            List<int> columns = new List<int> { 0, 1, 2 };
-
             int index = 0;
             int targetId = Target.GetCurrent().Id;
+            HudList.HudListRowAccessor row;
 
             index = NearbyListAdd("Monsters", Nearby.Monsters(), index);
             index = NearbyListAdd("NPCs", Nearby.Npcs(), index);
             index = NearbyListAdd("Items", Nearby.Items(), index);
+            index = NearbyListAdd("Portals", Nearby.Portals(), index);
 
             // Players
             List<Fellow> players = Fellow.Players();
@@ -838,22 +837,25 @@ namespace OracleOfDereth
             {
                 // Header
                 if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                AssignSelected(row, false, columns);
+                index++;
+
+                AssignSelected(row, false, NearbyListColumns);
+
                 ((HudStaticText)row[0]).Text = $"Players ({players.Count()})";
                 ((HudStaticText)row[1]).Text = "";
                 ((HudStaticText)row[2]).Text = "";
-                index++;
 
                 for (int x = 0; x < players.Count; x++)
                 {
                     Fellow player = players[x];
                     if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                    AssignSelected(row, (player.Id == targetId), columns);
+                    index++;
+
+                    AssignSelected(row, (player.Id == targetId), NearbyListColumns);
 
                     ((HudStaticText)row[0]).Text = " " + player.Name;
-                    ((HudStaticText)row[1]).Text = player.LastUpdatedAgo().ToString();
+                    ((HudStaticText)row[1]).Text = player.LastRequestedAgo().ToString();
                     ((HudStaticText)row[2]).Text = player.Id.ToString();
-                    index++;
                 }
 
                 // Blank row
@@ -871,11 +873,13 @@ namespace OracleOfDereth
 
                     // Header
                     if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                    AssignSelected(row, false, columns);
+                    index++;
+
+                    AssignSelected(row, false, NearbyListColumns);
+
                     ((HudStaticText)row[0]).Text = $"{fellowship.Key} ({fellowship.Count()})";
                     ((HudStaticText)row[1]).Text = "";
                     ((HudStaticText)row[2]).Text = "";
-                    index++;
 
                     // Fellows
                     List<Fellow> fellows = fellowship.OrderBy(f => f.Name).ToList();
@@ -884,12 +888,13 @@ namespace OracleOfDereth
                     {
                         Fellow fellow = fellows[y];
                         if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                        AssignSelected(row, fellow.Id == targetId, columns);
+                        index++;
+
+                        AssignSelected(row, fellow.Id == targetId, NearbyListColumns);
 
                         ((HudStaticText)row[0]).Text = " " + fellow.Name;
-                        ((HudStaticText)row[1]).Text = fellow.LastUpdatedAgo().ToString();
+                        ((HudStaticText)row[1]).Text = fellow.LastRequestedAgo().ToString();
                         ((HudStaticText)row[2]).Text = fellow.Id.ToString();
-                        index++;
                     }
 
                     // Blank row

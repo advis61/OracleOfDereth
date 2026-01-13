@@ -40,10 +40,12 @@ namespace OracleOfDereth
 
         public static List<WorldObject> Monsters() { return All(ObjectClass.Monster); }
         public static List<WorldObject> Npcs() { return All(ObjectClass.Npc).Concat(All(ObjectClass.Vendor)).ToList(); }
+        public static List<WorldObject> Portals() { return All(ObjectClass.Portal); }
 
         public static List<WorldObject> Items() {
             return Objects.Where(o =>
                 o.ObjectClass != ObjectClass.Player &&
+                o.ObjectClass != ObjectClass.Portal &&
                 o.ObjectClass != ObjectClass.Monster &&
                 o.ObjectClass != ObjectClass.Npc &&
                 o.ObjectClass != ObjectClass.Vendor
@@ -80,7 +82,7 @@ namespace OracleOfDereth
                 }
             }
 
-            Util.Chat($"Loaded {Nearbys.Count} Nearbys from embedded CSV.", 1);
+            //Util.Chat($"Loaded {Nearbys.Count} Nearbys from embedded CSV.", 1);
         }
 
         public static void Add(WorldObject item)
@@ -91,11 +93,16 @@ namespace OracleOfDereth
                 return; 
             }
 
+            // Add all Portals
+            if(item.ObjectClass == ObjectClass.Portal) {
+                Objects.Add(item);
+                Announce(item);
+            }
+
             Nearby nearby = Nearbys[item.Name.ToLower()];
             if(nearby == null) { return; }
 
             Objects.Add(item);
-
             Announce(item);
         }
 

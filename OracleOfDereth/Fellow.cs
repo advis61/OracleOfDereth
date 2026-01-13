@@ -26,8 +26,8 @@ namespace OracleOfDereth
     public class Fellow
     {
         // Constants
-        public static readonly int RescanAfterSeconds = 2;
-        public static readonly int RescanPlayersCount = 2;
+        public static readonly int PerTick = 4;
+        public static readonly int Cooldown = 3;
 
         // Collection
         public static List<Fellow> Fellows = new List<Fellow>();
@@ -62,6 +62,14 @@ namespace OracleOfDereth
         public static Fellow Find(int id) { return Fellows.Find(f => f.Item.Id == id); }
         public static Fellow Find(WorldObject item) { return Fellows.Find(f => f.Id == item.Id); }
 
+        public static List<Fellow> RequestableFellows()
+        {
+            return Fellows
+                .Where(f => f.Requestable && (f.LastRequestedAgo() == -1 || f.LastRequestedAgo() > Cooldown))
+                .OrderBy(f => f.LastRequestedAt).ToList();
+        }
+
+        // We only need this for Nearby fellows. Not everyone in our fellowship which is handled by Fellowship class
         public static void Update()
         {
             // Remove old fellows we can no longer track
@@ -70,9 +78,8 @@ namespace OracleOfDereth
             // Update all fellows
             foreach (Fellow fellow in Fellows) { Update(fellow); }
 
-            // Request ident for oldest players outside my felloship
-            List<Fellow> RequestableFellows = Fellows.Where(f => f.Requestable && f.LastRequestedAgo() >= RescanAfterSeconds).OrderBy(f => f.LastRequestedAt).ToList();
-            foreach (Fellow fellow in RequestableFellows.Take(RescanPlayersCount)) { Request(fellow); }
+            // Request ident for oldest players outside my fellowship
+            foreach (Fellow fellow in RequestableFellows().Take(PerTick)) { Request(fellow); }
         }
 
         private static void Update(Fellow fellow)
@@ -118,12 +125,12 @@ namespace OracleOfDereth
                 Item = item, 
                 Id = item.Id, 
                 Name = item.Name, 
-                FellowshipName = fellowshipName, 
+                FellowshipName = fellowshipName
             };
 
             Fellows.Add(fellow);
             Update(fellow);
-            if (fellow.Requestable) { Request(fellow); }
+            if(item.HasIdData == false) { Request(fellow); }
 
             //Util.Chat($"Adding {fellow.ToString()}");
             
@@ -132,8 +139,9 @@ namespace OracleOfDereth
 
         public static void Request(Fellow fellow)
         {
-            CoreManager.Current.Actions.RequestId(fellow.Id);
             fellow.LastRequestedAt = DateTime.Now;
+            Util.Chat($"Requesting: {fellow.Name}");
+            CoreManager.Current.Actions.RequestId(fellow.Id);
         }
 
         // Once a player is identified, this packet is received with fellowship info
