@@ -453,8 +453,11 @@ namespace OracleOfDereth
         {
             if (disposing)
             {
+                view.Resize -= MainView_Resized;
                 MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                StatusViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
                 NearbyList.Click -= NearbyList_Click;
 
@@ -1935,6 +1938,5 @@ namespace OracleOfDereth
                 }
             }
         }
-
     }
 }
