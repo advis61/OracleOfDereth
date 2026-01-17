@@ -1445,8 +1445,11 @@ namespace OracleOfDereth
         {
             if (disposing)
             {
+                view.Resize -= MainView_Resized;
                 MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                StatusViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
                 JohnList.Click -= JohnList_Click;
                 JohnListSortCompleteIcon.Hit -= JohnListSortComplete_Click;

@@ -97,7 +97,7 @@ namespace OracleOfDereth
         {
             try
             {
-                Core.CharacterFilter.Login -= CharacterFilter_Login;
+                CoreManager.Current.CharacterFilter.Login -= CharacterFilter_Login;
                 Init();
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -165,9 +165,11 @@ namespace OracleOfDereth
                 CoreManager.Current.CommandLineText -= Current_CommandLineText;
                 CoreManager.Current.ChatBoxMessage -= Current_ChatBoxMessage;
                 CoreManager.Current.ItemSelected -= Current_ItemSelected;
+                CoreManager.Current.CharacterFilter.Login -= CharacterFilter_Login;
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
                 CoreManager.Current.CharacterFilter.SpellCast -= CharacterFilter_SpellCast;
                 CoreManager.Current.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch;
+
                 worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
 
                 // Shutdown timer
