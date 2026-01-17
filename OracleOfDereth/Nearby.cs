@@ -36,21 +36,18 @@ namespace OracleOfDereth
             LoadNearbysCSV();
         }
 
-        private static List<WorldObject> All(ObjectClass c) { return Objects.Where(o => o.ObjectClass == c).ToList(); }
+        public static List<WorldObject> All() {
+            return Objects
+                .Where(o => o.ObjectClass != ObjectClass.Player)
+                .ToList();
+        }
+
+        private static List<WorldObject> All(ObjectClass c) { return All().Where(o => o.ObjectClass == c).ToList(); 
+        }
 
         public static List<WorldObject> Monsters() { return All(ObjectClass.Monster); }
         public static List<WorldObject> Npcs() { return All(ObjectClass.Npc).Concat(All(ObjectClass.Vendor)).ToList(); }
         public static List<WorldObject> Portals() { return All(ObjectClass.Portal); }
-
-        public static List<WorldObject> Items() {
-            return Objects.Where(o =>
-                o.ObjectClass != ObjectClass.Player &&
-                o.ObjectClass != ObjectClass.Portal &&
-                o.ObjectClass != ObjectClass.Monster &&
-                o.ObjectClass != ObjectClass.Npc &&
-                o.ObjectClass != ObjectClass.Vendor
-            ).ToList();
-        }
 
         public static void LoadNearbysCSV()
         {
@@ -93,17 +90,11 @@ namespace OracleOfDereth
                 return; 
             }
 
-            // Add all Portals
-            if(item.ObjectClass == ObjectClass.Portal) {
-                Objects.Add(item);
-                Announce(item);
-            }
+            // Add all items
+            Objects.Add(item);
 
             Nearby nearby = Nearbys[item.Name.ToLower()];
-            if(nearby == null) { return; }
-
-            Objects.Add(item);
-            Announce(item);
+            if (nearby != null) { Announce(item); }
         }
 
         public static void Remove(WorldObject item)

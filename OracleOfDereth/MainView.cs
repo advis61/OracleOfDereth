@@ -825,10 +825,11 @@ namespace OracleOfDereth
             int targetId = Target.GetCurrent().Id;
             HudList.HudListRowAccessor row;
 
-            index = NearbyListAdd("Monsters", Nearby.Monsters(), index);
-            index = NearbyListAdd("NPCs", Nearby.Npcs(), index);
-            index = NearbyListAdd("Items", Nearby.Items(), index);
-            index = NearbyListAdd("Portals", Nearby.Portals(), index);
+            //index = NearbyListAdd("Monsters", Nearby.Monsters(), index);
+            //index = NearbyListAdd("NPCs", Nearby.Npcs(), index);
+            //index = NearbyListAdd("Items", Nearby.Items(), index);
+            //index = NearbyListAdd("Portals", Nearby.Portals(), index);
+            index = NearbyListAdd("All", Nearby.All(), index);
 
             // Players
             List<Fellow> players = Fellow.Players();
