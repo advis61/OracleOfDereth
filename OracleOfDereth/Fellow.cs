@@ -140,7 +140,7 @@ namespace OracleOfDereth
         public static void Request(Fellow fellow)
         {
             fellow.LastRequestedAt = DateTime.Now;
-            Util.Chat($"Requesting: {fellow.Name}");
+            //Util.Chat($"Requesting: {fellow.Name}");
             CoreManager.Current.Actions.RequestId(fellow.Id);
         }
 

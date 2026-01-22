@@ -70,6 +70,9 @@ namespace OracleOfDereth
         public HudButton FellowshipDismiss { get; private set; }
         public HudButton FellowshipDisband { get; private set; }
 
+        public HudStaticText FellowshipName { get; private set; }
+        public HudStaticText FellowsName { get; private set; }
+
         public HudList FellowsList { get; private set; }
 
         // Nearbys
@@ -170,7 +173,7 @@ namespace OracleOfDereth
             { 1_00, 320 }, // HUD
             { 1_01, 545 }, // Buffs
             { 1_02, 320 }, // Nearbys
-            { 1_03, 420 }, // Fellowship 
+            { 1_03, 380 }, // Fellowship 
 
             // Character Tab
             { 2_00, 550 }, // Augmentations
@@ -268,6 +271,9 @@ namespace OracleOfDereth
                 // Fellows Tab
                 FellowshipList = (HudList)view["FellowshipList"];
                 FellowshipList.ClearRows();
+
+                FellowshipName = (HudStaticText)view["FellowshipName"];
+                FellowsName = (HudStaticText)view["FellowsName"];
 
                 FellowshipAutoRecruit = (HudCheckBox)view["FellowshipAutoRecruit"];
                 FellowshipAutoRecruit.Change += FellowshipAutoRecruit_Change;
@@ -666,6 +672,7 @@ namespace OracleOfDereth
 
         public void UpdateFellowship()
         {
+            UpdateFellowshipNames();
             UpdateFellowshipList();
             UpdateFellowshipButtons();
             UpdateFellowsList();
@@ -940,6 +947,17 @@ namespace OracleOfDereth
             UpdateFellowship();
         }
 
+        private void UpdateFellowshipNames()
+        {
+            bool isInFellowship = Fellowship.IsInFellowship();
+
+            FellowshipAutoRecruit.Visible = isInFellowship;
+            FellowsName.Visible = isInFellowship;
+
+            FellowshipName.Text = (isInFellowship ? Fellowship.Name() : "No Fellowship");
+            FellowsName.Text = (isInFellowship ? $"Fellows ({Fellowship.FellowCount()} / 9)" : "");
+        }
+
         private void UpdateFellowshipButtons()
         {
             bool isInFellowship = Fellowship.IsInFellowship();
@@ -995,8 +1013,6 @@ namespace OracleOfDereth
 
             return !Fellowship.IsLeader(id);
         }
-
-
         private void UpdateFellowsList()
         {
             List<KeyValuePair<int, string>> items = Fellowship.Fellows().OrderBy(f => f.Value).ToList();

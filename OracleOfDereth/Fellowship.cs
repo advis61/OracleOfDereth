@@ -167,13 +167,8 @@ namespace OracleOfDereth
         {
             var status = new Dictionary<string, string>();
 
-            if (IsInFellowship() == false)
-            {
-                status.Add("None", "");
-                return status.ToList();
-            }
+            if (IsInFellowship() == false) { return status.ToList(); }
 
-            status.Add("Name", Name());
             status.Add("Leader", LeaderName());
             status.Add("Open", IsOpen().ToString());
 
@@ -181,8 +176,6 @@ namespace OracleOfDereth
             else if (IsShareXp() && IsEvenXPSplit()) { status.Add("Experience", "Even split"); }
             else if (IsShareXp() && !IsEvenXPSplit()) { status.Add("Experience", "Uneven split"); }
             else { status.Add("Experience", "Not shared"); }
-
-            status.Add("Fellows", FellowCount().ToString() + " / 9");
 
             if (AutoRecruitEnabled && IsFull()) {
                 status.Add("Auto Recruit", "Fellowship full");
@@ -216,11 +209,7 @@ namespace OracleOfDereth
         {
             var fellows = new Dictionary<int, string>();
 
-            if (IsInFellowship() == false)
-            {
-                fellows.Add(0, "None");
-                return fellows;
-            }
+            if (IsInFellowship() == false) { return fellows; }
 
             for (int x = 0; x < FellowCount(); x++)
             {
