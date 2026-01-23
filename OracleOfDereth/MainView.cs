@@ -144,7 +144,7 @@ namespace OracleOfDereth
             // Status Tab
             { 1_00, 200 }, // HUD
             { 1_01, 460 }, // Buffs
-            { 1_02, 240 }, // Nearby
+            { 1_02, 250 }, // Nearby
             { 1_03, 250 }, // Fellowship
 
             // Character Tab
@@ -773,155 +773,307 @@ namespace OracleOfDereth
             while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount - 1); }
         }
 
-        private readonly List<int> NearbyListColumns = new List<int> { 0, 1, 2 };
 
-        private int NearbyListAdd(string section, List<WorldObject> items, int index)
-        {
-            if (items.Count() == 0) { return index; }
+        //private int NearbyListAdd(string section, List<WorldObject> items, int index)
+        //{
+        //    if (items.Count() == 0) { return index; }
 
-            WorldObject item;
-            HudList.HudListRowAccessor row;
-            int targetId = Target.GetCurrent().Id;
+        //    WorldObject item;
+        //    HudList.HudListRowAccessor row;
+        //    int targetId = Target.GetCurrent().Id;
 
-            // Header
-            if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-            index++;
+        //    // Header
+        //    if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+        //    index++;
 
-            AssignSelected(row, false, NearbyListColumns);
+        //    AssignSelected(row, false, NearbyListColumns);
 
-            ((HudStaticText)row[0]).Text = section;
-            ((HudStaticText)row[1]).Text = "";
-            ((HudStaticText)row[2]).Text = "";
+        //    ((HudStaticText)row[0]).Text = section;
+        //    ((HudStaticText)row[1]).Text = "";
+        //    ((HudStaticText)row[2]).Text = "";
 
-            for (int x = 0; x < items.Count; x++)
-            {
-                item = items[x];
+        //    for (int x = 0; x < items.Count; x++)
+        //    {
+        //        item = items[x];
 
-                if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                index++;
+        //        if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+        //        index++;
 
-                ((HudStaticText)row[0]).Text = " " + item.Name;
+        //        ((HudStaticText)row[0]).Text = " " + item.Name;
 
-                if(item.Id == targetId) {
-                    AssignSelected(row, true, NearbyListColumns);
-                    ((HudStaticText)row[1]).Text = Util.GetDistanceFromPlayerText(item);
-                } else {
-                    AssignSelected(row, false, NearbyListColumns);
-                    ((HudStaticText)row[1]).Text = "";
-                }
+        //        if (item.Id == targetId)
+        //        {
+        //            AssignSelected(row, true, NearbyListColumns);
+        //            ((HudStaticText)row[1]).Text = Util.GetDistanceFromPlayerText(item);
+        //        }
+        //        else
+        //        {
+        //            AssignSelected(row, false, NearbyListColumns);
+        //            ((HudStaticText)row[1]).Text = "";
+        //        }
 
-                ((HudStaticText)row[2]).Text = item.Id.ToString();
-            }
+        //        ((HudStaticText)row[2]).Text = item.Id.ToString();
+        //    }
 
-            // Blank row
-            return NearbyListAddBlank(index);
-        }
+        //    // Blank row
+        //    return NearbyListAddBlank(index);
+        //}
+
+        //private int NearbyListAdd(string section, List<WorldObject> items, int index)
+        //{
+        //    if (items.Count() == 0) { return index; }
+
+        //    WorldObject item;
+        //    HudList.HudListRowAccessor row;
+        //    int targetId = Target.GetCurrent().Id;
+
+        //    // Header
+        //    if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+        //    index++;
+
+        //    AssignSelected(row, false, NearbyListColumns);
+
+        //    ((HudStaticText)row[0]).Text = section;
+        //    ((HudStaticText)row[1]).Text = "";
+        //    ((HudStaticText)row[2]).Text = "";
+
+        //    for (int x = 0; x < items.Count; x++)
+        //    {
+        //        item = items[x];
+
+        //        if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+        //        index++;
+
+        //        ((HudStaticText)row[0]).Text = " " + item.Name;
+
+        //        if(item.Id == targetId) {
+        //            AssignSelected(row, true, NearbyListColumns);
+        //            ((HudStaticText)row[1]).Text = Util.GetDistanceFromPlayerText(item);
+        //        } else {
+        //            AssignSelected(row, false, NearbyListColumns);
+        //            ((HudStaticText)row[1]).Text = "";
+        //        }
+
+        //        ((HudStaticText)row[2]).Text = item.Id.ToString();
+        //    }
+
+        //    // Blank row
+        //    return NearbyListAddBlank(index);
+        //}
 
         private int NearbyListAddBlank(int index)
         {
             HudList.HudListRowAccessor row;
 
             if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-            ((HudStaticText)row[0]).Text = "";
+            AssignImage((HudPictureBox)row[0], 0);
             ((HudStaticText)row[1]).Text = "";
             ((HudStaticText)row[2]).Text = "";
+            ((HudStaticText)row[3]).Text = "";
 
             return (index + 1);
+        }
+
+        private readonly List<int> NearbyListColumns = new List<int> { 1, 2, 3 };
+        public static Dictionary<string, bool> NearbyListExpanded = new Dictionary<string, bool>();
+
+        private int NearbyListAdd(List<NearbyItem> items, int index)
+        {
+            if (items.Count() == 0) { return index; }
+
+            HudList.HudListRowAccessor row;
+            int targetId = Target.GetCurrent().Id;
+
+            List<IGrouping<string, NearbyItem>> grouped = items.GroupBy(i => i.GroupKey()).ToList();
+
+            foreach (var group in grouped)
+            {
+                NearbyListExpanded.TryGetValue(group.Key, out bool expanded);
+                bool alwaysGroup = group.First().AlwaysGroup();
+
+                if (group.Count() > 1)
+                {
+                    if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+                    index++;
+
+                    NearbyItem item = group.First();
+
+                    AssignImage((HudPictureBox)row[0], item.Item.Icon);
+                    AssignSelected(row, (item.Item.Id == targetId && !expanded), NearbyListColumns);
+
+                    //((HudStaticText)row[1]).Text = $"{group.Key} ({group.Count()})";
+                    ((HudStaticText)row[1]).Text = $"{group.Key} ({group.Count()})";
+                    ((HudStaticText)row[2]).Text = (expanded ? "[-]" : "[+]");
+                    ((HudStaticText)row[3]).Text = item.Item.Id.ToString();
+                    ((HudStaticText)row[4]).Text = group.Key;
+                }
+
+                // Maybe render items
+                if (group.Count() == 1 || expanded)
+                {
+                    foreach (NearbyItem item in group)
+                    {
+                        if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+                        index++;
+
+                        if (group.Count() > 1) {
+                            AssignImage((HudPictureBox)row[0], 0);
+                        } else {
+                            AssignImage((HudPictureBox)row[0], item.Item.Icon);
+                        }
+
+                        ((HudStaticText)row[1]).Text = item.Item.Name;
+
+                        if (item.Item.Id == targetId)
+                        {
+                            AssignSelected(row, true, NearbyListColumns);
+                            ((HudStaticText)row[2]).Text = item.Distance().ToString();
+                        }
+                        else
+                        {
+                            AssignSelected(row, false, NearbyListColumns);
+                            ((HudStaticText)row[2]).Text = "";
+                        }
+
+                        ((HudStaticText)row[3]).Text = item.Item.Id.ToString();
+                        ((HudStaticText)row[4]).Text = "";
+                    }
+                }
+
+                if (group.Count() > 1 && expanded) { index = NearbyListAddBlank(index); }
+            }
+
+            return index;
         }
 
         private void UpdateNearbyList()
         {
             int index = 0;
-            int targetId = Target.GetCurrent().Id;
-            HudList.HudListRowAccessor row;
+            List<NearbyItem> items = NearbyItem.NearbyItems();
 
-            //index = NearbyListAdd("Monsters", Nearby.Monsters(), index);
-            //index = NearbyListAdd("NPCs", Nearby.Npcs(), index);
-            //index = NearbyListAdd("Items", Nearby.Items(), index);
-            //index = NearbyListAdd("Portals", Nearby.Portals(), index);
-            index = NearbyListAdd("All", Nearby.All(), index);
-
-            // Players
-            List<Fellow> players = Fellow.Players();
-
-            if (players.Count() > 0)
-            {
-                // Header
-                if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                index++;
-
-                AssignSelected(row, false, NearbyListColumns);
-
-                ((HudStaticText)row[0]).Text = $"Players ({players.Count()})";
-                ((HudStaticText)row[1]).Text = "";
-                ((HudStaticText)row[2]).Text = "";
-
-                for (int x = 0; x < players.Count; x++)
-                {
-                    Fellow player = players[x];
-                    if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                    index++;
-
-                    AssignSelected(row, (player.Id == targetId), NearbyListColumns);
-
-                    ((HudStaticText)row[0]).Text = " " + player.Name;
-                    ((HudStaticText)row[1]).Text = player.LastRequestedAgo().ToString();
-                    ((HudStaticText)row[2]).Text = player.Id.ToString();
-                }
-
-                // Blank row
-                index = NearbyListAddBlank(index);
-            }
-
-            // Fellowships
-            List<IGrouping<string, Fellow>> fellowships = Fellow.Fellowships();
-
-            if (fellowships.Count() > 0)
-            {
-                for (int x = 0; x < fellowships.Count; x++)
-                {
-                    var fellowship = fellowships[x];
-
-                    // Header
-                    if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                    index++;
-
-                    AssignSelected(row, false, NearbyListColumns);
-
-                    ((HudStaticText)row[0]).Text = $"{fellowship.Key} ({fellowship.Count()})";
-                    ((HudStaticText)row[1]).Text = "";
-                    ((HudStaticText)row[2]).Text = "";
-
-                    // Fellows
-                    List<Fellow> fellows = fellowship.OrderBy(f => f.Name).ToList();
-
-                    for (int y = 0; y < fellows.Count; y++)
-                    {
-                        Fellow fellow = fellows[y];
-                        if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
-                        index++;
-
-                        AssignSelected(row, fellow.Id == targetId, NearbyListColumns);
-
-                        ((HudStaticText)row[0]).Text = " " + fellow.Name;
-                        ((HudStaticText)row[1]).Text = fellow.LastRequestedAgo().ToString();
-                        ((HudStaticText)row[2]).Text = fellow.Id.ToString();
-                    }
-
-                    // Blank row
-                    index = NearbyListAddBlank(index);
-                }
-            }
+            //index = NearbyListAdd(items.Where(i => i.IsMonster()).ToList(), index);
+            //index = NearbyListAdd(items.Where(i => i.IsPlayer()).ToList(), index);
+            //index = NearbyListAdd(items.Where(i => i.IsPortal()).ToList(), index);
+            //index = NearbyListAdd(items.Where(i => i.IsNpc()).ToList(), index);
+            //index = NearbyListAdd(items.Where(i => i.IsOther()).ToList(), index);
+            index = NearbyListAdd(items, index);
 
             while (NearbyList.RowCount > index) { NearbyList.RemoveRow(NearbyList.RowCount - 1); }
         }
 
+        //private void UpdateNearbyListOld()
+        //{
+        //    int index = 0;
+        //    int targetId = Target.GetCurrent().Id;
+        //    HudList.HudListRowAccessor row;
+
+        //    //index = NearbyListAdd("Monsters", Nearby.Monsters(), index);
+        //    //index = NearbyListAdd("NPCs", Nearby.Npcs(), index);
+        //    //index = NearbyListAdd("Items", Nearby.Items(), index);
+        //    //index = NearbyListAdd("Portals", Nearby.Portals(), index);
+        //    index = NearbyListAdd("All", Nearby.All(), index);
+
+        //    // Players
+        //    List<Fellow> players = Fellow.Players();
+
+        //    if (players.Count() > 0)
+        //    {
+        //        // Header
+        //        if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+        //        index++;
+
+        //        AssignSelected(row, false, NearbyListColumns);
+
+        //        ((HudStaticText)row[0]).Text = $"Players ({players.Count()})";
+        //        ((HudStaticText)row[1]).Text = "";
+        //        ((HudStaticText)row[2]).Text = "";
+
+        //        for (int x = 0; x < players.Count; x++)
+        //        {
+        //            Fellow player = players[x];
+        //            if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+        //            index++;
+
+        //            AssignSelected(row, (player.Id == targetId), NearbyListColumns);
+
+        //            ((HudStaticText)row[0]).Text = " " + player.Name;
+        //            ((HudStaticText)row[1]).Text = player.LastRequestedAgo().ToString();
+        //            ((HudStaticText)row[2]).Text = player.Id.ToString();
+        //        }
+
+        //        // Blank row
+        //        index = NearbyListAddBlank(index);
+        //    }
+
+        //    // Fellowships
+        //    List<IGrouping<string, Fellow>> fellowships = Fellow.Fellowships();
+
+        //    if (fellowships.Count() > 0)
+        //    {
+        //        for (int x = 0; x < fellowships.Count; x++)
+        //        {
+        //            var fellowship = fellowships[x];
+
+        //            // Header
+        //            if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+        //            index++;
+
+        //            AssignSelected(row, false, NearbyListColumns);
+
+        //            ((HudStaticText)row[0]).Text = $"{fellowship.Key} ({fellowship.Count()})";
+        //            ((HudStaticText)row[1]).Text = "";
+        //            ((HudStaticText)row[2]).Text = "";
+
+        //            // Fellows
+        //            List<Fellow> fellows = fellowship.OrderBy(f => f.Name).ToList();
+
+        //            for (int y = 0; y < fellows.Count; y++)
+        //            {
+        //                Fellow fellow = fellows[y];
+        //                if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
+        //                index++;
+
+        //                AssignSelected(row, fellow.Id == targetId, NearbyListColumns);
+
+        //                ((HudStaticText)row[0]).Text = " " + fellow.Name;
+        //                ((HudStaticText)row[1]).Text = fellow.LastRequestedAgo().ToString();
+        //                ((HudStaticText)row[2]).Text = fellow.Id.ToString();
+        //            }
+
+        //            // Blank row
+        //            index = NearbyListAddBlank(index);
+        //        }
+        //    }
+
+        //    while (NearbyList.RowCount > index) { NearbyList.RemoveRow(NearbyList.RowCount - 1); }
+        //}
+
+        private static string LastClickGroup = "";
+        private static DateTime LastClickAt = DateTime.MinValue;
+
         private void NearbyList_Click(object sender, int row, int col)
         {
-            string id = ((HudStaticText)NearbyList[row][2]).Text;
+            string group = ((HudStaticText)NearbyList[row][4]).Text;
+
+            string id = ((HudStaticText)NearbyList[row][3]).Text;
             if (id == null || id.Length < 1) { return; }
 
-            CoreManager.Current.Actions.SelectItem(int.Parse(id));
+            DateTime now = DateTime.Now;
+            bool doubleClick = (group == LastClickGroup) && ((int)(now - LastClickAt).TotalMilliseconds < 500);
+
+            // Toggle expand / collapse
+            if (group.Length > 0 && (col == 2 || doubleClick))
+            {
+                NearbyListExpanded.TryGetValue(group, out bool expanded);
+                NearbyListExpanded[group] = !expanded;
+            } else {
+                // Otherwise select item
+                CoreManager.Current.Actions.SelectItem(int.Parse(id));
+            }
+
+            LastClickGroup = group;
+            LastClickAt = now;
+
             UpdateNearbyList();
         }
 
