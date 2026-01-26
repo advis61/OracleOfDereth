@@ -125,7 +125,10 @@ namespace OracleOfDereth
             if (CoreManager.Current.CharacterFilter.Id == 0) throw new ArgumentOutOfRangeException("destObj", "CharacterFilter.Id of 0");
             if (destObj.Id == 0) throw new ArgumentOutOfRangeException("destObj", "Object passed with an Id of 0");
 
-            return CoreManager.Current.WorldFilter.Distance(CoreManager.Current.CharacterFilter.Id, destObj.Id) * 240;
+            int myId = CoreManager.Current.CharacterFilter.Id;
+            if(destObj.Id == myId) { return 0.0; }
+
+            return CoreManager.Current.WorldFilter.Distance(myId, destObj.Id) * 240;
         }
 
         public static string GetDistanceFromPlayerText(WorldObject obj)

@@ -33,9 +33,11 @@ namespace OracleOfDereth
             int myId = CoreManager.Current.CharacterFilter.Id;
 
             foreach (WorldObject worldObject in CoreManager.Current.WorldFilter.GetLandscape()) {
-                if(worldObject.Name == null || worldObject.Name.Length == 0) continue;
-                if(worldObject.Id == myId && !Fellowship.IsInFellowship()) continue;
-                if(worldObject.Behavior == 148) continue; // Cannot be picked up, cannot be selected, is not an NPC. Enemy spell projectiles.
+                if (worldObject.Name == null || worldObject.Name.Length == 0) continue;
+                if (worldObject.Icon == 8384) continue; // Bugged item
+                if (worldObject.Id == myId && !Fellowship.IsInFellowship()) continue;
+                if (worldObject.Behavior == 148) continue; // Cannot be picked up, cannot be selected, is not an NPC. Enemy spell projectiles.
+                if (worldObject.Behavior == 4116 && worldObject.Icon == 4887) continue; // Doors
 
                 NearbyItem item = new() { Item = worldObject };
                 items.Add(item);
@@ -53,7 +55,7 @@ namespace OracleOfDereth
         public bool IsSign() { return Item.ObjectClass == ObjectClass.Misc && (Item.Icon == 4819 || Item.Icon == 9046); }
         public bool IsMarker() { return Item.Name == "Exploration Marker"; }
         public bool IsCorpse() { return (Item.Behavior & 0x00002000) != 0; }
-        public int Distance() { return (int)Util.GetDistanceFromPlayer(Item); }
+        public double Distance() { return Util.GetDistanceFromPlayer(Item); }
 
         public string FellowshipName()
         {
@@ -67,9 +69,9 @@ namespace OracleOfDereth
 
         public bool IsPlayerInFellowship() { return Item.ObjectClass == ObjectClass.Player; }
 
-        public bool AlwaysGroup()
+        public bool ForceGroup()
         {
-            if(FellowshipName() != "") { return true; }
+            if(IsPlayer() && FellowshipName() != "") { return true; }
             return false;
         }
 
@@ -78,7 +80,7 @@ namespace OracleOfDereth
             if(IsPlayer())
             {
                 string fellowshipName = FellowshipName();
-                return (fellowshipName.Length > 0 ? $"Fellow {fellowshipName}" : "Players");
+                return (fellowshipName.Length > 0 ? $"Fellow: {fellowshipName}" : "Players");
             }
 
             if(IsPortal()) return "Portals";

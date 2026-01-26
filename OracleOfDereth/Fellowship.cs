@@ -120,6 +120,18 @@ namespace OracleOfDereth
             return false;
         }
 
+        public static bool NearbyBindstone()
+        {
+            WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByName("Bind Stone");
+
+            foreach (WorldObject item in items)
+            {
+                if (Util.GetDistanceFromPlayer(item) < 50.0) { return true; }
+            }
+
+            return false;
+        }
+
         public unsafe static void AutoRecruit()
         {
             if(AutoRecruitEnabled == false) { return; }
@@ -127,8 +139,9 @@ namespace OracleOfDereth
             if (IsLeader() && !IsOpen()) { Open(); }
             if (CanRecruit() == false) { return; }
             if (NearbyLifestone()) { return; }
+            if (NearbyBindstone()) { return; }
 
-            foreach(Fellow player in Fellow.Players().Where(f => f.Identified).ToList()) { 
+            foreach (Fellow player in Fellow.Players().Where(f => f.Identified).ToList()) { 
                 if(IsInFellowship(player.Id) == false) { Recruit(player.Id); }
             }
         }
@@ -191,7 +204,10 @@ namespace OracleOfDereth
                 status.Add("Auto Recruit", "Fellowship full");
             }
             else if (AutoRecruitEnabled && NearbyLifestone()) {
-                status.Add("Auto Recruit", "Paused near Life Stone");
+                status.Add("Auto Recruit", "Paused by Life Stone");
+            }
+            else if (AutoRecruitEnabled && NearbyBindstone()) {
+                status.Add("Auto Recruit", "Paused by Bind Stone");
             }
             else if (AutoRecruitEnabled && CanRecruit()) {
                 status.Add("Auto Recruit", "Recruiting players");
