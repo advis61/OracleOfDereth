@@ -233,12 +233,7 @@ namespace OracleOfDereth
 
             try 
             {
-                // Track /myquests output
-                if (QuestFlag.MyQuestRegex.IsMatch(e.Text)) 
-                {
-                    QuestFlag.Add(e.Text);
-                }
-                else if (Target.YouCastRegex.IsMatch(e.Text))
+                if (Target.YouCastRegex.IsMatch(e.Text))
                 {
                     Target.SpellStarted(e.Text);
                     targetView.Update();
@@ -246,6 +241,14 @@ namespace OracleOfDereth
                 else if (Target.PeriodicNetherRegex.IsMatch(e.Text))
                 {
                     Target.SpellTicked(e.Text);
+                }
+                else if (QuestFlag.MyQuestRegex.IsMatch(e.Text))
+                {
+                    QuestFlag.Add(e.Text);
+                }
+                else if (QuestFlag.MyQuestsCooldownRegex.IsMatch(e.Text))
+                {
+                    QuestFlag.SetCooldown();
                 }
             }
             catch (Exception ex) { Util.Log(ex); }

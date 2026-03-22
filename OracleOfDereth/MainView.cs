@@ -402,7 +402,7 @@ namespace OracleOfDereth
 
         private void QuestFlagsRefresh_Hit(object sender, EventArgs e)
         {
-            QuestFlag.Refresh();
+            QuestFlag.Refresh(true);
         }
 
 
