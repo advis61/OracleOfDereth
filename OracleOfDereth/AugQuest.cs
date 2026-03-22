@@ -69,7 +69,7 @@ namespace OracleOfDereth
             //Util.Chat($"Loaded {Quests.Count} Aug Quests from embedded CSV.", 1);
         }
 
-        public new string ToString()
+        public override string ToString()
         {
             return $"{Name}: {Flag}";
         }

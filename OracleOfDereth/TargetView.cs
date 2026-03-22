@@ -125,6 +125,11 @@ namespace OracleOfDereth
             view.Visible = Target.GetCurrent().IsTarget();
         }
 
+        // Track last-known colors locally to avoid reading HudStaticText.TextColor (throws NullReferenceException)
+        private Color lastCorrosionColor = Color.White;
+        private Color lastCorruptionColor = Color.White;
+        private Color lastCurseColor = Color.White;
+
         public void UpdateSpells()
         {
             Target target = Target.GetCurrent();
@@ -135,21 +140,32 @@ namespace OracleOfDereth
             CurseText.Text = target.CurseText();
             DestText.Text = target.DestructionText();
 
-            // Colors
-            List<Color> before = new List<Color> { CorrosionText.TextColor, CorruptionText.TextColor, CurseText.TextColor };
+            // Snapshot previous colors from our local tracking
+            int before = new[] { lastCorrosionColor, lastCorruptionColor, lastCurseColor }.Count(color => color == Target.DestructionColor);
 
-            CorrosionText.TextColor = target.CorrosionColor();
-            CorruptionText.TextColor = target.CorruptionColor();
-            CurseText.TextColor = target.CurseColor();
+            // Compute new colors
+            Color corrosionColor = target.CorrosionColor();
+            Color corruptionColor = target.CorruptionColor();
+            Color curseColor = target.CurseColor();
 
-            if(CorrosionText.TextColor == Target.DestructionColor) { CorrosionText.FontHeight = 11; } else {  CorrosionText.FontHeight = 10; }
-            if(CorruptionText.TextColor == Target.DestructionColor) { CorruptionText.FontHeight = 11; } else { CorruptionText.FontHeight = 10; }
-            if(CurseText.TextColor == Target.DestructionColor) { CurseText.FontHeight = 11; } else { CurseText.FontHeight = 10; }
+            // Apply colors
+            CorrosionText.TextColor = corrosionColor;
+            CorruptionText.TextColor = corruptionColor;
+            CurseText.TextColor = curseColor;
 
-            List<Color> after = new List<Color> { CorrosionText.TextColor, CorruptionText.TextColor, CurseText.TextColor };
+            CorrosionText.FontHeight = (corrosionColor == Target.DestructionColor ? 11 : 10);
+            CorruptionText.FontHeight = (corruptionColor == Target.DestructionColor ? 11 : 10);
+            CurseText.FontHeight = (curseColor == Target.DestructionColor ? 11 : 10);
+
+            // Store for next tick
+            lastCorrosionColor = corrosionColor;
+            lastCorruptionColor = corruptionColor;
+            lastCurseColor = curseColor;
+
+            int after = new[] { corrosionColor, corruptionColor, curseColor }.Count(color => color == Target.DestructionColor);
 
             // Nice
-            if(target.Id == LastTargetId && DestText.Text != "" && before.Count(color => color == Target.DestructionColor) == 2 && after.Count(color => color == Target.DestructionColor) == 3)
+            if(target.Id == LastTargetId && DestText.Text != "" && before == 2 && after == 3)
             {
                 CorrosionText.Text = "N";
                 CorruptionText.Text = "I";

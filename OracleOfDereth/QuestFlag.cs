@@ -32,7 +32,8 @@ namespace OracleOfDereth
         // Collection of Quest Flags data objects
         public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();
 
-        public static bool QuestsChanged = true;
+        // MyQuests tracking
+        public static bool QuestsChanged = false;
         public static bool MyQuestsRan = false;
 
         // Properties
@@ -47,13 +48,14 @@ namespace OracleOfDereth
         {
             QuestFlags.Clear();
 
-            QuestsChanged = true;
+            QuestsChanged = false;
             MyQuestsRan = false;
         }
 
-        public static void Refresh()
-        {
+        public static void Refresh() {
             Init();
+
+            MyQuestsRan = true;
             Util.Command("/myquests");
         }
 
@@ -117,7 +119,7 @@ namespace OracleOfDereth
         }
 
         // instance methods
-        public new string ToString()
+        public override string ToString()
         {
             return $"{Key}: {Description} CompletedOn:{CompletedOn} Solves:{Solves} MaxSolves:{MaxSolves} RepeatTime:{Util.GetFriendlyTimeDifference(RepeatTime)}";
         }

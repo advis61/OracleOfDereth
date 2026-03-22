@@ -109,7 +109,7 @@ namespace OracleOfDereth
             return (int)(TotalLuminanceSpent() / (float)TotalLuminance() * 100);
         }
 
-        public new string ToString()
+        public override string ToString()
         {
             return $"{Name}";
         }
