@@ -79,7 +79,7 @@ namespace OracleOfDereth
             //Util.Chat($"Loaded {Cantrips.Count} Cantrips from embedded CSV.", 1);
         }
 
-        public new string ToString()
+        public override string ToString()
         {
             return $"{Name}";
         }
@@ -182,7 +182,7 @@ namespace OracleOfDereth
         {
             if (IsLegendary()) { return "+30 health"; };
             if (IsEpic()) { return "+25 health"; };
-            if (IsMajor()) { return "+25 helath"; };
+            if (IsMajor()) { return "+25 health"; };
             if (IsModerate()) { return "+20 health"; } 
             if (IsMinor()) { return "+15 health"; }
             return "-";

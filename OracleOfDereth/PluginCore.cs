@@ -222,6 +222,7 @@ namespace OracleOfDereth
                 {
                     int thing = CoreManager.Current.CharacterFilter.GetCharProperty(287);
                     Util.Chat($"Thing is {thing}");
+                    e.Eat = true;
                 }
             }
             catch (Exception ex) { Util.Log(ex); }

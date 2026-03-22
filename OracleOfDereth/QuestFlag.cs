@@ -117,7 +117,7 @@ namespace OracleOfDereth
         }
 
         // instance methods
-        public new string ToString()
+        public override string ToString()
         {
             return $"{Key}: {Description} CompletedOn:{CompletedOn} Solves:{Solves} MaxSolves:{MaxSolves} RepeatTime:{Util.GetFriendlyTimeDifference(RepeatTime)}";
         }
