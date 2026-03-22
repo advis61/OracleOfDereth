@@ -14,7 +14,6 @@ namespace OracleOfDereth
     public class QuestFlag
     {
         public static readonly Regex MyQuestRegex = new Regex(@"(?<key>\S+) \- (?<solves>\d+) solves \((?<completedOn>\d{0,11})\)""?((?<description>.*)"" (?<maxSolves>.*) (?<repeatTime>\d{0,11}))?.*$");
-        public static readonly Regex MyQuestsCooldownRegex = new Regex(@"^\[MyQuests\] This command may only be run once every");
         public static readonly Regex KillTaskRegex = new Regex(@"(killtask|killcount|slayerquest|totalgolem.*dead|(kills$))");
 
         // Quest Flags I care to track
@@ -37,11 +36,6 @@ namespace OracleOfDereth
         public static bool QuestsChanged = false;
         public static bool MyQuestsRan = false;
 
-        // For servers with a 60 second timeout
-        private static bool HasCooldown = false;
-        private static DateTime LastRefresh = DateTime.MinValue;
-        private static readonly TimeSpan RefreshCooldown = TimeSpan.FromSeconds(61);
-
         // Properties
         public string Key = "";
         public string Description = "";
@@ -58,23 +52,10 @@ namespace OracleOfDereth
             MyQuestsRan = false;
         }
 
-
-        public static void SetCooldown()
-        {
-            HasCooldown = true;
-            LastRefresh = DateTime.UtcNow;
-            Util.Log("MyQuests is now on cooldown YO");
-        }
-
-        public static void Refresh(bool force = false)
-        {
-            if (HasCooldown && !force && DateTime.UtcNow - LastRefresh < RefreshCooldown)
-            {
-                return;
-            }
-
+        public static void Refresh() {
             Init();
-            LastRefresh = DateTime.UtcNow;
+
+            MyQuestsRan = true;
             Util.Command("/myquests");
         }
 

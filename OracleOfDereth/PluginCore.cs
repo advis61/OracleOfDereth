@@ -246,10 +246,6 @@ namespace OracleOfDereth
                 {
                     QuestFlag.Add(e.Text);
                 }
-                else if (QuestFlag.MyQuestsCooldownRegex.IsMatch(e.Text))
-                {
-                    QuestFlag.SetCooldown();
-                }
             }
             catch (Exception ex) { Util.Log(ex); }
         }
