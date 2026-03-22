@@ -63,7 +63,7 @@ namespace OracleOfDereth
             3721,  // Prodigal Light Weapon Mastery
             3722,  // Prodigal Magic Item Expertise
             3723,  // Prodigal Magic Resistance
-            3732,  // Prodigal Mana Conversion Mastery
+            3724,  // Prodigal Mana Conversion Mastery
             3725,  // Prodigal Mana Renewal
             3726,  // Prodigal Monster Attunement
             3727,  // Prodigal Person Attunement

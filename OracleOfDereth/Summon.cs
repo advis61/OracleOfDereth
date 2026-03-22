@@ -30,7 +30,7 @@ namespace OracleOfDereth
             Util.Chat(summon.ToString(), Util.ColorCyan, "");
         }
 
-        public new string ToString()
+        public override string ToString()
         {
             return $"{Item.Name} [DMG {DamageScore()}% | DEF {DefenseScore()}%]";
         }

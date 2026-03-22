@@ -130,7 +130,7 @@ namespace OracleOfDereth {
         }
 
 
-        public new string ToString()
+        public override string ToString()
         {
             return $"{Number} {Name}: {Flag} BitMask:{BitMask}";
         }

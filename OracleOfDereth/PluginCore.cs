@@ -9,7 +9,6 @@ using WindowsTimer = System.Windows.Forms.Timer;
 
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
-// Remember to update installer.nsi to match
 [assembly: AssemblyVersion("1.11.0.0")]
 [assembly: AssemblyFileVersion("1.11.0.0")]
 
@@ -212,7 +211,7 @@ namespace OracleOfDereth
                 else if (cmd.StartsWith("/od fellow recruit ")) { Fellowship.Recruit(cmd.Substring(19, cmd.Length - 19)); }
                 else { return; }
 
-                e.Eat = true;
+                e.Eat = true;            
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -222,12 +221,7 @@ namespace OracleOfDereth
 
             try 
             {
-                // Track /myquests output
-                if (QuestFlag.MyQuestRegex.IsMatch(e.Text)) 
-                {
-                    QuestFlag.Add(e.Text);
-                }
-                else if (Target.YouCastRegex.IsMatch(e.Text))
+                if (Target.YouCastRegex.IsMatch(e.Text))
                 {
                     Target.SpellStarted(e.Text);
                     targetView.Update();
@@ -235,6 +229,10 @@ namespace OracleOfDereth
                 else if (Target.PeriodicNetherRegex.IsMatch(e.Text))
                 {
                     Target.SpellTicked(e.Text);
+                }
+                else if (QuestFlag.MyQuestRegex.IsMatch(e.Text))
+                {
+                    QuestFlag.Add(e.Text);
                 }
             }
             catch (Exception ex) { Util.Log(ex); }

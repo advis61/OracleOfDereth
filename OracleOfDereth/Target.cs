@@ -129,7 +129,7 @@ namespace OracleOfDereth
             foreach(var targetSpell in targetSpells) { targetSpell.SetTicked(); }
         }
 
-        public new string ToString()         {
+        public override string ToString() {
             return $"[{Id}] {Name()} ({ObjectClass()})";
         }
 
