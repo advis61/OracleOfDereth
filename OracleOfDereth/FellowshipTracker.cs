@@ -126,11 +126,9 @@ namespace OracleOfDereth
                 if (fellow.Id == myId || Fellowship.IsInFellowship(fellow.Id))
                 {
                     if (fellow.FellowshipName != myFellowName) { fellow.FellowshipName = myFellowName; }
+                    if (fellow.Identified != true) { fellow.Identified = true; }
 
-                    Util.Chat("Updating known fellow " + fellow.Name + " to fellowship \"" + myFellowName + "\"");
-
-                    fellow.LastIdentifiedAt = DateTime.Now;
-                    fellow.Identified = true;
+                    //fellow.LastIdentifiedAt = DateTime.Now;
                 }
             }
         }
