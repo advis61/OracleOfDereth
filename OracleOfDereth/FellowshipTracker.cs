@@ -10,11 +10,14 @@ namespace OracleOfDereth
 {
     public static class FellowshipTracker
     {
-        private static readonly int IdRequestsPerTick = 4;
-        private static readonly int ReIdentifyIntervalSeconds = 3;
         public static List<Fellow> Fellows = new List<Fellow>();
 
-        public static bool Debug = true;
+        private static readonly int MaxIdentsPerTick = 2;
+        private static readonly int PlayerCooldownSeconds = 3;
+        private static readonly Random random = new Random();
+
+
+        public static bool Debug = false;
 
         public static void Init()
         {
@@ -66,15 +69,18 @@ namespace OracleOfDereth
 
             Fellows.Add(fellow);
 
-            if (!item.HasIdData)
+            if (item.HasIdData)
             {
-                fellow.LastRequestedAt = DateTime.Now;
-                CoreManager.Current.Actions.RequestId(fellow.Id);
-                Log($"Requesting ident for new player: {fellow.Name}");
+                fellow.Identified = true;
+                fellow.LastIdentifiedAt = DateTime.Now;
+                Fellowship.AutoRecruit(fellow);
+                Log($"Player already identified: {fellow.Name}, fellowship=\"{fellowshipName}\"");
             }
             else
             {
-                Fellowship.AutoRecruit(fellow);
+                double jitter = 1.0 + random.NextDouble() * 2.0;
+                fellow.IdentifyAfter = DateTime.Now.AddSeconds(jitter);
+                Log($"New player: {fellow.Name}, ident in {jitter:F1}s");
             }
 
             return fellow;
@@ -118,37 +124,32 @@ namespace OracleOfDereth
 
         private static void UpdateKnownFellows()
         {
-            int myId = CoreManager.Current.CharacterFilter.Id;
             string myFellowName = Fellowship.Name();
 
             foreach (Fellow fellow in Fellows)
             {
-                if (fellow.Id == myId || Fellowship.IsInFellowship(fellow.Id))
+                if (fellow.IsKnown())
                 {
                     if (fellow.FellowshipName != myFellowName) { fellow.FellowshipName = myFellowName; }
-                    if (fellow.Identified != true) { fellow.Identified = true; }
-
-                    //fellow.LastIdentifiedAt = DateTime.Now;
                 }
             }
         }
 
         private static void RequestIdentifications()
         {
-            int myId = CoreManager.Current.CharacterFilter.Id;
-
+            // Single queue: oldest-requested first, per-player cooldown prevents spam
+            // Unidentified players with jitter use IdentifyAfter as a gate
             var requestable = Fellows.Where(f =>
-                !(f.Id == myId) &&
-                !Fellowship.IsInFellowship(f.Id) &&
-                (!f.Identified || f.LastIdentifiedAgo() > ReIdentifyIntervalSeconds) &&
-                (f.LastRequestedAgo() == -1 || f.LastRequestedAgo() > ReIdentifyIntervalSeconds)
-            ).OrderBy(f => f.LastRequestedAt).Take(IdRequestsPerTick).ToList();
+                !f.IsKnown() &&
+                (f.LastRequestedAgo() == -1 || f.LastRequestedAgo() >= PlayerCooldownSeconds) &&
+                (!f.Identified || f.IdentifyAfter == DateTime.MinValue || DateTime.Now >= f.IdentifyAfter)
+            ).OrderBy(f => f.LastRequestedAt).Take(MaxIdentsPerTick).ToList();
 
             foreach (var fellow in requestable)
             {
                 fellow.LastRequestedAt = DateTime.Now;
                 CoreManager.Current.Actions.RequestId(fellow.Id);
-                Log($"Re-requesting ident: {fellow.Name} (last identified {fellow.LastIdentifiedAgo()}s ago)");
+                Log($"Ident: {fellow.Name} (identified={fellow.Identified}, last ident {fellow.LastIdentifiedAgo()}s ago)");
             }
         }
 

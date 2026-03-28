@@ -14,6 +14,15 @@ namespace OracleOfDereth
         public DateTime LastRequestedAt = DateTime.MinValue;
         public DateTime LastIdentifiedAt = DateTime.MinValue;
         public DateTime LastRecruitedAt = DateTime.MinValue;
+        public DateTime IdentifyAfter = DateTime.MinValue;
+
+        public bool IsKnown()
+        { 
+            if (Id == CoreManager.Current.CharacterFilter.Id) return true;
+            if (Fellowship.IsInFellowship(Id)) return true;
+
+            return false;
+        }
 
         public int LastRequestedAgo()
         {
