@@ -22,7 +22,7 @@ namespace OracleOfDereth
         // Instance variables
         public WorldObject Item;
 
-        public static void SetCurrent(WorldObject item)
+        public static void Identified(WorldObject item)
         {
             Summon summon = new() { Item = item };
             if (summon.IsSummon() == false) { return; }

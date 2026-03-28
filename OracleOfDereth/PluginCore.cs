@@ -1,22 +1,16 @@
 ﻿using Decal.Adapter;
 using Decal.Adapter.Wrappers;
-using MyClasses.MetaViewWrappers;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
+using System.Threading;
 using WindowsTimer = System.Windows.Forms.Timer;
 
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
-// Remember to update installer.nsi to match
-[assembly: AssemblyVersion("1.9.5.0")]
-[assembly: AssemblyFileVersion("1.9.5.0")]
+[assembly: AssemblyVersion("1.11.0.0")]
+[assembly: AssemblyFileVersion("1.11.0.0")]
 
 namespace OracleOfDereth
 {
@@ -78,6 +72,8 @@ namespace OracleOfDereth
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete; // Not run on hot reload
                 CoreManager.Current.CharacterFilter.SpellCast += CharacterFilter_SpellCast;
                 CoreManager.Current.EchoFilter.ServerDispatch += EchoFilter_ServerDispatch;
+                CoreManager.Current.WorldFilter.CreateObject += WorldFilter_CreateObject;
+                CoreManager.Current.WorldFilter.ReleaseObject += WorldFilter_ReleaseObject;
 
                 worldObjectIdentifier = new WorldObjectIdentifier();
                 worldObjectIdentifier.Identified += WorldObjectIdentifier_Identified;
@@ -124,9 +120,11 @@ namespace OracleOfDereth
             Cantrip.Init();
             CreditQuest.Init();
             FacilityQuest.Init();
+            FellowshipTracker.Init();
             FlagQuest.Init();
             JohnQuest.Init();
             Marker.Init();
+            Nearby.Init();
             QuestFlag.Init();
             Recall.Init();
             Target.Init();
@@ -148,6 +146,8 @@ namespace OracleOfDereth
             try
             {
                 Target.RemoveAllExpired();
+                FellowshipTracker.Update();
+                Fellowship.AutoOpenFellow();
 
                 mainView.Update();
                 targetView.Update();
@@ -169,7 +169,8 @@ namespace OracleOfDereth
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
                 CoreManager.Current.CharacterFilter.SpellCast -= CharacterFilter_SpellCast;
                 CoreManager.Current.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch;
-
+                CoreManager.Current.WorldFilter.CreateObject -= WorldFilter_CreateObject;
+                CoreManager.Current.WorldFilter.ReleaseObject -= WorldFilter_ReleaseObject;
                 worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
 
                 // Shutdown timer
@@ -191,39 +192,26 @@ namespace OracleOfDereth
             } catch (Exception ex) { Util.Log(ex); }
         }
 
-        private void Current_CommandLineText(object sender, ChatParserInterceptEventArgs e)
+        public unsafe void Current_CommandLineText(object sender, ChatParserInterceptEventArgs e)
         {
             if (e.Text == null) return;
-            string command = e.Text.ToLower().Trim();
+            string cmd = e.Text.ToLower().Trim();
 
             try 
             {
-                if (command == "/od" || command == "/ood")
-                {
-                    Version version = Assembly.GetExecutingAssembly().GetName().Version;
-                    Util.Chat($"Oracle of Dereth v{version}", 1);
-                    e.Eat = true;
-                }
+                if (cmd == "/od" || cmd == "/ood") { Util.Chat($"Oracle of Dereth v{Assembly.GetExecutingAssembly().GetName().Version}", 1); }
+                else if (cmd == "/od exception") { throw new InvalidOperationException("An error occurred."); }
+                else if (cmd == "/od landblock") { Util.Chat($"Current landblock: {Util.CurrentLandblock()}"); }
+                else if (cmd == "/od logout") { CoreManager.Current.Actions.Logout(); }
+                else if (cmd == "/od fellow open") { Fellowship.Open(); }
+                else if (cmd == "/od fellow close") { Fellowship.Close(); }
+                else if (cmd == "/od fellow disband") { Fellowship.Disband(); }
+                else if (cmd == "/od fellow create") { Fellowship.Create(); }
+                else if (cmd == "/od fellow quit") { Fellowship.Quit(); }
+                else if (cmd.StartsWith("/od fellow recruit ")) { Fellowship.Recruit(cmd.Substring(19, cmd.Length - 19)); }
+                else { return; }
 
-                if (command == "/od exception")
-                {
-                    Util.Chat($"Oracle of Dereth EXCEPTION", 1);
-                    e.Eat = true;
-                    throw new InvalidOperationException("An error occurred.");
-                }
-
-                if(command == "/od markers" || command == "/markers")
-                {
-                    Marker.Info();
-                    e.Eat = true;
-                }
-
-                if(command == "/od society")
-                {
-                    int thing = CoreManager.Current.CharacterFilter.GetCharProperty(287);
-                    Util.Chat($"Thing is {thing}");
-                    e.Eat = true;
-                }
+                e.Eat = true;            
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -255,6 +243,7 @@ namespace OracleOfDereth
             {
                 Target.SetCurrent(e.ItemGuid);
                 targetView.Update();
+                mainView.UpdateTarget();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -267,26 +256,41 @@ namespace OracleOfDereth
             }
             catch (Exception ex) { Util.Log(ex); }
         }
+
+        private void WorldFilter_CreateObject(object sender, CreateObjectEventArgs e)
+        {
+            FellowshipTracker.Add(e.New);
+            Nearby.Add(e.New);
+        }
+
+        private void WorldFilter_ReleaseObject(object sender, ReleaseObjectEventArgs e)
+        {
+            Nearby.Remove(e.Released);
+        }
+
         private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
         {
-            Summon.SetCurrent(item);
+            Summon.Identified(item);
         }
 
         // https://github.com/ACEmulator/ACE/blob/master/Source/ACE.Server/Network/GameEvent/GameEventType.cs
         private void EchoFilter_ServerDispatch(object sender, NetworkMessageEventArgs e)
         {
             try {
-
                 if (e.Message.Type != 0xF7B0) { return; } // Game Event
 
-                if ((int)e.Message["event"] == 0x0029) // Titles list
-                {
-                    Title.Parse(e.Message.Struct("titles"));
+                int eventType = (int)e.Message["event"];
+
+                if (eventType == 0x0029) {
+                    Title.Parse(e.Message.Struct("titles")); // Titles list
                 }
 
-                if ((int)e.Message["event"] == 0x002B) // Update titles
-                {
-                    Title.ParseUpdate(e.Message.Value<Int32>("title"));
+                else if (eventType == 0x002B) {
+                    Title.ParseUpdate(e.Message.Value<Int32>("title")); // Update titles
+                }
+
+                else if (eventType == 0x00C9) {
+                    FellowshipTracker.Parse(e.Message.RawData); // Identify Response
                 }
             }
             catch (Exception ex) { Util.Log(ex); }

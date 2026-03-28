@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(grep \"\\\\.cs$\")",
-      "Bash(ls -lh /c/Projects/OracleOfDereth/OracleOfDereth/*.cs)"
+      "Bash(ls -lh /c/Projects/OracleOfDereth/OracleOfDereth/*.cs)",
+      "Bash(git log:*)",
+      "Bash(grep:*)"
     ]
   }
 }

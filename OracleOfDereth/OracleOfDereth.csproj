@@ -13,6 +13,7 @@
     <RootNamespace>OracleOfDereth</RootNamespace>
     <AssemblyName>OracleOfDereth</AssemblyName>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);VVS_REFERENCED</DefineConstants>
@@ -27,6 +28,7 @@
     <None Remove="Resources\facilityquests.csv" />
     <None Remove="Resources\flagquests.csv" />
     <None Remove="Resources\markers.csv" />
+    <None Remove="Resources\nearbys.csv" />
     <None Remove="Resources\recalls.csv" />
     <None Remove="Resources\titles.csv" />
   </ItemGroup>
@@ -48,6 +50,7 @@
     <EmbeddedResource Include="Resources\facilityquests.csv" />
     <EmbeddedResource Include="Resources\flagquests.csv" />
     <EmbeddedResource Include="Resources\markers.csv" />
+    <EmbeddedResource Include="Resources\nearbys.csv" />
     <EmbeddedResource Include="Resources\recalls.csv" />
     <EmbeddedResource Include="Resources\titles.csv" />
     <EmbeddedResource Include="targetView.xml" />
@@ -60,6 +63,9 @@
     </Reference>
     <Reference Include="Decal.FileService">
       <HintPath>..\deps\Decal.FileService.dll</HintPath>
+    </Reference>
+    <Reference Include="Decal.Interop.Core">
+      <HintPath>..\deps\Decal.Interop.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="VirindiViewService">
