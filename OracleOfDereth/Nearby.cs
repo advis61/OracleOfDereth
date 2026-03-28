@@ -40,7 +40,8 @@ namespace OracleOfDereth
             return Objects.Where(o => o.ObjectClass != ObjectClass.Player).ToList();
         }
 
-        private static List<WorldObject> All(ObjectClass c) { return All().Where(o => o.ObjectClass == c).ToList(); 
+        private static List<WorldObject> All(ObjectClass c) { 
+            return All().Where(o => o.ObjectClass == c).ToList(); 
         }
 
         public static List<WorldObject> Monsters() { return All(ObjectClass.Monster); }

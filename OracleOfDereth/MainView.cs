@@ -77,6 +77,7 @@ namespace OracleOfDereth
 
         // Nearbys
         public HudList NearbyList { get; private set; }
+        public HudCombo NearbySort { get; private set; }
 
         // John
         public HudStaticText JohnLabel { get; private set; }
@@ -144,7 +145,7 @@ namespace OracleOfDereth
             // Status Tab
             { 1_00, 200 }, // HUD
             { 1_01, 460 }, // Buffs
-            { 1_02, 270 }, // Nearby
+            { 1_02, 290 }, // Nearby
             { 1_03, 250 }, // Fellowship
 
             // Character Tab
@@ -315,6 +316,12 @@ namespace OracleOfDereth
                 FellowsList.ClearRows();
 
                 // Nearbys Tab
+                NearbySort = (HudCombo)view["NearbySort"];
+                NearbySort.AddItem("Sort by Default", "Sort by Default"); // 0
+                NearbySort.AddItem("Sort by Distance", "Sort by Name"); // 1
+                NearbySort.AddItem("Sort by Name", "Sort by Distance"); // 2
+                NearbySort.Change += NearbySort_Change;
+
                 NearbyList = (HudList)view["NearbyList"];
                 NearbyList.Click += NearbyList_Click;
                 NearbyList.ClearRows();
@@ -465,6 +472,7 @@ namespace OracleOfDereth
                 StatusViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
+                NearbySort.Change -= NearbySort_Change;
                 NearbyList.Click -= NearbyList_Click;
 
                 FellowsList.Click -= FellowsList_Click;
@@ -781,6 +789,12 @@ namespace OracleOfDereth
         private static string LastClickGroup = "";
         private static DateTime LastClickAt = DateTime.MinValue;
 
+        private void NearbySort_Change(object sender, EventArgs e)
+        {
+            NearbyItem.Sort((NearbyItem.SortType)NearbySort.Current);
+            UpdateNearbyList();
+        }
+
         private void UpdateNearbyList()
         {
             int index = 0;
@@ -823,7 +837,7 @@ namespace OracleOfDereth
                 }
 
                 // Maybe render items
-                if (expanded|| !isGrouped)
+                if (expanded || !isGrouped)
                 {
                     foreach (NearbyItem item in group)
                     {
@@ -849,7 +863,7 @@ namespace OracleOfDereth
                     }
                 }
 
-                if (group.Count() > 1 && expanded) { index = NearbyListAddBlank(index); }
+                if (expanded && isGrouped) { index = NearbyListAddBlank(index); }
             }
 
             return index;
@@ -867,7 +881,6 @@ namespace OracleOfDereth
 
             return (index + 1);
         }
-
 
         private void NearbyList_Click(object sender, int row, int col)
         {

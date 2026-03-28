@@ -21,11 +21,23 @@ namespace OracleOfDereth
 {
     public class NearbyItem
     {
-
-        // Instance variables
         public WorldObject Item;
 
+        public static SortType CurrentSortType = SortType.Name;
+
+        public enum SortType
+        {
+            Default, // 0
+            Distance, // 1
+            Name // 2
+        }
+
         public static void Init() { }
+
+        public static void Sort(SortType sortType)
+        {
+            CurrentSortType = sortType;
+        }
 
         public static List<NearbyItem> NearbyItems()
         {
@@ -43,8 +55,15 @@ namespace OracleOfDereth
                 items.Add(item);
             }
 
-            //return items.OrderBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
-            return items.OrderBy(i => i.Distance()).ThenBy(i => i.Item.Name).ToList();
+            switch (CurrentSortType)
+            {
+                case SortType.Name:
+                    return items.OrderBy(i => i.IsPlayer() ? 0 : 1).ThenBy(i => i.FellowshipName()).ThenBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
+                case SortType.Distance:
+                    return items.OrderBy(i => i.IsPlayer() ? 0 : 1).ThenBy(i => i.FellowshipName()).ThenBy(i => i.Distance()).ThenBy(i => i.Item.Name).ToList();
+                default:
+                    return items.OrderBy(i => i.IsPlayer() ? 0 : 1).ThenBy(i => i.FellowshipName()).ThenBy(i => i.Priority()).ThenBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
+            }
         }
 
         public bool IsPlayer() { return Item.ObjectClass == ObjectClass.Player; }
@@ -53,6 +72,7 @@ namespace OracleOfDereth
         public bool IsVendor() { return Item.ObjectClass == ObjectClass.Vendor; }
         public bool IsPortal() { return Item.ObjectClass == ObjectClass.Portal; }
         public bool IsSign() { return Item.ObjectClass == ObjectClass.Misc && (Item.Icon == 4819 || Item.Icon == 9046); }
+        
         public bool IsMarker() { return Item.Name == "Exploration Marker"; }
         public bool IsCorpse() { return (Item.Behavior & 0x00002000) != 0; }
         public double Distance() { return Util.GetDistanceFromPlayer(Item); }
@@ -66,8 +86,6 @@ namespace OracleOfDereth
             
             return fellow.FellowshipName;
         }
-
-        public bool IsPlayerInFellowship() { return Item.ObjectClass == ObjectClass.Player; }
 
         public bool ForceGroup()
         {
@@ -91,6 +109,22 @@ namespace OracleOfDereth
             else if(IsSign()) return "Signs";
 
             return Item.Name;
+        }
+
+        public int Priority()
+        {
+            if (IsPlayer() && FellowshipName() != "") return 0; // Fellowship members
+            if (IsPlayer()) return 1;
+            if (IsMarker()) return 2;
+            // 3 = anything unexpected (default below)
+            if (IsPortal()) return 4;
+            if (IsNpc()) return 5;
+            if (IsVendor()) return 6;
+            if (IsCorpse()) return 7;
+            if (IsMonster()) return 8;
+            if (IsSign()) return 9;
+
+            return 3;
         }
 
     }

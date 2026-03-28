@@ -51,9 +51,10 @@
 				</page>
 				<page label="Nearby">
 					<control progid="DecalControls.FixedLayout" clipped="">
-						<control progid="DecalControls.List" name="NearbyList" left="0" top="0" width="640" height="2000">
+						<control progid="DecalControls.Choice" name="NearbySort" left="140" top="0" width="130" height="18"/>
+						<control progid="DecalControls.List" name="NearbyList" left="0" top="16" width="640" height="2000">
 							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="198" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="218" />
 							<column progid="DecalControls.TextColumn" name="Distance" fixedwidth="40" />
 							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="1" />
 							<column progid="DecalControls.TextColumn" name="Group" fixedwidth="1" />
