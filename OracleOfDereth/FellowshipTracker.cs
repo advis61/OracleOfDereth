@@ -13,9 +13,8 @@ namespace OracleOfDereth
         public static List<Fellow> Fellows = new List<Fellow>();
 
         private static readonly int MaxIdentsPerTick = 2;
-        private static readonly int PlayerCooldownSeconds = 3;
+        private static readonly int PlayerCooldownSeconds = 4;
         private static readonly Random random = new Random();
-
 
         public static bool Debug = false;
 
@@ -137,17 +136,19 @@ namespace OracleOfDereth
 
         private static void RequestIdentifications()
         {
+            DateTime now = DateTime.Now;
+
             // Single queue: oldest-requested first, per-player cooldown prevents spam
             // Unidentified players with jitter use IdentifyAfter as a gate
             var requestable = Fellows.Where(f =>
                 !f.IsKnown() &&
                 (f.LastRequestedAgo() == -1 || f.LastRequestedAgo() >= PlayerCooldownSeconds) &&
-                (!f.Identified || f.IdentifyAfter == DateTime.MinValue || DateTime.Now >= f.IdentifyAfter)
+                (!f.Identified || now >= f.IdentifyAfter)
             ).OrderBy(f => f.LastRequestedAt).Take(MaxIdentsPerTick).ToList();
 
             foreach (var fellow in requestable)
             {
-                fellow.LastRequestedAt = DateTime.Now;
+                fellow.LastRequestedAt = now;
                 CoreManager.Current.Actions.RequestId(fellow.Id);
                 Log($"Ident: {fellow.Name} (identified={fellow.Identified}, last ident {fellow.LastIdentifiedAgo()}s ago)");
             }
