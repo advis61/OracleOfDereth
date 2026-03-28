@@ -61,7 +61,7 @@ namespace OracleOfDereth
         {
             if (IsPlayer() == false) return "";
 
-            Fellow fellow = Fellow.Find(Item.Id);
+            Fellow fellow = FellowshipTracker.Find(Item.Id);
             if (fellow == null) return "";
             
             return fellow.FellowshipName;

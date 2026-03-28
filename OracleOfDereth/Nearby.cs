@@ -37,9 +37,7 @@ namespace OracleOfDereth
         }
 
         public static List<WorldObject> All() {
-            return Objects
-                .Where(o => o.ObjectClass != ObjectClass.Player)
-                .ToList();
+            return Objects.Where(o => o.ObjectClass != ObjectClass.Player).ToList();
         }
 
         private static List<WorldObject> All(ObjectClass c) { return All().Where(o => o.ObjectClass == c).ToList(); 

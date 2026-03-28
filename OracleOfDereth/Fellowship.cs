@@ -1,30 +1,14 @@
-﻿using AcClient;
+using AcClient;
 using Decal.Adapter;
 using Decal.Adapter.Wrappers;
-using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
-using System.IO;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Numerics;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Security.Permissions;
-using System.Security.Policy;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
+using System.Windows.Forms;
 
 namespace OracleOfDereth
 {
-    public class Fellowship
+    public static class Fellowship
     {
         private static readonly Random random = new Random();
 
@@ -80,26 +64,21 @@ namespace OracleOfDereth
             "Yaraq Vanguard"
         };
 
-        public static int CurrentFellowId = 0; // Selected by clicking in the FellowsList
+        public static int CurrentFellowId = 0;
         public static bool AutoRecruitEnabled = false;
-
-        public static void Init()
-        {
-            // Nothing to do
-        }
 
         // If my current target is in the fellow, return that.
         // Otherwise last selected fellow on the FellowsList UI
         public static int SelectedFellowId()
         {
             int targetId = 0;
-            int fellowId = Fellowship.CurrentFellowId;
+            int fellowId = CurrentFellowId;
 
             WorldObject target = Target.GetCurrent().Item();
             if (target != null && target.ObjectClass == ObjectClass.Player) { targetId = target.Id; }
 
-            if (Fellowship.IsInFellowship(targetId)) { return targetId; }
-            if (Fellowship.IsInFellowship(fellowId)) { return fellowId; }
+            if (IsInFellowship(targetId)) { return targetId; }
+            if (IsInFellowship(fellowId)) { return fellowId; }
 
             return 0;
         }
@@ -107,6 +86,36 @@ namespace OracleOfDereth
         public static void SelectFellow(int id)
         {
             CurrentFellowId = id;
+        }
+
+        public static void AutoOpenFellow()
+        {
+            if (AutoRecruitEnabled && IsLeader() && !IsOpen()) Open();
+        }
+
+        public static void AutoRecruit(Fellow fellow, bool force = false)
+        {
+            if (!AutoRecruitEnabled) return;
+            if (fellow.Id == CoreManager.Current.CharacterFilter.Id) return;
+
+            if (!IsInFellowship()) return;
+            if (IsInFellowship(fellow.Id)) return;
+
+            if (!fellow.Identified) return;
+            if (!fellow.FellowshipNameBlank()) return;
+
+            if (!CanRecruit()) return;
+            if (NearbyLifestone() || NearbyBindstone()) return;
+
+            if (fellow.WasRecruited() && !force) return;
+
+            fellow.LastRecruitedAt = DateTime.Now;
+            Recruit(fellow.Id);
+        }
+
+        public static void RecruitAll()
+        {
+            foreach (var fellow in FellowshipTracker.Fellows) { AutoRecruit(fellow, true); }
         }
 
         public static bool NearbyLifestone()
@@ -130,20 +139,6 @@ namespace OracleOfDereth
             }
 
             return false;
-        }
-
-        public unsafe static void AutoRecruit()
-        {
-            if(AutoRecruitEnabled == false) { return; }
-
-            if (IsLeader() && !IsOpen()) { Open(); }
-            if (CanRecruit() == false) { return; }
-            if (NearbyLifestone()) { return; }
-            if (NearbyBindstone()) { return; }
-
-            foreach (Fellow player in Fellow.Players().Where(f => f.Identified).ToList()) { 
-                if(IsInFellowship(player.Id) == false) { Recruit(player.Id); }
-            }
         }
 
         public unsafe static void Create(string name = "")
@@ -186,17 +181,17 @@ namespace OracleOfDereth
             status.Add("Open", IsOpen().ToString());
 
             // Experience
-            if (IsShareXp() && FellowCount() == 1) { 
-                status.Add("Experience", "Shared"); 
+            if (IsShareXp() && FellowCount() == 1) {
+                status.Add("Experience", "Shared");
             }
-            else if (IsShareXp() && IsEvenXPSplit()) { 
-                status.Add("Experience", "Even split"); 
+            else if (IsShareXp() && IsEvenXPSplit()) {
+                status.Add("Experience", "Even split");
             }
-            else if (IsShareXp() && !IsEvenXPSplit()) { 
-                status.Add("Experience", "Uneven split"); 
+            else if (IsShareXp() && !IsEvenXPSplit()) {
+                status.Add("Experience", "Uneven split");
             }
-            else { 
-                status.Add("Experience", "Not shared"); 
+            else {
+                status.Add("Experience", "Not shared");
             }
 
             // Recruit or Auto-Recruit
@@ -320,6 +315,3 @@ namespace OracleOfDereth
         }
     }
 }
-
-
-

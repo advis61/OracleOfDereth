@@ -915,6 +915,8 @@ namespace OracleOfDereth
         {
             Fellowship.AutoRecruitEnabled = FellowshipAutoRecruit.Checked;
             UpdateFellowship();
+
+            if (Fellowship.AutoRecruitEnabled) Fellowship.RecruitAll();
         }
 
         private void UpdateFellowshipNames()

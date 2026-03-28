@@ -120,7 +120,7 @@ namespace OracleOfDereth
             Cantrip.Init();
             CreditQuest.Init();
             FacilityQuest.Init();
-            Fellow.Init();
+            FellowshipTracker.Init();
             FlagQuest.Init();
             JohnQuest.Init();
             Marker.Init();
@@ -146,8 +146,8 @@ namespace OracleOfDereth
             try
             {
                 Target.RemoveAllExpired();
-                Fellow.Update();
-                Fellowship.AutoRecruit();
+                FellowshipTracker.Update();
+                Fellowship.AutoOpenFellow();
 
                 mainView.Update();
                 targetView.Update();
@@ -259,8 +259,7 @@ namespace OracleOfDereth
 
         private void WorldFilter_CreateObject(object sender, CreateObjectEventArgs e)
         {
-            //Util.Chat("CreateObject " + e.New.Name + " has data? " + e.New.HasIdData);
-            Fellow.Add(e.New);
+            FellowshipTracker.Add(e.New);
             Nearby.Add(e.New);
         }
 
@@ -291,7 +290,7 @@ namespace OracleOfDereth
                 }
 
                 else if (eventType == 0x00C9) {
-                    Fellow.Parse(e.Message.RawData); // Identify Response
+                    FellowshipTracker.Parse(e.Message.RawData); // Identify Response
                 }
             }
             catch (Exception ex) { Util.Log(ex); }
