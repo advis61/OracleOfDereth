@@ -58,11 +58,11 @@ namespace OracleOfDereth
             switch (CurrentSortType)
             {
                 case SortType.Name:
-                    return items.OrderBy(i => i.IsPlayer() ? 0 : 1).ThenBy(i => i.FellowshipName()).ThenBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
+                    return items.OrderBy(i => i.FellowshipName()).ThenBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
                 case SortType.Distance:
-                    return items.OrderBy(i => i.IsPlayer() ? 0 : 1).ThenBy(i => i.FellowshipName()).ThenBy(i => i.Distance()).ThenBy(i => i.Item.Name).ToList();
+                    return items.OrderBy(i => i.FellowshipName()).ThenBy(i => i.Distance()).ThenBy(i => i.Item.Name).ToList();
                 default:
-                    return items.OrderBy(i => i.IsPlayer() ? 0 : 1).ThenBy(i => i.FellowshipName()).ThenBy(i => i.Priority()).ThenBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
+                    return items.OrderBy(i => i.Priority()).ThenBy(i => i.FellowshipName()).ThenBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
             }
         }
 
@@ -113,16 +113,16 @@ namespace OracleOfDereth
 
         public int Priority()
         {
-            if (IsPlayer() && FellowshipName() != "") return 0; // Fellowship members
-            if (IsPlayer()) return 1;
-            if (IsMarker()) return 2;
-            // 3 = anything unexpected (default below)
-            if (IsPortal()) return 4;
-            if (IsNpc()) return 5;
-            if (IsVendor()) return 6;
-            if (IsCorpse()) return 7;
-            if (IsMonster()) return 8;
-            if (IsSign()) return 9;
+            if (IsPlayer() && FellowshipName() != "") return 1; // Fellowship members
+            if (IsPlayer()) return 2;
+            if (IsMarker()) return 3;
+            // 4 = anything unexpected (default below)
+            if (IsPortal()) return 5;
+            if (IsNpc()) return 6;
+            if (IsVendor()) return 7;
+            if (IsCorpse()) return 8;
+            if (IsMonster()) return 9;
+            if (IsSign()) return 10;
 
             return 3;
         }

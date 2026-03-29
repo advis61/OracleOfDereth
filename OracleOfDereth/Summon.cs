@@ -22,12 +22,13 @@ namespace OracleOfDereth
         // Instance variables
         public WorldObject Item;
 
-        public static void Identified(WorldObject item)
+        public static bool Identified(WorldObject item)
         {
             Summon summon = new() { Item = item };
-            if (summon.IsSummon() == false) { return; }
+            if (summon.IsSummon() == false) { return false; }
 
             Util.Chat(summon.ToString(), Util.ColorCyan, "");
+            return true;
         }
 
         public override string ToString()

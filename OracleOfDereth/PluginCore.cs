@@ -9,8 +9,8 @@ using WindowsTimer = System.Windows.Forms.Timer;
 
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
-[assembly: AssemblyVersion("1.10.0.0")]
-[assembly: AssemblyFileVersion("1.10.0.0")]
+[assembly: AssemblyVersion("1.10.1.0")]
+[assembly: AssemblyFileVersion("1.10.1.0")]
 
 namespace OracleOfDereth
 {
@@ -270,15 +270,11 @@ namespace OracleOfDereth
 
         private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
         {
-            Summon.Identified(item);
+            if (Summon.Identified(item)) return;
+            if (ItemInfo.WeaponIdentified(item)) return;
 
-            try
-            {
-
-                ItemInfo info = new ItemInfo(item);
-                Util.Chat(info.ToString());
-            }
-            catch (Exception ex) { Util.Log(ex); }
+            //ItemInfo info = new ItemInfo(item);
+            //Util.Chat(info.ToString(), Util.ColorCyan, "");
         }
 
         // https://github.com/ACEmulator/ACE/blob/master/Source/ACE.Server/Network/GameEvent/GameEventType.cs

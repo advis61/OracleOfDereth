@@ -38,6 +38,31 @@ namespace OracleOfDereth
             for (int i = 0; i < wo.SpellCount; i++)
                 innateSpells.Add(wo.Spell(i));
         }
+        public static bool WeaponIdentified(WorldObject item)
+        {
+            if (item.ObjectClass != ObjectClass.MeleeWeapon &&
+                item.ObjectClass != ObjectClass.MissileWeapon &&
+                item.ObjectClass != ObjectClass.WandStaffOrb)
+                return false;
+
+            ItemInfo info = new ItemInfo(item);
+
+            string odValue = info.GetODValue();
+            string mdValue = info.GetMDValue();
+
+            if (odValue == null && mdValue == null) return false;
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(item.Name);
+            sb.Append(" [");
+            if (odValue != null) sb.Append("OD: " + odValue);
+            if (odValue != null && mdValue != null) sb.Append(" | ");
+            if (mdValue != null) sb.Append("MD: " + mdValue);
+            sb.Append("]");
+
+            Util.Chat(sb.ToString(), Util.ColorCyan, "");
+            return true;
+        }
 
         public override string ToString()
         {
