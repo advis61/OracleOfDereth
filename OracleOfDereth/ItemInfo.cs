@@ -63,6 +63,11 @@ namespace OracleOfDereth
                     sb.Append(" (Unknown Mastery " + wo.Values((LongValueKey)353) + ")");
             }
 
+            // OD Value (weapons only, after name and mastery)
+            string odValue = GetODValue();
+            if (odValue != null)
+                sb.Append(" [DMG: " + odValue + "]");
+
             // Equipment Set
             int set = wo.Values((LongValueKey)265, 0);
             if (set != 0)
@@ -168,11 +173,6 @@ namespace OracleOfDereth
 
                 sb.Append(")");
             }
-
-            // OD Value (weapons only)
-            string odValue = GetODValue();
-            if (odValue != null)
-                sb.Append(", " + odValue);
 
             // Spells
             if (wo.SpellCount > 0)
@@ -541,26 +541,31 @@ namespace OracleOfDereth
 
             if (tableMax <= 0) return null;
             int od = GetBuffedIntValue(Key_MaxDamage) - tableMax;
-            return od >= 0 ? "OD+" + od : null;
+            if (od < -10) return null;
+            return od >= 0 ? "OD+" + od : "OD" + od;
         }
 
         private string GetMissileOD()
         {
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
 
-            int[] maxTable = null;
-            if (mastery == 8) maxTable = BowElemMax;
-            else if (mastery == 9) maxTable = CrossbowElemMax;
-            else if (mastery == 10) maxTable = ThrownElemMax;
-            if (maxTable == null) return null;
+            // Top tier max damage modifier % per missile type
+            double maxDmgPct;
+            if (mastery == 8) maxDmgPct = 140;       // Bow
+            else if (mastery == 9) maxDmgPct = 165;   // Crossbow
+            else if (mastery == 10) maxDmgPct = 160;  // Thrown
+            else return null;
 
-            int maxElem = maxTable[maxTable.Length - 1]; // Always compare against top tier
-            if (maxElem < 0) return null;
-
-            // Missile elem bonus isn't affected by active buffs, but add Blood Thirst cantrip
             int elemBonus = wo.Values(LongValueKey.ElementalDmgBonus, 0);
-            int od = elemBonus + GetCantripIntBonus(Key_MaxDamage) - maxElem;
-            return od >= 0 ? "OD+" + od : null;
+            int cantripBonus = GetCantripIntBonus(Key_MaxDamage);
+            double dmgPct = (wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100;
+
+            // Convert excess damage modifier to elemental equivalents (3.5% ≈ 1 point)
+            double effectiveScore = elemBonus + cantripBonus + (dmgPct - maxDmgPct) * 2.0 / 7.0;
+            int maxElem = 22; // Top tier max elemental damage bonus
+            int od = (int)Math.Floor(effectiveScore - maxElem + 11.0 / 7.0);
+            if (od < -10) return null;
+            return od >= 0 ? "OD+" + od : "OD" + od;
         }
 
         private string GetCasterOD()
@@ -572,7 +577,8 @@ namespace OracleOfDereth
             int buffedPct = (int)Math.Round((buffedPctValue - 1) * 100);
 
             int od = buffedPct - maxPct;
-            return od >= 0 ? "OD+" + od : null;
+            if (od < -10) return null;
+            return od >= 0 ? "OD+" + od : "OD" + od;
         }
 
         private int GetCantripIntBonus(int key)
@@ -654,6 +660,12 @@ namespace OracleOfDereth
         private static readonly int[] BowElemMax =                  { 5, 9, 16, 19, 22 };
         private static readonly int[] CrossbowElemMax =             { 5, 9, 16, 19, 22 };
         private static readonly int[] ThrownElemMax =               { -1, -1, 16, 19, 22 };
+
+        // Missile max damage modifier % per wield tier (-1 = unknown)
+        //                                                            315  335  360  375  385
+        private static readonly int[] BowDmgModMax =                { 140, 140, 140, 140, 140 };
+        private static readonly int[] CrossbowDmgModMax =           { 165, 165, 165, 165, 165 };
+        private static readonly int[] ThrownDmgModMax =             { 160, 160, 160, 160, 160 };
 
         //                                                            355  375  385
         private static readonly int[] CasterWieldTiers =            { 355, 375, 385 };
