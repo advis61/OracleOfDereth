@@ -271,6 +271,14 @@ namespace OracleOfDereth
         private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
         {
             Summon.Identified(item);
+
+            try
+            {
+
+                ItemInfo info = new ItemInfo(item);
+                Util.Chat(info.ToString());
+            }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         // https://github.com/ACEmulator/ACE/blob/master/Source/ACE.Server/Network/GameEvent/GameEventType.cs
