@@ -24,7 +24,6 @@ namespace OracleOfDereth
         {
             wo = worldObject;
 
-            // Extract property values for buffed calculations
             foreach (var key in wo.LongKeys)
                 intValues[key] = wo.Values((LongValueKey)key);
 
@@ -63,7 +62,7 @@ namespace OracleOfDereth
                     sb.Append(" (Unknown Mastery " + wo.Values((LongValueKey)353) + ")");
             }
 
-            // OD Value (weapons only, after name and mastery)
+            // OD Value (weapons only)
             string odValue = GetODValue();
             if (odValue != null)
                 sb.Append(" [DMG: " + odValue + "]");
@@ -111,7 +110,7 @@ namespace OracleOfDereth
             // Damage (melee/missile)
             if (wo.Values(LongValueKey.MaxDamage) != 0 && wo.Values(DoubleValueKey.Variance) != 0)
                 sb.Append(", " + (wo.Values(LongValueKey.MaxDamage) - (wo.Values(LongValueKey.MaxDamage) * wo.Values(DoubleValueKey.Variance))).ToString("N2") + "-" + wo.Values(LongValueKey.MaxDamage));
-            else if (wo.Values(LongValueKey.MaxDamage) != 0 && wo.Values(DoubleValueKey.Variance) == 0)
+            else if (wo.Values(LongValueKey.MaxDamage) != 0)
                 sb.Append(", " + wo.Values(LongValueKey.MaxDamage));
 
             // Elemental Damage Bonus
@@ -153,11 +152,9 @@ namespace OracleOfDereth
 
                 if (wo.ObjectClass == ObjectClass.MeleeWeapon)
                     sb.Append(CalcBuffedTinkedDoT().ToString("N1") + "/" + GetBuffedIntValue(Key_MaxDamage));
-
-                if (wo.ObjectClass == ObjectClass.MissileWeapon)
+                else if (wo.ObjectClass == ObjectClass.MissileWeapon)
                     sb.Append(CalcBuffedMissileDamage().ToString("N1"));
-
-                if (wo.ObjectClass == ObjectClass.WandStaffOrb)
+                else
                     sb.Append(((GetBuffedDoubleValue(Key_ElementalDmgVsMonsters) - 1) * 100).ToString("N1"));
 
                 sb.Append(" ");
@@ -175,65 +172,49 @@ namespace OracleOfDereth
             }
 
             // Spells
-            if (wo.SpellCount > 0)
+            if (innateSpells.Count > 0)
             {
                 FileService service = CoreManager.Current.Filter<FileService>();
-                List<int> spellIds = new List<int>();
-
-                for (int i = 0; i < wo.SpellCount; i++)
-                    spellIds.Add(wo.Spell(i));
-
-                spellIds.Sort();
-                spellIds.Reverse();
+                List<int> sorted = new List<int>(innateSpells);
+                sorted.Sort();
+                sorted.Reverse();
 
                 bool isLootGenerated = wo.LongKeys.Contains((int)LongValueKey.Material);
                 bool isUnenchantable = wo.Values(LongValueKey.Unenchantable, 0) != 0;
 
-                foreach (int spellId in spellIds)
+                foreach (int spellId in sorted)
                 {
                     Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
                     if (spell == null) continue;
 
                     string name = spell.Name;
 
-                    // If the item is not loot generated, show all spells
                     if (!isLootGenerated)
                         goto ShowSpell;
 
-                    // Always show Minor/Major/Epic/Legendary Impen
                     if (name.Contains("Minor Impenetrability") || name.Contains("Major Impenetrability") || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability"))
                         goto ShowSpell;
 
-                    // Always show trinket spells
                     if (name.Contains("Augmented"))
                         goto ShowSpell;
 
                     if (isUnenchantable)
                     {
-                        // Show banes and impen on unenchantable equipment
                         if (name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard"))
                             goto ShowSpell;
                     }
                     else
                     {
-                        // Hide banes and impen on enchantable equipment
                         if (name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard"))
                             continue;
                     }
 
-                    // Filter level 1-5 spells
                     if (name.EndsWith(" I") || name.EndsWith(" II") || name.EndsWith(" III") || name.EndsWith(" IV") || name.EndsWith(" V"))
                         continue;
-
-                    // Filter level 6 spells
                     if (name.EndsWith(" VI"))
                         continue;
-
-                    // Filter level 7 spells (named weapon buff 7's like "Elysa's Sight" don't end in VII, so they pass through)
                     if (name.EndsWith(" VII"))
                         continue;
-
-                    // Filter level 8 spells (Incantations)
                     if (name.Contains("Incantation"))
                         continue;
 
@@ -290,7 +271,7 @@ namespace OracleOfDereth
             if (wo.Values(LongValueKey.LoreRequirement) > 0)
                 sb.Append(", Diff " + wo.Values(LongValueKey.LoreRequirement));
 
-            // Workmanship / Salvage Workmanship
+            // Workmanship
             if (wo.ObjectClass == ObjectClass.Salvage)
             {
                 if (wo.Values(DoubleValueKey.SalvageWorkmanship) > 0)
@@ -323,31 +304,7 @@ namespace OracleOfDereth
                 sb.Append(", BU " + wo.Values(LongValueKey.Burden));
 
             // Ratings
-            int damRating = wo.Values((LongValueKey)370);
-            int damResistRating = wo.Values((LongValueKey)371);
-            int critRating = wo.Values((LongValueKey)372);
-            int critDamRating = wo.Values((LongValueKey)374);
-            int critResistRating = wo.Values((LongValueKey)373);
-            int critDamResistRating = wo.Values((LongValueKey)375);
-            int healBoostRating = wo.Values((LongValueKey)376);
-            int vitalityRating = wo.Values((LongValueKey)379);
-
-            int totalRating = damRating + damResistRating + critRating + critDamRating + critResistRating + critDamResistRating + healBoostRating + vitalityRating;
-
-            if (totalRating > 0)
-            {
-                sb.Append(", [");
-                bool first = true;
-                if (damRating > 0) { sb.Append("D " + damRating); first = false; }
-                if (damResistRating > 0) { if (!first) sb.Append(", "); sb.Append("DR " + damResistRating); first = false; }
-                if (critRating > 0) { if (!first) sb.Append(", "); sb.Append("C " + critRating); first = false; }
-                if (critDamRating > 0) { if (!first) sb.Append(", "); sb.Append("CD " + critDamRating); first = false; }
-                if (critResistRating > 0) { if (!first) sb.Append(", "); sb.Append("CR " + critResistRating); first = false; }
-                if (critDamResistRating > 0) { if (!first) sb.Append(", "); sb.Append("CDR " + critDamResistRating); first = false; }
-                if (healBoostRating > 0) { if (!first) sb.Append(", "); sb.Append("HB " + healBoostRating); first = false; }
-                if (vitalityRating > 0) { if (!first) sb.Append(", "); sb.Append("V " + vitalityRating); first = false; }
-                sb.Append("]");
-            }
+            AppendRatings(sb);
 
             // Keyring
             if (wo.ObjectClass == ObjectClass.Misc && wo.Name.Contains("Keyring"))
@@ -356,25 +313,41 @@ namespace OracleOfDereth
             return sb.ToString();
         }
 
+        private void AppendRatings(StringBuilder sb)
+        {
+            int d = wo.Values((LongValueKey)370);
+            int dr = wo.Values((LongValueKey)371);
+            int c = wo.Values((LongValueKey)372);
+            int cr = wo.Values((LongValueKey)373);
+            int cd = wo.Values((LongValueKey)374);
+            int cdr = wo.Values((LongValueKey)375);
+            int hb = wo.Values((LongValueKey)376);
+            int v = wo.Values((LongValueKey)379);
+
+            if (d + dr + c + cr + cd + cdr + hb + v <= 0) return;
+
+            sb.Append(", [");
+            bool first = true;
+            void Add(string label, int val) { if (val > 0) { if (!first) sb.Append(", "); sb.Append(label + " " + val); first = false; } }
+            Add("D", d); Add("DR", dr); Add("C", c); Add("CD", cd); Add("CR", cr); Add("CDR", cdr); Add("HB", hb); Add("V", v);
+            sb.Append("]");
+        }
+
         #region Buffed Value Calculations
 
-        // Property key constants (raw int values from Decal)
-        private const int Key_MaxDamage = 218103842;        // LongValueKey.MaxDamage
-        private const int Key_ArmorLevel = 28;              // LongValueKey.ArmorLevel
-        private const int Key_ElementalDmgBonus = 204;      // LongValueKey.ElementalDmgBonus
-        private const int Key_Imbued = 179;                 // LongValueKey.Imbued
-        private const int Key_Tinks = 171;                  // LongValueKey.NumberTimesTinkered
-        private const int Key_Material = 131;               // LongValueKey.Material
-        private const int Key_Variance = 167772171;         // DoubleValueKey.Variance
-        private const int Key_DamageBonus = 167772174;      // DoubleValueKey.DamageBonus
-        private const int Key_ElementalDmgVsMonsters = 152; // DoubleValueKey.ElementalDamageVersusMonsters
-        private const int Key_AttackBonus = 167772172;      // DoubleValueKey.AttackBonus
-        private const int Key_MeleeDefenseBonus = 29;       // DoubleValueKey.MeleeDefenseBonus
-        private const int Key_ManaCBonus = 144;             // DoubleValueKey.ManaCBonus
+        private const int Key_MaxDamage = 218103842;
+        private const int Key_ArmorLevel = 28;
+        private const int Key_ElementalDmgBonus = 204;
+        private const int Key_Imbued = 179;
+        private const int Key_Tinks = 171;
+        private const int Key_Material = 131;
+        private const int Key_Variance = 167772171;
+        private const int Key_DamageBonus = 167772174;
+        private const int Key_ElementalDmgVsMonsters = 152;
+        private const int Key_AttackBonus = 167772172;
+        private const int Key_MeleeDefenseBonus = 29;
+        private const int Key_ManaCBonus = 144;
 
-        /// <summary>
-        /// Gets the base int value for a property, removing active buff spell effects and adding innate cantrip bonuses.
-        /// </summary>
         private int GetBuffedIntValue(int key, int defaultValue = 0)
         {
             if (!intValues.ContainsKey(key))
@@ -397,9 +370,6 @@ namespace OracleOfDereth
             return value;
         }
 
-        /// <summary>
-        /// Gets the base double value for a property, removing active buff spell effects and adding innate cantrip bonuses.
-        /// </summary>
         private double GetBuffedDoubleValue(int key, double defaultValue = 0)
         {
             if (!doubleValues.ContainsKey(key))
@@ -432,24 +402,20 @@ namespace OracleOfDereth
             return value;
         }
 
-        /// <summary>
-        /// Calculates optimal 10-tink melee DamageOverTime, factoring iron vs granite tink choices.
-        /// </summary>
         private double CalcBuffedTinkedDoT()
         {
             if (!doubleValues.ContainsKey(Key_Variance) || !intValues.ContainsKey(Key_MaxDamage))
                 return -1;
 
-            double variance = doubleValues.ContainsKey(Key_Variance) ? doubleValues[Key_Variance] : 0;
+            double variance = doubleValues[Key_Variance];
             int maxDamage = GetBuffedIntValue(Key_MaxDamage);
 
             int tinks = intValues.ContainsKey(Key_Tinks) ? intValues[Key_Tinks] : 0;
             int numberOfTinksLeft = Math.Max(10 - Math.Max(tinks, 0), 0);
 
             if (!intValues.ContainsKey(Key_Imbued) || intValues[Key_Imbued] == 0)
-                numberOfTinksLeft--; // Factor in an imbue tink
+                numberOfTinksLeft--;
 
-            // If this is not a loot generated item, it can't be tinked
             if (!intValues.ContainsKey(Key_Material) || intValues[Key_Material] == 0)
                 numberOfTinksLeft = 0;
 
@@ -467,9 +433,6 @@ namespace OracleOfDereth
             return CalculateDamageOverTime(maxDamage + 24, variance);
         }
 
-        /// <summary>
-        /// Calculates buffed missile damage: MaxDamage + (DamageBonus% / 3) + ElementalDmgBonus.
-        /// </summary>
         private double CalcBuffedMissileDamage()
         {
             if (!intValues.ContainsKey(Key_MaxDamage) || !doubleValues.ContainsKey(Key_DamageBonus) || !intValues.ContainsKey(Key_ElementalDmgBonus))
@@ -487,16 +450,14 @@ namespace OracleOfDereth
 
         #region OD (Over Damage) Calculations
 
-        // OD+1 = max roll for that weapon type at top wield tier.
-        // OD+2 = 1 above max, etc. Only shown when buffed value >= max.
+        // OD+0 = top roll for that weapon type. OD+N = N above top roll. OD-N = N below.
+        // Not shown when equipped (character buffs inflate stats) or below OD-10.
 
         private const int Key_EquipSkill = 218103840;
-
         private const int Key_CurrentWieldedLocation = 10;
 
         private string GetODValue()
         {
-            // Skip OD when weapon is equipped — displayed stats include character buffs we can't strip
             if (wo.Values((LongValueKey)Key_CurrentWieldedLocation) > 0)
                 return null;
 
@@ -518,65 +479,59 @@ namespace OracleOfDereth
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
             if (mastery == 0) return null;
 
-            int maxDamage = wo.Values(LongValueKey.MaxDamage);
+            int rawDmg = wo.Values(LongValueKey.MaxDamage);
             int topTier = MeleeWieldTiers.Length - 1;
-            int tableMax = 0;
+            int tableMax;
 
             if (skill == 0x29 || mastery == 11) // Two Handed
-            {
                 tableMax = IsTwoHandedSpear() ? TwoHandedSpearMax[topTier] : TwoHandedCleaverMax[topTier];
-            }
             else if (skill == 0x2C) // Heavy
-            {
-                tableMax = LookupMeleeMax(HeavyMax, HeavyMultiMax, mastery, topTier, maxDamage);
-            }
+                tableMax = LookupMeleeMax(HeavyMax, HeavyMultiMax, mastery, topTier, rawDmg);
             else if (skill == 0x2D || skill == 0x2E) // Light / Finesse
             {
                 if (mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0)
                     tableMax = LightJitteMax[topTier];
                 else
-                    tableMax = LookupMeleeMax(LightMax, LightMultiMax, mastery, topTier, maxDamage);
+                    tableMax = LookupMeleeMax(LightMax, LightMultiMax, mastery, topTier, rawDmg);
             }
             else return null;
 
             if (tableMax <= 0) return null;
-            int od = GetBuffedIntValue(Key_MaxDamage) - tableMax;
-            if (od < -10) return null;
-            return od >= 0 ? "OD+" + od : "OD" + od;
+            return FormatOD(GetBuffedIntValue(Key_MaxDamage) - tableMax);
         }
 
         private string GetMissileOD()
         {
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
 
-            // Top tier max damage modifier % per missile type
-            double maxDmgPct;
-            if (mastery == 8) maxDmgPct = 140;       // Bow
-            else if (mastery == 9) maxDmgPct = 165;   // Crossbow
-            else if (mastery == 10) maxDmgPct = 160;  // Thrown
+            // Each missile type has its own dmgPct-to-elem conversion factor (K) and reference (refC).
+            // K represents how many % of damage modifier equals 1 elemental damage point.
+            double conversionK, refC;
+            if (mastery == 8)       { conversionK = 3.5; refC = 423.0 / 7.0; } // Bow
+            else if (mastery == 9)  { conversionK = 3.5; refC = 473.0 / 7.0; } // Crossbow (estimated)
+            else if (mastery == 10) { conversionK = 2.5; refC = 86.0; }        // Thrown
             else return null;
 
             int elemBonus = wo.Values(LongValueKey.ElementalDmgBonus, 0);
             int cantripBonus = GetCantripIntBonus(Key_MaxDamage);
             double dmgPct = (wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100;
 
-            // Convert excess damage modifier to elemental equivalents (3.5% ≈ 1 point)
-            double effectiveScore = elemBonus + cantripBonus + (dmgPct - maxDmgPct) * 2.0 / 7.0;
-            int maxElem = 22; // Top tier max elemental damage bonus
-            int od = (int)Math.Floor(effectiveScore - maxElem + 11.0 / 7.0);
-            if (od < -10) return null;
-            return od >= 0 ? "OD+" + od : "OD" + od;
+            double score = elemBonus + cantripBonus + dmgPct / conversionK;
+            int od = (int)Math.Floor(score - refC);
+            return FormatOD(od);
         }
 
         private string GetCasterOD()
         {
-            int maxPct = CasterMaxPct[CasterMaxPct.Length - 1]; // Always compare against top tier
-
-            // GetBuffedDoubleValue strips active Spirit Drinker, adds Spirit Thirst cantrip
+            int maxPct = CasterMaxPct[CasterMaxPct.Length - 1];
             double buffedPctValue = GetBuffedDoubleValue(Key_ElementalDmgVsMonsters);
             int buffedPct = (int)Math.Round((buffedPctValue - 1) * 100);
 
-            int od = buffedPct - maxPct;
+            return FormatOD(buffedPct - maxPct);
+        }
+
+        private static string FormatOD(int od)
+        {
             if (od < -10) return null;
             return od >= 0 ? "OD+" + od : "OD" + od;
         }
@@ -609,9 +564,9 @@ namespace OracleOfDereth
 
         #region OD Max Damage Tables
 
-        private static readonly int[] MeleeWieldTiers = { 0, 250, 300, 325, 350, 370, 400, 420, 430 };
+        //                                                          0    250  300  325  350  370  400  420  430
+        private static readonly int[] MeleeWieldTiers =           { 0, 250, 300, 325, 350, 370, 400, 420, 430 };
 
-        // Heavy Weapons: mastery → max damage per wield tier
         private static readonly Dictionary<int, int[]> HeavyMax = new Dictionary<int, int[]>
         {
             { 3, new[] { 26, 33, 40, 47, 54, 61, 68, 71, 74 } },  // Axe
@@ -628,7 +583,6 @@ namespace OracleOfDereth
             { 2, new[] { 12, 16, 19, 23, 26, 30, 33, 36, 38 } },  // Sword Multi
         };
 
-        // Light / Finesse Weapons: mastery → max damage per wield tier
         private static readonly Dictionary<int, int[]> LightMax = new Dictionary<int, int[]>
         {
             { 3, new[] { 22, 28, 33, 39, 44, 50, 55, 57, 61 } },  // Axe
@@ -645,24 +599,15 @@ namespace OracleOfDereth
             { 2, new[] { 7, 10, 13, 16, 18, 21, 24, 25, 28 } },   // Sword Multi
         };
 
-        // Light Jitte (Mace variant)
-        //                                                            0   250  300  325  350  370  400  420  430
         private static readonly int[] LightJitteMax =               { 19, 24, 29, 34, 38, 43, 48, 52, 57 };
-
-        // Two-Handed Weapons
         private static readonly int[] TwoHandedCleaverMax =         { 13, 17, 22, 26, 30, 35, 39, 42, 45 };
         private static readonly int[] TwoHandedSpearMax =           { 14, 19, 24, 29, 33, 37, 42, 45, 48 };
 
         //                                                            315  335  360  375  385
         private static readonly int[] MissileWieldTiers =           { 315, 335, 360, 375, 385 };
-
-        // Missile max elemental damage bonus per wield tier (-1 = unknown)
         private static readonly int[] BowElemMax =                  { 5, 9, 16, 19, 22 };
         private static readonly int[] CrossbowElemMax =             { 5, 9, 16, 19, 22 };
         private static readonly int[] ThrownElemMax =               { -1, -1, 16, 19, 22 };
-
-        // Missile max damage modifier % per wield tier (-1 = unknown)
-        //                                                            315  335  360  375  385
         private static readonly int[] BowDmgModMax =                { 140, 140, 140, 140, 140 };
         private static readonly int[] CrossbowDmgModMax =           { 165, 165, 165, 165, 165 };
         private static readonly int[] ThrownDmgModMax =             { 160, 160, 160, 160, 160 };
@@ -693,7 +638,6 @@ namespace OracleOfDereth
 
         private static readonly Dictionary<int, SpellEffect<int>> IntSpellEffects = new Dictionary<int, SpellEffect<int>>
         {
-            // Blood Drinker (MaxDamage)
             { 1616, new SpellEffect<int>(Key_MaxDamage, 20) },          // Blood Drinker VI
             { 2096, new SpellEffect<int>(Key_MaxDamage, 22) },          // Infected Caress
             { 5183, new SpellEffect<int>(Key_MaxDamage, 24) },          // Incantation of Blood Drinker
@@ -704,7 +648,6 @@ namespace OracleOfDereth
             { 6089, new SpellEffect<int>(Key_MaxDamage, 10, 10) },      // Legendary Blood Thirst
             { 3688, new SpellEffect<int>(Key_MaxDamage, 300) },         // Prodigal Blood Drinker
 
-            // Impenetrability (ArmorLevel)
             { 1486, new SpellEffect<int>(Key_ArmorLevel, 200) },        // Impenetrability VI
             { 2108, new SpellEffect<int>(Key_ArmorLevel, 220) },        // Brogard's Defiance
             { 4407, new SpellEffect<int>(Key_ArmorLevel, 240) },        // Incantation of Impenetrability
@@ -716,7 +659,6 @@ namespace OracleOfDereth
 
         private static readonly Dictionary<int, SpellEffect<double>> DoubleSpellEffects = new Dictionary<int, SpellEffect<double>>
         {
-            // Spirit Drinker (ElementalDamageVersusMonsters)
             { 3258, new SpellEffect<double>(Key_ElementalDmgVsMonsters, .06) },         // Spirit Drinker VI
             { 3259, new SpellEffect<double>(Key_ElementalDmgVsMonsters, .07) },         // Infected Spirit Caress
             { 5182, new SpellEffect<double>(Key_ElementalDmgVsMonsters, .08) },         // Incantation of Spirit Drinker
@@ -727,7 +669,6 @@ namespace OracleOfDereth
             { 6098, new SpellEffect<double>(Key_ElementalDmgVsMonsters, .07, .07) },    // Legendary Spirit Thirst
             { 3735, new SpellEffect<double>(Key_ElementalDmgVsMonsters, .15) },         // Prodigal Spirit Drinker
 
-            // Heart Seeker (AttackBonus)
             { 1592, new SpellEffect<double>(Key_AttackBonus, .15) },            // Heart Seeker VI
             { 2106, new SpellEffect<double>(Key_AttackBonus, .17) },            // Elysa's Sight
             { 4405, new SpellEffect<double>(Key_AttackBonus, .20) },            // Incantation of Heart Seeker
@@ -736,7 +677,6 @@ namespace OracleOfDereth
             { 4666, new SpellEffect<double>(Key_AttackBonus, .07, .07) },       // Epic Heart Thirst
             { 6094, new SpellEffect<double>(Key_AttackBonus, .09, .09) },       // Legendary Heart Thirst
 
-            // Defender (MeleeDefenseBonus)
             { 1605, new SpellEffect<double>(Key_MeleeDefenseBonus, .15) },      // Defender VI
             { 2101, new SpellEffect<double>(Key_MeleeDefenseBonus, .17) },      // Cragstone's Will
             { 4400, new SpellEffect<double>(Key_MeleeDefenseBonus, .20) },      // Incantation of Defender
@@ -747,7 +687,6 @@ namespace OracleOfDereth
             { 6091, new SpellEffect<double>(Key_MeleeDefenseBonus, .09, .09) }, // Legendary Defender
             { 3699, new SpellEffect<double>(Key_MeleeDefenseBonus, .25) },      // Prodigal Defender
 
-            // Hermetic Link (ManaCBonus)
             { 1480, new SpellEffect<double>(Key_ManaCBonus, 1.60) },            // Hermetic Link VI
             { 2117, new SpellEffect<double>(Key_ManaCBonus, 1.70) },            // Mystic's Blessing
             { 4418, new SpellEffect<double>(Key_ManaCBonus, 1.80) },            // Incantation of Hermetic Link
