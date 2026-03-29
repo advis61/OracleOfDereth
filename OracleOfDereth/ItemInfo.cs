@@ -71,7 +71,7 @@ namespace OracleOfDereth
                 if (AttributeSetInfo.TryGetValue(set, out string setName))
                     sb.Append(setName);
                 else
-                    sb.Append("Unknown Set " + set);
+                    sb.Append("Unknown Set");
             }
 
             // Armor Level
@@ -168,6 +168,11 @@ namespace OracleOfDereth
 
                 sb.Append(")");
             }
+
+            // OD Value (weapons only)
+            string odValue = GetODValue();
+            if (odValue != null)
+                sb.Append(", " + odValue);
 
             // Spells
             if (wo.SpellCount > 0)
@@ -480,6 +485,184 @@ namespace OracleOfDereth
 
         #endregion
 
+        #region OD (Over Damage) Calculations
+
+        // OD+1 = max roll for that weapon type at top wield tier.
+        // OD+2 = 1 above max, etc. Only shown when buffed value >= max.
+
+        private const int Key_EquipSkill = 218103840;
+
+        private const int Key_CurrentWieldedLocation = 10;
+
+        private string GetODValue()
+        {
+            // Skip OD when weapon is equipped — displayed stats include character buffs we can't strip
+            if (wo.Values((LongValueKey)Key_CurrentWieldedLocation) > 0)
+                return null;
+
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon)
+                return GetMeleeOD();
+            if (wo.ObjectClass == ObjectClass.MissileWeapon)
+                return GetMissileOD();
+            if (wo.ObjectClass == ObjectClass.WandStaffOrb)
+                return GetCasterOD();
+            return null;
+        }
+
+        private string GetMeleeOD()
+        {
+            int equipSkill = intValues.ContainsKey(Key_EquipSkill) ? intValues[Key_EquipSkill] : 0;
+            int wieldSkill = wo.Values(LongValueKey.WieldReqAttribute);
+            int skill = equipSkill > 0 ? equipSkill : wieldSkill;
+
+            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            if (mastery == 0) return null;
+
+            int maxDamage = wo.Values(LongValueKey.MaxDamage);
+            int topTier = MeleeWieldTiers.Length - 1;
+            int tableMax = 0;
+
+            if (skill == 0x29 || mastery == 11) // Two Handed
+            {
+                tableMax = IsTwoHandedSpear() ? TwoHandedSpearMax[topTier] : TwoHandedCleaverMax[topTier];
+            }
+            else if (skill == 0x2C) // Heavy
+            {
+                tableMax = LookupMeleeMax(HeavyMax, HeavyMultiMax, mastery, topTier, maxDamage);
+            }
+            else if (skill == 0x2D || skill == 0x2E) // Light / Finesse
+            {
+                if (mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0)
+                    tableMax = LightJitteMax[topTier];
+                else
+                    tableMax = LookupMeleeMax(LightMax, LightMultiMax, mastery, topTier, maxDamage);
+            }
+            else return null;
+
+            if (tableMax <= 0) return null;
+            int od = GetBuffedIntValue(Key_MaxDamage) - tableMax;
+            return od >= 0 ? "OD+" + od : null;
+        }
+
+        private string GetMissileOD()
+        {
+            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+
+            int[] maxTable = null;
+            if (mastery == 8) maxTable = BowElemMax;
+            else if (mastery == 9) maxTable = CrossbowElemMax;
+            else if (mastery == 10) maxTable = ThrownElemMax;
+            if (maxTable == null) return null;
+
+            int maxElem = maxTable[maxTable.Length - 1]; // Always compare against top tier
+            if (maxElem < 0) return null;
+
+            // Missile elem bonus isn't affected by active buffs, but add Blood Thirst cantrip
+            int elemBonus = wo.Values(LongValueKey.ElementalDmgBonus, 0);
+            int od = elemBonus + GetCantripIntBonus(Key_MaxDamage) - maxElem;
+            return od >= 0 ? "OD+" + od : null;
+        }
+
+        private string GetCasterOD()
+        {
+            int maxPct = CasterMaxPct[CasterMaxPct.Length - 1]; // Always compare against top tier
+
+            // GetBuffedDoubleValue strips active Spirit Drinker, adds Spirit Thirst cantrip
+            double buffedPctValue = GetBuffedDoubleValue(Key_ElementalDmgVsMonsters);
+            int buffedPct = (int)Math.Round((buffedPctValue - 1) * 100);
+
+            int od = buffedPct - maxPct;
+            return od >= 0 ? "OD+" + od : null;
+        }
+
+        private int GetCantripIntBonus(int key)
+        {
+            int bonus = 0;
+            foreach (int spell in innateSpells)
+            {
+                if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
+                    bonus += effect.Bonus;
+            }
+            return bonus;
+        }
+
+        private static int LookupMeleeMax(Dictionary<int, int[]> singleTable, Dictionary<int, int[]> multiTable, int mastery, int tierIdx, int rawDmg)
+        {
+            if (multiTable.ContainsKey(mastery) && rawDmg <= multiTable[mastery][tierIdx] + 15)
+                return multiTable[mastery][tierIdx];
+            if (singleTable.ContainsKey(mastery))
+                return singleTable[mastery][tierIdx];
+            return 0;
+        }
+
+        private bool IsTwoHandedSpear()
+        {
+            string name = wo.Name.ToLower();
+            return name.Contains("spear") || name.Contains("pike") || name.Contains("assagai") || name.Contains("yari") || name.Contains("naginata") || name.Contains("trident");
+        }
+
+        #region OD Max Damage Tables
+
+        private static readonly int[] MeleeWieldTiers = { 0, 250, 300, 325, 350, 370, 400, 420, 430 };
+
+        // Heavy Weapons: mastery → max damage per wield tier
+        private static readonly Dictionary<int, int[]> HeavyMax = new Dictionary<int, int[]>
+        {
+            { 3, new[] { 26, 33, 40, 47, 54, 61, 68, 71, 74 } },  // Axe
+            { 6, new[] { 24, 31, 38, 45, 51, 58, 65, 68, 71 } },  // Dagger
+            { 4, new[] { 22, 29, 36, 43, 49, 56, 63, 66, 69 } },  // Mace
+            { 5, new[] { 25, 32, 39, 46, 52, 59, 66, 69, 72 } },  // Spear
+            { 2, new[] { 24, 31, 38, 45, 51, 58, 65, 68, 71 } },  // Sword
+            { 7, new[] { 23, 30, 36, 43, 50, 56, 63, 66, 70 } },  // Staff
+            { 1, new[] { 20, 26, 31, 37, 43, 48, 54, 56, 59 } },  // UA
+        };
+        private static readonly Dictionary<int, int[]> HeavyMultiMax = new Dictionary<int, int[]>
+        {
+            { 6, new[] { 13, 16, 20, 23, 26, 30, 33, 36, 38 } },  // Dagger Multi
+            { 2, new[] { 12, 16, 19, 23, 26, 30, 33, 36, 38 } },  // Sword Multi
+        };
+
+        // Light / Finesse Weapons: mastery → max damage per wield tier
+        private static readonly Dictionary<int, int[]> LightMax = new Dictionary<int, int[]>
+        {
+            { 3, new[] { 22, 28, 33, 39, 44, 50, 55, 57, 61 } },  // Axe
+            { 6, new[] { 18, 24, 29, 35, 40, 46, 51, 54, 58 } },  // Dagger
+            { 4, new[] { 19, 24, 29, 35, 40, 45, 50, 53, 57 } },  // Mace
+            { 5, new[] { 21, 26, 32, 37, 42, 48, 53, 56, 60 } },  // Spear
+            { 2, new[] { 20, 25, 31, 36, 41, 47, 52, 55, 58 } },  // Sword
+            { 7, new[] { 19, 24, 30, 35, 40, 46, 51, 54, 57 } },  // Staff
+            { 1, new[] { 17, 23, 27, 31, 35, 40, 44, 46, 48 } },  // UA
+        };
+        private static readonly Dictionary<int, int[]> LightMultiMax = new Dictionary<int, int[]>
+        {
+            { 6, new[] { 7, 10, 13, 16, 18, 21, 24, 27, 28 } },   // Dagger Multi
+            { 2, new[] { 7, 10, 13, 16, 18, 21, 24, 25, 28 } },   // Sword Multi
+        };
+
+        // Light Jitte (Mace variant)
+        //                                                            0   250  300  325  350  370  400  420  430
+        private static readonly int[] LightJitteMax =               { 19, 24, 29, 34, 38, 43, 48, 52, 57 };
+
+        // Two-Handed Weapons
+        private static readonly int[] TwoHandedCleaverMax =         { 13, 17, 22, 26, 30, 35, 39, 42, 45 };
+        private static readonly int[] TwoHandedSpearMax =           { 14, 19, 24, 29, 33, 37, 42, 45, 48 };
+
+        //                                                            315  335  360  375  385
+        private static readonly int[] MissileWieldTiers =           { 315, 335, 360, 375, 385 };
+
+        // Missile max elemental damage bonus per wield tier (-1 = unknown)
+        private static readonly int[] BowElemMax =                  { 5, 9, 16, 19, 22 };
+        private static readonly int[] CrossbowElemMax =             { 5, 9, 16, 19, 22 };
+        private static readonly int[] ThrownElemMax =               { -1, -1, 16, 19, 22 };
+
+        //                                                            355  375  385
+        private static readonly int[] CasterWieldTiers =            { 355, 375, 385 };
+        private static readonly int[] CasterMaxPct =                { 13, 16, 18 };
+
+        #endregion
+
+        #endregion
+
         #region Spell Effect Dictionaries
 
         private struct SpellEffect<T>
@@ -775,9 +958,6 @@ namespace OracleOfDereth
             { 135, "Purple Society Band" },
             { 136, "Blue Society Band" },
             { 137, "Gauntlet Garb" },
-            { 138, "UNKNOWN_138" },
-            { 139, "UNKNOWN_139" },
-            { 140, "UNKNOWN_140" },
         };
 
         private static readonly Dictionary<int, string> MaterialInfo = new Dictionary<int, string>
