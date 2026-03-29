@@ -6,6 +6,8 @@ using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Decal.Filters;
 
+// claude --resume eaf48359-ba2c-4782-ad06-f48ca4b5f18d
+
 namespace OracleOfDereth
 {
     /// <summary>
@@ -62,10 +64,18 @@ namespace OracleOfDereth
                     sb.Append(" (Unknown Mastery " + wo.Values((LongValueKey)353) + ")");
             }
 
-            // OD Value (weapons only)
+            // OD and MD Values (weapons only)
             string odValue = GetODValue();
-            if (odValue != null)
-                sb.Append(" [DMG: " + odValue + "]");
+            string mdValue = GetMDValue();
+
+            if (odValue != null || mdValue != null)
+            {
+                sb.Append(" [");
+                if (odValue != null) sb.Append("OD: " + odValue);
+                if (odValue != null && mdValue != null) sb.Append(" | ");
+                if (mdValue != null) sb.Append("MD: " + mdValue);
+                sb.Append("]");
+            }
 
             // Equipment Set
             int set = wo.Values((LongValueKey)265, 0);
@@ -213,10 +223,10 @@ namespace OracleOfDereth
                         continue;
                     if (name.EndsWith(" VI"))
                         continue;
-                    if (name.EndsWith(" VII"))
-                        continue;
-                    if (name.Contains("Incantation"))
-                        continue;
+                    //if (name.EndsWith(" VII"))
+                    //    continue;
+                    //if (name.Contains("Incantation"))
+                    //    continue;
 
                     ShowSpell:
                     sb.Append(", " + name);
@@ -259,6 +269,7 @@ namespace OracleOfDereth
                     sb.Append(", Unknown Skill " + wo.Values((LongValueKey)366) + " " + wo.Values((LongValueKey)367));
             }
 
+            // Skill
             if (wo.Values((LongValueKey)368) > 0 && wo.Values((LongValueKey)367) > 0)
             {
                 if (SkillInfo.TryGetValue(wo.Values((LongValueKey)368), out string skillName))
@@ -458,15 +469,12 @@ namespace OracleOfDereth
 
         private string GetODValue()
         {
-            if (wo.Values((LongValueKey)Key_CurrentWieldedLocation) > 0)
-                return null;
+            if (wo.Values((LongValueKey)Key_CurrentWieldedLocation) > 0) return null;
 
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon)
-                return GetMeleeOD();
-            if (wo.ObjectClass == ObjectClass.MissileWeapon)
-                return GetMissileOD();
-            if (wo.ObjectClass == ObjectClass.WandStaffOrb)
-                return GetCasterOD();
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon) return GetMeleeOD();
+            if (wo.ObjectClass == ObjectClass.MissileWeapon) return GetMissileOD();
+            if (wo.ObjectClass == ObjectClass.WandStaffOrb) return GetCasterOD();
+
             return null;
         }
 
@@ -480,19 +488,25 @@ namespace OracleOfDereth
             if (mastery == 0) return null;
 
             int rawDmg = wo.Values(LongValueKey.MaxDamage);
-            int topTier = MeleeWieldTiers.Length - 1;
-            int tableMax;
+            int tableMax = 0;
 
             if (skill == 0x29 || mastery == 11) // Two Handed
-                tableMax = IsTwoHandedSpear() ? TwoHandedSpearMax[topTier] : TwoHandedCleaverMax[topTier];
+                tableMax = IsTwoHandedSpear() ? TwoHandedSpearMax : TwoHandedCleaverMax;
             else if (skill == 0x2C) // Heavy
-                tableMax = LookupMeleeMax(HeavyMax, HeavyMultiMax, mastery, topTier, rawDmg);
+            {
+                if (HeavyMultiMax.ContainsKey(mastery) && rawDmg <= HeavyMultiMax[mastery] + 15)
+                    tableMax = HeavyMultiMax[mastery];
+                else if (HeavyMax.ContainsKey(mastery))
+                    tableMax = HeavyMax[mastery];
+            }
             else if (skill == 0x2D || skill == 0x2E) // Light / Finesse
             {
                 if (mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0)
-                    tableMax = LightJitteMax[topTier];
-                else
-                    tableMax = LookupMeleeMax(LightMax, LightMultiMax, mastery, topTier, rawDmg);
+                    tableMax = LightJitteMax;
+                else if (LightMultiMax.ContainsKey(mastery) && rawDmg <= LightMultiMax[mastery] + 15)
+                    tableMax = LightMultiMax[mastery];
+                else if (LightMax.ContainsKey(mastery))
+                    tableMax = LightMax[mastery];
             }
             else return null;
 
@@ -523,7 +537,7 @@ namespace OracleOfDereth
 
         private string GetCasterOD()
         {
-            int maxPct = CasterMaxPct[CasterMaxPct.Length - 1];
+            int maxPct = CasterMax;
             double buffedPctValue = GetBuffedDoubleValue(Key_ElementalDmgVsMonsters);
             int buffedPct = (int)Math.Round((buffedPctValue - 1) * 100);
 
@@ -533,7 +547,7 @@ namespace OracleOfDereth
         private static string FormatOD(int od)
         {
             if (od < -10) return null;
-            return od >= 0 ? "OD+" + od : "OD" + od;
+            return od >= 0 ? "+" + od : "" + od;
         }
 
         private int GetCantripIntBonus(int key)
@@ -547,74 +561,136 @@ namespace OracleOfDereth
             return bonus;
         }
 
-        private static int LookupMeleeMax(Dictionary<int, int[]> singleTable, Dictionary<int, int[]> multiTable, int mastery, int tierIdx, int rawDmg)
-        {
-            if (multiTable.ContainsKey(mastery) && rawDmg <= multiTable[mastery][tierIdx] + 15)
-                return multiTable[mastery][tierIdx];
-            if (singleTable.ContainsKey(mastery))
-                return singleTable[mastery][tierIdx];
-            return 0;
-        }
-
         private bool IsTwoHandedSpear()
         {
             string name = wo.Name.ToLower();
             return name.Contains("spear") || name.Contains("pike") || name.Contains("assagai") || name.Contains("yari") || name.Contains("naginata") || name.Contains("trident");
         }
 
+        #endregion
+
+        #region MD (Melee Defense) Calculations
+
+        // MD+0 = max defense roll for that weapon type. MD+N = N% above max.
+        // Not shown when equipped or below MD-10.
+
+        private string GetMDValue()
+        {
+            if (wo.Values((LongValueKey)Key_CurrentWieldedLocation) > 0)
+                return null;
+
+            if (wo.ObjectClass != ObjectClass.MeleeWeapon && wo.ObjectClass != ObjectClass.MissileWeapon && wo.ObjectClass != ObjectClass.WandStaffOrb)
+                return null;
+
+            // Raw defense % from the item
+            double rawDefPct = Math.Round((wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) - 1) * 100);
+            if (rawDefPct <= 0) return null;
+
+            // Add Defender cantrip bonus
+            double cantripDefPct = GetCantripDoubleBonus(Key_MeleeDefenseBonus) * 100;
+            int totalDef = (int)Math.Round(rawDefPct + cantripDefPct);
+
+            // Determine max defense for this weapon type
+            int maxDef = GetMaxDefense();
+            if (maxDef <= 0) return null;
+
+            return FormatMD(totalDef - maxDef);
+        }
+
+        private int GetMaxDefense()
+        {
+            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+
+            // Missile and Caster weapons all have 20% max defense
+            if (wo.ObjectClass == ObjectClass.MissileWeapon || wo.ObjectClass == ObjectClass.WandStaffOrb)
+                return 20;
+
+            // Two-Handed weapons
+            int equipSkill = intValues.ContainsKey(Key_EquipSkill) ? intValues[Key_EquipSkill] : 0;
+            int wieldSkill = wo.Values(LongValueKey.WieldReqAttribute);
+            int skill = equipSkill > 0 ? equipSkill : wieldSkill;
+
+            if (skill == 0x29 || mastery == 11)
+                return IsTwoHandedSpear() ? 20 : 18;
+
+            // Finesse Jitte (special case: 25% instead of normal Mace 22%)
+            if ((skill == 0x2E) && mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0)
+                return 25;
+
+            // Melee weapons by mastery (same across Heavy/Light/Finesse)
+            if (MaxDefenseByMastery.TryGetValue(mastery, out int maxDef))
+                return maxDef;
+
+            return 0;
+        }
+
+        private double GetCantripDoubleBonus(int key)
+        {
+            double bonus = 0;
+            foreach (int spell in innateSpells)
+            {
+                if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && effect.Bonus > 0)
+                    bonus += effect.Bonus;
+            }
+            return bonus;
+        }
+
+        private static string FormatMD(int md)
+        {
+            if (md < -10) return null;
+            return md >= 0 ? "+" + md : "" + md;
+        }
+
+        // Max melee defense bonus % by mastery (same for Heavy/Light/Finesse)
+        private static readonly Dictionary<int, int> MaxDefenseByMastery = new Dictionary<int, int>
+        {
+            { 1, 20 },  // UA
+            { 2, 20 },  // Sword
+            { 3, 18 },  // Axe
+            { 4, 22 },  // Mace
+            { 5, 15 },  // Spear
+            { 6, 20 },  // Dagger
+            { 7, 25 },  // Staff
+        };
+
         #region OD Max Damage Tables
 
-        //                                                          0    250  300  325  350  370  400  420  430
-        private static readonly int[] MeleeWieldTiers =           { 0, 250, 300, 325, 350, 370, 400, 420, 430 };
-
-        private static readonly Dictionary<int, int[]> HeavyMax = new Dictionary<int, int[]>
+        private static readonly Dictionary<int, int> HeavyMax = new Dictionary<int, int>
         {
-            { 3, new[] { 26, 33, 40, 47, 54, 61, 68, 71, 74 } },  // Axe
-            { 6, new[] { 24, 31, 38, 45, 51, 58, 65, 68, 71 } },  // Dagger
-            { 4, new[] { 22, 29, 36, 43, 49, 56, 63, 66, 69 } },  // Mace
-            { 5, new[] { 25, 32, 39, 46, 52, 59, 66, 69, 72 } },  // Spear
-            { 2, new[] { 24, 31, 38, 45, 51, 58, 65, 68, 71 } },  // Sword
-            { 7, new[] { 23, 30, 36, 43, 50, 56, 63, 66, 70 } },  // Staff
-            { 1, new[] { 20, 26, 31, 37, 43, 48, 54, 56, 59 } },  // UA
+            { 3, 74 },  // Axe
+            { 6, 71 },  // Dagger
+            { 4, 69 },  // Mace
+            { 5, 72 },  // Spear
+            { 2, 71 },  // Sword
+            { 7, 70 },  // Staff
+            { 1, 59 },  // UA
         };
-        private static readonly Dictionary<int, int[]> HeavyMultiMax = new Dictionary<int, int[]>
+        private static readonly Dictionary<int, int> HeavyMultiMax = new Dictionary<int, int>
         {
-            { 6, new[] { 13, 16, 20, 23, 26, 30, 33, 36, 38 } },  // Dagger Multi
-            { 2, new[] { 12, 16, 19, 23, 26, 30, 33, 36, 38 } },  // Sword Multi
+            { 6, 38 },  // Dagger Multi
+            { 2, 38 },  // Sword Multi
         };
 
-        private static readonly Dictionary<int, int[]> LightMax = new Dictionary<int, int[]>
+        private static readonly Dictionary<int, int> LightMax = new Dictionary<int, int>
         {
-            { 3, new[] { 22, 28, 33, 39, 44, 50, 55, 57, 61 } },  // Axe
-            { 6, new[] { 18, 24, 29, 35, 40, 46, 51, 54, 58 } },  // Dagger
-            { 4, new[] { 19, 24, 29, 35, 40, 45, 50, 53, 57 } },  // Mace
-            { 5, new[] { 21, 26, 32, 37, 42, 48, 53, 56, 60 } },  // Spear
-            { 2, new[] { 20, 25, 31, 36, 41, 47, 52, 55, 58 } },  // Sword
-            { 7, new[] { 19, 24, 30, 35, 40, 46, 51, 54, 57 } },  // Staff
-            { 1, new[] { 17, 23, 27, 31, 35, 40, 44, 46, 48 } },  // UA
+            { 3, 61 },  // Axe
+            { 6, 58 },  // Dagger
+            { 4, 57 },  // Mace
+            { 5, 60 },  // Spear
+            { 2, 58 },  // Sword
+            { 7, 57 },  // Staff
+            { 1, 48 },  // UA
         };
-        private static readonly Dictionary<int, int[]> LightMultiMax = new Dictionary<int, int[]>
+        private static readonly Dictionary<int, int> LightMultiMax = new Dictionary<int, int>
         {
-            { 6, new[] { 7, 10, 13, 16, 18, 21, 24, 27, 28 } },   // Dagger Multi
-            { 2, new[] { 7, 10, 13, 16, 18, 21, 24, 25, 28 } },   // Sword Multi
+            { 6, 28 },  // Dagger Multi
+            { 2, 28 },  // Sword Multi
         };
 
-        private static readonly int[] LightJitteMax =               { 19, 24, 29, 34, 38, 43, 48, 52, 57 };
-        private static readonly int[] TwoHandedCleaverMax =         { 13, 17, 22, 26, 30, 35, 39, 42, 45 };
-        private static readonly int[] TwoHandedSpearMax =           { 14, 19, 24, 29, 33, 37, 42, 45, 48 };
-
-        //                                                            315  335  360  375  385
-        private static readonly int[] MissileWieldTiers =           { 315, 335, 360, 375, 385 };
-        private static readonly int[] BowElemMax =                  { 5, 9, 16, 19, 22 };
-        private static readonly int[] CrossbowElemMax =             { 5, 9, 16, 19, 22 };
-        private static readonly int[] ThrownElemMax =               { -1, -1, 16, 19, 22 };
-        private static readonly int[] BowDmgModMax =                { 140, 140, 140, 140, 140 };
-        private static readonly int[] CrossbowDmgModMax =           { 165, 165, 165, 165, 165 };
-        private static readonly int[] ThrownDmgModMax =             { 160, 160, 160, 160, 160 };
-
-        //                                                            355  375  385
-        private static readonly int[] CasterWieldTiers =            { 355, 375, 385 };
-        private static readonly int[] CasterMaxPct =                { 13, 16, 18 };
+        private const int LightJitteMax = 57;
+        private const int TwoHandedCleaverMax = 45;
+        private const int TwoHandedSpearMax = 48;
+        private const int CasterMax = 18;
 
         #endregion
 
