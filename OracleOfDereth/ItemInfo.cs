@@ -388,6 +388,8 @@ namespace OracleOfDereth
         private const int Key_MeleeDefenseBonus = 29;
         private const int Key_ManaCBonus = 144;
 
+        private bool IsEquipped => intValues.ContainsKey(10) && intValues[10] > 0;
+
         private int GetBuffedIntValue(int key, int defaultValue = 0)
         {
             if (!intValues.ContainsKey(key))
@@ -404,7 +406,12 @@ namespace OracleOfDereth
             foreach (int spell in innateSpells)
             {
                 if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
-                    value += effect.Bonus;
+                {
+                    if (effect.Bonus != 0)
+                        value += effect.Bonus;
+                    else if (IsEquipped && effect.Change != 0)
+                        value -= effect.Change;
+                }
             }
 
             return value;
@@ -430,12 +437,22 @@ namespace OracleOfDereth
 
             foreach (int spell in innateSpells)
             {
-                if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && Math.Abs(effect.Bonus - 0) > Double.Epsilon)
+                if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
                 {
-                    if (Math.Abs(effect.Change - 1) < Double.Epsilon)
-                        value *= effect.Bonus;
-                    else
-                        value += effect.Bonus;
+                    if (Math.Abs(effect.Bonus) > Double.Epsilon)
+                    {
+                        if (Math.Abs(effect.Change - 1) < Double.Epsilon)
+                            value *= effect.Bonus;
+                        else
+                            value += effect.Bonus;
+                    }
+                    else if (IsEquipped)
+                    {
+                        if (Math.Abs(effect.Change - 1) < Double.Epsilon)
+                            value /= effect.Change;
+                        else
+                            value -= effect.Change;
+                    }
                 }
             }
 
@@ -536,6 +553,10 @@ namespace OracleOfDereth
         // UB: od = CalcMissileDamage - (MaxElementalDmgBonus + 24 + MaxArrowDmg)
         private int? GetMissileOD()
         {
+            // Only calculate OD for top-tier weapons (wield req 355+ skill)
+            int wieldReqValue = wo.Values(LongValueKey.WieldReqValue, 0);
+            if (wieldReqValue < 355) return null;
+
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
 
             int arrowMax;
