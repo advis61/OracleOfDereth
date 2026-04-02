@@ -495,22 +495,19 @@ namespace OracleOfDereth
 
         private string GetODValue()
         {
-            if (wo.Values((LongValueKey)Key_CurrentWieldedLocation) > 0) return null;
+            int? od = null;
 
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon) return GetMeleeOD();
-            if (wo.ObjectClass == ObjectClass.MissileWeapon) return GetMissileOD();
-            if (wo.ObjectClass == ObjectClass.WandStaffOrb) return GetCasterOD();
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon) od = GetMeleeOD();
+            else if (wo.ObjectClass == ObjectClass.MissileWeapon) od = GetMissileOD();
+            else if (wo.ObjectClass == ObjectClass.WandStaffOrb) od = GetCasterOD();
 
-            return null;
+            if (od == null || od < -10) return null;
+            return od >= 0 ? "+" + od : "" + od;
         }
 
-        /// <summary>
-        /// Melee OD: accounts for variance tinks (granite vs iron) and compares against
-        /// the max damage for this specific weapon type/skill/wield req from the lookup table.
-        /// Formula: OD = (BuffedMaxDmg - varianceTinks) - tableMaxDmg
-        /// where varianceTinks = Log(maxVariance / actualVariance, 0.8)
-        /// </summary>
-        private string GetMeleeOD()
+        // UB: CalcMeleeDamage = GetBuffedIntValueKey(218103842) - varianceTinks
+        // UB: od = CalcMeleeDamage - GetMaxProperty(wo, WeaponProperty.MaxDmg)
+        private int? GetMeleeOD()
         {
             if (!doubleValues.ContainsKey(Key_Variance) || !intValues.ContainsKey(Key_MaxDamage))
                 return null;
@@ -519,43 +516,36 @@ namespace OracleOfDereth
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
             int multi = IsMultiStrike() ? 1 : 0;
 
-            double tableMaxDmg = LookupMaxProperty(skill, mastery, multi, e => e.MaxDmg);
-            double tableMaxVar = LookupMaxProperty(skill, mastery, multi, e => e.MaxVar);
-            if (tableMaxDmg <= 0) return null;
+            double maxDmg = LookupMaxProperty(skill, mastery, multi, e => e.MaxDmg);
+            double maxVar = LookupMaxProperty(skill, mastery, multi, e => e.MaxVar);
+            if (maxDmg <= 0) return null;
 
-            double actualVariance = doubleValues[Key_Variance];
+            double variance = doubleValues[Key_Variance];
             double varianceTinks = 0;
-            if (tableMaxVar > 0 && actualVariance > 0 && actualVariance < tableMaxVar)
-                varianceTinks = Math.Round(Math.Log(tableMaxVar / actualVariance, 0.8), 2);
+            if (maxVar > 0 && variance > 0 && variance < maxVar)
+                varianceTinks = Math.Round(Math.Log(maxVar / variance, 0.8), 2);
 
-            double calcDamage = GetBuffedIntValue(Key_MaxDamage) - varianceTinks;
-            double od = calcDamage - tableMaxDmg;
-            return FormatOD(od);
+            double calcMeleeDamage = GetBuffedIntValue(Key_MaxDamage) - varianceTinks;
+            return (int)Math.Round(calcMeleeDamage - maxDmg);
         }
 
-        /// <summary>
-        /// Missile OD: normalizes the weapon to a fully-tinked state, then compares
-        /// against the theoretical max (max elemental bonus + BD8 + max arrow damage).
-        /// Formula from UtilityBelt:
-        ///   CalcMissileDmg = (1 + (dmgMod + 4*remainingTinks)/100) * (elemBonus + buffedDmg + arrowMax) / maxTinkedMod
-        ///   OD = CalcMissileDmg - (maxElemBonus + 24 + arrowMax)
-        /// </summary>
-        private string GetMissileOD()
+        // UB: CalcMissileDamage = (1 + (dmgMod + 4*remainingTinks)/100) * (ElemBonus + buffedDmg + arrowMax) / maxTinkedMissileMod
+        // UB: od = CalcMissileDamage - (MaxElementalDmgBonus + 24 + MaxArrowDmg)
+        private int? GetMissileOD()
         {
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
 
             int arrowMax;
-            if (mastery == 8) arrowMax = 40;       // Bow
-            else if (mastery == 9) arrowMax = 53;   // Crossbow
-            else if (mastery == 10) arrowMax = 42;  // Thrown
+            if (mastery == 8) arrowMax = 40;
+            else if (mastery == 9) arrowMax = 53;
+            else if (mastery == 10) arrowMax = 42;
             else return null;
 
             int skill = GetWeaponSkill();
+            double maxDmgMod = LookupMaxProperty(skill, mastery, 0, e => e.MaxDmgMod);
+            double maxElemBonus = LookupMaxProperty(skill, mastery, 0, e => e.MaxElemBonus);
 
-            double tableMaxDmgMod = LookupMaxProperty(skill, mastery, 0, e => e.MaxDmgMod);
-            double tableMaxElemBonus = LookupMaxProperty(skill, mastery, 0, e => e.MaxElemBonus);
-
-            double dmgMod = (wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100;
+            double dmgMod = Math.Round((wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100);
             int numTimesTinkered = wo.Values(LongValueKey.NumberTimesTinkered, 0);
             double remainingTinks = 10;
 
@@ -577,45 +567,35 @@ namespace OracleOfDereth
                 remainingTinks = 0;
             }
 
-            double maxTinkedMissileMod = (tableMaxDmgMod + 100 + 4 * 9) / 100;
+            double maxTinkedMissileMod = (maxDmgMod + 100 + 4 * 9) / 100;
             if (maxTinkedMissileMod <= 0) return null;
 
-            int elemBonus = wo.Values(LongValueKey.ElementalDmgBonus, 0);
             double buffedDmg = GetBuffedIntValue(Key_MaxDamage);
             if (buffedDmg <= 10) buffedDmg += 24;
+
+            int elemBonus = intValues.ContainsKey(Key_ElementalDmgBonus) ? intValues[Key_ElementalDmgBonus] : 0;
 
             double calcMissileDmg = (1 + (dmgMod + (4 * remainingTinks)) / 100)
                                     * (elemBonus + buffedDmg + arrowMax)
                                     / maxTinkedMissileMod;
 
-            double od = calcMissileDmg - (tableMaxElemBonus + 24 + arrowMax);
-            return FormatOD(od);
+            double od = calcMissileDmg - (maxElemBonus + 24 + arrowMax);
+            return (int)Math.Round(od);
         }
 
-        /// <summary>
-        /// Caster OD: compares the buffed elemental damage vs monsters % against the
-        /// max for this wand's skill/wield req from the lookup table.
-        /// </summary>
-        private string GetCasterOD()
+        // UB: ((GetBuffedDoubleValueKey(ElementalDamageVersusMonsters) - 1) * 100) compared to table max
+        private int? GetCasterOD()
         {
             int skill = GetWeaponSkill();
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
 
-            double tableMaxVsMon = LookupMaxProperty(skill, mastery, 0, e => e.MaxElemVsMon);
-            if (tableMaxVsMon <= 0) return null;
+            double maxVsMon = LookupMaxProperty(skill, mastery, 0, e => e.MaxElemVsMon);
+            if (maxVsMon <= 0) return null;
 
-            double buffedPctValue = GetBuffedDoubleValue(Key_ElementalDmgVsMonsters);
-            double maxPct = Math.Round((tableMaxVsMon - 1) * 100);
-            int buffedPct = (int)Math.Round((buffedPctValue - 1) * 100);
+            double buffedPct = (GetBuffedDoubleValue(Key_ElementalDmgVsMonsters) - 1) * 100;
+            double maxPct = (maxVsMon - 1) * 100;
 
-            return FormatOD(buffedPct - maxPct);
-        }
-
-        private static string FormatOD(double od)
-        {
-            double rounded = Math.Round(od, 2);
-            if (rounded < -10) return null;
-            return rounded >= 0 ? "+" + rounded : "" + rounded;
+            return (int)Math.Round(buffedPct - maxPct);
         }
 
         private int GetWeaponSkill()
