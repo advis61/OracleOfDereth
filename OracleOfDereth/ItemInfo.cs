@@ -485,12 +485,13 @@ namespace OracleOfDereth
         #endregion
 
         #region OD (Over Damage) Calculations
+        // Algorithm ported from UtilityBelt's ItemInfo / MyWorldObject / BestValuesDatatable.
+        // Uses a comprehensive lookup table keyed by (skill, mastery, multiStrike, wieldReq)
+        // to determine max weapon properties, then compares the actual weapon against those maxes.
 
-        // OD+0 = top roll for that weapon type. OD+N = N above top roll. OD-N = N below.
-        // Not shown when equipped (character buffs inflate stats) or below OD-10.
-
-        private const int Key_EquipSkill = 218103840;
         private const int Key_CurrentWieldedLocation = 10;
+        private const int Key_WeaponSkill = 159;     // The weapon's combat skill (Heavy=44, Light=45, etc.)
+        private const int Key_CombatUse = 47;         // Weapon type for multi-strike detection
 
         private string GetODValue()
         {
@@ -503,76 +504,131 @@ namespace OracleOfDereth
             return null;
         }
 
+        /// <summary>
+        /// Melee OD: accounts for variance tinks (granite vs iron) and compares against
+        /// the max damage for this specific weapon type/skill/wield req from the lookup table.
+        /// Formula: OD = (BuffedMaxDmg - varianceTinks) - tableMaxDmg
+        /// where varianceTinks = Log(maxVariance / actualVariance, 0.8)
+        /// </summary>
         private string GetMeleeOD()
         {
-            int equipSkill = intValues.ContainsKey(Key_EquipSkill) ? intValues[Key_EquipSkill] : 0;
-            int wieldSkill = wo.Values(LongValueKey.WieldReqAttribute);
-            int skill = equipSkill > 0 ? equipSkill : wieldSkill;
+            if (!doubleValues.ContainsKey(Key_Variance) || !intValues.ContainsKey(Key_MaxDamage))
+                return null;
 
+            int skill = GetWeaponSkill();
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
-            if (mastery == 0) return null;
+            int multi = IsMultiStrike() ? 1 : 0;
 
-            int rawDmg = wo.Values(LongValueKey.MaxDamage);
-            int tableMax = 0;
+            double tableMaxDmg = LookupMaxProperty(skill, mastery, multi, e => e.MaxDmg);
+            double tableMaxVar = LookupMaxProperty(skill, mastery, multi, e => e.MaxVar);
+            if (tableMaxDmg <= 0) return null;
 
-            if (skill == 0x29 || mastery == 11) // Two Handed
-                tableMax = IsTwoHandedSpear() ? TwoHandedSpearMax : TwoHandedCleaverMax;
-            else if (skill == 0x2C) // Heavy
-            {
-                if (HeavyMultiMax.ContainsKey(mastery) && rawDmg <= HeavyMultiMax[mastery] + 15)
-                    tableMax = HeavyMultiMax[mastery];
-                else if (HeavyMax.ContainsKey(mastery))
-                    tableMax = HeavyMax[mastery];
-            }
-            else if (skill == 0x2D || skill == 0x2E) // Light / Finesse
-            {
-                if (mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0)
-                    tableMax = LightJitteMax;
-                else if (LightMultiMax.ContainsKey(mastery) && rawDmg <= LightMultiMax[mastery] + 15)
-                    tableMax = LightMultiMax[mastery];
-                else if (LightMax.ContainsKey(mastery))
-                    tableMax = LightMax[mastery];
-            }
-            else return null;
+            double actualVariance = doubleValues[Key_Variance];
+            double varianceTinks = 0;
+            if (tableMaxVar > 0 && actualVariance > 0 && actualVariance < tableMaxVar)
+                varianceTinks = Math.Round(Math.Log(tableMaxVar / actualVariance, 0.8), 2);
 
-            if (tableMax <= 0) return null;
-            return FormatOD(GetBuffedIntValue(Key_MaxDamage) - tableMax);
+            double calcDamage = GetBuffedIntValue(Key_MaxDamage) - varianceTinks;
+            double od = calcDamage - tableMaxDmg;
+            return FormatOD(od);
         }
 
+        /// <summary>
+        /// Missile OD: normalizes the weapon to a fully-tinked state, then compares
+        /// against the theoretical max (max elemental bonus + BD8 + max arrow damage).
+        /// Formula from UtilityBelt:
+        ///   CalcMissileDmg = (1 + (dmgMod + 4*remainingTinks)/100) * (elemBonus + buffedDmg + arrowMax) / maxTinkedMod
+        ///   OD = CalcMissileDmg - (maxElemBonus + 24 + arrowMax)
+        /// </summary>
         private string GetMissileOD()
         {
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
 
-            // Each missile type has its own dmgPct-to-elem conversion factor (K) and reference (refC).
-            // K represents how many % of damage modifier equals 1 elemental damage point.
-            double conversionK, refC;
-            if (mastery == 8)       { conversionK = 3.5; refC = 423.0 / 7.0; } // Bow
-            else if (mastery == 9)  { conversionK = 3.5; refC = 473.0 / 7.0; } // Crossbow (estimated)
-            else if (mastery == 10) { conversionK = 2.5; refC = 86.0; }        // Thrown
+            int arrowMax;
+            if (mastery == 8) arrowMax = 40;       // Bow
+            else if (mastery == 9) arrowMax = 53;   // Crossbow
+            else if (mastery == 10) arrowMax = 42;  // Thrown
             else return null;
 
-            int elemBonus = wo.Values(LongValueKey.ElementalDmgBonus, 0);
-            int cantripBonus = GetCantripIntBonus(Key_MaxDamage);
-            double dmgPct = (wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100;
+            int skill = GetWeaponSkill();
 
-            double score = elemBonus + cantripBonus + dmgPct / conversionK;
-            int od = (int)Math.Floor(score - refC);
+            double tableMaxDmgMod = LookupMaxProperty(skill, mastery, 0, e => e.MaxDmgMod);
+            double tableMaxElemBonus = LookupMaxProperty(skill, mastery, 0, e => e.MaxElemBonus);
+
+            double dmgMod = (wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100;
+            int numTimesTinkered = wo.Values(LongValueKey.NumberTimesTinkered, 0);
+            double remainingTinks = 10;
+
+            if (wo.Values(DoubleValueKey.SalvageWorkmanship, -1) >= 0)
+            {
+                if (numTimesTinkered > 0)
+                {
+                    remainingTinks -= numTimesTinkered;
+                    if (wo.Values(LongValueKey.Imbued, 0) == 0)
+                        remainingTinks--;
+                }
+                else
+                {
+                    remainingTinks--;
+                }
+            }
+            else
+            {
+                remainingTinks = 0;
+            }
+
+            double maxTinkedMissileMod = (tableMaxDmgMod + 100 + 4 * 9) / 100;
+            if (maxTinkedMissileMod <= 0) return null;
+
+            int elemBonus = wo.Values(LongValueKey.ElementalDmgBonus, 0);
+            double buffedDmg = GetBuffedIntValue(Key_MaxDamage);
+            if (buffedDmg <= 10) buffedDmg += 24;
+
+            double calcMissileDmg = (1 + (dmgMod + (4 * remainingTinks)) / 100)
+                                    * (elemBonus + buffedDmg + arrowMax)
+                                    / maxTinkedMissileMod;
+
+            double od = calcMissileDmg - (tableMaxElemBonus + 24 + arrowMax);
             return FormatOD(od);
         }
 
+        /// <summary>
+        /// Caster OD: compares the buffed elemental damage vs monsters % against the
+        /// max for this wand's skill/wield req from the lookup table.
+        /// </summary>
         private string GetCasterOD()
         {
-            int maxPct = CasterMax;
+            int skill = GetWeaponSkill();
+            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+
+            double tableMaxVsMon = LookupMaxProperty(skill, mastery, 0, e => e.MaxElemVsMon);
+            if (tableMaxVsMon <= 0) return null;
+
             double buffedPctValue = GetBuffedDoubleValue(Key_ElementalDmgVsMonsters);
+            double maxPct = Math.Round((tableMaxVsMon - 1) * 100);
             int buffedPct = (int)Math.Round((buffedPctValue - 1) * 100);
 
             return FormatOD(buffedPct - maxPct);
         }
 
-        private static string FormatOD(int od)
+        private static string FormatOD(double od)
         {
-            if (od < -10) return null;
-            return od >= 0 ? "+" + od : "" + od;
+            double rounded = Math.Round(od, 2);
+            if (rounded < -10) return null;
+            return rounded >= 0 ? "+" + rounded : "" + rounded;
+        }
+
+        private int GetWeaponSkill()
+        {
+            return intValues.ContainsKey(Key_WeaponSkill) ? intValues[Key_WeaponSkill] : 0;
+        }
+
+        private bool IsMultiStrike()
+        {
+            int combatUse = intValues.ContainsKey(Key_CombatUse) ? intValues[Key_CombatUse] : 0;
+            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            return combatUse == 160 || combatUse == 166 || combatUse == 486
+                || (combatUse == 4 && mastery == 11);
         }
 
         private int GetCantripIntBonus(int key)
@@ -631,10 +687,7 @@ namespace OracleOfDereth
                 return 20;
 
             // Two-Handed weapons
-            int equipSkill = intValues.ContainsKey(Key_EquipSkill) ? intValues[Key_EquipSkill] : 0;
-            int wieldSkill = wo.Values(LongValueKey.WieldReqAttribute);
-            int skill = equipSkill > 0 ? equipSkill : wieldSkill;
-
+            int skill = GetWeaponSkill();
             if (skill == 0x29 || mastery == 11)
                 return IsTwoHandedSpear() ? 20 : 18;
 
@@ -678,44 +731,83 @@ namespace OracleOfDereth
             { 7, 25 },  // Staff
         };
 
-        #region OD Max Damage Tables
+        #region Weapon Max Values Lookup Table (from UtilityBelt BestValuesDatatable)
 
-        private static readonly Dictionary<int, int> HeavyMax = new Dictionary<int, int>
+        private struct WeaponMax
         {
-            { 3, 74 },  // Axe
-            { 6, 71 },  // Dagger
-            { 4, 69 },  // Mace
-            { 5, 72 },  // Spear
-            { 2, 71 },  // Sword
-            { 7, 70 },  // Staff
-            { 1, 59 },  // UA
-        };
-        private static readonly Dictionary<int, int> HeavyMultiMax = new Dictionary<int, int>
-        {
-            { 6, 38 },  // Dagger Multi
-            { 2, 38 },  // Sword Multi
-        };
+            public readonly int Skill, Mastery, Multi;
+            public readonly double MaxDmg, MaxVar, MaxDmgMod, MaxElemBonus, MaxElemVsMon;
 
-        private static readonly Dictionary<int, int> LightMax = new Dictionary<int, int>
-        {
-            { 3, 61 },  // Axe
-            { 6, 58 },  // Dagger
-            { 4, 57 },  // Mace
-            { 5, 60 },  // Spear
-            { 2, 58 },  // Sword
-            { 7, 57 },  // Staff
-            { 1, 48 },  // UA
-        };
-        private static readonly Dictionary<int, int> LightMultiMax = new Dictionary<int, int>
-        {
-            { 6, 28 },  // Dagger Multi
-            { 2, 28 },  // Sword Multi
-        };
+            public WeaponMax(int skill, int mastery, int multi,
+                             double maxDmg = 0, double maxVar = 0, double maxDmgMod = 0,
+                             double maxElemBonus = 0, double maxElemVsMon = 0)
+            {
+                Skill = skill; Mastery = mastery; Multi = multi;
+                MaxDmg = maxDmg; MaxVar = maxVar; MaxDmgMod = maxDmgMod;
+                MaxElemBonus = maxElemBonus; MaxElemVsMon = maxElemVsMon;
+            }
+        }
 
-        private const int LightJitteMax = 57;
-        private const int TwoHandedCleaverMax = 45;
-        private const int TwoHandedSpearMax = 48;
-        private const int CasterMax = 18;
+        private static double LookupMaxProperty(int skill, int mastery, int multi, Func<WeaponMax, double> selector)
+        {
+            foreach (var e in WeaponMaxTable)
+            {
+                if (e.Skill == skill && e.Mastery == mastery && e.Multi == multi)
+                    return selector(e);
+            }
+            return 0;
+        }
+
+        // Top-tier max values only (highest wield req for each weapon type)
+        private static readonly WeaponMax[] WeaponMaxTable =
+        {
+            // Heavy Weaponry (skill 44)
+            new WeaponMax(44, 3, 0, 74, .90),   // Axe
+            new WeaponMax(44, 6, 0, 71, .47),   // Dagger
+            new WeaponMax(44, 6, 1, 38, .40),   // Multi-Strike Dagger
+            new WeaponMax(44, 4, 0, 69, .30),   // Mace
+            new WeaponMax(44, 5, 0, 72, .59),   // Spear
+            new WeaponMax(44, 2, 0, 71, .47),   // Sword
+            new WeaponMax(44, 2, 1, 38, .40),   // Multi-Strike Sword
+            new WeaponMax(44, 7, 0, 70, .38),   // Staff
+            new WeaponMax(44, 1, 0, 59, .44),   // UA
+
+            // Light Weaponry (skill 45)
+            new WeaponMax(45, 3, 0, 61, .80),   // Axe
+            new WeaponMax(45, 6, 0, 58, .42),   // Dagger
+            new WeaponMax(45, 6, 1, 28, .24),   // Multi-Strike Dagger
+            new WeaponMax(45, 4, 0, 57, .23),   // Mace
+            new WeaponMax(45, 5, 0, 60, .65),   // Spear
+            new WeaponMax(45, 2, 0, 58, .42),   // Sword
+            new WeaponMax(45, 2, 1, 28, .24),   // Multi-Strike Sword
+            new WeaponMax(45, 7, 0, 57, .325),  // Staff
+            new WeaponMax(45, 1, 0, 48, .43),   // UA
+
+            // Finesse Weaponry (skill 46)
+            new WeaponMax(46, 3, 0, 61, .80),   // Axe
+            new WeaponMax(46, 6, 0, 58, .42),   // Dagger
+            new WeaponMax(46, 6, 1, 28, .24),   // Multi-Strike Dagger
+            new WeaponMax(46, 4, 0, 57, .23),   // Mace
+            new WeaponMax(46, 5, 0, 60, .65),   // Spear
+            new WeaponMax(46, 2, 0, 58, .42),   // Sword
+            new WeaponMax(46, 2, 1, 28, .24),   // Multi-Strike Sword
+            new WeaponMax(46, 7, 0, 57, .325),  // Staff
+            new WeaponMax(46, 1, 0, 48, .43),   // UA
+
+            // Two Handed Weaponry (skill 41)
+            new WeaponMax(41, 11, 1, 45, .30),  // Cleaver (multi-strike)
+            new WeaponMax(41, 11, 0, 48, .35),  // Two-Handed Spear
+
+            // Missile Weaponry (skill 47)
+            new WeaponMax(47,  8, 0, maxDmgMod: 140, maxElemBonus: 22),  // Bow
+            new WeaponMax(47,  9, 0, maxDmgMod: 165, maxElemBonus: 22),  // Crossbow
+            new WeaponMax(47, 10, 0, maxDmgMod: 160, maxElemBonus: 22),  // Thrown
+
+            // Wands
+            new WeaponMax(34,  0, 0, maxElemVsMon: 1.18),  // War Magic
+            new WeaponMax(43,  0, 0, maxElemVsMon: 1.18),  // Void Magic
+            new WeaponMax(43, 12, 0, maxElemVsMon: 1.18),  // Void VR wand
+        };
 
         #endregion
 
