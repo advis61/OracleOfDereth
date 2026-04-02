@@ -48,16 +48,18 @@ namespace OracleOfDereth
             ItemInfo info = new ItemInfo(item);
 
             string odValue = info.GetODValue();
-            string mdValue = info.GetMDValue();
+            string oaValue = info.GetOAValue();
+            string omValue = info.GetOMValue();
 
-            if (odValue == null && mdValue == null) return false;
+            if (odValue == null && oaValue == null && omValue == null) return false;
 
             StringBuilder sb = new StringBuilder();
             sb.Append(item.Name);
             sb.Append(" [");
-            if (odValue != null) sb.Append("OD: " + odValue);
-            if (odValue != null && mdValue != null) sb.Append(" | ");
-            if (mdValue != null) sb.Append("MD: " + mdValue);
+            bool needSep = false;
+            if (odValue != null) { sb.Append("OD " + odValue); needSep = true; }
+            if (oaValue != null) { if (needSep) sb.Append(" | "); sb.Append("OA " + oaValue); needSep = true; }
+            if (omValue != null) { if (needSep) sb.Append(" | "); sb.Append("OM " + omValue); }
             sb.Append("]");
 
             Util.Chat(sb.ToString(), Util.ColorCyan, "");
@@ -89,16 +91,18 @@ namespace OracleOfDereth
                     sb.Append(" (Unknown Mastery " + wo.Values((LongValueKey)353) + ")");
             }
 
-            // OD and MD Values (weapons only)
+            // OD, OA, and OM Values (weapons only)
             string odValue = GetODValue();
-            string mdValue = GetMDValue();
+            string oaValue = GetOAValue();
+            string omValue = GetOMValue();
 
-            if (odValue != null || mdValue != null)
+            if (odValue != null || oaValue != null || omValue != null)
             {
                 sb.Append(" [");
-                if (odValue != null) sb.Append("OD: " + odValue);
-                if (odValue != null && mdValue != null) sb.Append(" | ");
-                if (mdValue != null) sb.Append("MD: " + mdValue);
+                bool needSep = false;
+                if (odValue != null) { sb.Append("OD: " + odValue); needSep = true; }
+                if (oaValue != null) { if (needSep) sb.Append(" | "); sb.Append("OA: " + oaValue); needSep = true; }
+                if (omValue != null) { if (needSep) sb.Append(" | "); sb.Append("OM: " + omValue); }
                 sb.Append("]");
             }
 
@@ -489,7 +493,6 @@ namespace OracleOfDereth
         // Uses a comprehensive lookup table keyed by (skill, mastery, multiStrike, wieldReq)
         // to determine max weapon properties, then compares the actual weapon against those maxes.
 
-        private const int Key_CurrentWieldedLocation = 10;
         private const int Key_WeaponSkill = 159;     // The weapon's combat skill (Heavy=44, Light=45, etc.)
         private const int Key_CombatUse = 47;         // Weapon type for multi-strike detection
 
@@ -567,7 +570,7 @@ namespace OracleOfDereth
                 remainingTinks = 0;
             }
 
-            double maxTinkedMissileMod = (maxDmgMod + 100 + 4 * 9) / 100;
+            double maxTinkedMissileMod = (maxDmgMod + 100 + 4 * remainingTinks) / 100;
             if (maxTinkedMissileMod <= 0) return null;
 
             double buffedDmg = GetBuffedIntValue(Key_MaxDamage);
@@ -630,16 +633,13 @@ namespace OracleOfDereth
 
         #endregion
 
-        #region MD (Melee Defense) Calculations
+        #region OM (Over Melee Defense) Calculations
 
-        // MD+0 = max defense roll for that weapon type. MD+N = N% above max.
-        // Not shown when equipped or below MD-10.
+        // OM+0 = max defense roll for that weapon type. OM+N = N% above max.
+        // Not shown when equipped or below OM-10.
 
-        private string GetMDValue()
+        private string GetOMValue()
         {
-            if (wo.Values((LongValueKey)Key_CurrentWieldedLocation) > 0)
-                return null;
-
             if (wo.ObjectClass != ObjectClass.MeleeWeapon && wo.ObjectClass != ObjectClass.MissileWeapon && wo.ObjectClass != ObjectClass.WandStaffOrb)
                 return null;
 
@@ -652,13 +652,13 @@ namespace OracleOfDereth
             int totalDef = (int)Math.Round(rawDefPct + cantripDefPct);
 
             // Determine max defense for this weapon type
-            int maxDef = GetMaxDefense();
+            int maxDef = GetMaxMeleeDefense();
             if (maxDef <= 0) return null;
 
-            return FormatMD(totalDef - maxDef);
+            return FormatOM(totalDef - maxDef);
         }
 
-        private int GetMaxDefense()
+        private int GetMaxMeleeDefense()
         {
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
 
@@ -676,7 +676,7 @@ namespace OracleOfDereth
                 return 25;
 
             // Melee weapons by mastery (same across Heavy/Light/Finesse)
-            if (MaxDefenseByMastery.TryGetValue(mastery, out int maxDef))
+            if (MaxMeleeDefenseByMastery.TryGetValue(mastery, out int maxDef))
                 return maxDef;
 
             return 0;
@@ -693,14 +693,14 @@ namespace OracleOfDereth
             return bonus;
         }
 
-        private static string FormatMD(int md)
+        private static string FormatOM(int md)
         {
             if (md < -10) return null;
             return md >= 0 ? "+" + md : "" + md;
         }
 
         // Max melee defense bonus % by mastery (same for Heavy/Light/Finesse)
-        private static readonly Dictionary<int, int> MaxDefenseByMastery = new Dictionary<int, int>
+        private static readonly Dictionary<int, int> MaxMeleeDefenseByMastery = new Dictionary<int, int>
         {
             { 1, 20 },  // UA
             { 2, 20 },  // Sword
@@ -710,6 +710,69 @@ namespace OracleOfDereth
             { 6, 20 },  // Dagger
             { 7, 25 },  // Staff
         };
+
+        #endregion
+
+        #region OA (Over Attack) Calculations
+
+        // OA+0 = max attack bonus for that weapon type. OA+N = N% above max.
+        // Only applies to melee weapons.
+
+        private string GetOAValue()
+        {
+            if (wo.ObjectClass != ObjectClass.MeleeWeapon) return null;
+
+            int? oa = GetMeleeOA();
+            if (oa == null || oa < -10) return null;
+            return oa >= 0 ? "+" + oa : "" + oa;
+        }
+
+        private int? GetMeleeOA()
+        {
+            if (!doubleValues.ContainsKey(Key_AttackBonus))
+                return null;
+
+            int maxAtk = GetMaxAttack();
+            if (maxAtk <= 0) return null;
+
+            double buffedPct = Math.Round((GetBuffedDoubleValue(Key_AttackBonus, 1) - 1) * 100);
+
+            return (int)Math.Round(buffedPct - maxAtk);
+        }
+
+        private int GetMaxAttack()
+        {
+            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+
+            // Two-Handed weapons
+            int skill = GetWeaponSkill();
+            if (skill == 0x29 || mastery == 11)
+                return IsTwoHandedSpear() ? 20 : 22;
+
+            // Finesse Jitte (special case: 15% instead of normal Mace 18%)
+            if ((skill == 0x2E) && mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0)
+                return 15;
+
+            // Melee weapons by mastery (same across Heavy/Light/Finesse)
+            if (MaxAttackByMastery.TryGetValue(mastery, out int maxAtk))
+                return maxAtk;
+
+            return 0;
+        }
+
+        // Max melee attack bonus % by mastery (same for Heavy/Light/Finesse)
+        private static readonly Dictionary<int, int> MaxAttackByMastery = new Dictionary<int, int>
+        {
+            { 1, 20 },  // UA
+            { 2, 20 },  // Sword
+            { 3, 22 },  // Axe
+            { 4, 18 },  // Mace
+            { 5, 25 },  // Spear
+            { 6, 20 },  // Dagger
+            { 7, 15 },  // Staff
+        };
+
+        #endregion
 
         #region Weapon Max Values Lookup Table (from UtilityBelt BestValuesDatatable)
 
@@ -788,8 +851,6 @@ namespace OracleOfDereth
             new WeaponMax(43,  0, 0, maxElemVsMon: 1.18),  // Void Magic
             new WeaponMax(43, 12, 0, maxElemVsMon: 1.18),  // Void VR wand
         };
-
-        #endregion
 
         #endregion
 
