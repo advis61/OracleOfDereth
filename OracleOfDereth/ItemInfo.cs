@@ -28,6 +28,23 @@ namespace OracleOfDereth
         public bool IsSummon => wo.ObjectClass == ObjectClass.Misc &&
                                 wo.Values(LongValueKey.UsesTotal) == 50 &&
                                 (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
+        public bool IsAetheria => wo.Name.Contains("Aetheria");
+
+        public string GetAetheriaSurge()
+        {
+            FileService service = CoreManager.Current.Filter<FileService>();
+            for (int i = 0; i < wo.SpellCount; i++)
+            {
+                Decal.Filters.Spell spell = service.SpellTable.GetById(wo.Spell(i));
+                if (spell == null) continue;
+                string name = spell.Name;
+                if (name.Contains("Destruction")) return "Destruction";
+                if (name.Contains("Protection")) return "Protection";
+                if (name.Contains("Regeneration")) return "Regeneration";
+                if (name.Contains("Mana")) return "Mana";
+            }
+            return "";
+        }
         private readonly List<int> activeSpells = new List<int>();
         private readonly List<int> innateSpells = new List<int>();
         private readonly Dictionary<int, int> intValues = new Dictionary<int, int>();
@@ -120,6 +137,26 @@ namespace OracleOfDereth
             int? om = GetOMValue();
             if (om == null || om < -15 || om > 30) return null;
             return "MD " + FormatOValue((int)om);
+        }
+
+        public string GetSetName()
+        {
+            int set = wo.Values((LongValueKey)265, 0);
+            if (set != 0 && AttributeSetInfo.TryGetValue(set, out string setName))
+                return setName.Replace("Sigil of ", "").Replace("'s", "").Replace(" Proof Set", "").Replace(" Set", "").Trim();
+            return "";
+        }
+
+        public string GetSummonDamage()
+        {
+            Summon summon = new() { Item = wo };
+            return $"DMG {summon.DamageScore()}%";
+        }
+
+        public string GetSummonDefense()
+        {
+            Summon summon = new() { Item = wo };
+            return $"DEF {summon.DefenseScore()}%";
         }
 
         public string GetRatingsString()

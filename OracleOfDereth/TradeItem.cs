@@ -232,25 +232,6 @@ namespace OracleOfDereth
             });
         }
 
-        private static string GetSetName(ItemInfo info)
-        {
-            int set = info.wo.Values((LongValueKey)265, 0);
-            if (set != 0 && ItemInfo.AttributeSetInfo.TryGetValue(set, out string setName))
-                return setName.Replace("'s", "").Replace(" Proof Set", "").Replace(" Set", "").Trim();
-            return "";
-        }
-
-        private static string GetSummonScores(WorldObject wo)
-        {
-            Summon summon = new() { Item = wo };
-            return $"DMG {summon.DamageScore()}%";
-        }
-
-        private static string GetSummonDefense(WorldObject wo)
-        {
-            Summon summon = new() { Item = wo };
-            return $"DEF {summon.DefenseScore()}%";
-        }
 
         private static string GetSummaryCol1(ItemInfo info)
         {
@@ -258,7 +239,14 @@ namespace OracleOfDereth
             if (info.IsCloak) return "Cloak";
             if (info.IsSummon) return "Summon";
             if (info.IsArmorClothing || info.IsJewelry) return info.GetSlotName();
-            if (info.wo.Name.Contains("Aetheria")) return "Aetheria";
+            if (info.IsAetheria)
+            {
+                string name = info.wo.Name;
+                if (name.Contains("Blue")) return "Blue";
+                if (name.Contains("Yellow")) return "Yellow";
+                if (name.Contains("Red")) return "Red";
+                return "Aetheria";
+            }
             return info.wo.ObjectClass.ToString();
         }
 
@@ -266,8 +254,9 @@ namespace OracleOfDereth
         {
             if (info.IsWeapon) return info.GetODString() ?? "";
             if (info.IsCloak) return info.GetCloakProc();
-            if (info.IsSummon) return GetSummonScores(info.wo);
-            if (info.IsArmorClothing) return GetSetName(info);
+            if (info.IsSummon) return info.GetSummonDamage();
+            if (info.IsAetheria) return info.GetSetName();
+            if (info.IsArmorClothing) return info.GetSetName();
             if (info.IsJewelry) return info.GetRatingsString();
             return "";
         }
@@ -276,7 +265,8 @@ namespace OracleOfDereth
         {
             if (info.IsWeapon) return info.GetOAString() ?? "";
             if (info.IsCloak) return info.GetRatingsString();
-            if (info.IsSummon) return GetSummonDefense(info.wo);
+            if (info.IsSummon) return info.GetSummonDefense();
+            if (info.IsAetheria) return info.GetAetheriaSurge();
             if (info.IsArmorClothing) return info.GetRatingsString();
             return "";
         }
