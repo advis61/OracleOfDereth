@@ -46,24 +46,31 @@ namespace OracleOfDereth
                 return false;
 
             ItemInfo info = new ItemInfo(item);
+            Util.Chat(info.ToString(), Util.ColorCyan, "");
 
-            string odValue = info.GetODValue();
-            string oaValue = info.GetOAValue();
-            string omValue = info.GetOMValue();
+            string odString = info.ToODString();
+            if (odString == null) return false;
 
-            if (odValue == null && oaValue == null && omValue == null) return false;
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append(item.Name);
-            sb.Append(" [");
-            bool needSep = false;
-            if (odValue != null) { sb.Append("OD " + odValue); needSep = true; }
-            if (oaValue != null) { if (needSep) sb.Append(" | "); sb.Append("OA " + oaValue); needSep = true; }
-            if (omValue != null) { if (needSep) sb.Append(" | "); sb.Append("OM " + omValue); }
-            sb.Append("]");
-
-            Util.Chat(sb.ToString(), Util.ColorCyan, "");
+            Util.Chat(item.Name + " " + odString, Util.ColorCyan, "");
             return true;
+        }
+
+        private string ToODString()
+        {
+            string odValue = GetODValue();
+            string oaValue = GetOAValue();
+            string omValue = GetOMValue();
+
+            bool isWand = wo.ObjectClass == ObjectClass.WandStaffOrb;
+
+            if (odValue == null && (!isWand || omValue == null)) return null;
+
+            var parts = new List<string>();
+            if (odValue != null) parts.Add("OD: " + odValue);
+            if (oaValue != null) parts.Add("OA: " + oaValue);
+            if (omValue != null) parts.Add("OM: " + omValue);
+
+            return "[" + string.Join(" | ", parts) + "]";
         }
 
         public override string ToString()
@@ -664,13 +671,10 @@ namespace OracleOfDereth
             if (wo.ObjectClass != ObjectClass.MeleeWeapon && wo.ObjectClass != ObjectClass.MissileWeapon && wo.ObjectClass != ObjectClass.WandStaffOrb)
                 return null;
 
-            // Raw defense % from the item
-            double rawDefPct = Math.Round((wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) - 1) * 100);
-            if (rawDefPct <= 0) return null;
+            double buffedDefBonus = GetBuffedDoubleValue(Key_MeleeDefenseBonus);
+            if (buffedDefBonus <= 0) return null;
 
-            // Add Defender cantrip bonus
-            double cantripDefPct = GetCantripDoubleBonus(Key_MeleeDefenseBonus) * 100;
-            int totalDef = (int)Math.Round(rawDefPct + cantripDefPct);
+            int totalDef = (int)Math.Round((buffedDefBonus - 1) * 100);
 
             // Determine max defense for this weapon type
             int maxDef = GetMaxMeleeDefense();
