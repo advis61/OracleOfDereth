@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0"?>
-<view icon="8894" title="Oracle Of Dereth" width="200" height="345">
+<view icon="8894" title="Oracle Of Dereth" width="210" height="345">
 	<control progid="DecalControls.Notebook" name="MainViewNotebook">
 		<page label="Status">
 			<control progid="DecalControls.Notebook" name="StatusViewNotebook">
@@ -84,6 +84,23 @@
 						<control progid="DecalControls.List" name="FellowsList" left="0" top="185" width="640" height="165">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="134" />
 							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="90" />
+							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="1" />
+						</control>
+					</control>
+				</page>
+				<page label="Trade">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="TradeText" left="5" top="5" width="300" height="20" text="Trade Items: 0 selected"/>
+						<control progid="DecalControls.PushButton" name="TradeAdd" left="5" top="30" width="55" height="24" text="Add"/>
+						<control progid="DecalControls.PushButton" name="TradeAddAll" left="65" top="30" width="55" height="24" text="Add All"/>
+						<control progid="DecalControls.PushButton" name="TradeClear" left="125" top="30" width="55" height="24" text="Clear"/>
+						<control progid="DecalControls.CheckBox" name="TradeAddSelected" left="190" top="33" width="180" height="20" text="Add selected" checked="false"/>
+						<control progid="DecalControls.PushButton" name="TradeCopy" left="5" top="59" width="137" height="24" text="Copy to Clipboard"/>
+						<control progid="DecalControls.PushButton" name="TradeExport" left="147" top="59" width="137" height="24" text="Export to Text File"/>
+						<control progid="DecalControls.StaticText" name="TradeLabel" left="1" top="88" width="300" height="17" text="Trade Items"/>
+						<control progid="DecalControls.List" name="TradeList" left="0" top="108" width="640" height="2000">
+							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="200" />
 							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="1" />
 						</control>
 					</control>

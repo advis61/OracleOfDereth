@@ -75,6 +75,16 @@ namespace OracleOfDereth
 
         public HudList FellowsList { get; private set; }
 
+        // Trade
+        public HudStaticText TradeText { get; private set; }
+        public HudCheckBox TradeAddSelected { get; private set; }
+        public HudButton TradeAdd { get; private set; }
+        public HudButton TradeAddAll { get; private set; }
+        public HudButton TradeClear { get; private set; }
+        public HudButton TradeCopy { get; private set; }
+        public HudButton TradeExport { get; private set; }
+        public HudList TradeList { get; private set; }
+
         // Nearbys
         public HudList NearbyList { get; private set; }
         public HudCombo NearbySort { get; private set; }
@@ -143,10 +153,11 @@ namespace OracleOfDereth
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
         {
             // Status Tab
-            { 1_00, 200 }, // HUD
+            { 1_00, 210 }, // HUD
             { 1_01, 460 }, // Buffs
             { 1_02, 290 }, // Nearby
             { 1_03, 250 }, // Fellowship
+            { 1_04, 290 }, // Trade
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -174,7 +185,8 @@ namespace OracleOfDereth
             { 1_00, 320 }, // HUD
             { 1_01, 545 }, // Buffs
             { 1_02, 320 }, // Nearbys
-            { 1_03, 380 }, // Fellowship 
+            { 1_03, 380 }, // Fellowship
+            { 1_04, 450 }, // Trade
 
             // Character Tab
             { 2_00, 550 }, // Augmentations
@@ -314,6 +326,32 @@ namespace OracleOfDereth
                 FellowsList = (HudList)view["FellowsList"];
                 FellowsList.Click += FellowsList_Click;
                 FellowsList.ClearRows();
+
+                // Trade Tab
+                TradeText = (HudStaticText)view["TradeText"];
+                TradeText.FontHeight = 10;
+
+                TradeAdd = (HudButton)view["TradeAdd"];
+                TradeAdd.Hit += TradeAdd_Hit;
+
+                TradeAddAll = (HudButton)view["TradeAddAll"];
+                TradeAddAll.Hit += TradeAddAll_Hit;
+
+                TradeClear = (HudButton)view["TradeClear"];
+                TradeClear.Hit += TradeClear_Hit;
+
+                TradeExport = (HudButton)view["TradeExport"];
+                TradeExport.Hit += TradeExport_Hit;
+
+                TradeCopy = (HudButton)view["TradeCopy"];
+                TradeCopy.Hit += TradeCopy_Hit;
+
+                TradeAddSelected = (HudCheckBox)view["TradeAddSelected"];
+                TradeAddSelected.Change += TradeAddSelected_Change;
+
+                TradeList = (HudList)view["TradeList"];
+                TradeList.Click += TradeList_Click;
+                TradeList.ClearRows();
 
                 // Nearbys Tab
                 NearbySort = (HudCombo)view["NearbySort"];
@@ -472,6 +510,14 @@ namespace OracleOfDereth
                 StatusViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
+                TradeAddSelected.Change -= TradeAddSelected_Change;
+                TradeAdd.Hit -= TradeAdd_Hit;
+                TradeAddAll.Hit -= TradeAddAll_Hit;
+                TradeClear.Hit -= TradeClear_Hit;
+                TradeExport.Hit -= TradeExport_Hit;
+                TradeCopy.Hit -= TradeCopy_Hit;
+                TradeList.Click -= TradeList_Click;
+
                 NearbySort.Change -= NearbySort_Change;
                 NearbyList.Click -= NearbyList_Click;
 
@@ -600,6 +646,7 @@ namespace OracleOfDereth
             if (currentTab == 1_01) { UpdateBuffs(); }
             if (currentTab == 1_02) { UpdateNearby(); } // If this changes update UpdateTarget() method below
             if (currentTab == 1_03) { UpdateFellowship(); } // If this changes update UpdateTarget() method below
+            if (currentTab == 1_04) { UpdateTrade(); }
 
             // Character Tab
             if (currentTab == 2_00) { UpdateAugmentations(); }
@@ -779,6 +826,49 @@ namespace OracleOfDereth
             }
 
             while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount - 1); }
+        }
+
+
+        // Trade
+
+        public void UpdateTrade()
+        {
+            // TODO: Update trade list
+        }
+
+        private void TradeAddSelected_Change(object sender, EventArgs e)
+        {
+            // TODO: Toggle adding selected items to trade list
+        }
+
+        private void TradeAdd_Hit(object sender, EventArgs e)
+        {
+            // TODO: Add selected item to trade list
+        }
+
+        private void TradeAddAll_Hit(object sender, EventArgs e)
+        {
+            // TODO: Add all items to trade list
+        }
+
+        private void TradeClear_Hit(object sender, EventArgs e)
+        {
+            // TODO: Clear all items from trade list
+        }
+
+        private void TradeExport_Hit(object sender, EventArgs e)
+        {
+            // TODO: Export trade list to file
+        }
+
+        private void TradeCopy_Hit(object sender, EventArgs e)
+        {
+            // TODO: Copy trade list to clipboard
+        }
+
+        private void TradeList_Click(object sender, int row, int col)
+        {
+            // TODO: Handle trade list row click
         }
 
 
