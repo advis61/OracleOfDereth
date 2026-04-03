@@ -60,6 +60,10 @@ namespace OracleOfDereth
             string oaValue = GetOAValue();
             string omValue = GetOMValue();
 
+            // If we guessed full buffs but the results look too low,
+            // the weapon probably isn't buffed -- hide everything.
+            if (AssumeFullBuffs && odValue == null && omValue == null) return "";
+
             bool isWand = wo.ObjectClass == ObjectClass.WandStaffOrb;
 
             if (odValue == null && (!isWand || omValue == null)) return "";
