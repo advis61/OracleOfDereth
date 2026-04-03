@@ -83,6 +83,13 @@ namespace OracleOfDereth
         public HudButton TradeClear { get; private set; }
         public HudButton TradeCopy { get; private set; }
         public HudButton TradeExport { get; private set; }
+        public HudFixedLayout TradeListSortComplete { get; private set; }
+        public HudPictureBox TradeListSortCompleteIcon { get; private set; }
+        public HudStaticText TradeListSortName { get; private set; }
+        public HudStaticText TradeListSortCol1 { get; private set; }
+        public HudStaticText TradeListSortCol2 { get; private set; }
+        public HudStaticText TradeListSortCol3 { get; private set; }
+        public HudStaticText TradeListSortCol4 { get; private set; }
         public HudList TradeList { get; private set; }
 
         // Nearbys
@@ -352,6 +359,27 @@ namespace OracleOfDereth
                 TradeAddSelected = (HudCheckBox)view["TradeAddSelected"];
                 TradeAddSelected.Change += TradeAddSelected_Change;
 
+                TradeListSortCompleteIcon = new HudPictureBox();
+                TradeListSortCompleteIcon.Image = IconSort;
+                TradeListSortComplete = (HudFixedLayout)view["TradeListSortComplete"];
+                TradeListSortComplete.AddControl(TradeListSortCompleteIcon, new Rectangle(0, 0, 16, 16));
+                TradeListSortCompleteIcon.Hit += TradeListSortComplete_Click;
+
+                TradeListSortName = (HudStaticText)view["TradeListSortName"];
+                TradeListSortName.Hit += TradeListSortName_Click;
+
+                TradeListSortCol1 = (HudStaticText)view["TradeListSortCol1"];
+                TradeListSortCol1.Hit += TradeListSortCol1_Click;
+
+                TradeListSortCol2 = (HudStaticText)view["TradeListSortCol2"];
+                TradeListSortCol2.Hit += TradeListSortCol2_Click;
+
+                TradeListSortCol3 = (HudStaticText)view["TradeListSortCol3"];
+                TradeListSortCol3.Hit += TradeListSortCol3_Click;
+
+                TradeListSortCol4 = (HudStaticText)view["TradeListSortCol4"];
+                TradeListSortCol4.Hit += TradeListSortCol4_Click;
+
                 TradeList = (HudList)view["TradeList"];
                 TradeList.Click += TradeList_Click;
                 TradeList.ClearRows();
@@ -522,6 +550,12 @@ namespace OracleOfDereth
                 TradeExport.Hit -= TradeExport_Hit;
                 TradeCopy.Hit -= TradeCopy_Hit;
                 TradeList.Click -= TradeList_Click;
+                TradeListSortCompleteIcon.Hit -= TradeListSortComplete_Click;
+                TradeListSortName.Hit -= TradeListSortName_Click;
+                TradeListSortCol1.Hit -= TradeListSortCol1_Click;
+                TradeListSortCol2.Hit -= TradeListSortCol2_Click;
+                TradeListSortCol3.Hit -= TradeListSortCol3_Click;
+                TradeListSortCol4.Hit -= TradeListSortCol4_Click;
 
                 NearbySort.Change -= NearbySort_Change;
                 NearbyList.Click -= NearbyList_Click;
@@ -927,6 +961,36 @@ namespace OracleOfDereth
                 TradeItem item = TradeItem.TradeItems.FirstOrDefault(t => t.Id == id);
                 if (item != null) { Util.Chat(item.Description); }
             }
+        }
+
+        private void TradeListSortComplete_Click(object sender, EventArgs e)
+        {
+            // TODO: Sort by item type
+        }
+
+        private void TradeListSortName_Click(object sender, EventArgs e)
+        {
+            // TODO: Sort by name
+        }
+
+        private void TradeListSortCol1_Click(object sender, EventArgs e)
+        {
+            // TODO: Sort by type
+        }
+
+        private void TradeListSortCol2_Click(object sender, EventArgs e)
+        {
+            // TODO: Sort by OD / Set
+        }
+
+        private void TradeListSortCol3_Click(object sender, EventArgs e)
+        {
+            // TODO: Sort by ratings
+        }
+
+        private void TradeListSortCol4_Click(object sender, EventArgs e)
+        {
+            // TODO: Sort by spells
         }
 
 
