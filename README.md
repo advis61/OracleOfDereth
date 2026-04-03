@@ -2,7 +2,7 @@
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.10.0/OracleOfDerethInstaller-1.10.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.11.0/OracleOfDerethInstaller-1.11.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
@@ -30,6 +30,14 @@ Status HUD
 Buffs
 
 ![Buffs List](./docs/Buffs.png)
+
+Nearby
+
+![Nearby](./docs/Nearby.png)
+
+Fellowship
+
+![Fellowship](./docs/Fellowship.png)
 
 Augmentations
 
@@ -75,6 +83,13 @@ Void Target View
 
 ![Void Target View](./docs/Void.png)
 
+Summon Score
+
+![Summon Score](./docs/SummonScore.png)
+
+Weapon Score
+
+![Weapon Score](./docs/WeaponScore.png)
 
 ### Status HUD
 
@@ -92,6 +107,18 @@ It will:
 ### Buffs List
 
 Displays your buffs and debuffs with time remaining.
+
+### Nearby List
+
+- Displays all nearby WorldObjects, grouped by name. 
+- Click to select the closest one.
+- Sort by default (objectclass), name or distance.
+
+### Fellowship
+
+- Create a fellowship in one click with a fantasy sounding name
+- AutoRecruit will send a fellowship recruit to any players in range
+- Pauses around lifestones and bindstones.
 
 ### XP Augmentations
 
@@ -165,6 +192,14 @@ The Corruption blast spell is tracked on 1 target only and is not aware of any s
 If your dot was cast with the destruction proc up, it will be displayed in highlighted color.
 
 Works for PK and PKLite.
+
+### Summon Score
+
+Displays a damage score and a defense score when you identify a Summons. 0% - 100%
+
+### Weapon Score
+
+Displays an O(Damage), O(Attack), O(Melee) based on the max rolls of the weapon
 
 ### Commands
 

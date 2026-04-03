@@ -6,6 +6,8 @@ using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Decal.Filters;
 
+// claude --resume "strip-aura-weapon-effects"
+
 namespace OracleOfDereth
 {
     /// <summary>
@@ -70,22 +72,32 @@ namespace OracleOfDereth
 
         private string ToODString()
         {
-            string odValue = GetODValue();
-            string oaValue = GetOAValue();
-            string omValue = GetOMValue();
+            int? od = GetODValue();
+            int? oa = GetOAValue();
+            int? om = GetOMValue();
+
+            // OD outside -15 to +30 means the calculation is unreliable -- hide everything.
+            if (od != null && (od < -15 || od > 30)) return "";
+            if (oa != null && (oa < -15 || oa > 30)) return "";
+            if (om != null && (om < -15 || om > 30)) return "";
 
             // If we guessed full buffs but the results look too low,
             // the weapon probably isn't buffed -- hide everything.
-            if (AssumeFullBuffs && odValue == null && omValue == null) return "";
+            if (AssumeFullBuffs && od == null && om == null) return "";
 
-            if (odValue == null && oaValue == null && omValue == null) return "";
+            if (od == null && oa == null && om == null) return "";
 
             var parts = new List<string>();
-            if (odValue != null) parts.Add("OD " + odValue);
-            if (oaValue != null) parts.Add("OA " + oaValue);
-            if (omValue != null) parts.Add("OM " + omValue);
+            if (od != null) parts.Add("OD " + FormatOValue((int)od));
+            if (oa != null) parts.Add("OA " + FormatOValue((int)oa));
+            if (om != null) parts.Add("OM " + FormatOValue((int)om));
 
             return "[" + string.Join(" | ", parts) + "]";
+        }
+
+        private static string FormatOValue(int val)
+        {
+            return val >= 0 ? "+" + val : "" + val;
         }
 
         public override string ToString()
@@ -522,18 +534,15 @@ namespace OracleOfDereth
         private const int Key_WeaponSkill = 159;     // The weapon's combat skill (Heavy=44, Light=45, etc.)
         private const int Key_CombatUse = 47;         // Weapon type for multi-strike detection
 
-        private string GetODValue()
+        private int? GetODValue()
         {
             if (IsEquipped && !AssumeFullBuffs) return null;
 
-            int? od = null;
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon) return GetMeleeOD();
+            if (wo.ObjectClass == ObjectClass.MissileWeapon) return GetMissileOD();
+            if (wo.ObjectClass == ObjectClass.WandStaffOrb) return GetCasterOD();
 
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon) od = GetMeleeOD();
-            else if (wo.ObjectClass == ObjectClass.MissileWeapon) od = GetMissileOD();
-            else if (wo.ObjectClass == ObjectClass.WandStaffOrb) od = GetCasterOD();
-
-            if (od == null || od < -15) return null;
-            return od >= 0 ? "+" + od : "" + od;
+            return null;
         }
 
         private int? GetMeleeOD()
@@ -542,7 +551,7 @@ namespace OracleOfDereth
                 return null;
 
             int skill = GetWeaponSkill();
-            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            int mastery = GetMastery();
             int multi = IsMultiStrike() ? 1 : 0;
 
             double maxDmg = LookupMaxProperty(skill, mastery, multi, e => e.MaxDmg);
@@ -556,7 +565,7 @@ namespace OracleOfDereth
 
         private int? GetMissileOD()
         {
-            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            int mastery = GetMastery();
 
             int arrowMax;
             if (mastery == 8) arrowMax = 40;
@@ -599,10 +608,7 @@ namespace OracleOfDereth
             if (buffedDmg <= 10) buffedDmg += 24;
 
             int elemBonus = intValues.ContainsKey(Key_ElementalDmgBonus) ? intValues[Key_ElementalDmgBonus] : 0;
-
-            double calcMissileDmg = (1 + (dmgMod + (4 * remainingTinks)) / 100)
-                                    * (elemBonus + buffedDmg + arrowMax)
-                                    / maxTinkedMissileMod;
+            double calcMissileDmg = (1 + (dmgMod + (4 * remainingTinks)) / 100) * (elemBonus + buffedDmg + arrowMax) / maxTinkedMissileMod;
 
             double od = calcMissileDmg - (maxElemBonus + 24 + arrowMax);
             return (int)Math.Round(od);
@@ -611,7 +617,7 @@ namespace OracleOfDereth
         private int? GetCasterOD()
         {
             int skill = GetWeaponSkill();
-            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            int mastery = GetMastery();
 
             double maxVsMon = LookupMaxProperty(skill, mastery, 0, e => e.MaxElemVsMon);
             if (maxVsMon <= 0) maxVsMon = 1.18;
@@ -628,8 +634,10 @@ namespace OracleOfDereth
             if (intValues.ContainsKey(Key_WeaponSkill) && intValues[Key_WeaponSkill] != 0)
                 return intValues[Key_WeaponSkill];
 
+            // Only use WieldReqAttribute if it looks like a weapon skill (>= 34)
+            // Wield Lvl requirements use attribute=1 (Level) which isn't a weapon skill
             int wieldAttr = wo.Values(LongValueKey.WieldReqAttribute, 0);
-            if (wieldAttr != 0) return wieldAttr;
+            if (wieldAttr >= 34) return wieldAttr;
 
             // Quest weapons with no skill or wield req: infer from object class + mastery
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
@@ -655,6 +663,19 @@ namespace OracleOfDereth
             return 0;
         }
 
+        private int GetMastery()
+        {
+            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            if (mastery != 0) return mastery;
+
+            // Infer from skill for weapons without mastery property
+            int skill = intValues.ContainsKey(Key_WeaponSkill) ? intValues[Key_WeaponSkill] : 0;
+            if (skill == 0) skill = wo.Values(LongValueKey.WieldReqAttribute, 0);
+            if (skill == 41 || skill == 0x29) return 11; // Two Handed → mastery 11
+
+            return 0;
+        }
+
         private bool IsMultiStrike()
         {
             int combatUse = intValues.ContainsKey(Key_CombatUse) ? intValues[Key_CombatUse] : 0;
@@ -676,7 +697,7 @@ namespace OracleOfDereth
         // OM+0 = max defense roll for that weapon type. OM+N = N% above max.
         // Not shown when equipped or below OM-10.
 
-        private string GetOMValue()
+        private int? GetOMValue()
         {
             if (IsEquipped && !AssumeFullBuffs) return null;
 
@@ -689,16 +710,15 @@ namespace OracleOfDereth
             int totalDef = (int)Math.Round((buffedDefBonus - 1) * 100);
             if (AssumeFullBuffs) totalDef -= 20; // Incantation of Defender
 
-            // Determine max defense for this weapon type
             int maxDef = GetMaxMeleeDefense();
             if (maxDef <= 0) return null;
 
-            return FormatOM(totalDef - maxDef);
+            return totalDef - maxDef;
         }
 
         private int GetMaxMeleeDefense()
         {
-            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            int mastery = GetMastery();
 
             // Missile and Caster weapons all have 20% max defense
             if (wo.ObjectClass == ObjectClass.MissileWeapon || wo.ObjectClass == ObjectClass.WandStaffOrb)
@@ -720,12 +740,6 @@ namespace OracleOfDereth
             return 0;
         }
 
-        private static string FormatOM(int md)
-        {
-            if (md < -15) return null;
-            return md >= 0 ? "+" + md : "" + md;
-        }
-
         // Max melee defense bonus % by mastery (same for Heavy/Light/Finesse)
         private static readonly Dictionary<int, int> MaxMeleeDefenseByMastery = new Dictionary<int, int>
         {
@@ -745,15 +759,13 @@ namespace OracleOfDereth
         // OA+0 = max attack bonus for that weapon type. OA+N = N% above max.
         // Only applies to melee weapons.
 
-        private string GetOAValue()
+        private int? GetOAValue()
         {
             if (IsEquipped && !AssumeFullBuffs) return null;
 
             if (wo.ObjectClass != ObjectClass.MeleeWeapon) return null;
 
-            int? oa = GetMeleeOA();
-            if (oa == null || oa < -15) return null;
-            return oa >= 0 ? "+" + oa : "" + oa;
+            return GetMeleeOA();
         }
 
         private int? GetMeleeOA()
@@ -772,7 +784,7 @@ namespace OracleOfDereth
 
         private int GetMaxAttack()
         {
-            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            int mastery = GetMastery();
 
             // Two-Handed weapons
             int skill = GetWeaponSkill();
