@@ -243,15 +243,15 @@ namespace OracleOfDereth
         private static string GetSummaryCol1(ItemInfo info)
         {
             if (info.IsWeapon) return info.GetWeaponTypeName();
-            if (info.IsCloak) return "";
+            if (info.IsCloak) return "Cloak";
             if (info.IsArmorClothing || info.IsJewelry) return info.GetSlotName();
-            return "";
+            return info.wo.ObjectClass.ToString();
         }
 
         private static string GetSummaryCol2(ItemInfo info)
         {
             if (info.IsWeapon) return info.GetODString() ?? "";
-            if (info.IsCloak) return info.GetCloakWeave();
+            if (info.IsCloak) return info.GetCloakProc();
             if (info.IsArmorClothing) return GetSetName(info);
             if (info.IsJewelry) return info.GetRatingsString();
             return "";
@@ -260,7 +260,7 @@ namespace OracleOfDereth
         private static string GetSummaryCol3(ItemInfo info)
         {
             if (info.IsWeapon) return info.GetOAString() ?? "";
-            if (info.IsCloak) return info.GetCloakProc();
+            if (info.IsCloak) return info.GetRatingsString();
             if (info.IsArmorClothing) return info.GetRatingsString();
             return "";
         }
@@ -268,7 +268,6 @@ namespace OracleOfDereth
         private static string GetSummaryCol4(ItemInfo info)
         {
             if (info.IsWeapon) return info.GetOMString() ?? "";
-            if (info.IsCloak) return info.GetRatingsString();
             return "";
         }
 

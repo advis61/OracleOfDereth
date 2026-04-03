@@ -164,12 +164,13 @@ namespace OracleOfDereth
         public string GetSlotName()
         {
             int slots = wo.Values(LongValueKey.EquipableSlots, 0);
+            int coverage = wo.Values(LongValueKey.Coverage, 0);
 
-            if (wo.ObjectClass == ObjectClass.Clothing)
+            // Underclothing (no armor level)
+            if (wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.ArmorLevel, 0) == 0)
             {
-                if ((slots & 2) != 0) return "Shirt";
+                if ((slots & 0x02) != 0) return "Shirt";
                 if ((slots & 0x40) != 0) return "Pants";
-                return "";
             }
 
             if (wo.ObjectClass == ObjectClass.Jewelry)
@@ -178,23 +179,44 @@ namespace OracleOfDereth
                 if ((slots & 0x180000) != 0) return "Bracelet";
                 if ((slots & 0x40000) != 0) return "Necklace";
                 if ((slots & 0x2000000) != 0) return "Trinket";
-                return "";
+
+                // Fallback to name
+                string name = wo.Name.ToLower();
+                if (name.Contains("ring")) return "Ring";
+                if (name.Contains("bracelet")) return "Bracelet";
+                if (name.Contains("necklace") || name.Contains("gorget") || name.Contains("amulet")) return "Necklace";
+                if (name.Contains("trinket")) return "Trinket";
+                return "Jewelry";
             }
 
             // Shield
             if ((slots & 0x200000) != 0) return "Shield";
 
-            // Armor slots - check armor pieces first, then clothing slots
-            if ((slots & 0x0400) != 0) return "Chest";
-            if ((slots & 0x0800) != 0) return "Abdomen";
+            // Outerwear slots
+            if ((slots & 0x200) != 0) return "Chest";
             if ((slots & 0x1000) != 0) return "Upper Arms";
             if ((slots & 0x2000) != 0) return "Lower Arms";
             if ((slots & 0x4000) != 0) return "Upper Legs";
             if ((slots & 0x8000) != 0) return "Lower Legs";
+            if ((slots & 0x0400) != 0) return "Abdomen";
+
+            // Underwear / base wear slots
             if ((slots & 0x01) != 0) return "Head";
             if ((slots & 0x02) != 0) return "Chest";
             if ((slots & 0x20) != 0) return "Hands";
+            if ((slots & 0x40) != 0) return "Legs";
             if ((slots & 0x100) != 0) return "Feet";
+
+            // Fallback to Coverage
+            if ((coverage & 0x02) != 0 || (coverage & 0x400) != 0) return "Chest";
+            if ((coverage & 0x04) != 0 || (coverage & 0x800) != 0) return "Abdomen";
+            if ((coverage & 0x08) != 0 || (coverage & 0x1000) != 0) return "Upper Arms";
+            if ((coverage & 0x10) != 0 || (coverage & 0x2000) != 0) return "Lower Arms";
+            if ((coverage & 0x40) != 0 || (coverage & 0x4000) != 0) return "Upper Legs";
+            if ((coverage & 0x80) != 0 || (coverage & 0x8000) != 0) return "Lower Legs";
+            if ((coverage & 0x01) != 0) return "Head";
+            if ((coverage & 0x20) != 0) return "Hands";
+            if ((coverage & 0x100) != 0) return "Feet";
 
             return "";
         }
@@ -224,14 +246,20 @@ namespace OracleOfDereth
                 string name = spell.Name;
 
                 if (name.Contains("Cloaked in Skill")) return "Cloaked in Skill";
-                if (name.Contains("Major Melee")) return "Melee Ring";
-                if (name.Contains("Major Magic")) return "Magic Ring";
-                if (name.Contains("Surge of Destruction")) return "AOE";
+                if (name.Contains("Shroud of Darkness")) return name.Replace("Shroud of Darkness", "Shroud");
+                if (name.Contains("Horizon's Blades")) return "Blade Ring";
+                if (name.Contains("Tectonic Rifts")) return "Bludgeon Ring";
+                if (name.Contains("Nuhmudira's Spines")) return "Piercing Ring";
+                if (name.Contains("Searing Disc")) return "Acid Ring";
+                if (name.Contains("Cassius' Ring of Fire")) return "Fire Ring";
+                if (name.Contains("Halo of Frost")) return "Frost Ring";
+                if (name.Contains("Eye of the Storm")) return "Lightning Ring";
+                if (name.Contains("Clouded Soul")) return "Void Ring";
 
                 return name;
             }
 
-            return "-200";
+            return "-200 Damage";
         }
 
         public override string ToString()
