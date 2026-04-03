@@ -30,6 +30,8 @@ namespace OracleOfDereth
         public int Icon = 0;
         public string SummaryCol1 = "";
         public string SummaryCol2 = "";
+        public string SummaryCol3 = "";
+        public string SummaryCol4 = "";
         public string Description = "";
 
         public static void Init()
@@ -224,33 +226,49 @@ namespace OracleOfDereth
                 Icon = wo.Icon,
                 SummaryCol1 = GetSummaryCol1(info),
                 SummaryCol2 = GetSummaryCol2(info),
+                SummaryCol3 = GetSummaryCol3(info),
+                SummaryCol4 = GetSummaryCol4(info),
                 Description = info.ToString(),
             });
         }
 
+        private static string GetSetName(ItemInfo info)
+        {
+            int set = info.wo.Values((LongValueKey)265, 0);
+            if (set != 0 && ItemInfo.AttributeSetInfo.TryGetValue(set, out string setName))
+                return setName.Replace("'s", "").Replace(" Proof Set", "").Replace(" Set", "").Trim();
+            return "";
+        }
+
         private static string GetSummaryCol1(ItemInfo info)
         {
-            if (info.IsWeapon)
-                return info.GetODString() ?? "";
-
-            if (info.IsArmorClothing || info.IsJewelry)
-                return info.GetRatingsString();
-
+            if (info.IsWeapon) return info.GetWeaponTypeName();
+            if (info.IsCloak) return "";
+            if (info.IsArmorClothing || info.IsJewelry) return info.GetSlotName();
             return "";
         }
 
         private static string GetSummaryCol2(ItemInfo info)
         {
-            if (info.IsWeapon)
-                return info.GetOMString() ?? "";
+            if (info.IsWeapon) return info.GetODString() ?? "";
+            if (info.IsCloak) return info.GetCloakWeave();
+            if (info.IsArmorClothing) return GetSetName(info);
+            if (info.IsJewelry) return info.GetRatingsString();
+            return "";
+        }
 
-            if (info.IsArmorClothing)
-            {
-                int set = info.wo.Values((LongValueKey)265, 0);
-                if (set != 0 && ItemInfo.AttributeSetInfo.TryGetValue(set, out string setName))
-                    return setName.Replace("'s", "").Replace(" Proof Set", "").Replace(" Set", "").Trim();
-            }
+        private static string GetSummaryCol3(ItemInfo info)
+        {
+            if (info.IsWeapon) return info.GetOAString() ?? "";
+            if (info.IsCloak) return info.GetCloakProc();
+            if (info.IsArmorClothing) return info.GetRatingsString();
+            return "";
+        }
 
+        private static string GetSummaryCol4(ItemInfo info)
+        {
+            if (info.IsWeapon) return info.GetOMString() ?? "";
+            if (info.IsCloak) return info.GetRatingsString();
             return "";
         }
 

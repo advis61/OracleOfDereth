@@ -23,6 +23,8 @@ namespace OracleOfDereth
         public bool IsArmorClothing => wo.ObjectClass == ObjectClass.Armor ||
                                        wo.ObjectClass == ObjectClass.Clothing;
         public bool IsJewelry => wo.ObjectClass == ObjectClass.Jewelry;
+        public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing &&
+                               wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
         private readonly List<int> activeSpells = new List<int>();
         private readonly List<int> innateSpells = new List<int>();
         private readonly Dictionary<int, int> intValues = new Dictionary<int, int>();
@@ -141,6 +143,95 @@ namespace OracleOfDereth
             if (v > 0) parts.Add("V" + v);
 
             return string.Join(" ", parts);
+        }
+
+        public string GetWeaponTypeName()
+        {
+            int skill = GetWeaponSkill();
+            switch (skill)
+            {
+                case 44: return "Heavy";
+                case 45: return "Light";
+                case 46: return "Finesse";
+                case 41: return "2 Hand";
+                case 47: return "Missile";
+                case 34: return "War";
+                case 43: return "Void";
+                default: return "";
+            }
+        }
+
+        public string GetSlotName()
+        {
+            int slots = wo.Values(LongValueKey.EquipableSlots, 0);
+
+            if (wo.ObjectClass == ObjectClass.Clothing)
+            {
+                if ((slots & 2) != 0) return "Shirt";
+                if ((slots & 0x40) != 0) return "Pants";
+                return "";
+            }
+
+            if (wo.ObjectClass == ObjectClass.Jewelry)
+            {
+                if ((slots & 0x600000) != 0) return "Ring";
+                if ((slots & 0x180000) != 0) return "Bracelet";
+                if ((slots & 0x40000) != 0) return "Necklace";
+                if ((slots & 0x2000000) != 0) return "Trinket";
+                return "";
+            }
+
+            // Shield
+            if ((slots & 0x200000) != 0) return "Shield";
+
+            // Armor slots - check armor pieces first, then clothing slots
+            if ((slots & 0x0400) != 0) return "Chest";
+            if ((slots & 0x0800) != 0) return "Abdomen";
+            if ((slots & 0x1000) != 0) return "Upper Arms";
+            if ((slots & 0x2000) != 0) return "Lower Arms";
+            if ((slots & 0x4000) != 0) return "Upper Legs";
+            if ((slots & 0x8000) != 0) return "Lower Legs";
+            if ((slots & 0x01) != 0) return "Head";
+            if ((slots & 0x02) != 0) return "Chest";
+            if ((slots & 0x20) != 0) return "Hands";
+            if ((slots & 0x100) != 0) return "Feet";
+
+            return "";
+        }
+
+        public string GetCloakWeave()
+        {
+            FileService service = CoreManager.Current.Filter<FileService>();
+            foreach (int spellId in innateSpells)
+            {
+                Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
+                if (spell == null) continue;
+                string name = spell.Name;
+                if (name.Contains("Weave of"))
+                    return name.Replace("Weave of ", "");
+            }
+            return "";
+        }
+
+        public string GetCloakProc()
+        {
+            FileService service = CoreManager.Current.Filter<FileService>();
+
+            if (wo.SpellCount > 0)
+            {
+                Decal.Filters.Spell spell = service.SpellTable.GetById(wo.Spell(0));
+                if (spell == null) return "";
+                string name = spell.Name;
+
+                if (name.Contains("Cloaked in Skill")) return "Cloaked in Skill";
+                if (name.Contains("Major Melee")) return "Melee Ring";
+                if (name.Contains("Major Magic")) return "Magic Ring";
+                if (name.Contains("Surge of Destruction")) return "AOE";
+
+                return name;
+            }
+
+            return "-200";
         }
 
         public override string ToString()
