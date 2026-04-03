@@ -262,6 +262,8 @@ namespace OracleOfDereth
         private static string GetSummaryCol4(ItemInfo info)
         {
             if (info.IsWeapon) return info.GetOAString() ?? "";
+            if (info.IsCloak) return "";
+            if (info.IsArmorClothing || info.IsJewelry) return info.GetCantripsString();
             return "";
         }
 

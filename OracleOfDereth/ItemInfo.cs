@@ -56,6 +56,11 @@ namespace OracleOfDereth
             if (IsSummon) return "Summon";
             if (IsAetheria) return GetAetheriaColor();
             if (IsArmorClothing || IsJewelry) return GetSlotName();
+            if (wo.ObjectClass == ObjectClass.SpellComponent) return "Component";
+            if (wo.ObjectClass == ObjectClass.CraftedFletching) return "Fletching";
+            if (wo.ObjectClass == ObjectClass.CraftedAlchemy) return "Alchemy";
+            if (wo.ObjectClass == ObjectClass.CraftedCooking) return "Cooking";
+            if (wo.ObjectClass == ObjectClass.BaseCooking) return "Cooking";
             return wo.ObjectClass.ToString();
         }
 
@@ -302,7 +307,10 @@ namespace OracleOfDereth
                 string name = spell.Name;
 
                 if (name.Contains("Cloaked in Skill")) return "CiS";
-                if (name.Contains("Shroud of Darkness")) return name.Replace("Shroud of Darkness", "Shroud");
+                if (name.Contains("Shroud of Darkness (Melee)")) return "Melee Shroud";
+                if (name.Contains("Shroud of Darkness (Missile)")) return "Missile Shroud";
+                if (name.Contains("Shroud of Darkness (Magic)")) return "Magic Shroud";
+                if (name.Contains("Shroud of Darkness")) return "Shroud";
                 if (name.Contains("Horizon's Blades")) return "Blade Ring";
                 if (name.Contains("Tectonic Rifts")) return "Bludgeon Ring";
                 if (name.Contains("Nuhmudira's Spines")) return "Piercing Ring";
@@ -574,6 +582,34 @@ namespace OracleOfDereth
                 parts.Add(name);
             }
 
+            return string.Join(", ", parts);
+        }
+
+        private static int CantripSortOrder(string name)
+        {
+            if (name.StartsWith("Legendary ")) return 0;
+            if (name.StartsWith("Epic ")) return 1;
+            if (name.StartsWith("Major ")) return 2;
+            if (name.StartsWith("Minor ")) return 3;
+            return 4;
+        }
+
+        public string GetCantripsString()
+        {
+            if (innateSpells.Count == 0) return "";
+
+            FileService service = CoreManager.Current.Filter<FileService>();
+            var parts = new List<string>();
+            foreach (int spellId in innateSpells)
+            {
+                Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
+                if (spell == null) continue;
+                string name = spell.Name;
+                if (name.EndsWith(" Bane")) continue;
+                if (name.StartsWith("Legendary ") || name.StartsWith("Epic ") || name.StartsWith("Major ") || name.StartsWith("Minor "))
+                    parts.Add(name);
+            }
+            parts.Sort((a, b) => CantripSortOrder(a).CompareTo(CantripSortOrder(b)));
             return string.Join(", ", parts);
         }
 

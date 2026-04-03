@@ -157,7 +157,7 @@ namespace OracleOfDereth
             { 1_01, 460 }, // Buffs
             { 1_02, 290 }, // Nearby
             { 1_03, 250 }, // Fellowship
-            { 1_04, 650 }, // Trade
+            { 1_04, 950 }, // Trade
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
