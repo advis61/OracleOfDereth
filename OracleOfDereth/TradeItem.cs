@@ -245,6 +245,7 @@ namespace OracleOfDereth
             if (info.IsWeapon) return info.GetWeaponTypeName();
             if (info.IsCloak) return "Cloak";
             if (info.IsArmorClothing || info.IsJewelry) return info.GetSlotName();
+            if (info.wo.Name.Contains("Aetheria")) return "Aetheria";
             return info.wo.ObjectClass.ToString();
         }
 

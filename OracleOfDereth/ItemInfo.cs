@@ -177,11 +177,18 @@ namespace OracleOfDereth
 
             if (wo.ObjectClass == ObjectClass.Jewelry)
             {
+                // Try EquipableSlots first
+                if ((slots & 0xC0000) != 0) return "Ring";
+                if ((slots & 0x300000) != 0) return "Bracelet";
+                if ((slots & 0x400000) != 0) return "Necklace";
+                if ((slots & 0x2000000) != 0) return "Trinket";
+
+                // Fallback to name
                 string name = wo.Name.ToLower();
-                if (name.Contains("ring")) return "Ring";
-                if (name.Contains("bracelet")) return "Bracelet";
-                if (name.Contains("necklace") || name.Contains("gorget") || name.Contains("amulet")) return "Necklace";
-                if (name.Contains("trinket")) return "Trinket";
+                if (name.Contains("ring") || name.Contains("band") || name.Contains("signet")) return "Ring";
+                if (name.Contains("bracelet") || name.Contains("brace")) return "Bracelet";
+                if (name.Contains("necklace") || name.Contains("gorget") || name.Contains("amulet") || name.Contains("pendant") || name.Contains("choker") || name.Contains("locket")) return "Necklace";
+                if (name.Contains("trinket") || name.Contains("compass") || name.Contains("pocket") || name.Contains("goggles") || name.Contains("puzzle box") || name.Contains(" top")) return "Trinket";
                 return "Jewelry";
             }
 
