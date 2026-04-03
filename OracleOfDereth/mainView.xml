@@ -101,11 +101,11 @@
 						<control progid="DecalControls.List" name="TradeList" left="0" top="108" width="650" height="2000">
 							<column progid="DecalControls.IconColumn" name="Remove" fixedwidth="16" />
 							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="201" />
-							<column progid="DecalControls.TextColumn" name="Col1" fixedwidth="104" />
-							<column progid="DecalControls.TextColumn" name="Col2" fixedwidth="104" />
-							<column progid="DecalControls.TextColumn" name="Col3" fixedwidth="104" />
-							<column progid="DecalControls.TextColumn" name="Col4" fixedwidth="104" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="210" />
+							<column progid="DecalControls.TextColumn" name="Col1" fixedwidth="110" />
+							<column progid="DecalControls.TextColumn" name="Col2" fixedwidth="90" />
+							<column progid="DecalControls.TextColumn" name="Col3" fixedwidth="90" />
+							<column progid="DecalControls.TextColumn" name="Col4" fixedwidth="90" />
 							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="1" />
 						</control>
 					</control>

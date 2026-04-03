@@ -72,7 +72,7 @@ namespace OracleOfDereth
             string odString = info.ToODString();
             if (odString == null) return false;
 
-            Util.Chat(item.Name + " " + odString, Util.ColorCyan, "");
+            Util.Chat(info.GetName() + " " + odString, Util.ColorCyan, "");
             return true;
         }
 
@@ -153,11 +153,13 @@ namespace OracleOfDereth
                 case 44: return "Heavy";
                 case 45: return "Light";
                 case 46: return "Finesse";
-                case 41: return "2 Hand";
+                case 41: return "Two Hand";
                 case 47: return "Missile";
                 case 34: return "War";
                 case 43: return "Void";
-                default: return "";
+                default:
+                    if (wo.ObjectClass == ObjectClass.WandStaffOrb) return "Caster";
+                    return "";
             }
         }
 
@@ -175,12 +177,6 @@ namespace OracleOfDereth
 
             if (wo.ObjectClass == ObjectClass.Jewelry)
             {
-                if ((slots & 0x600000) != 0) return "Ring";
-                if ((slots & 0x180000) != 0) return "Bracelet";
-                if ((slots & 0x40000) != 0) return "Necklace";
-                if ((slots & 0x2000000) != 0) return "Trinket";
-
-                // Fallback to name
                 string name = wo.Name.ToLower();
                 if (name.Contains("ring")) return "Ring";
                 if (name.Contains("bracelet")) return "Bracelet";
@@ -245,7 +241,7 @@ namespace OracleOfDereth
                 if (spell == null) return "";
                 string name = spell.Name;
 
-                if (name.Contains("Cloaked in Skill")) return "Cloaked in Skill";
+                if (name.Contains("Cloaked in Skill")) return "CiS";
                 if (name.Contains("Shroud of Darkness")) return name.Replace("Shroud of Darkness", "Shroud");
                 if (name.Contains("Horizon's Blades")) return "Blade Ring";
                 if (name.Contains("Tectonic Rifts")) return "Bludgeon Ring";
@@ -262,21 +258,30 @@ namespace OracleOfDereth
             return "-200 Damage";
         }
 
+        public string GetMaterial()
+        {
+            if (wo.Values(LongValueKey.Material) > 0)
+            {
+                if (MaterialInfo.TryGetValue(wo.Values(LongValueKey.Material), out string mat))
+                    return mat;
+                return "Unknown Material " + wo.Values(LongValueKey.Material);
+            }
+            return "";
+        }
+
+        public string GetName()
+        {
+            string material = GetMaterial();
+            if (material.Length > 0)
+                return material + " " + wo.Name;
+            return wo.Name;
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
 
-            // Material
-            if (wo.Values(LongValueKey.Material) > 0)
-            {
-                if (MaterialInfo.TryGetValue(wo.Values(LongValueKey.Material), out string mat))
-                    sb.Append(mat + " ");
-                else
-                    sb.Append("Unknown Material " + wo.Values(LongValueKey.Material) + " ");
-            }
-
-            // Name
-            sb.Append(wo.Name);
+            sb.Append(GetName());
 
             // Mastery
             if (wo.Values((LongValueKey)353) > 0)

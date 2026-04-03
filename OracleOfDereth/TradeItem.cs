@@ -222,7 +222,7 @@ namespace OracleOfDereth
             Add(new TradeItem
             {
                 Id = wo.Id,
-                Name = wo.Name,
+                Name = info.GetName(),
                 Icon = wo.Icon,
                 SummaryCol1 = GetSummaryCol1(info),
                 SummaryCol2 = GetSummaryCol2(info),
