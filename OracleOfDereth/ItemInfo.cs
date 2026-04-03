@@ -46,7 +46,6 @@ namespace OracleOfDereth
                 return false;
 
             ItemInfo info = new ItemInfo(item);
-            Util.Chat(info.ToString(), Util.ColorCyan, "");
 
             string odString = info.ToODString();
             if (odString == null) return false;
@@ -63,12 +62,12 @@ namespace OracleOfDereth
 
             bool isWand = wo.ObjectClass == ObjectClass.WandStaffOrb;
 
-            if (odValue == null && (!isWand || omValue == null)) return null;
+            if (odValue == null && (!isWand || omValue == null)) return "";
 
             var parts = new List<string>();
-            if (odValue != null) parts.Add("OD: " + odValue);
-            if (oaValue != null) parts.Add("OA: " + oaValue);
-            if (omValue != null) parts.Add("OM: " + omValue);
+            if (odValue != null) parts.Add("OD " + odValue);
+            if (oaValue != null) parts.Add("OA " + oaValue);
+            if (omValue != null) parts.Add("OM " + omValue);
 
             return "[" + string.Join(" | ", parts) + "]";
         }
@@ -98,20 +97,9 @@ namespace OracleOfDereth
                     sb.Append(" (Unknown Mastery " + wo.Values((LongValueKey)353) + ")");
             }
 
-            // OD, OA, and OM Values (weapons only)
-            string odValue = GetODValue();
-            string oaValue = GetOAValue();
-            string omValue = GetOMValue();
-
-            if (odValue != null || oaValue != null || omValue != null)
-            {
-                sb.Append(" [");
-                bool needSep = false;
-                if (odValue != null) { sb.Append("OD: " + odValue); needSep = true; }
-                if (oaValue != null) { if (needSep) sb.Append(" | "); sb.Append("OA: " + oaValue); needSep = true; }
-                if (omValue != null) { if (needSep) sb.Append(" | "); sb.Append("OM: " + omValue); }
-                sb.Append("]");
-            }
+            // OD, OA and OM values
+            string odValue = ToODString();
+            if(odValue.Length > 0) { sb.Append(" " + odValue); }
 
             // Equipment Set
             int set = wo.Values((LongValueKey)265, 0);
