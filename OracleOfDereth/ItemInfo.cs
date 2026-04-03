@@ -400,13 +400,8 @@ namespace OracleOfDereth
 
             foreach (int spell in innateSpells)
             {
-                if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
-                {
-                    if (effect.Bonus != 0)
-                        value += effect.Bonus;
-                    else if (IsEquipped && effect.Change != 0)
-                        value -= effect.Change;
-                }
+                if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && effect.Bonus != 0)
+                    value += effect.Bonus;
             }
 
             return value;
@@ -432,27 +427,32 @@ namespace OracleOfDereth
 
             foreach (int spell in innateSpells)
             {
-                if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
+                if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && Math.Abs(effect.Bonus) > Double.Epsilon)
                 {
-                    if (Math.Abs(effect.Bonus) > Double.Epsilon)
-                    {
-                        if (Math.Abs(effect.Change - 1) < Double.Epsilon)
-                            value *= effect.Bonus;
-                        else
-                            value += effect.Bonus;
-                    }
-                    else if (IsEquipped)
-                    {
-                        if (Math.Abs(effect.Change - 1) < Double.Epsilon)
-                            value /= effect.Change;
-                        else
-                            value -= effect.Change;
-                    }
+                    if (Math.Abs(effect.Change - 1) < Double.Epsilon)
+                        value *= effect.Bonus;
+                    else
+                        value += effect.Bonus;
                 }
             }
 
             return value;
         }
+
+        private int GetHolderLevel()
+        {
+            if (!IsEquipped) return 0;
+            try
+            {
+                WorldObject holder = CoreManager.Current.WorldFilter[wo.Container];
+                if (holder != null)
+                    return holder.Values((LongValueKey)25, 0);
+            }
+            catch { }
+            return 0;
+        }
+
+        private bool AssumeFullBuffs => GetHolderLevel() >= 200;
 
         private double CalcBuffedTinkedDoT()
         {
@@ -510,6 +510,8 @@ namespace OracleOfDereth
 
         private string GetODValue()
         {
+            if (IsEquipped && !AssumeFullBuffs) return null;
+
             int? od = null;
 
             if (wo.ObjectClass == ObjectClass.MeleeWeapon) od = GetMeleeOD();
@@ -524,7 +526,7 @@ namespace OracleOfDereth
         // UB: od = CalcMeleeDamage - GetMaxProperty(wo, WeaponProperty.MaxDmg)
         private int? GetMeleeOD()
         {
-            if (!doubleValues.ContainsKey(Key_Variance) || !intValues.ContainsKey(Key_MaxDamage))
+            if (!intValues.ContainsKey(Key_MaxDamage))
                 return null;
 
             int skill = GetWeaponSkill();
@@ -532,16 +534,12 @@ namespace OracleOfDereth
             int multi = IsMultiStrike() ? 1 : 0;
 
             double maxDmg = LookupMaxProperty(skill, mastery, multi, e => e.MaxDmg);
-            double maxVar = LookupMaxProperty(skill, mastery, multi, e => e.MaxVar);
             if (maxDmg <= 0) return null;
 
-            double variance = doubleValues[Key_Variance];
-            double varianceTinks = 0;
-            if (maxVar > 0 && variance > 0 && variance < maxVar)
-                varianceTinks = Math.Round(Math.Log(maxVar / variance, 0.8), 2);
+            int buffedDmg = GetBuffedIntValue(Key_MaxDamage);
+            if (AssumeFullBuffs) buffedDmg -= 24; // Incantation of Blood Drinker
 
-            double calcMeleeDamage = GetBuffedIntValue(Key_MaxDamage) - varianceTinks;
-            return (int)Math.Round(calcMeleeDamage - maxDmg);
+            return (int)Math.Round(buffedDmg - maxDmg);
         }
 
         // UB: CalcMissileDamage = (1 + (dmgMod + 4*remainingTinks)/100) * (ElemBonus + buffedDmg + arrowMax) / maxTinkedMissileMod
@@ -590,6 +588,7 @@ namespace OracleOfDereth
             if (maxTinkedMissileMod <= 0) return null;
 
             double buffedDmg = GetBuffedIntValue(Key_MaxDamage);
+            if (AssumeFullBuffs) buffedDmg -= 24; // Strip Incantation of Blood Drinker
             if (buffedDmg <= 10) buffedDmg += 24;
 
             int elemBonus = intValues.ContainsKey(Key_ElementalDmgBonus) ? intValues[Key_ElementalDmgBonus] : 0;
@@ -612,6 +611,7 @@ namespace OracleOfDereth
             if (maxVsMon <= 0) maxVsMon = 1.18;
 
             double buffedPct = (GetBuffedDoubleValue(Key_ElementalDmgVsMonsters) - 1) * 100;
+            if (AssumeFullBuffs) buffedPct -= 8; // Incantation of Spirit Drinker
             double maxPct = (maxVsMon - 1) * 100;
 
             return (int)Math.Round(buffedPct - maxPct);
@@ -656,6 +656,8 @@ namespace OracleOfDereth
 
         private string GetOMValue()
         {
+            if (IsEquipped && !AssumeFullBuffs) return null;
+
             if (wo.ObjectClass != ObjectClass.MeleeWeapon && wo.ObjectClass != ObjectClass.MissileWeapon && wo.ObjectClass != ObjectClass.WandStaffOrb)
                 return null;
 
@@ -663,6 +665,7 @@ namespace OracleOfDereth
             if (buffedDefBonus <= 0) return null;
 
             int totalDef = (int)Math.Round((buffedDefBonus - 1) * 100);
+            if (AssumeFullBuffs) totalDef -= 20; // Incantation of Defender
 
             // Determine max defense for this weapon type
             int maxDef = GetMaxMeleeDefense();
@@ -733,6 +736,8 @@ namespace OracleOfDereth
 
         private string GetOAValue()
         {
+            if (IsEquipped && !AssumeFullBuffs) return null;
+
             if (wo.ObjectClass != ObjectClass.MeleeWeapon) return null;
 
             int? oa = GetMeleeOA();
@@ -749,6 +754,7 @@ namespace OracleOfDereth
             if (maxAtk <= 0) return null;
 
             double buffedPct = Math.Round((GetBuffedDoubleValue(Key_AttackBonus, 1) - 1) * 100);
+            if (AssumeFullBuffs) buffedPct -= 20; // Incantation of Heart Seeker
 
             return (int)Math.Round(buffedPct - maxAtk);
         }
