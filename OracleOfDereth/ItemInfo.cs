@@ -32,11 +32,28 @@ namespace OracleOfDereth
             foreach (var key in wo.DoubleKeys)
                 doubleValues[key] = wo.Values((DoubleValueKey)key);
 
+            // Some quest weapons don't expose keys via LongKeys/DoubleKeys
+            // but the values are accessible via wo.Values() directly.
+            EnsureKey(intValues, Key_MaxDamage, wo.Values(LongValueKey.MaxDamage, 0));
+            EnsureKey(intValues, Key_ElementalDmgBonus, wo.Values(LongValueKey.ElementalDmgBonus, 0));
+            EnsureKey(intValues, 353, wo.Values((LongValueKey)353, 0)); // Mastery
+            EnsureKey(doubleValues, Key_Variance, wo.Values(DoubleValueKey.Variance, 0));
+            EnsureKey(doubleValues, Key_DamageBonus, wo.Values(DoubleValueKey.DamageBonus, 0));
+            EnsureKey(doubleValues, Key_AttackBonus, wo.Values(DoubleValueKey.AttackBonus, 0));
+            EnsureKey(doubleValues, Key_MeleeDefenseBonus, wo.Values(DoubleValueKey.MeleeDefenseBonus, 0));
+            EnsureKey(doubleValues, Key_ElementalDmgVsMonsters, wo.Values(DoubleValueKey.ElementalDamageVersusMonsters, 0));
+
             for (int i = 0; i < wo.ActiveSpellCount; i++)
                 activeSpells.Add(wo.ActiveSpell(i));
 
             for (int i = 0; i < wo.SpellCount; i++)
                 innateSpells.Add(wo.Spell(i));
+        }
+
+        private static void EnsureKey<T>(Dictionary<int, T> dict, int key, T value) where T : struct, IComparable
+        {
+            if (!dict.ContainsKey(key) && value.CompareTo(default(T)) != 0)
+                dict[key] = value;
         }
         public static bool WeaponIdentified(WorldObject item)
         {
@@ -530,8 +547,8 @@ namespace OracleOfDereth
         // UB: od = CalcMeleeDamage - GetMaxProperty(wo, WeaponProperty.MaxDmg)
         private int? GetMeleeOD()
         {
-            int rawMaxDmg = wo.Values(LongValueKey.MaxDamage, 0);
-            if (rawMaxDmg == 0) return null;
+            if (!intValues.ContainsKey(Key_MaxDamage))
+                return null;
 
             int skill = GetWeaponSkill();
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
@@ -540,10 +557,7 @@ namespace OracleOfDereth
             double maxDmg = LookupMaxProperty(skill, mastery, multi, e => e.MaxDmg);
             if (maxDmg <= 0) return null;
 
-            // Use intValues if available (for spell stripping), else fall back to raw
-            int buffedDmg = intValues.ContainsKey(Key_MaxDamage)
-                ? GetBuffedIntValue(Key_MaxDamage)
-                : rawMaxDmg;
+            int buffedDmg = GetBuffedIntValue(Key_MaxDamage);
             if (AssumeFullBuffs) buffedDmg -= 24; // Incantation of Blood Drinker
 
             return (int)Math.Round(buffedDmg - maxDmg);
@@ -553,10 +567,6 @@ namespace OracleOfDereth
         // UB: od = CalcMissileDamage - (MaxElementalDmgBonus + 24 + MaxArrowDmg)
         private int? GetMissileOD()
         {
-            // Only calculate OD for top-tier weapons (wield req 355+ skill)
-            int wieldReqValue = wo.Values(LongValueKey.WieldReqValue, 0);
-            if (wieldReqValue < 355) return null;
-
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
 
             int arrowMax;
@@ -568,6 +578,7 @@ namespace OracleOfDereth
             int skill = GetWeaponSkill();
             double maxDmgMod = LookupMaxProperty(skill, mastery, 0, e => e.MaxDmgMod);
             double maxElemBonus = LookupMaxProperty(skill, mastery, 0, e => e.MaxElemBonus);
+            if (maxElemBonus <= 0) maxElemBonus = 22;
 
             double dmgMod = Math.Round((wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100);
             int numTimesTinkered = wo.Values(LongValueKey.NumberTimesTinkered, 0);
@@ -632,14 +643,25 @@ namespace OracleOfDereth
             int wieldAttr = wo.Values(LongValueKey.WieldReqAttribute, 0);
             if (wieldAttr != 0) return wieldAttr;
 
-            // Quest weapons with no skill or wield req: try common melee skills
+            // Quest weapons with no skill or wield req: infer from object class + mastery
+            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+
             if (wo.ObjectClass == ObjectClass.MeleeWeapon)
             {
-                int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
                 if (mastery == 11) return 41; // Two Handed
-                // Light and Finesse share the same max values; try them first, then Heavy
                 if (LookupMaxProperty(45, mastery, 0, e => e.MaxDmg) > 0) return 45;
                 if (LookupMaxProperty(44, mastery, 0, e => e.MaxDmg) > 0) return 44;
+            }
+
+            if (wo.ObjectClass == ObjectClass.MissileWeapon)
+            {
+                if (LookupMaxProperty(47, mastery, 0, e => e.MaxDmgMod) > 0) return 47;
+            }
+
+            if (wo.ObjectClass == ObjectClass.WandStaffOrb)
+            {
+                if (LookupMaxProperty(34, mastery, 0, e => e.MaxElemVsMon) > 0) return 34;
+                if (LookupMaxProperty(43, mastery, 0, e => e.MaxElemVsMon) > 0) return 43;
             }
 
             return 0;
@@ -770,16 +792,13 @@ namespace OracleOfDereth
 
         private int? GetMeleeOA()
         {
-            if (!doubleValues.ContainsKey(Key_AttackBonus) && wo.Values(DoubleValueKey.AttackBonus, 1) == 1)
+            if (!doubleValues.ContainsKey(Key_AttackBonus))
                 return null;
 
             int maxAtk = GetMaxAttack();
             if (maxAtk <= 0) return null;
 
-            double attackBonus = doubleValues.ContainsKey(Key_AttackBonus)
-                ? GetBuffedDoubleValue(Key_AttackBonus, 1)
-                : wo.Values(DoubleValueKey.AttackBonus, 1);
-            double buffedPct = Math.Round((attackBonus - 1) * 100);
+            double buffedPct = Math.Round((GetBuffedDoubleValue(Key_AttackBonus, 1) - 1) * 100);
             if (AssumeFullBuffs) buffedPct -= 20; // Incantation of Heart Seeker
 
             return (int)Math.Round(buffedPct - maxAtk);
