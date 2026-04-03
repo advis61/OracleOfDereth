@@ -271,8 +271,14 @@ namespace OracleOfDereth
 
         private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
         {
-            if (Summon.Identified(item)) return;
-            if (ItemInfo.WeaponIdentified(item)) return;
+            if (mainView.IsTradeTabActive())
+            {
+                TradeItem.Identified(item);
+                mainView.UpdateTradeList();
+            }
+
+            Summon.Identified(item);
+            ItemInfo.WeaponIdentified(item);
 
             //ItemInfo info = new ItemInfo(item);
             //Util.Chat(info.ToString(), Util.ColorCyan, "");

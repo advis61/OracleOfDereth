@@ -571,6 +571,8 @@ namespace OracleOfDereth
         }
 
 
+        public bool IsTradeTabActive() { return view.Visible && CurrentTab() == 1_04; }
+
         private int CurrentTab()
         {
             int mainTab = MainViewNotebook.CurrentTab + 1;
@@ -865,7 +867,7 @@ namespace OracleOfDereth
 
         private void TradeAdd_Hit(object sender, EventArgs e)
         {
-            TradeItem.AddSelected();
+            TradeItem.RequestAdd(Target.CurrentTargetId);
             UpdateTradeList();
         }
 
