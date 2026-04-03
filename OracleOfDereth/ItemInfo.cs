@@ -7,6 +7,7 @@ using Decal.Adapter.Wrappers;
 using Decal.Filters;
 
 // claude --resume "strip-aura-weapon-effects"
+// claude --resume 69ab0145-1287-4c96-bffe-3eae1782346b
 
 namespace OracleOfDereth
 {
@@ -17,18 +18,12 @@ namespace OracleOfDereth
     public class ItemInfo
     {
         public readonly WorldObject wo;
-        public bool IsWeapon => wo.ObjectClass == ObjectClass.MeleeWeapon ||
-                                wo.ObjectClass == ObjectClass.MissileWeapon ||
-                                wo.ObjectClass == ObjectClass.WandStaffOrb;
-        public bool IsArmorClothing => wo.ObjectClass == ObjectClass.Armor ||
-                                       wo.ObjectClass == ObjectClass.Clothing;
+        public bool IsWeapon => wo.ObjectClass == ObjectClass.MeleeWeapon || wo.ObjectClass == ObjectClass.MissileWeapon || wo.ObjectClass == ObjectClass.WandStaffOrb;
+        public bool IsArmorClothing => wo.ObjectClass == ObjectClass.Armor || wo.ObjectClass == ObjectClass.Clothing;
         public bool IsJewelry => wo.ObjectClass == ObjectClass.Jewelry;
-        public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing &&
-                               wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
-        public bool IsSummon => wo.ObjectClass == ObjectClass.Misc &&
-                                wo.Values(LongValueKey.UsesTotal) == 50 &&
-                                (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
-        public bool IsAetheria => wo.Name.Contains("Aetheria");
+        public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
+        public bool IsSummon => wo.ObjectClass == ObjectClass.Misc && wo.Values(LongValueKey.UsesTotal) == 50 && (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
+        public bool IsAetheria => wo.Name == "Aetheria";
 
         public string GetAetheriaSurge()
         {
@@ -105,8 +100,7 @@ namespace OracleOfDereth
         {
             ItemInfo info = new ItemInfo(item);
 
-            if (!info.IsWeapon)
-                return false;
+            if (!info.IsWeapon) return false;
 
             string odString = info.ToODString();
             if (odString == null) return false;
@@ -345,288 +339,340 @@ namespace OracleOfDereth
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var parts = new List<string>();
 
-            sb.Append(GetName());
+            parts.Add(GetName());
 
-            // Mastery
-            if (wo.Values((LongValueKey)353) > 0)
-            {
-                if (MasteryInfo.TryGetValue(wo.Values((LongValueKey)353), out string mastery))
-                    sb.Append(" (" + mastery + ")");
-                else
-                    sb.Append(" (Unknown Mastery " + wo.Values((LongValueKey)353) + ")");
-            }
+            string mastery = GetMasteryString();
+            if (mastery.Length > 0) parts[0] += " (" + mastery + ")";
 
-            // OD, OA and OM values
-            string odValue = ToODString();
-            if(odValue.Length > 0) { sb.Append(" " + odValue); }
+            string od = ToODString();
+            if (od.Length > 0) parts[0] += " " + od;
 
-            // Equipment Set
+            string setName = GetFullSetName();
+            if (setName.Length > 0) parts.Add(setName);
+
+            string armorLevel = GetArmorLevelString();
+            if (armorLevel.Length > 0) parts.Add(armorLevel);
+
+            string imbues = GetImbueString();
+            if (imbues.Length > 0) parts.Add(imbues);
+
+            string tinks = GetTinksString();
+            if (tinks.Length > 0) parts.Add(tinks);
+
+            string damage = GetDamageString();
+            if (damage.Length > 0) parts.Add(damage);
+
+            string bonuses = GetBonusesString();
+            if (bonuses.Length > 0) parts.Add(bonuses);
+
+            string buffed = GetBuffedValuesString();
+            if (buffed.Length > 0) parts.Add(buffed);
+
+            string spells = GetSpellsString();
+            if (spells.Length > 0) parts.Add(spells);
+
+            string wield = GetWieldReqString();
+            if (wield.Length > 0) parts.Add(wield);
+
+            string summonReqs = GetSummonReqsString();
+            if (summonReqs.Length > 0) parts.Add(summonReqs);
+
+            string lore = GetLoreString();
+            if (lore.Length > 0) parts.Add(lore);
+
+            string craft = GetWorkmanshipString();
+            if (craft.Length > 0) parts.Add(craft);
+
+            string prots = GetProtectionsString();
+            if (prots.Length > 0) parts.Add(prots);
+
+            string value = GetValueBurdenString();
+            if (value.Length > 0) parts.Add(value);
+
+            string ratings = GetRatingsString();
+            if (ratings.Length > 0) parts.Add("[" + ratings + "]");
+
+            string keyring = GetKeyringString();
+            if (keyring.Length > 0) parts.Add(keyring);
+
+            return string.Join(", ", parts);
+        }
+
+        // --- ToString Section Methods ---
+
+        public string GetMasteryString()
+        {
+            if (wo.Values((LongValueKey)353) <= 0) return "";
+            if (MasteryInfo.TryGetValue(wo.Values((LongValueKey)353), out string mastery))
+                return mastery;
+            return "Unknown Mastery " + wo.Values((LongValueKey)353);
+        }
+
+        public string GetFullSetName()
+        {
             int set = wo.Values((LongValueKey)265, 0);
-            if (set != 0)
-            {
-                sb.Append(", ");
-                if (AttributeSetInfo.TryGetValue(set, out string setName))
-                    sb.Append(setName);
-                else
-                    sb.Append("Unknown Set");
-            }
+            if (set == 0) return "";
+            if (AttributeSetInfo.TryGetValue(set, out string setName))
+                return setName;
+            return "Unknown Set";
+        }
 
-            // Armor Level
-            if (wo.Values(LongValueKey.ArmorLevel) > 0)
-                sb.Append(", AL " + wo.Values(LongValueKey.ArmorLevel));
+        public string GetArmorLevelString()
+        {
+            if (wo.Values(LongValueKey.ArmorLevel) <= 0) return "";
+            return "AL " + wo.Values(LongValueKey.ArmorLevel);
+        }
 
-            // Imbues
-            if (wo.Values(LongValueKey.Imbued) > 0)
-            {
-                sb.Append(",");
-                int imbued = wo.Values(LongValueKey.Imbued);
-                if ((imbued & 1) == 1) sb.Append(" CS");
-                if ((imbued & 2) == 2) sb.Append(" CB");
-                if ((imbued & 4) == 4) sb.Append(" AR");
-                if ((imbued & 8) == 8) sb.Append(" SlashRend");
-                if ((imbued & 16) == 16) sb.Append(" PierceRend");
-                if ((imbued & 32) == 32) sb.Append(" BludgeRend");
-                if ((imbued & 64) == 64) sb.Append(" AcidRend");
-                if ((imbued & 128) == 128) sb.Append(" FrostRend");
-                if ((imbued & 256) == 256) sb.Append(" LightRend");
-                if ((imbued & 512) == 512) sb.Append(" FireRend");
-                if ((imbued & 1024) == 1024) sb.Append(" MeleeImbue");
-                if ((imbued & 4096) == 4096) sb.Append(" MagicImbue");
-                if ((imbued & 8192) == 8192) sb.Append(" Hematited");
-                if ((imbued & 536870912) == 536870912) sb.Append(" MagicAbsorb");
-            }
+        public string GetImbueString()
+        {
+            int imbued = wo.Values(LongValueKey.Imbued);
+            if (imbued <= 0) return "";
 
-            // Tinks
-            if (wo.Values(LongValueKey.NumberTimesTinkered) > 0)
-                sb.Append(", Tinks " + wo.Values(LongValueKey.NumberTimesTinkered));
+            var parts = new List<string>();
+            if ((imbued & 1) == 1) parts.Add("CS");
+            if ((imbued & 2) == 2) parts.Add("CB");
+            if ((imbued & 4) == 4) parts.Add("AR");
+            if ((imbued & 8) == 8) parts.Add("SlashRend");
+            if ((imbued & 16) == 16) parts.Add("PierceRend");
+            if ((imbued & 32) == 32) parts.Add("BludgeRend");
+            if ((imbued & 64) == 64) parts.Add("AcidRend");
+            if ((imbued & 128) == 128) parts.Add("FrostRend");
+            if ((imbued & 256) == 256) parts.Add("LightRend");
+            if ((imbued & 512) == 512) parts.Add("FireRend");
+            if ((imbued & 1024) == 1024) parts.Add("MeleeImbue");
+            if ((imbued & 4096) == 4096) parts.Add("MagicImbue");
+            if ((imbued & 8192) == 8192) parts.Add("Hematited");
+            if ((imbued & 536870912) == 536870912) parts.Add("MagicAbsorb");
+            return string.Join(" ", parts);
+        }
 
-            // Damage (melee/missile)
+        public string GetTinksString()
+        {
+            if (wo.Values(LongValueKey.NumberTimesTinkered) <= 0) return "";
+            return "Tinks " + wo.Values(LongValueKey.NumberTimesTinkered);
+        }
+
+        public string GetDamageString()
+        {
+            var parts = new List<string>();
+
             if (wo.Values(LongValueKey.MaxDamage) != 0 && wo.Values(DoubleValueKey.Variance) != 0)
-                sb.Append(", " + (wo.Values(LongValueKey.MaxDamage) - (wo.Values(LongValueKey.MaxDamage) * wo.Values(DoubleValueKey.Variance))).ToString("N2") + "-" + wo.Values(LongValueKey.MaxDamage));
+                parts.Add((wo.Values(LongValueKey.MaxDamage) - (wo.Values(LongValueKey.MaxDamage) * wo.Values(DoubleValueKey.Variance))).ToString("N2") + "-" + wo.Values(LongValueKey.MaxDamage));
             else if (wo.Values(LongValueKey.MaxDamage) != 0)
-                sb.Append(", " + wo.Values(LongValueKey.MaxDamage));
+                parts.Add(wo.Values(LongValueKey.MaxDamage).ToString());
 
-            // Elemental Damage Bonus
             if (wo.Values(LongValueKey.ElementalDmgBonus, 0) != 0)
-                sb.Append(", +" + wo.Values(LongValueKey.ElementalDmgBonus));
+                parts.Add("+" + wo.Values(LongValueKey.ElementalDmgBonus));
 
-            // Damage Bonus %
             if (wo.Values(DoubleValueKey.DamageBonus, 1) != 1)
-                sb.Append(", +" + Math.Round(((wo.Values(DoubleValueKey.DamageBonus) - 1) * 100)) + "%");
+                parts.Add("+" + Math.Round(((wo.Values(DoubleValueKey.DamageBonus) - 1) * 100)) + "%");
 
-            // Elemental Damage vs Monsters
             if (wo.Values(DoubleValueKey.ElementalDamageVersusMonsters, 1) != 1)
-                sb.Append(", +" + Math.Round(((wo.Values(DoubleValueKey.ElementalDamageVersusMonsters) - 1) * 100)) + "%vs. Monsters");
+                parts.Add("+" + Math.Round(((wo.Values(DoubleValueKey.ElementalDamageVersusMonsters) - 1) * 100)) + "%vs. Monsters");
 
-            // Attack Bonus
+            return string.Join(", ", parts);
+        }
+
+        public string GetBonusesString()
+        {
+            var parts = new List<string>();
+
             if (wo.Values(DoubleValueKey.AttackBonus, 1) != 1)
-                sb.Append(", +" + Math.Round(((wo.Values(DoubleValueKey.AttackBonus) - 1) * 100)) + "%a");
+                parts.Add("+" + Math.Round(((wo.Values(DoubleValueKey.AttackBonus) - 1) * 100)) + "%a");
 
-            // Melee Defense Bonus
             if (wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) != 1)
-                sb.Append(", " + Math.Round(((wo.Values(DoubleValueKey.MeleeDefenseBonus) - 1) * 100)) + "%md");
+                parts.Add(Math.Round(((wo.Values(DoubleValueKey.MeleeDefenseBonus) - 1) * 100)) + "%md");
 
-            // Magic Defense Bonus
             if (wo.Values(DoubleValueKey.MagicDBonus, 1) != 1)
-                sb.Append(", " + Math.Round(((wo.Values(DoubleValueKey.MagicDBonus) - 1) * 100), 1) + "%mgc.d");
+                parts.Add(Math.Round(((wo.Values(DoubleValueKey.MagicDBonus) - 1) * 100), 1) + "%mgc.d");
 
-            // Missile Defense Bonus
             if (wo.Values(DoubleValueKey.MissileDBonus, 1) != 1)
-                sb.Append(", " + Math.Round(((wo.Values(DoubleValueKey.MissileDBonus) - 1) * 100), 1) + "%msl.d");
+                parts.Add(Math.Round(((wo.Values(DoubleValueKey.MissileDBonus) - 1) * 100), 1) + "%msl.d");
 
-            // Mana Conversion Bonus
             if (wo.Values(DoubleValueKey.ManaCBonus) != 0)
-                sb.Append(", " + Math.Round((wo.Values(DoubleValueKey.ManaCBonus) * 100)) + "%mc");
+                parts.Add(Math.Round((wo.Values(DoubleValueKey.ManaCBonus) * 100)) + "%mc");
 
-            // Buffed Values (weapons only)
-            if (IsWeapon)
+            return string.Join(", ", parts);
+        }
+
+        public string GetBuffedValuesString()
+        {
+            if (!IsWeapon) return "";
+
+            var sb = new StringBuilder("(");
+
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon)
+                sb.Append(CalcBuffedTinkedDoT().ToString("N1") + "/" + GetBuffedIntValue(Key_MaxDamage));
+            else if (wo.ObjectClass == ObjectClass.MissileWeapon)
+                sb.Append(CalcBuffedMissileDamage().ToString("N1"));
+            else
+                sb.Append(((GetBuffedDoubleValue(Key_ElementalDmgVsMonsters) - 1) * 100).ToString("N1"));
+
+            sb.Append(" ");
+
+            if (wo.Values(DoubleValueKey.AttackBonus, 1) != 1)
+                sb.Append(Math.Round(((GetBuffedDoubleValue(Key_AttackBonus) - 1) * 100)).ToString("N1") + "/");
+
+            if (wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) != 1)
+                sb.Append(Math.Round(((GetBuffedDoubleValue(Key_MeleeDefenseBonus) - 1) * 100)).ToString("N1"));
+
+            if (wo.Values(DoubleValueKey.ManaCBonus) != 0)
+                sb.Append("/" + Math.Round(GetBuffedDoubleValue(Key_ManaCBonus) * 100));
+
+            sb.Append(")");
+            return sb.ToString();
+        }
+
+        public string GetSpellsString()
+        {
+            if (innateSpells.Count == 0) return "";
+
+            FileService service = CoreManager.Current.Filter<FileService>();
+            List<int> sorted = new List<int>(innateSpells);
+            sorted.Sort();
+            sorted.Reverse();
+
+            bool isLootGenerated = wo.LongKeys.Contains((int)LongValueKey.Material);
+            bool isUnenchantable = wo.Values(LongValueKey.Unenchantable, 0) != 0;
+
+            var parts = new List<string>();
+            foreach (int spellId in sorted)
             {
-                sb.Append(", (");
+                Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
+                if (spell == null) continue;
 
-                if (wo.ObjectClass == ObjectClass.MeleeWeapon)
-                    sb.Append(CalcBuffedTinkedDoT().ToString("N1") + "/" + GetBuffedIntValue(Key_MaxDamage));
-                else if (wo.ObjectClass == ObjectClass.MissileWeapon)
-                    sb.Append(CalcBuffedMissileDamage().ToString("N1"));
-                else
-                    sb.Append(((GetBuffedDoubleValue(Key_ElementalDmgVsMonsters) - 1) * 100).ToString("N1"));
+                string name = spell.Name;
 
-                sb.Append(" ");
+                if (!isLootGenerated)
+                    goto ShowSpell;
 
-                if (wo.Values(DoubleValueKey.AttackBonus, 1) != 1)
-                    sb.Append(Math.Round(((GetBuffedDoubleValue(Key_AttackBonus) - 1) * 100)).ToString("N1") + "/");
+                if (name.Contains("Minor Impenetrability") || name.Contains("Major Impenetrability") || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability"))
+                    goto ShowSpell;
 
-                if (wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) != 1)
-                    sb.Append(Math.Round(((GetBuffedDoubleValue(Key_MeleeDefenseBonus) - 1) * 100)).ToString("N1"));
+                if (name.Contains("Augmented"))
+                    goto ShowSpell;
 
-                if (wo.Values(DoubleValueKey.ManaCBonus) != 0)
-                    sb.Append("/" + Math.Round(GetBuffedDoubleValue(Key_ManaCBonus) * 100));
-
-                sb.Append(")");
-            }
-
-            // Spells
-            if (innateSpells.Count > 0)
-            {
-                FileService service = CoreManager.Current.Filter<FileService>();
-                List<int> sorted = new List<int>(innateSpells);
-                sorted.Sort();
-                sorted.Reverse();
-
-                bool isLootGenerated = wo.LongKeys.Contains((int)LongValueKey.Material);
-                bool isUnenchantable = wo.Values(LongValueKey.Unenchantable, 0) != 0;
-
-                foreach (int spellId in sorted)
+                if (isUnenchantable)
                 {
-                    Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
-                    if (spell == null) continue;
-
-                    string name = spell.Name;
-
-                    if (!isLootGenerated)
+                    if (name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard"))
                         goto ShowSpell;
-
-                    if (name.Contains("Minor Impenetrability") || name.Contains("Major Impenetrability") || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability"))
-                        goto ShowSpell;
-
-                    if (name.Contains("Augmented"))
-                        goto ShowSpell;
-
-                    if (isUnenchantable)
-                    {
-                        if (name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard"))
-                            goto ShowSpell;
-                    }
-                    else
-                    {
-                        if (name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard"))
-                            continue;
-                    }
-
-                    if (name.EndsWith(" I") || name.EndsWith(" II") || name.EndsWith(" III") || name.EndsWith(" IV") || name.EndsWith(" V"))
-                        continue;
-                    if (name.EndsWith(" VI"))
-                        continue;
-                    //if (name.EndsWith(" VII"))
-                    //    continue;
-                    //if (name.Contains("Incantation"))
-                    //    continue;
-
-                    ShowSpell:
-                    sb.Append(", " + name);
                 }
-            }
-
-            // Wield Requirements
-            if (wo.Values(LongValueKey.WieldReqValue) > 0)
-            {
-                if (wo.Values(LongValueKey.WieldReqType) == 7 && wo.Values(LongValueKey.WieldReqAttribute) == 1)
-                    sb.Append(", Wield Lvl " + wo.Values(LongValueKey.WieldReqValue));
                 else
                 {
-                    if (SkillInfo.TryGetValue(wo.Values(LongValueKey.WieldReqAttribute), out string skillName))
-                        sb.Append(", " + skillName + " " + wo.Values(LongValueKey.WieldReqValue));
-                    else
-                        sb.Append(", Unknown Skill " + wo.Values(LongValueKey.WieldReqAttribute) + " " + wo.Values(LongValueKey.WieldReqValue));
+                    if (name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard"))
+                        continue;
                 }
+
+                if (name.EndsWith(" I") || name.EndsWith(" II") || name.EndsWith(" III") || name.EndsWith(" IV") || name.EndsWith(" V"))
+                    continue;
+                if (name.EndsWith(" VI"))
+                    continue;
+
+                ShowSpell:
+                parts.Add(name);
             }
 
-            // Summoning Gem Level
+            return string.Join(", ", parts);
+        }
+
+        public string GetWieldReqString()
+        {
+            if (wo.Values(LongValueKey.WieldReqValue) <= 0) return "";
+
+            if (wo.Values(LongValueKey.WieldReqType) == 7 && wo.Values(LongValueKey.WieldReqAttribute) == 1)
+                return "Wield Lvl " + wo.Values(LongValueKey.WieldReqValue);
+
+            if (SkillInfo.TryGetValue(wo.Values(LongValueKey.WieldReqAttribute), out string skillName))
+                return skillName + " " + wo.Values(LongValueKey.WieldReqValue);
+
+            return "Unknown Skill " + wo.Values(LongValueKey.WieldReqAttribute) + " " + wo.Values(LongValueKey.WieldReqValue);
+        }
+
+        public string GetSummonReqsString()
+        {
+            var parts = new List<string>();
+
             if (wo.Values((LongValueKey)369) > 0)
-                sb.Append(", Lvl " + wo.Values((LongValueKey)369));
+                parts.Add("Lvl " + wo.Values((LongValueKey)369));
 
-            // Activation Requirement
             if (wo.Values(LongValueKey.SkillLevelReq) > 0 && (wo.Values(LongValueKey.WieldReqAttribute) != wo.Values(LongValueKey.ActivationReqSkillId) || wo.Values(LongValueKey.WieldReqValue) < wo.Values(LongValueKey.SkillLevelReq)))
             {
                 if (SkillInfo.TryGetValue(wo.Values(LongValueKey.ActivationReqSkillId), out string skillName))
-                    sb.Append(", " + skillName + " " + wo.Values(LongValueKey.SkillLevelReq) + " to Activate");
+                    parts.Add(skillName + " " + wo.Values(LongValueKey.SkillLevelReq) + " to Activate");
                 else
-                    sb.Append(", Unknown Skill " + wo.Values(LongValueKey.ActivationReqSkillId) + " " + wo.Values(LongValueKey.SkillLevelReq) + " to Activate");
+                    parts.Add("Unknown Skill " + wo.Values(LongValueKey.ActivationReqSkillId) + " " + wo.Values(LongValueKey.SkillLevelReq) + " to Activate");
             }
 
-            // Summoning Gem Skill Requirements
             if (wo.Values((LongValueKey)366) > 0 && wo.Values((LongValueKey)367) > 0)
             {
                 if (SkillInfo.TryGetValue(wo.Values((LongValueKey)366), out string skillName))
-                    sb.Append(", " + skillName + " " + wo.Values((LongValueKey)367));
+                    parts.Add(skillName + " " + wo.Values((LongValueKey)367));
                 else
-                    sb.Append(", Unknown Skill " + wo.Values((LongValueKey)366) + " " + wo.Values((LongValueKey)367));
+                    parts.Add("Unknown Skill " + wo.Values((LongValueKey)366) + " " + wo.Values((LongValueKey)367));
             }
 
-            // Skill
             if (wo.Values((LongValueKey)368) > 0 && wo.Values((LongValueKey)367) > 0)
             {
                 if (SkillInfo.TryGetValue(wo.Values((LongValueKey)368), out string skillName))
-                    sb.Append(", Spec " + skillName + " " + wo.Values((LongValueKey)367));
+                    parts.Add("Spec " + skillName + " " + wo.Values((LongValueKey)367));
                 else
-                    sb.Append(", Unknown Skill Spec " + wo.Values((LongValueKey)368) + " " + wo.Values((LongValueKey)367));
+                    parts.Add("Unknown Skill Spec " + wo.Values((LongValueKey)368) + " " + wo.Values((LongValueKey)367));
             }
 
-            // Lore Difficulty
-            if (wo.Values(LongValueKey.LoreRequirement) > 0)
-                sb.Append(", Diff " + wo.Values(LongValueKey.LoreRequirement));
+            return string.Join(", ", parts);
+        }
 
-            // Workmanship
+        public string GetLoreString()
+        {
+            if (wo.Values(LongValueKey.LoreRequirement) <= 0) return "";
+            return "Diff " + wo.Values(LongValueKey.LoreRequirement);
+        }
+
+        public string GetWorkmanshipString()
+        {
             if (wo.ObjectClass == ObjectClass.Salvage)
             {
                 if (wo.Values(DoubleValueKey.SalvageWorkmanship) > 0)
-                    sb.Append(", Work " + wo.Values(DoubleValueKey.SalvageWorkmanship).ToString("N2"));
+                    return "Work " + wo.Values(DoubleValueKey.SalvageWorkmanship).ToString("N2");
             }
             else
             {
                 if (wo.Values(LongValueKey.Workmanship) > 0 && wo.Values(LongValueKey.NumberTimesTinkered) != 10)
-                    sb.Append(", Craft " + wo.Values(LongValueKey.Workmanship));
+                    return "Craft " + wo.Values(LongValueKey.Workmanship);
             }
-
-            // Armor Protections (unenchantable armor)
-            if (wo.ObjectClass == ObjectClass.Armor && wo.Values(LongValueKey.Unenchantable, 0) != 0)
-            {
-                sb.Append(", [" +
-                    wo.Values(DoubleValueKey.SlashProt).ToString("N1") + "/" +
-                    wo.Values(DoubleValueKey.PierceProt).ToString("N1") + "/" +
-                    wo.Values(DoubleValueKey.BludgeonProt).ToString("N1") + "/" +
-                    wo.Values(DoubleValueKey.ColdProt).ToString("N1") + "/" +
-                    wo.Values(DoubleValueKey.FireProt).ToString("N1") + "/" +
-                    wo.Values(DoubleValueKey.AcidProt).ToString("N1") + "/" +
-                    wo.Values(DoubleValueKey.LightningProt).ToString("N1") + "]");
-            }
-
-            // Value and Burden
-            if (wo.Values(LongValueKey.Value) > 0)
-                sb.Append(", Value " + String.Format("{0:n0}", wo.Values(LongValueKey.Value)));
-
-            if (wo.Values(LongValueKey.Burden) > 0)
-                sb.Append(", BU " + wo.Values(LongValueKey.Burden));
-
-            // Ratings
-            AppendRatings(sb);
-
-            // Keyring
-            if (wo.ObjectClass == ObjectClass.Misc && wo.Name.Contains("Keyring"))
-                sb.Append(", Keys: " + wo.Values(LongValueKey.KeysHeld) + ", Uses: " + wo.Values(LongValueKey.UsesRemaining));
-
-            return sb.ToString();
+            return "";
         }
 
-        private void AppendRatings(StringBuilder sb)
+        public string GetProtectionsString()
         {
-            int d = wo.Values((LongValueKey)370);
-            int dr = wo.Values((LongValueKey)371);
-            int c = wo.Values((LongValueKey)372);
-            int cr = wo.Values((LongValueKey)373);
-            int cd = wo.Values((LongValueKey)374);
-            int cdr = wo.Values((LongValueKey)375);
-            int hb = wo.Values((LongValueKey)376);
-            int v = wo.Values((LongValueKey)379);
+            if (wo.ObjectClass != ObjectClass.Armor || wo.Values(LongValueKey.Unenchantable, 0) == 0) return "";
 
-            if (d + dr + c + cr + cd + cdr + hb + v <= 0) return;
+            return "[" +
+                wo.Values(DoubleValueKey.SlashProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.PierceProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.BludgeonProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.ColdProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.FireProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.AcidProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.LightningProt).ToString("N1") + "]";
+        }
 
-            sb.Append(", [");
-            bool first = true;
-            void Add(string label, int val) { if (val > 0) { if (!first) sb.Append(", "); sb.Append(label + " " + val); first = false; } }
-            Add("D", d); Add("DR", dr); Add("C", c); Add("CD", cd); Add("CR", cr); Add("CDR", cdr); Add("HB", hb); Add("V", v);
-            sb.Append("]");
+        public string GetValueBurdenString()
+        {
+            var parts = new List<string>();
+            if (wo.Values(LongValueKey.Value) > 0)
+                parts.Add("Value " + String.Format("{0:n0}", wo.Values(LongValueKey.Value)));
+            if (wo.Values(LongValueKey.Burden) > 0)
+                parts.Add("BU " + wo.Values(LongValueKey.Burden));
+            return string.Join(", ", parts);
+        }
+
+        public string GetKeyringString()
+        {
+            if (wo.ObjectClass != ObjectClass.Misc || !wo.Name.Contains("Keyring")) return "";
+            return "Keys: " + wo.Values(LongValueKey.KeysHeld) + ", Uses: " + wo.Values(LongValueKey.UsesRemaining);
         }
 
         #region Buffed Value Calculations

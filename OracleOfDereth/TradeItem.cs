@@ -251,7 +251,7 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol3(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetOAString() ?? "";
+            if (info.IsWeapon) return info.GetOMString() ?? "";
             if (info.IsCloak) return info.GetRatingsString();
             if (info.IsSummon) return info.GetSummonDefense();
             if (info.IsAetheria) return info.GetAetheriaSurge();
@@ -261,7 +261,7 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol4(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetOMString() ?? "";
+            if (info.IsWeapon) return info.GetOAString() ?? "";
             return "";
         }
 
