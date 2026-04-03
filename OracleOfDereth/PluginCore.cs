@@ -129,6 +129,7 @@ namespace OracleOfDereth
             Recall.Init();
             Target.Init();
             Title.Init();
+            TradeItem.Init();
 
             // Initialize Views
             mainView = new MainView();

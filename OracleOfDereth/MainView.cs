@@ -833,7 +833,29 @@ namespace OracleOfDereth
 
         public void UpdateTrade()
         {
-            // TODO: Update trade list
+            UpdateTradeList();
+        }
+
+        public void UpdateTradeList()
+        {
+            List<TradeItem> items = TradeItem.TradeItems.ToList();
+
+            for (int x = 0; x < items.Count; x++)
+            {
+                HudList.HudListRowAccessor row;
+                if (x >= TradeList.RowCount) { row = TradeList.AddRow(); } else { row = TradeList[x]; }
+
+                TradeItem item = items[x];
+
+                AssignImage((HudPictureBox)row[0], IconNotComplete);
+                AssignImage((HudPictureBox)row[1], item.Icon);
+                ((HudStaticText)row[2]).Text = item.Name;
+                ((HudStaticText)row[3]).Text = item.Id.ToString();
+            }
+
+            while (TradeList.RowCount > items.Count) { TradeList.RemoveRow(TradeList.RowCount - 1); }
+
+            TradeText.Text = $"Trade Items: {items.Count} selected";
         }
 
         private void TradeAddSelected_Change(object sender, EventArgs e)
@@ -843,7 +865,8 @@ namespace OracleOfDereth
 
         private void TradeAdd_Hit(object sender, EventArgs e)
         {
-            // TODO: Add selected item to trade list
+            TradeItem.AddSelected();
+            UpdateTradeList();
         }
 
         private void TradeAddAll_Hit(object sender, EventArgs e)
@@ -853,7 +876,8 @@ namespace OracleOfDereth
 
         private void TradeClear_Hit(object sender, EventArgs e)
         {
-            // TODO: Clear all items from trade list
+            TradeItem.Clear();
+            UpdateTradeList();
         }
 
         private void TradeExport_Hit(object sender, EventArgs e)
@@ -868,7 +892,19 @@ namespace OracleOfDereth
 
         private void TradeList_Click(object sender, int row, int col)
         {
-            // TODO: Handle trade list row click
+            int id = int.Parse(((HudStaticText)TradeList[row][3]).Text);
+
+            if (col == 0)
+            {
+                TradeItem.Remove(id);
+                UpdateTradeList();
+            }
+            else
+            {
+                CoreManager.Current.Actions.SelectItem(id);
+                TradeItem item = TradeItem.TradeItems.FirstOrDefault(t => t.Id == id);
+                if (item != null) { Util.Chat(item.Description); }
+            }
         }
 
 
