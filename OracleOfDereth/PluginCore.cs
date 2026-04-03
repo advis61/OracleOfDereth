@@ -245,6 +245,14 @@ namespace OracleOfDereth
                 Target.SetCurrent(e.ItemGuid);
                 targetView.Update();
                 mainView.UpdateTarget();
+
+                if (TradeItem.AutoAddEnabled && mainView.IsTradeTabActive())
+                {
+                    if (TradeItem.RequestAdd(e.ItemGuid))
+                    {
+                        mainView.UpdateTradeList();
+                    }
+                }
             }
             catch (Exception ex) { Util.Log(ex); }
         }

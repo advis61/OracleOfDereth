@@ -14,6 +14,8 @@ namespace OracleOfDereth
         // Items pending identification before being added
         private static HashSet<int> PendingIds = new HashSet<int>();
 
+        public static bool AutoAddEnabled = false;
+
         // Properties
         public string Name = "";
         public int Id = 0;
@@ -24,6 +26,29 @@ namespace OracleOfDereth
         {
             TradeItems.Clear();
             PendingIds.Clear();
+        }
+
+        public static bool IsTradeable(WorldObject wo)
+        {
+            if (wo == null) return false;
+            if (wo.ObjectClass == ObjectClass.Container) return false;
+            if (wo.Values(LongValueKey.Attuned, 0) > 0) return false;
+            if (!IsInInventory(wo)) return false;
+            return true;
+        }
+
+        private static bool IsInInventory(WorldObject wo)
+        {
+            int characterId = CoreManager.Current.CharacterFilter.Id;
+            int containerId = wo.Container;
+            while (containerId != 0)
+            {
+                if (containerId == characterId) return true;
+                WorldObject container = CoreManager.Current.WorldFilter[containerId];
+                if (container == null) return false;
+                containerId = container.Container;
+            }
+            return false;
         }
 
         /// <summary>
@@ -37,10 +62,13 @@ namespace OracleOfDereth
             WorldObject wo = CoreManager.Current.WorldFilter[id];
             if (wo == null) return false;
 
+            if (wo.ObjectClass == ObjectClass.Container) return false;
+            if (!IsInInventory(wo)) return false;
             if (TradeItems.Any(t => t.Id == id)) return false;
 
             if (wo.HasIdData)
             {
+                if (!IsTradeable(wo)) return false;
                 AddFromWorldObject(wo);
                 return true;
             }
@@ -59,6 +87,9 @@ namespace OracleOfDereth
             if (!PendingIds.Contains(item.Id)) return false;
 
             PendingIds.Remove(item.Id);
+
+            if (!IsTradeable(item)) return true;
+
             AddFromWorldObject(item);
             return true;
         }

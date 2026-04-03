@@ -862,7 +862,7 @@ namespace OracleOfDereth
 
         private void TradeAddSelected_Change(object sender, EventArgs e)
         {
-            // TODO: Toggle adding selected items to trade list
+            TradeItem.AutoAddEnabled = TradeAddSelected.Checked;
         }
 
         private void TradeAdd_Hit(object sender, EventArgs e)
