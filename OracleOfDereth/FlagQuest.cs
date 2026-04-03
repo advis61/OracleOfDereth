@@ -82,6 +82,16 @@ namespace OracleOfDereth
                 return CoreManager.Current.CharacterFilter.GetCharProperty(287) >= 300;
             }
 
+            // Asheron's Departure Lower
+            if (Flag == "burflagged(permanent)")
+            {
+                QuestFlag.QuestFlags.TryGetValue("burflagged(metal)", out QuestFlag bur1);
+                QuestFlag.QuestFlags.TryGetValue("burflagged(motes)", out QuestFlag bur2);
+                QuestFlag.QuestFlags.TryGetValue("burflagged(gem)", out QuestFlag bur3);
+
+                if (bur1 != null && bur2 != null && bur3 != null) { return true; }
+            }
+
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return false; }
 
