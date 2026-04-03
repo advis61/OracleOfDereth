@@ -16,7 +16,13 @@ namespace OracleOfDereth
     /// </summary>
     public class ItemInfo
     {
-        private readonly WorldObject wo;
+        public readonly WorldObject wo;
+        public bool IsWeapon => wo.ObjectClass == ObjectClass.MeleeWeapon ||
+                                wo.ObjectClass == ObjectClass.MissileWeapon ||
+                                wo.ObjectClass == ObjectClass.WandStaffOrb;
+        public bool IsArmorClothing => wo.ObjectClass == ObjectClass.Armor ||
+                                       wo.ObjectClass == ObjectClass.Clothing;
+        public bool IsJewelry => wo.ObjectClass == ObjectClass.Jewelry;
         private readonly List<int> activeSpells = new List<int>();
         private readonly List<int> innateSpells = new List<int>();
         private readonly Dictionary<int, int> intValues = new Dictionary<int, int>();
@@ -56,12 +62,10 @@ namespace OracleOfDereth
         }
         public static bool WeaponIdentified(WorldObject item)
         {
-            if (item.ObjectClass != ObjectClass.MeleeWeapon &&
-                item.ObjectClass != ObjectClass.MissileWeapon &&
-                item.ObjectClass != ObjectClass.WandStaffOrb)
-                return false;
-
             ItemInfo info = new ItemInfo(item);
+
+            if (!info.IsWeapon)
+                return false;
 
             string odString = info.ToODString();
             if (odString == null) return false;
@@ -72,72 +76,45 @@ namespace OracleOfDereth
 
         private string ToODString()
         {
-            int? od = GetODValue();
-            int? oa = GetOAValue();
-            int? om = GetOMValue();
+            string od = GetODString();
+            string oa = GetOAString();
+            string om = GetOMString();
 
-            // OD outside -15 to +30 means the calculation is unreliable -- hide everything.
-            if (od != null && (od < -15 || od > 30)) return "";
-            if (oa != null && (oa < -15 || oa > 30)) return "";
-            if (om != null && (om < -15 || om > 30)) return "";
-
-            // If we guessed full buffs but the results look too low,
-            // the weapon probably isn't buffed -- hide everything.
             if (AssumeFullBuffs && od == null && om == null) return "";
-
             if (od == null && oa == null && om == null) return "";
 
             var parts = new List<string>();
-            if (od != null) parts.Add("OD " + FormatOValue((int)od));
-            if (oa != null) parts.Add("OA " + FormatOValue((int)oa));
-            if (om != null) parts.Add("OM " + FormatOValue((int)om));
+            if (od != null) parts.Add(od);
+            if (oa != null) parts.Add(oa);
+            if (om != null) parts.Add(om);
 
             return "[" + string.Join(" | ", parts) + "]";
         }
 
-        private static string FormatOValue(int val)
+        public static string FormatOValue(int val)
         {
             return val >= 0 ? "+" + val : "" + val;
         }
 
-        public string GetSummaryCol1()
+        public string GetODString()
         {
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon ||
-                wo.ObjectClass == ObjectClass.MissileWeapon ||
-                wo.ObjectClass == ObjectClass.WandStaffOrb)
-            {
-                int? od = GetODValue();
-                if (od == null || od < -15 || od > 30) return "";
-                return "OD " + FormatOValue((int)od);
-            }
-
-            if (wo.ObjectClass == ObjectClass.Armor || wo.ObjectClass == ObjectClass.Clothing)
-            {
-                int set = wo.Values((LongValueKey)265, 0);
-                if (set != 0 && AttributeSetInfo.TryGetValue(set, out string setName))
-                    return setName;
-            }
-
-            return "";
+            int? od = GetODValue();
+            if (od == null || od < -15 || od > 30) return null;
+            return "OD " + FormatOValue((int)od);
         }
 
-        public string GetSummaryCol2()
+        public string GetOAString()
         {
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon ||
-                wo.ObjectClass == ObjectClass.MissileWeapon ||
-                wo.ObjectClass == ObjectClass.WandStaffOrb)
-            {
-                int? om = GetOMValue();
-                if (om == null || om < -15 || om > 30) return "";
-                return "MD " + FormatOValue((int)om);
-            }
+            int? oa = GetOAValue();
+            if (oa == null || oa < -15 || oa > 30) return null;
+            return "OA " + FormatOValue((int)oa);
+        }
 
-            if (wo.ObjectClass == ObjectClass.Armor || wo.ObjectClass == ObjectClass.Clothing)
-            {
-                return GetRatingsString();
-            }
-
-            return "";
+        public string GetOMString()
+        {
+            int? om = GetOMValue();
+            if (om == null || om < -15 || om > 30) return null;
+            return "MD " + FormatOValue((int)om);
         }
 
         public string GetRatingsString()
@@ -274,7 +251,7 @@ namespace OracleOfDereth
                 sb.Append(", " + Math.Round((wo.Values(DoubleValueKey.ManaCBonus) * 100)) + "%mc");
 
             // Buffed Values (weapons only)
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon || wo.ObjectClass == ObjectClass.MissileWeapon || wo.ObjectClass == ObjectClass.WandStaffOrb)
+            if (IsWeapon)
             {
                 sb.Append(", (");
 
@@ -600,7 +577,7 @@ namespace OracleOfDereth
         private const int Key_WeaponSkill = 159;     // The weapon's combat skill (Heavy=44, Light=45, etc.)
         private const int Key_CombatUse = 47;         // Weapon type for multi-strike detection
 
-        private int? GetODValue()
+        public int? GetODValue()
         {
             if (IsEquipped && !AssumeFullBuffs) return null;
 
@@ -763,11 +740,11 @@ namespace OracleOfDereth
         // OM+0 = max defense roll for that weapon type. OM+N = N% above max.
         // Not shown when equipped or below OM-10.
 
-        private int? GetOMValue()
+        public int? GetOMValue()
         {
             if (IsEquipped && !AssumeFullBuffs) return null;
 
-            if (wo.ObjectClass != ObjectClass.MeleeWeapon && wo.ObjectClass != ObjectClass.MissileWeapon && wo.ObjectClass != ObjectClass.WandStaffOrb)
+            if (!IsWeapon)
                 return null;
 
             double buffedDefBonus = GetBuffedDoubleValue(Key_MeleeDefenseBonus);
@@ -1114,7 +1091,7 @@ namespace OracleOfDereth
             { 11, "Two Handed Combat" },
         };
 
-        private static readonly Dictionary<int, string> AttributeSetInfo = new Dictionary<int, string>
+        public static readonly Dictionary<int, string> AttributeSetInfo = new Dictionary<int, string>
         {
             { 2, "Test" },
             { 4, "Carraida's Benediction" },

@@ -222,10 +222,36 @@ namespace OracleOfDereth
                 Id = wo.Id,
                 Name = wo.Name,
                 Icon = wo.Icon,
-                SummaryCol1 = info.GetSummaryCol1(),
-                SummaryCol2 = info.GetSummaryCol2(),
+                SummaryCol1 = GetSummaryCol1(info),
+                SummaryCol2 = GetSummaryCol2(info),
                 Description = info.ToString(),
             });
+        }
+
+        private static string GetSummaryCol1(ItemInfo info)
+        {
+            if (info.IsWeapon)
+                return info.GetODString() ?? "";
+
+            if (info.IsArmorClothing || info.IsJewelry)
+                return info.GetRatingsString();
+
+            return "";
+        }
+
+        private static string GetSummaryCol2(ItemInfo info)
+        {
+            if (info.IsWeapon)
+                return info.GetOMString() ?? "";
+
+            if (info.IsArmorClothing)
+            {
+                int set = info.wo.Values((LongValueKey)265, 0);
+                if (set != 0 && ItemInfo.AttributeSetInfo.TryGetValue(set, out string setName))
+                    return setName.Replace("'s", "").Replace(" Proof Set", "").Replace(" Set", "").Trim();
+            }
+
+            return "";
         }
 
         public static void Add(TradeItem item)
