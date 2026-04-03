@@ -157,7 +157,7 @@ namespace OracleOfDereth
             { 1_01, 460 }, // Buffs
             { 1_02, 290 }, // Nearby
             { 1_03, 250 }, // Fellowship
-            { 1_04, 290 }, // Trade
+            { 1_04, 450 }, // Trade
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -855,9 +855,11 @@ namespace OracleOfDereth
                 TradeItem item = items[x];
 
                 AssignImage((HudPictureBox)row[0], IconNotComplete);
-                AssignImage((HudPictureBox)row[1], item.Icon);
-                ((HudStaticText)row[2]).Text = item.Name;
-                ((HudStaticText)row[3]).Text = item.Id.ToString();
+                ((HudStaticText)row[1]).Text = item.SummaryCol1;
+                ((HudStaticText)row[2]).Text = item.SummaryCol2;
+                AssignImage((HudPictureBox)row[3], item.Icon);
+                ((HudStaticText)row[4]).Text = item.Name;
+                ((HudStaticText)row[5]).Text = item.Id.ToString();
             }
 
             while (TradeList.RowCount > items.Count) { TradeList.RemoveRow(TradeList.RowCount - 1); }
@@ -910,7 +912,7 @@ namespace OracleOfDereth
 
         private void TradeList_Click(object sender, int row, int col)
         {
-            int id = int.Parse(((HudStaticText)TradeList[row][3]).Text);
+            int id = int.Parse(((HudStaticText)TradeList[row][5]).Text);
 
             if (col == 0)
             {

@@ -28,6 +28,8 @@ namespace OracleOfDereth
         public string Name = "";
         public int Id = 0;
         public int Icon = 0;
+        public string SummaryCol1 = "";
+        public string SummaryCol2 = "";
         public string Description = "";
 
         public static void Init()
@@ -220,6 +222,8 @@ namespace OracleOfDereth
                 Id = wo.Id,
                 Name = wo.Name,
                 Icon = wo.Icon,
+                SummaryCol1 = info.GetSummaryCol1(),
+                SummaryCol2 = info.GetSummaryCol2(),
                 Description = info.ToString(),
             });
         }

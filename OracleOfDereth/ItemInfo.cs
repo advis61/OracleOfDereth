@@ -100,6 +100,72 @@ namespace OracleOfDereth
             return val >= 0 ? "+" + val : "" + val;
         }
 
+        public string GetSummaryCol1()
+        {
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon ||
+                wo.ObjectClass == ObjectClass.MissileWeapon ||
+                wo.ObjectClass == ObjectClass.WandStaffOrb)
+            {
+                int? od = GetODValue();
+                if (od == null || od < -15 || od > 30) return "";
+                return "OD " + FormatOValue((int)od);
+            }
+
+            if (wo.ObjectClass == ObjectClass.Armor || wo.ObjectClass == ObjectClass.Clothing)
+            {
+                int set = wo.Values((LongValueKey)265, 0);
+                if (set != 0 && AttributeSetInfo.TryGetValue(set, out string setName))
+                    return setName;
+            }
+
+            return "";
+        }
+
+        public string GetSummaryCol2()
+        {
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon ||
+                wo.ObjectClass == ObjectClass.MissileWeapon ||
+                wo.ObjectClass == ObjectClass.WandStaffOrb)
+            {
+                int? om = GetOMValue();
+                if (om == null || om < -15 || om > 30) return "";
+                return "MD " + FormatOValue((int)om);
+            }
+
+            if (wo.ObjectClass == ObjectClass.Armor || wo.ObjectClass == ObjectClass.Clothing)
+            {
+                return GetRatingsString();
+            }
+
+            return "";
+        }
+
+        public string GetRatingsString()
+        {
+            int d = wo.Values((LongValueKey)370);
+            int dr = wo.Values((LongValueKey)371);
+            int c = wo.Values((LongValueKey)372);
+            int cr = wo.Values((LongValueKey)373);
+            int cd = wo.Values((LongValueKey)374);
+            int cdr = wo.Values((LongValueKey)375);
+            int hb = wo.Values((LongValueKey)376);
+            int v = wo.Values((LongValueKey)379);
+
+            if (d + dr + c + cr + cd + cdr + hb + v <= 0) return "";
+
+            var parts = new List<string>();
+            if (d > 0) parts.Add("D" + d);
+            if (dr > 0) parts.Add("DR" + dr);
+            if (c > 0) parts.Add("C" + c);
+            if (cd > 0) parts.Add("CD" + cd);
+            if (cr > 0) parts.Add("CR" + cr);
+            if (cdr > 0) parts.Add("CDR" + cdr);
+            if (hb > 0) parts.Add("HB" + hb);
+            if (v > 0) parts.Add("V" + v);
+
+            return string.Join(" ", parts);
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
