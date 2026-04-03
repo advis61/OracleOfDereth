@@ -530,8 +530,8 @@ namespace OracleOfDereth
         // UB: od = CalcMeleeDamage - GetMaxProperty(wo, WeaponProperty.MaxDmg)
         private int? GetMeleeOD()
         {
-            if (!intValues.ContainsKey(Key_MaxDamage))
-                return null;
+            int rawMaxDmg = wo.Values(LongValueKey.MaxDamage, 0);
+            if (rawMaxDmg == 0) return null;
 
             int skill = GetWeaponSkill();
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
@@ -540,7 +540,10 @@ namespace OracleOfDereth
             double maxDmg = LookupMaxProperty(skill, mastery, multi, e => e.MaxDmg);
             if (maxDmg <= 0) return null;
 
-            int buffedDmg = GetBuffedIntValue(Key_MaxDamage);
+            // Use intValues if available (for spell stripping), else fall back to raw
+            int buffedDmg = intValues.ContainsKey(Key_MaxDamage)
+                ? GetBuffedIntValue(Key_MaxDamage)
+                : rawMaxDmg;
             if (AssumeFullBuffs) buffedDmg -= 24; // Incantation of Blood Drinker
 
             return (int)Math.Round(buffedDmg - maxDmg);
@@ -623,7 +626,23 @@ namespace OracleOfDereth
 
         private int GetWeaponSkill()
         {
-            return intValues.ContainsKey(Key_WeaponSkill) ? intValues[Key_WeaponSkill] : 0;
+            if (intValues.ContainsKey(Key_WeaponSkill) && intValues[Key_WeaponSkill] != 0)
+                return intValues[Key_WeaponSkill];
+
+            int wieldAttr = wo.Values(LongValueKey.WieldReqAttribute, 0);
+            if (wieldAttr != 0) return wieldAttr;
+
+            // Quest weapons with no skill or wield req: try common melee skills
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon)
+            {
+                int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+                if (mastery == 11) return 41; // Two Handed
+                // Light and Finesse share the same max values; try them first, then Heavy
+                if (LookupMaxProperty(45, mastery, 0, e => e.MaxDmg) > 0) return 45;
+                if (LookupMaxProperty(44, mastery, 0, e => e.MaxDmg) > 0) return 44;
+            }
+
+            return 0;
         }
 
         private bool IsMultiStrike()
@@ -751,13 +770,16 @@ namespace OracleOfDereth
 
         private int? GetMeleeOA()
         {
-            if (!doubleValues.ContainsKey(Key_AttackBonus))
+            if (!doubleValues.ContainsKey(Key_AttackBonus) && wo.Values(DoubleValueKey.AttackBonus, 1) == 1)
                 return null;
 
             int maxAtk = GetMaxAttack();
             if (maxAtk <= 0) return null;
 
-            double buffedPct = Math.Round((GetBuffedDoubleValue(Key_AttackBonus, 1) - 1) * 100);
+            double attackBonus = doubleValues.ContainsKey(Key_AttackBonus)
+                ? GetBuffedDoubleValue(Key_AttackBonus, 1)
+                : wo.Values(DoubleValueKey.AttackBonus, 1);
+            double buffedPct = Math.Round((attackBonus - 1) * 100);
             if (AssumeFullBuffs) buffedPct -= 20; // Incantation of Heart Seeker
 
             return (int)Math.Round(buffedPct - maxAtk);
