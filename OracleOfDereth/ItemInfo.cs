@@ -45,6 +45,25 @@ namespace OracleOfDereth
             }
             return "";
         }
+
+        public string GetAetheriaColor()
+        {
+            if (wo.Name.Contains("Blue")) return "Blue";
+            if (wo.Name.Contains("Yellow")) return "Yellow";
+            if (wo.Name.Contains("Red")) return "Red";
+            return "Aetheria";
+        }
+
+        public string GetItemSlotName()
+        {
+            if (IsWeapon) return GetWeaponTypeName();
+            if (IsCloak) return "Cloak";
+            if (IsSummon) return "Summon";
+            if (IsAetheria) return GetAetheriaColor();
+            if (IsArmorClothing || IsJewelry) return GetSlotName();
+            return wo.ObjectClass.ToString();
+        }
+
         private readonly List<int> activeSpells = new List<int>();
         private readonly List<int> innateSpells = new List<int>();
         private readonly Dictionary<int, int> intValues = new Dictionary<int, int>();

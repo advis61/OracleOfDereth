@@ -235,19 +235,7 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol1(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetWeaponTypeName();
-            if (info.IsCloak) return "Cloak";
-            if (info.IsSummon) return "Summon";
-            if (info.IsArmorClothing || info.IsJewelry) return info.GetSlotName();
-            if (info.IsAetheria)
-            {
-                string name = info.wo.Name;
-                if (name.Contains("Blue")) return "Blue";
-                if (name.Contains("Yellow")) return "Yellow";
-                if (name.Contains("Red")) return "Red";
-                return "Aetheria";
-            }
-            return info.wo.ObjectClass.ToString();
+            return info.GetItemSlotName();
         }
 
         private static string GetSummaryCol2(ItemInfo info)
