@@ -14,7 +14,15 @@ namespace OracleOfDereth
         // Items pending identification before being added
         private static HashSet<int> PendingIds = new HashSet<int>();
 
+        // Queue of item ids waiting to be identified (for Add All)
+        private static Queue<int> IdentifyQueue = new Queue<int>();
+        public static bool IsProcessingQueue = false;
+
         public static bool AutoAddEnabled = false;
+
+        // Callback to refresh the UI after an item is added from the queue
+        public static Action OnTradeListChanged;
+        public static Action OnQueueFinished;
 
         // Properties
         public string Name = "";
@@ -26,7 +34,11 @@ namespace OracleOfDereth
         {
             TradeItems.Clear();
             PendingIds.Clear();
+            IdentifyQueue.Clear();
+            IsProcessingQueue = false;
         }
+
+        public static int QueueCount => IdentifyQueue.Count + PendingIds.Count;
 
         public static bool IsTradeable(WorldObject wo)
         {
@@ -94,6 +106,111 @@ namespace OracleOfDereth
             return true;
         }
 
+        /// <summary>
+        /// Scans the entire inventory. Adds identified tradeable items immediately,
+        /// queues unidentified items for identification one at a time.
+        /// </summary>
+        public static int AddAll()
+        {
+            int addedImmediately = 0;
+
+            using (var inv = CoreManager.Current.WorldFilter.GetInventory())
+            {
+                foreach (WorldObject wo in inv)
+                {
+                    if (wo.ObjectClass == ObjectClass.Container) continue;
+                    if (!IsInInventory(wo)) continue;
+                    if (TradeItems.Any(t => t.Id == wo.Id)) continue;
+
+                    if (wo.HasIdData)
+                    {
+                        if (!IsTradeable(wo)) continue;
+                        AddFromWorldObject(wo);
+                        addedImmediately++;
+                    }
+                    else
+                    {
+                        if (!PendingIds.Contains(wo.Id) && !IdentifyQueue.Contains(wo.Id))
+                        {
+                            IdentifyQueue.Enqueue(wo.Id);
+                        }
+                    }
+                }
+            }
+
+            if (IdentifyQueue.Count > 0 && !IsProcessingQueue)
+            {
+                IsProcessingQueue = true;
+                CoreManager.Current.WorldFilter.ChangeObject += TradeItem_ChangeObject;
+                ProcessNextInQueue();
+            }
+
+            return addedImmediately;
+        }
+
+        private static void ProcessNextInQueue()
+        {
+            // Skip items that have already been added or no longer exist
+            while (IdentifyQueue.Count > 0)
+            {
+                int id = IdentifyQueue.Dequeue();
+
+                WorldObject wo = CoreManager.Current.WorldFilter[id];
+                if (wo == null) continue;
+                if (TradeItems.Any(t => t.Id == id)) continue;
+
+                PendingIds.Add(id);
+                CoreManager.Current.Actions.RequestId(id);
+                return;
+            }
+
+            // Queue is empty, stop listening
+            StopProcessingQueue();
+        }
+
+        private static void TradeItem_ChangeObject(object sender, ChangeObjectEventArgs e)
+        {
+            try
+            {
+                if (e.Change != WorldChangeType.IdentReceived) return;
+                if (!PendingIds.Contains(e.Changed.Id)) return;
+
+                PendingIds.Remove(e.Changed.Id);
+
+                if (IsTradeable(e.Changed))
+                {
+                    AddFromWorldObject(e.Changed);
+                }
+
+                OnTradeListChanged?.Invoke();
+                ProcessNextInQueue();
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        public static void CancelQueue()
+        {
+            IdentifyQueue.Clear();
+            PendingIds.Clear();
+            StopProcessingQueue();
+        }
+
+        private static void StopProcessingQueue()
+        {
+            if (!IsProcessingQueue) return;
+            IsProcessingQueue = false;
+            CoreManager.Current.WorldFilter.ChangeObject -= TradeItem_ChangeObject;
+            OnQueueFinished?.Invoke();
+        }
+
+        public static string StatusText()
+        {
+            int pending = IdentifyQueue.Count + PendingIds.Count;
+            if (pending > 0)
+                return $"Trade Items: {TradeItems.Count} done, {pending} pending";
+            return $"Trade Items: {TradeItems.Count} selected";
+        }
+
         private static void AddFromWorldObject(WorldObject wo)
         {
             ItemInfo info = new ItemInfo(wo);
@@ -111,6 +228,7 @@ namespace OracleOfDereth
         {
             if (TradeItems.Any(t => t.Id == item.Id)) return;
             TradeItems.Add(item);
+            TradeItems.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
         }
 
         public static void Remove(int id)

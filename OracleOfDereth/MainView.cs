@@ -328,6 +328,9 @@ namespace OracleOfDereth
                 FellowsList.ClearRows();
 
                 // Trade Tab
+                TradeItem.OnTradeListChanged = () => UpdateTradeList();
+                TradeItem.OnQueueFinished = () => { TradeAddAll.Text = "Add All"; UpdateTradeList(); };
+
                 TradeText = (HudStaticText)view["TradeText"];
                 TradeText.FontHeight = 10;
 
@@ -510,6 +513,8 @@ namespace OracleOfDereth
                 StatusViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
+                TradeItem.OnTradeListChanged = null;
+                TradeItem.OnQueueFinished = null;
                 TradeAddSelected.Change -= TradeAddSelected_Change;
                 TradeAdd.Hit -= TradeAdd_Hit;
                 TradeAddAll.Hit -= TradeAddAll_Hit;
@@ -857,7 +862,7 @@ namespace OracleOfDereth
 
             while (TradeList.RowCount > items.Count) { TradeList.RemoveRow(TradeList.RowCount - 1); }
 
-            TradeText.Text = $"Trade Items: {items.Count} selected";
+            TradeText.Text = TradeItem.StatusText();
         }
 
         private void TradeAddSelected_Change(object sender, EventArgs e)
@@ -873,7 +878,18 @@ namespace OracleOfDereth
 
         private void TradeAddAll_Hit(object sender, EventArgs e)
         {
-            // TODO: Add all items to trade list
+            if (TradeItem.IsProcessingQueue)
+            {
+                TradeItem.CancelQueue();
+                TradeAddAll.Text = "Add All";
+                UpdateTradeList();
+                return;
+            }
+
+            TradeAddAll.Text = "Adding...";
+            TradeItem.AddAll();
+            if (TradeItem.QueueCount == 0) { TradeAddAll.Text = "Add All"; }
+            UpdateTradeList();
         }
 
         private void TradeClear_Hit(object sender, EventArgs e)
