@@ -6,8 +6,6 @@ using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Decal.Filters;
 
-// claude --resume eaf48359-ba2c-4782-ad06-f48ca4b5f18d
-
 namespace OracleOfDereth
 {
     /// <summary>
@@ -37,7 +35,6 @@ namespace OracleOfDereth
             EnsureKey(intValues, Key_MaxDamage, wo.Values(LongValueKey.MaxDamage, 0));
             EnsureKey(intValues, Key_ElementalDmgBonus, wo.Values(LongValueKey.ElementalDmgBonus, 0));
             EnsureKey(intValues, 353, wo.Values((LongValueKey)353, 0)); // Mastery
-            EnsureKey(doubleValues, Key_Variance, wo.Values(DoubleValueKey.Variance, 0));
             EnsureKey(doubleValues, Key_DamageBonus, wo.Values(DoubleValueKey.DamageBonus, 0));
             EnsureKey(doubleValues, Key_AttackBonus, wo.Values(DoubleValueKey.AttackBonus, 0));
             EnsureKey(doubleValues, Key_MeleeDefenseBonus, wo.Values(DoubleValueKey.MeleeDefenseBonus, 0));
@@ -81,9 +78,7 @@ namespace OracleOfDereth
             // the weapon probably isn't buffed -- hide everything.
             if (AssumeFullBuffs && odValue == null && omValue == null) return "";
 
-            bool isWand = wo.ObjectClass == ObjectClass.WandStaffOrb;
-
-            if (odValue == null && (!isWand || omValue == null)) return "";
+            if (odValue == null && oaValue == null && omValue == null) return "";
 
             var parts = new List<string>();
             if (odValue != null) parts.Add("OD " + odValue);
@@ -397,7 +392,6 @@ namespace OracleOfDereth
         private const int Key_Imbued = 179;
         private const int Key_Tinks = 171;
         private const int Key_Material = 131;
-        private const int Key_Variance = 167772171;
         private const int Key_DamageBonus = 167772174;
         private const int Key_ElementalDmgVsMonsters = 152;
         private const int Key_AttackBonus = 167772172;
@@ -477,10 +471,10 @@ namespace OracleOfDereth
 
         private double CalcBuffedTinkedDoT()
         {
-            if (!doubleValues.ContainsKey(Key_Variance) || !intValues.ContainsKey(Key_MaxDamage))
+            if (!doubleValues.ContainsKey(167772171) || !intValues.ContainsKey(Key_MaxDamage))
                 return -1;
 
-            double variance = doubleValues[Key_Variance];
+            double variance = doubleValues[167772171];
             int maxDamage = GetBuffedIntValue(Key_MaxDamage);
 
             int tinks = intValues.ContainsKey(Key_Tinks) ? intValues[Key_Tinks] : 0;
@@ -522,7 +516,6 @@ namespace OracleOfDereth
         #endregion
 
         #region OD (Over Damage) Calculations
-        // Algorithm ported from UtilityBelt's ItemInfo / MyWorldObject / BestValuesDatatable.
         // Uses a comprehensive lookup table keyed by (skill, mastery, multiStrike, wieldReq)
         // to determine max weapon properties, then compares the actual weapon against those maxes.
 
@@ -539,12 +532,10 @@ namespace OracleOfDereth
             else if (wo.ObjectClass == ObjectClass.MissileWeapon) od = GetMissileOD();
             else if (wo.ObjectClass == ObjectClass.WandStaffOrb) od = GetCasterOD();
 
-            if (od == null || od < -10) return null;
+            if (od == null || od < -15) return null;
             return od >= 0 ? "+" + od : "" + od;
         }
 
-        // UB: CalcMeleeDamage = GetBuffedIntValueKey(218103842) - varianceTinks
-        // UB: od = CalcMeleeDamage - GetMaxProperty(wo, WeaponProperty.MaxDmg)
         private int? GetMeleeOD()
         {
             if (!intValues.ContainsKey(Key_MaxDamage))
@@ -563,8 +554,6 @@ namespace OracleOfDereth
             return (int)Math.Round(buffedDmg - maxDmg);
         }
 
-        // UB: CalcMissileDamage = (1 + (dmgMod + 4*remainingTinks)/100) * (ElemBonus + buffedDmg + arrowMax) / maxTinkedMissileMod
-        // UB: od = CalcMissileDamage - (MaxElementalDmgBonus + 24 + MaxArrowDmg)
         private int? GetMissileOD()
         {
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
@@ -619,7 +608,6 @@ namespace OracleOfDereth
             return (int)Math.Round(od);
         }
 
-        // UB: ((GetBuffedDoubleValueKey(ElementalDamageVersusMonsters) - 1) * 100) compared to table max
         private int? GetCasterOD()
         {
             int skill = GetWeaponSkill();
@@ -672,18 +660,7 @@ namespace OracleOfDereth
             int combatUse = intValues.ContainsKey(Key_CombatUse) ? intValues[Key_CombatUse] : 0;
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
             return combatUse == 160 || combatUse == 166 || combatUse == 486
-                || (combatUse == 4 && mastery == 11);
-        }
-
-        private int GetCantripIntBonus(int key)
-        {
-            int bonus = 0;
-            foreach (int spell in innateSpells)
-            {
-                if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
-                    bonus += effect.Bonus;
-            }
-            return bonus;
+                || (combatUse == 4 && mastery == 11 && !IsTwoHandedSpear());
         }
 
         private bool IsTwoHandedSpear()
@@ -743,20 +720,9 @@ namespace OracleOfDereth
             return 0;
         }
 
-        private double GetCantripDoubleBonus(int key)
-        {
-            double bonus = 0;
-            foreach (int spell in innateSpells)
-            {
-                if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && effect.Bonus > 0)
-                    bonus += effect.Bonus;
-            }
-            return bonus;
-        }
-
         private static string FormatOM(int md)
         {
-            if (md < -10) return null;
+            if (md < -15) return null;
             return md >= 0 ? "+" + md : "" + md;
         }
 
@@ -786,7 +752,7 @@ namespace OracleOfDereth
             if (wo.ObjectClass != ObjectClass.MeleeWeapon) return null;
 
             int? oa = GetMeleeOA();
-            if (oa == null || oa < -10) return null;
+            if (oa == null || oa < -15) return null;
             return oa >= 0 ? "+" + oa : "" + oa;
         }
 
@@ -838,19 +804,19 @@ namespace OracleOfDereth
 
         #endregion
 
-        #region Weapon Max Values Lookup Table (from UtilityBelt BestValuesDatatable)
+        #region Weapon Max Values Lookup Table
 
         private struct WeaponMax
         {
             public readonly int Skill, Mastery, Multi;
-            public readonly double MaxDmg, MaxVar, MaxDmgMod, MaxElemBonus, MaxElemVsMon;
+            public readonly double MaxDmg, MaxDmgMod, MaxElemBonus, MaxElemVsMon;
 
             public WeaponMax(int skill, int mastery, int multi,
-                             double maxDmg = 0, double maxVar = 0, double maxDmgMod = 0,
+                             double maxDmg = 0, double maxDmgMod = 0,
                              double maxElemBonus = 0, double maxElemVsMon = 0)
             {
                 Skill = skill; Mastery = mastery; Multi = multi;
-                MaxDmg = maxDmg; MaxVar = maxVar; MaxDmgMod = maxDmgMod;
+                MaxDmg = maxDmg; MaxDmgMod = maxDmgMod;
                 MaxElemBonus = maxElemBonus; MaxElemVsMon = maxElemVsMon;
             }
         }
@@ -869,41 +835,41 @@ namespace OracleOfDereth
         private static readonly WeaponMax[] WeaponMaxTable =
         {
             // Heavy Weaponry (skill 44)
-            new WeaponMax(44, 3, 0, 74, .90),   // Axe
-            new WeaponMax(44, 6, 0, 71, .47),   // Dagger
-            new WeaponMax(44, 6, 1, 38, .40),   // Multi-Strike Dagger
-            new WeaponMax(44, 4, 0, 69, .30),   // Mace
-            new WeaponMax(44, 5, 0, 72, .59),   // Spear
-            new WeaponMax(44, 2, 0, 71, .47),   // Sword
-            new WeaponMax(44, 2, 1, 38, .40),   // Multi-Strike Sword
-            new WeaponMax(44, 7, 0, 70, .38),   // Staff
-            new WeaponMax(44, 1, 0, 59, .44),   // UA
+            new WeaponMax(44, 3, 0, 74),   // Axe
+            new WeaponMax(44, 6, 0, 71),   // Dagger
+            new WeaponMax(44, 6, 1, 38),   // Multi-Strike Dagger
+            new WeaponMax(44, 4, 0, 69),   // Mace
+            new WeaponMax(44, 5, 0, 72),   // Spear
+            new WeaponMax(44, 2, 0, 71),   // Sword
+            new WeaponMax(44, 2, 1, 38),   // Multi-Strike Sword
+            new WeaponMax(44, 7, 0, 70),   // Staff
+            new WeaponMax(44, 1, 0, 59),   // UA
 
             // Light Weaponry (skill 45)
-            new WeaponMax(45, 3, 0, 61, .80),   // Axe
-            new WeaponMax(45, 6, 0, 58, .42),   // Dagger
-            new WeaponMax(45, 6, 1, 28, .24),   // Multi-Strike Dagger
-            new WeaponMax(45, 4, 0, 57, .23),   // Mace
-            new WeaponMax(45, 5, 0, 60, .65),   // Spear
-            new WeaponMax(45, 2, 0, 58, .42),   // Sword
-            new WeaponMax(45, 2, 1, 28, .24),   // Multi-Strike Sword
-            new WeaponMax(45, 7, 0, 57, .325),  // Staff
-            new WeaponMax(45, 1, 0, 48, .43),   // UA
+            new WeaponMax(45, 3, 0, 61),   // Axe
+            new WeaponMax(45, 6, 0, 58),   // Dagger
+            new WeaponMax(45, 6, 1, 28),   // Multi-Strike Dagger
+            new WeaponMax(45, 4, 0, 57),   // Mace
+            new WeaponMax(45, 5, 0, 60),   // Spear
+            new WeaponMax(45, 2, 0, 58),   // Sword
+            new WeaponMax(45, 2, 1, 28),   // Multi-Strike Sword
+            new WeaponMax(45, 7, 0, 57),   // Staff
+            new WeaponMax(45, 1, 0, 48),   // UA
 
             // Finesse Weaponry (skill 46)
-            new WeaponMax(46, 3, 0, 61, .80),   // Axe
-            new WeaponMax(46, 6, 0, 58, .42),   // Dagger
-            new WeaponMax(46, 6, 1, 28, .24),   // Multi-Strike Dagger
-            new WeaponMax(46, 4, 0, 57, .23),   // Mace
-            new WeaponMax(46, 5, 0, 60, .65),   // Spear
-            new WeaponMax(46, 2, 0, 58, .42),   // Sword
-            new WeaponMax(46, 2, 1, 28, .24),   // Multi-Strike Sword
-            new WeaponMax(46, 7, 0, 57, .325),  // Staff
-            new WeaponMax(46, 1, 0, 48, .43),   // UA
+            new WeaponMax(46, 3, 0, 61),   // Axe
+            new WeaponMax(46, 6, 0, 58),   // Dagger
+            new WeaponMax(46, 6, 1, 28),   // Multi-Strike Dagger
+            new WeaponMax(46, 4, 0, 57),   // Mace
+            new WeaponMax(46, 5, 0, 60),   // Spear
+            new WeaponMax(46, 2, 0, 58),   // Sword
+            new WeaponMax(46, 2, 1, 28),   // Multi-Strike Sword
+            new WeaponMax(46, 7, 0, 57),   // Staff
+            new WeaponMax(46, 1, 0, 48),   // UA
 
             // Two Handed Weaponry (skill 41)
-            new WeaponMax(41, 11, 1, 45, .30),  // Cleaver (multi-strike)
-            new WeaponMax(41, 11, 0, 48, .35),  // Two-Handed Spear
+            new WeaponMax(41, 11, 1, 45),  // Cleaver (multi-strike)
+            new WeaponMax(41, 11, 0, 48),  // Two-Handed Spear
 
             // Missile Weaponry (skill 47)
             new WeaponMax(47,  8, 0, maxDmgMod: 140, maxElemBonus: 22),  // Bow
