@@ -621,7 +621,7 @@ namespace OracleOfDereth
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
 
             double maxVsMon = LookupMaxProperty(skill, mastery, 0, e => e.MaxElemVsMon);
-            if (maxVsMon <= 0) return null;
+            if (maxVsMon <= 0) maxVsMon = 1.18;
 
             double buffedPct = (GetBuffedDoubleValue(Key_ElementalDmgVsMonsters) - 1) * 100;
             double maxPct = (maxVsMon - 1) * 100;
