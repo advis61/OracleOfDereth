@@ -25,6 +25,9 @@ namespace OracleOfDereth
         public bool IsJewelry => wo.ObjectClass == ObjectClass.Jewelry;
         public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing &&
                                wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
+        public bool IsSummon => wo.ObjectClass == ObjectClass.Misc &&
+                                wo.Values(LongValueKey.UsesTotal) == 50 &&
+                                (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
         private readonly List<int> activeSpells = new List<int>();
         private readonly List<int> innateSpells = new List<int>();
         private readonly Dictionary<int, int> intValues = new Dictionary<int, int>();

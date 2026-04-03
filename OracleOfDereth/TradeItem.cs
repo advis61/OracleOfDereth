@@ -240,10 +240,23 @@ namespace OracleOfDereth
             return "";
         }
 
+        private static string GetSummonScores(WorldObject wo)
+        {
+            Summon summon = new() { Item = wo };
+            return $"DMG {summon.DamageScore()}%";
+        }
+
+        private static string GetSummonDefense(WorldObject wo)
+        {
+            Summon summon = new() { Item = wo };
+            return $"DEF {summon.DefenseScore()}%";
+        }
+
         private static string GetSummaryCol1(ItemInfo info)
         {
             if (info.IsWeapon) return info.GetWeaponTypeName();
             if (info.IsCloak) return "Cloak";
+            if (info.IsSummon) return "Summon";
             if (info.IsArmorClothing || info.IsJewelry) return info.GetSlotName();
             if (info.wo.Name.Contains("Aetheria")) return "Aetheria";
             return info.wo.ObjectClass.ToString();
@@ -253,6 +266,7 @@ namespace OracleOfDereth
         {
             if (info.IsWeapon) return info.GetODString() ?? "";
             if (info.IsCloak) return info.GetCloakProc();
+            if (info.IsSummon) return GetSummonScores(info.wo);
             if (info.IsArmorClothing) return GetSetName(info);
             if (info.IsJewelry) return info.GetRatingsString();
             return "";
@@ -262,6 +276,7 @@ namespace OracleOfDereth
         {
             if (info.IsWeapon) return info.GetOAString() ?? "";
             if (info.IsCloak) return info.GetRatingsString();
+            if (info.IsSummon) return GetSummonDefense(info.wo);
             if (info.IsArmorClothing) return info.GetRatingsString();
             return "";
         }
