@@ -210,7 +210,10 @@ namespace OracleOfDereth
         {
             int set = wo.Values((LongValueKey)265, 0);
             if (set != 0 && AttributeSetInfo.TryGetValue(set, out string setName))
+            {
+                if (setName.Contains("Perfect Light")) return "Perfect Light";
                 return setName.Replace("Sigil of ", "").Replace("'s", "").Replace(" Proof Set", "").Replace(" Set", "").Trim();
+            }
             return "";
         }
 
@@ -649,7 +652,9 @@ namespace OracleOfDereth
                 return name;
             }
 
-            return "-200 Damage";
+            // No spells — check CloakWeaveProc (352) for -200 damage cloaks vs tailored cloaks
+            if (wo.Values((LongValueKey)352, 0) != 0) return "-200 Damage";
+            return "";
         }
 
         // ============================================================
