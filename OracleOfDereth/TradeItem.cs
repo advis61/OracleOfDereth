@@ -312,7 +312,7 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol2(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetODString() ?? "";
+            if (info.IsWeapon) return info.GetODString();
             if (info.IsCloak) return info.GetCloakProc();
             if (info.IsSummon) return "DMG " + info.GetSummonDamageString();
             if (info.IsAetheria) return info.GetSetName();
@@ -322,7 +322,7 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol3(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetOMString() ?? "";
+            if (info.IsWeapon) return info.GetOMString();
             if (info.IsCloak) return info.GetRatingsString();
             if (info.IsSummon) return "DEF " + info.GetSummonDefenseString();
             if (info.IsAetheria) return info.GetAetheriaSurge();
@@ -333,7 +333,7 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol4(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetOAString() ?? "";
+            if (info.IsWeapon) return info.GetOAString();
             if (info.IsCloak) return "";
             if (info.IsArmorClothing || info.IsJewelry) return info.GetCantripsString();
             return "";

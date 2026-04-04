@@ -25,11 +25,8 @@ namespace OracleOfDereth
         {
             wo = worldObject;
 
-            foreach (var key in wo.LongKeys)
-                intValues[key] = wo.Values((LongValueKey)key);
-
-            foreach (var key in wo.DoubleKeys)
-                doubleValues[key] = wo.Values((DoubleValueKey)key);
+            foreach (var key in wo.LongKeys) intValues[key] = wo.Values((LongValueKey)key);
+            foreach (var key in wo.DoubleKeys) doubleValues[key] = wo.Values((DoubleValueKey)key);
 
             // Some quest weapons don't expose keys via LongKeys/DoubleKeys but the values are accessible via wo.Values() directly.
             EnsureKey(intValues, Key_MaxDamage, wo.Values(LongValueKey.MaxDamage, 0));
@@ -40,11 +37,8 @@ namespace OracleOfDereth
             EnsureKey(doubleValues, Key_MeleeDefenseBonus, wo.Values(DoubleValueKey.MeleeDefenseBonus, 0));
             EnsureKey(doubleValues, Key_ElementalDmgVsMonsters, wo.Values(DoubleValueKey.ElementalDamageVersusMonsters, 0));
 
-            for (int i = 0; i < wo.ActiveSpellCount; i++)
-                activeSpells.Add(wo.ActiveSpell(i));
-
-            for (int i = 0; i < wo.SpellCount; i++)
-                innateSpells.Add(wo.Spell(i));
+            for (int i = 0; i < wo.ActiveSpellCount; i++) activeSpells.Add(wo.ActiveSpell(i));
+            for (int i = 0; i < wo.SpellCount; i++) innateSpells.Add(wo.Spell(i));
         }
 
         private static void EnsureKey<T>(Dictionary<int, T> dict, int key, T value) where T : struct, IComparable
@@ -258,8 +252,7 @@ namespace OracleOfDereth
 
         public string GetRatingsString()
         {
-            if (RatingDamage + RatingDamageResist + RatingCrit + RatingCritResist +
-                RatingCritDamage + RatingCritDamageResist + RatingHealBoost + RatingVitality <= 0)
+            if (RatingDamage + RatingDamageResist + RatingCrit + RatingCritResist + RatingCritDamage + RatingCritDamageResist + RatingHealBoost + RatingVitality <= 0)
                 return "";
 
             var parts = new List<string>();
@@ -323,21 +316,21 @@ namespace OracleOfDereth
         public string GetODString()
         {
             int? od = GetODValue();
-            if (od == null) return null;
+            if (od == null) return "";
             return "OD " + FormatOValue((int)od);
         }
 
         public string GetOAString()
         {
             int? oa = GetOAValue();
-            if (oa == null) return null;
+            if (oa == null) return "";
             return "OA " + FormatOValue((int)oa);
         }
 
         public string GetOMString()
         {
             int? om = GetOMValue();
-            if (om == null) return null;
+            if (om == null) return "";
             return "MD " + FormatOValue((int)om);
         }
 
@@ -365,19 +358,16 @@ namespace OracleOfDereth
         public string GetDamageString()
         {
             var parts = new List<string>();
-
             int high = GetWeaponDamageHigh();
+
             if (high != 0 && wo.Values(DoubleValueKey.Variance) != 0)
                 parts.Add(GetWeaponDamageLow().ToString("N2") + "-" + high);
             else if (high != 0)
                 parts.Add(high.ToString());
 
-            if (GetElementalDamageBonus() != 0)
-                parts.Add("+" + GetElementalDamageBonus());
-            if (GetDamageBonusPct() != 0)
-                parts.Add("+" + GetDamageBonusPct() + "%");
-            if (GetElementalDamageVsMonsters() != 0)
-                parts.Add("+" + GetElementalDamageVsMonsters() + "%vs. Monsters");
+            if (GetElementalDamageBonus() != 0) parts.Add("+" + GetElementalDamageBonus());
+            if (GetDamageBonusPct() != 0) parts.Add("+" + GetDamageBonusPct() + "%");
+            if (GetElementalDamageVsMonsters() != 0) parts.Add("+" + GetElementalDamageVsMonsters() + "%vs. Monsters");
 
             return string.Join(", ", parts);
         }
@@ -395,11 +385,13 @@ namespace OracleOfDereth
         public string GetBonusesString()
         {
             var parts = new List<string>();
+
             if (GetAttackBonus() != 0) parts.Add("+" + GetAttackBonus() + "%a");
             if (GetMeleeDefenseBonus() != 0) parts.Add(GetMeleeDefenseBonus() + "%md");
             if (GetMagicDefenseBonus() != 0) parts.Add(GetMagicDefenseBonus() + "%mgc.d");
             if (GetMissileDefenseBonus() != 0) parts.Add(GetMissileDefenseBonus() + "%msl.d");
             if (GetManaConversionBonus() != 0) parts.Add(GetManaConversionBonus() + "%mc");
+
             return string.Join(", ", parts);
         }
 
@@ -413,6 +405,7 @@ namespace OracleOfDereth
             if (imbued <= 0) return "";
 
             var parts = new List<string>();
+
             if ((imbued & 1) == 1) parts.Add("CS");
             if ((imbued & 2) == 2) parts.Add("CB");
             if ((imbued & 4) == 4) parts.Add("AR");
@@ -427,6 +420,7 @@ namespace OracleOfDereth
             if ((imbued & 4096) == 4096) parts.Add("MagicImbue");
             if ((imbued & 8192) == 8192) parts.Add("Hematited");
             if ((imbued & 536870912) == 536870912) parts.Add("MagicAbsorb");
+
             return string.Join(" ", parts);
         }
 
@@ -464,17 +458,13 @@ namespace OracleOfDereth
                 if (isLootGenerated)
                 {
                     bool isBaneImpen = name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard");
-
                     if (isBaneImpen && !isUnenchantable) continue;
 
-                    bool isImpenCantrip = name.Contains("Minor Impenetrability") || name.Contains("Major Impenetrability")
-                                       || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability");
+                    bool isImpenCantrip = name.Contains("Minor Impenetrability") || name.Contains("Major Impenetrability") || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability");
 
                     if (!isImpenCantrip && !isBaneImpen && !name.Contains("Augmented"))
                     {
-                        if (name.EndsWith(" I") || name.EndsWith(" II") || name.EndsWith(" III")
-                            || name.EndsWith(" IV") || name.EndsWith(" V") || name.EndsWith(" VI"))
-                            continue;
+                        if (name.EndsWith(" I") || name.EndsWith(" II") || name.EndsWith(" III") || name.EndsWith(" IV") || name.EndsWith(" V") || name.EndsWith(" VI")) continue;
                     }
                 }
 
@@ -496,10 +486,10 @@ namespace OracleOfDereth
                 if (spell == null) continue;
                 string name = spell.Name;
                 if (name.EndsWith(" Bane")) continue;
-                if (name.StartsWith("Legendary ") || name.StartsWith("Epic ") || name.StartsWith("Major ") || name.StartsWith("Minor "))
-                    parts.Add(name);
+                if (name.StartsWith("Legendary ") || name.StartsWith("Epic ") || name.StartsWith("Major ") || name.StartsWith("Minor ")) parts.Add(name);
             }
             parts.Sort((a, b) => CantripSortOrder(a).CompareTo(CantripSortOrder(b)));
+
             return string.Join(", ", parts);
         }
 
@@ -521,6 +511,7 @@ namespace OracleOfDereth
             if (wo.Values(LongValueKey.WieldReqValue) <= 0) return "";
             if (wo.Values(LongValueKey.WieldReqType) == 7 && wo.Values(LongValueKey.WieldReqAttribute) == 1) return "Wield Lvl";
             if (SkillInfo.TryGetValue(wo.Values(LongValueKey.WieldReqAttribute), out string skillName)) return skillName;
+
             return "Unknown Skill " + wo.Values(LongValueKey.WieldReqAttribute);
         }
 
@@ -545,13 +536,11 @@ namespace OracleOfDereth
         {
             if (wo.ObjectClass == ObjectClass.Salvage)
             {
-                if (wo.Values(DoubleValueKey.SalvageWorkmanship) > 0)
-                    return "Work " + wo.Values(DoubleValueKey.SalvageWorkmanship).ToString("N2");
+                if (wo.Values(DoubleValueKey.SalvageWorkmanship) > 0) return "Work " + wo.Values(DoubleValueKey.SalvageWorkmanship).ToString("N2");
             }
             else
             {
-                if (wo.Values(LongValueKey.Workmanship) > 0 && GetTinksValue() != 10)
-                    return "Craft " + wo.Values(LongValueKey.Workmanship);
+                if (wo.Values(LongValueKey.Workmanship) > 0 && GetTinksValue() != 10) return "Craft " + wo.Values(LongValueKey.Workmanship);
             }
             return "";
         }
@@ -560,8 +549,7 @@ namespace OracleOfDereth
         {
             var parts = new List<string>();
 
-            if (wo.Values((LongValueKey)369) > 0)
-                parts.Add("Lvl " + wo.Values((LongValueKey)369));
+            if (wo.Values((LongValueKey)369) > 0) parts.Add("Lvl " + wo.Values((LongValueKey)369));
 
             if (wo.Values(LongValueKey.SkillLevelReq) > 0 && (wo.Values(LongValueKey.WieldReqAttribute) != wo.Values(LongValueKey.ActivationReqSkillId) || wo.Values(LongValueKey.WieldReqValue) < wo.Values(LongValueKey.SkillLevelReq)))
             {
@@ -606,6 +594,12 @@ namespace OracleOfDereth
             return $"{new Summon { Item = wo }.DefenseScore()}%";
         }
 
+        public string GetSummonString()
+        {
+            if (!IsSummon) return "";
+            return "DMG " + GetSummonDamageString() + " | DEF " + GetSummonDefenseString();
+        }
+
         // ============================================================
         // Cloak
         // ============================================================
@@ -617,8 +611,7 @@ namespace OracleOfDereth
             {
                 Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
                 if (spell == null) continue;
-                if (spell.Name.Contains("Weave of"))
-                    return spell.Name.Replace("Weave of ", "");
+                if (spell.Name.Contains("Weave of")) return spell.Name.Replace("Weave of ", "");
             }
             return "";
         }
@@ -692,12 +685,16 @@ namespace OracleOfDereth
         public int GetValue() => wo.Values(LongValueKey.Value, 0);
         public int GetBurden() => wo.Values(LongValueKey.Burden, 0);
 
-        public string GetValueBurdenString()
+        public string GetValueString()
         {
-            var parts = new List<string>();
-            if (GetValue() > 0) parts.Add("Value " + String.Format("{0:n0}", GetValue()));
-            if (GetBurden() > 0) parts.Add("BU " + GetBurden());
-            return string.Join(", ", parts);
+            if (GetValue() <= 0) return "";
+            return "Value " + String.Format("{0:n0}", GetValue());
+        }
+
+        public string GetBurdenString()
+        {
+            if (GetBurden() <= 0) return "";
+            return "BU " + GetBurden();
         }
 
         // ============================================================
@@ -734,20 +731,10 @@ namespace OracleOfDereth
         {
             var parts = new List<string>();
 
-            // Name with mastery and OD/summon inline
-            string header = GetName();
-
-            string mastery = GetMasteryString();
-            if (mastery.Length > 0) header += " (" + mastery + ")";
-
-            string od = ToODString();
-            if (od.Length > 0) header += " " + od;
-
-            if (IsSummon) header += " [DMG " + GetSummonDamageString() + " | DEF " + GetSummonDefenseString() + "]";
-
-            parts.Add(header);
-
-            // Remaining sections — each only added if non-empty
+            AddPart(parts, GetName());
+            AddPart(parts, GetMasteryString());
+            AddPart(parts, ToODString());
+            AddPart(parts, GetSummonString());
             AddPart(parts, GetFullSetName());
             AddPart(parts, GetArmorLevelString());
             AddPart(parts, GetImbueString());
@@ -761,7 +748,8 @@ namespace OracleOfDereth
             AddPart(parts, GetLoreString());
             AddPart(parts, GetWorkmanshipString());
             AddPart(parts, GetProtectionsString());
-            AddPart(parts, GetValueBurdenString());
+            AddPart(parts, GetValueString());
+            AddPart(parts, GetBurdenString());
 
             string ratings = GetRatingsString();
             if (ratings.Length > 0) parts.Add("[" + ratings + "]");
@@ -782,13 +770,13 @@ namespace OracleOfDereth
             string oa = GetOAString();
             string om = GetOMString();
 
-            if (AssumeFullBuffs && od == null && om == null) return "";
-            if (od == null && oa == null && om == null) return "";
+            if (AssumeFullBuffs && od.Length == 0 && om.Length == 0) return "";
+            if (od.Length == 0 && oa.Length == 0 && om.Length == 0) return "";
 
             var parts = new List<string>();
-            if (od != null) parts.Add(od);
-            if (oa != null) parts.Add(oa);
-            if (om != null) parts.Add(om);
+            if (od.Length > 0) parts.Add(od);
+            if (oa.Length > 0) parts.Add(oa);
+            if (om.Length > 0) parts.Add(om);
 
             return "[" + string.Join(" | ", parts) + "]";
         }
@@ -818,12 +806,13 @@ namespace OracleOfDereth
             if (!intValues.ContainsKey(key)) return defaultValue;
 
             int value = intValues[key];
+
             foreach (int spell in activeSpells)
-                if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
-                    value -= effect.Change;
+                if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key) value -= effect.Change;
+
             foreach (int spell in innateSpells)
-                if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && effect.Bonus != 0)
-                    value += effect.Bonus;
+                if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && effect.Bonus != 0) value += effect.Bonus;
+
             return value;
         }
 
@@ -832,6 +821,7 @@ namespace OracleOfDereth
             if (!doubleValues.ContainsKey(key)) return defaultValue;
 
             double value = doubleValues[key];
+
             foreach (int spell in activeSpells)
             {
                 if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
@@ -858,12 +848,14 @@ namespace OracleOfDereth
         private int GetHolderLevel()
         {
             if (!IsEquipped) return 0;
+
             try
             {
                 WorldObject holder = CoreManager.Current.WorldFilter[wo.Container];
                 if (holder != null) return holder.Values((LongValueKey)25, 0);
             }
             catch { }
+
             return 0;
         }
 
@@ -886,8 +878,10 @@ namespace OracleOfDereth
 
             if (wo.Values(DoubleValueKey.AttackBonus, 1) != 1)
                 sb.Append(Math.Round(((GetBuffedDoubleValue(Key_AttackBonus) - 1) * 100)).ToString("N1") + "/");
+
             if (wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) != 1)
                 sb.Append(Math.Round(((GetBuffedDoubleValue(Key_MeleeDefenseBonus) - 1) * 100)).ToString("N1"));
+
             if (wo.Values(DoubleValueKey.ManaCBonus) != 0)
                 sb.Append("/" + Math.Round(GetBuffedDoubleValue(Key_ManaCBonus) * 100));
 
@@ -905,15 +899,14 @@ namespace OracleOfDereth
             int tinks = intValues.ContainsKey(Key_Tinks) ? intValues[Key_Tinks] : 0;
             int numberOfTinksLeft = Math.Max(10 - Math.Max(tinks, 0), 0);
 
-            if (!intValues.ContainsKey(Key_Imbued) || intValues[Key_Imbued] == 0)
-                numberOfTinksLeft--;
-            if (!intValues.ContainsKey(Key_Material) || intValues[Key_Material] == 0)
-                numberOfTinksLeft = 0;
+            if (!intValues.ContainsKey(Key_Imbued) || intValues[Key_Imbued] == 0) numberOfTinksLeft--;
+            if (!intValues.ContainsKey(Key_Material) || intValues[Key_Material] == 0) numberOfTinksLeft = 0;
 
             for (int i = 1; i <= numberOfTinksLeft; i++)
             {
                 double ironTinkDoT = CalculateDamageOverTime(maxDamage + 24 + 1, variance);
                 double graniteTinkDoT = CalculateDamageOverTime(maxDamage + 24, variance * .8);
+
                 if (ironTinkDoT >= graniteTinkDoT)
                     maxDamage++;
                 else
@@ -925,8 +918,7 @@ namespace OracleOfDereth
 
         private double CalcBuffedMissileDamage()
         {
-            if (!intValues.ContainsKey(Key_MaxDamage) || !doubleValues.ContainsKey(Key_DamageBonus) || !intValues.ContainsKey(Key_ElementalDmgBonus))
-                return -1;
+            if (!intValues.ContainsKey(Key_MaxDamage) || !doubleValues.ContainsKey(Key_DamageBonus) || !intValues.ContainsKey(Key_ElementalDmgBonus)) return -1;
             return GetBuffedIntValue(Key_MaxDamage) + (((GetBuffedDoubleValue(Key_DamageBonus) - 1) * 100) / 3) + GetBuffedIntValue(Key_ElementalDmgBonus);
         }
 
@@ -1111,6 +1103,7 @@ namespace OracleOfDereth
             if (skill == 0x29 || mastery == 11) return IsTwoHandedSpear() ? 20 : 22;
             if ((skill == 0x2E) && mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0) return 15;
             if (MaxAttackByMastery.TryGetValue(mastery, out int maxAtk)) return maxAtk;
+
             return 0;
         }
 
@@ -1139,6 +1132,7 @@ namespace OracleOfDereth
         {
             foreach (var e in WeaponMaxTable)
                 if (e.Skill == skill && e.Mastery == mastery && e.Multi == multi) return selector(e);
+
             return 0;
         }
 
@@ -1216,10 +1210,7 @@ namespace OracleOfDereth
             public readonly T Change;
             public readonly T Bonus;
 
-            public SpellEffect(int key, T change, T bonus = default(T))
-            {
-                Key = key; Change = change; Bonus = bonus;
-            }
+            public SpellEffect(int key, T change, T bonus = default(T)) { Key = key; Change = change; Bonus = bonus; }
         }
 
         private static readonly Dictionary<int, SpellEffect<int>> IntSpellEffects = new Dictionary<int, SpellEffect<int>>
