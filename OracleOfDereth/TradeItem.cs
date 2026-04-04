@@ -277,7 +277,7 @@ namespace OracleOfDereth
         {
             if (info.IsWeapon) return info.GetODString() ?? "";
             if (info.IsCloak) return info.GetCloakProc();
-            if (info.IsSummon) return info.GetSummonDamage();
+            if (info.IsSummon) return "DMG " + info.GetSummonDamageString();
             if (info.IsAetheria) return info.GetSetName();
             if (info.IsArmorClothing) return info.GetSetName();
             if (info.IsJewelry) return info.GetRatingsString();
@@ -288,7 +288,7 @@ namespace OracleOfDereth
         {
             if (info.IsWeapon) return info.GetOMString() ?? "";
             if (info.IsCloak) return info.GetRatingsString();
-            if (info.IsSummon) return info.GetSummonDefense();
+            if (info.IsSummon) return "DEF " + info.GetSummonDefenseString();
             if (info.IsAetheria) return info.GetAetheriaSurge();
             if (info.IsArmorClothing) return info.GetRatingsString();
             return "";
@@ -396,10 +396,11 @@ namespace OracleOfDereth
         private static string[] GetExportHeaders()
         {
             return new[] {
-                "Character", "Name", "Type", "Set", "Armor Level", "Imbues", "Tinks",
+                "Character", "Server", "Name", "ObjectClass", "Type", "Set", "Armor Level", "Imbues", "Tinks",
                 "OD", "OA", "OM", "Damage", "Dmg Low", "Dmg High", "Elem Bonus", "Missile %", "Caster %",
                 "Attack", "Melee D", "Magic D", "Missile D", "Mana C",
                 "Spells", "Wield Req", "Wield Req Level", "Lore", "Craft", "Value", "Burden",
+                "Summon DMG", "Summon DEF",
                 "D", "DR", "C", "CR", "CD", "CDR", "HB", "V"
             };
         }
@@ -413,7 +414,9 @@ namespace OracleOfDereth
 
             return new[] {
                 CoreManager.Current.CharacterFilter.Name,
+                CoreManager.Current.CharacterFilter.Server,
                 info.GetName(),
+                info.GetObjectClassName(),
                 info.GetItemSlotName(),
                 info.GetFullSetName(),
                 info.GetArmorLevel() > 0 ? info.GetArmorLevel().ToString() : "",
@@ -440,6 +443,8 @@ namespace OracleOfDereth
                 info.GetWorkmanshipString(),
                 info.GetValue() > 0 ? info.GetValue().ToString() : "",
                 info.GetBurden() > 0 ? info.GetBurden().ToString() : "",
+                info.GetSummonDamageString(),
+                info.GetSummonDefenseString(),
                 info.RatingDamage > 0 ? info.RatingDamage.ToString() : "",
                 info.RatingDamageResist > 0 ? info.RatingDamageResist.ToString() : "",
                 info.RatingCrit > 0 ? info.RatingCrit.ToString() : "",

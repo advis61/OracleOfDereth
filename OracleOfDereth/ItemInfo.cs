@@ -168,16 +168,16 @@ namespace OracleOfDereth
             return "";
         }
 
-        public string GetSummonDamage()
+        public string GetSummonDamageString()
         {
-            Summon summon = new() { Item = wo };
-            return $"DMG {summon.DamageScore()}%";
+            if (!IsSummon) return "";
+            return $"{new Summon { Item = wo }.DamageScore()}%";
         }
 
-        public string GetSummonDefense()
+        public string GetSummonDefenseString()
         {
-            Summon summon = new() { Item = wo };
-            return $"DEF {summon.DefenseScore()}%";
+            if (!IsSummon) return "";
+            return $"{new Summon { Item = wo }.DefenseScore()}%";
         }
 
         public int RatingDamage => wo.Values((LongValueKey)370);
@@ -256,9 +256,9 @@ namespace OracleOfDereth
                 // Fallback to name
                 string name = wo.Name.ToLower();
                 if (name.Contains("ring") || name.Contains("band") || name.Contains("signet")) return "Ring";
-                if (name.Contains("bracelet") || name.Contains("brace")) return "Bracelet";
+                if (name.Contains("bracelet")) return "Bracelet";
                 if (name.Contains("necklace") || name.Contains("gorget") || name.Contains("amulet") || name.Contains("pendant") || name.Contains("choker") || name.Contains("locket")) return "Necklace";
-                if (name.Contains("trinket") || name.Contains("compass") || name.Contains("pocket") || name.Contains("goggles") || name.Contains("puzzle box") || name.Contains(" top")) return "Trinket";
+                if (name.Contains("trinket") || name.Contains("compass") || name.Contains("pocket") || name.Contains("goggles") || name.Contains("puzzle box") || name.Contains(" top") || name.Contains("scarab")) return "Trinket";
                 return "Jewelry";
             }
 
@@ -368,6 +368,8 @@ namespace OracleOfDereth
 
             string od = ToODString();
             if (od.Length > 0) parts[0] += " " + od;
+
+            if (IsSummon) parts[0] += " [DMG " + GetSummonDamageString() + " | DEF " + GetSummonDefenseString() + "]";
 
             string setName = GetFullSetName();
             if (setName.Length > 0) parts.Add(setName);
@@ -767,6 +769,7 @@ namespace OracleOfDereth
                 wo.Values(DoubleValueKey.LightningProt).ToString("N1") + "]";
         }
 
+        public string GetObjectClassName() => wo.ObjectClass.ToString();
         public int GetValue() => wo.Values(LongValueKey.Value, 0);
         public int GetBurden() => wo.Values(LongValueKey.Burden, 0);
 

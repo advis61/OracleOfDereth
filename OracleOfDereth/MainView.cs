@@ -969,7 +969,9 @@ namespace OracleOfDereth
 
         private void TradeClipboard_Hit(object sender, EventArgs e)
         {
-            // TODO: Copy trade list to clipboard
+            string text = string.Join("\n", TradeItem.TradeItems.Select(t => t.Description));
+            Util.ClipboardCopy(text);
+            Util.Chat($"Copied {TradeItem.TradeItems.Count} items to clipboard");
         }
 
         private void TradeList_Click(object sender, int row, int col)
