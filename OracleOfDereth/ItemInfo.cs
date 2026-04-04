@@ -24,6 +24,8 @@ namespace OracleOfDereth
         public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
         public bool IsSummon => wo.ObjectClass == ObjectClass.Misc && wo.Values(LongValueKey.UsesTotal) == 50 && (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
         public bool IsAetheria => wo.Name == "Aetheria";
+        public bool IsFoolproof => wo.Name.EndsWith(" Foolproof");
+        public bool IsAmmo => wo.ObjectClass == ObjectClass.MissileWeapon && wo.Values(LongValueKey.StackMax, 0) > 0;
 
         public string GetAetheriaSurge()
         {
@@ -55,6 +57,7 @@ namespace OracleOfDereth
             if (IsCloak) return "Cloak";
             if (IsSummon) return "Summon";
             if (IsAetheria) return GetAetheriaColor();
+            if (IsFoolproof) return "Foolproof";
             if (IsArmorClothing || IsJewelry) return GetSlotName();
             if (wo.ObjectClass == ObjectClass.SpellComponent) return "Component";
             if (wo.ObjectClass == ObjectClass.CraftedFletching) return "Fletching";

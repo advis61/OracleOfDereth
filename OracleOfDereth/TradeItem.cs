@@ -68,6 +68,7 @@ namespace OracleOfDereth
         {
             if (wo == null) return false;
             if (wo.ObjectClass == ObjectClass.Container) return false;
+            if (wo.ObjectClass == ObjectClass.MissileWeapon && wo.Values(LongValueKey.StackMax, 0) > 0) return false;
             if (wo.Values(LongValueKey.Attuned, 0) > 0) return false;
             if (!IsInInventory(wo)) return false;
             return true;
@@ -85,6 +86,18 @@ namespace OracleOfDereth
                 containerId = container.Container;
             }
             return false;
+        }
+
+        private static bool IsAddAllClass(ObjectClass objClass)
+        {
+            return objClass == ObjectClass.MeleeWeapon
+                || objClass == ObjectClass.MissileWeapon
+                || objClass == ObjectClass.WandStaffOrb
+                || objClass == ObjectClass.Armor
+                || objClass == ObjectClass.Clothing
+                || objClass == ObjectClass.Jewelry
+                || objClass == ObjectClass.Misc   // Aetheria and Summons
+                || objClass == ObjectClass.Salvage;
         }
 
         /// <summary>
@@ -134,15 +147,13 @@ namespace OracleOfDereth
         /// Scans the entire inventory. Adds identified tradeable items immediately,
         /// queues unidentified items for identification one at a time.
         /// </summary>
-        public static int AddAll()
+        public static void AddAll()
         {
-            int addedImmediately = 0;
-
             using (var inv = CoreManager.Current.WorldFilter.GetInventory())
             {
                 foreach (WorldObject wo in inv)
                 {
-                    if (wo.ObjectClass == ObjectClass.Container) continue;
+                    if (!IsAddAllClass(wo.ObjectClass)) continue;
                     if (!IsInInventory(wo)) continue;
                     if (TradeItems.Any(t => t.Id == wo.Id)) continue;
 
@@ -150,7 +161,6 @@ namespace OracleOfDereth
                     {
                         if (!IsTradeable(wo)) continue;
                         AddFromWorldObject(wo);
-                        addedImmediately++;
                     }
                     else
                     {
@@ -168,8 +178,6 @@ namespace OracleOfDereth
                 CoreManager.Current.WorldFilter.ChangeObject += TradeItem_ChangeObject;
                 ProcessNextInQueue();
             }
-
-            return addedImmediately;
         }
 
         private static void ProcessNextInQueue()
@@ -300,6 +308,7 @@ namespace OracleOfDereth
             if (info.IsCloak) return 3;
             if (info.IsSummon) return 4;
             if (info.IsAetheria) return 5;
+            if (info.IsFoolproof) return 6;
             return 9;
         }
 
