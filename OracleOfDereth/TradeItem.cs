@@ -32,7 +32,7 @@ namespace OracleOfDereth
         private static HashSet<int> PendingIds = new HashSet<int>();
 
         // Queue of item ids waiting to be identified (for Add All)
-        private static Queue<int> IdentifyQueue = new Queue<int>();
+        private static List<int> IdentifyQueue = new List<int>();
         public static bool IsProcessingQueue = false;
 
         public static bool AutoAddEnabled = false;
@@ -156,8 +156,23 @@ namespace OracleOfDereth
                 foreach (WorldObject wo in inv)
                 {
                     if (!IsAddAllClass(wo.ObjectClass)) continue;
+                    if (wo.ObjectClass == ObjectClass.MissileWeapon && wo.Values(LongValueKey.StackMax, 0) > 0) continue;
                     if (!IsInInventory(wo)) continue;
                     if (TradeItems.Any(t => t.Id == wo.Id)) continue;
+
+                    // Salvage doesn't need identification
+                    if (wo.ObjectClass == ObjectClass.Salvage)
+                    {
+                        AddFromWorldObject(wo);
+                        continue;
+                    }
+
+                    // Skip Misc items that aren't useful
+                    if (wo.ObjectClass == ObjectClass.Misc)
+                    {
+                        ItemInfo check = new ItemInfo(wo);
+                        if (!check.IsSummon && !check.IsAetheria && !check.IsFoolproof) continue;
+                    }
 
                     if (wo.HasIdData)
                     {
@@ -168,7 +183,7 @@ namespace OracleOfDereth
                     {
                         if (!PendingIds.Contains(wo.Id) && !IdentifyQueue.Contains(wo.Id))
                         {
-                            IdentifyQueue.Enqueue(wo.Id);
+                            IdentifyQueue.Add(wo.Id);
                         }
                     }
                 }
@@ -182,24 +197,43 @@ namespace OracleOfDereth
             }
         }
 
+        private const int MaxConcurrentRequests = 3;
+
         private static void ProcessNextInQueue()
         {
-            // Skip items that have already been added or no longer exist
-            while (IdentifyQueue.Count > 0)
+            while (IdentifyQueue.Count > 0 && PendingIds.Count < MaxConcurrentRequests)
             {
-                int id = IdentifyQueue.Dequeue();
+                int id = IdentifyQueue[0];
+                IdentifyQueue.RemoveAt(0);
 
                 WorldObject wo = CoreManager.Current.WorldFilter[id];
                 if (wo == null) continue;
                 if (TradeItems.Any(t => t.Id == id)) continue;
 
+                // Skip non-tradeable Misc items (not summons or aetheria)
+                if (wo.ObjectClass == ObjectClass.Misc)
+                {
+                    ItemInfo check = new ItemInfo(wo);
+                    if (!check.IsSummon && !check.IsAetheria && !check.IsFoolproof) continue;
+                }
+
+                // Already identified by another plugin — process immediately
+                if (wo.HasIdData)
+                {
+                    if (IsTradeable(wo)) AddFromWorldObject(wo);
+                    OnTradeListChanged?.Invoke();
+                    continue;
+                }
+
                 PendingIds.Add(id);
                 CoreManager.Current.Actions.RequestId(id);
-                return;
             }
 
-            // Queue is empty, stop listening
-            StopProcessingQueue();
+            // Queue is empty and no pending requests, stop listening
+            if (IdentifyQueue.Count == 0 && PendingIds.Count == 0)
+            {
+                StopProcessingQueue();
+            }
         }
 
         private static void TradeItem_ChangeObject(object sender, ChangeObjectEventArgs e)
@@ -207,9 +241,11 @@ namespace OracleOfDereth
             try
             {
                 if (e.Change != WorldChangeType.IdentReceived) return;
-                if (!PendingIds.Contains(e.Changed.Id)) return;
 
-                PendingIds.Remove(e.Changed.Id);
+                bool wasPending = PendingIds.Remove(e.Changed.Id);
+                bool wasQueued = IdentifyQueue.Remove(e.Changed.Id);
+
+                if (!wasPending && !wasQueued) return;
 
                 if (IsTradeable(e.Changed))
                 {
@@ -217,7 +253,8 @@ namespace OracleOfDereth
                 }
 
                 OnTradeListChanged?.Invoke();
-                ProcessNextInQueue();
+
+                if (wasPending) ProcessNextInQueue();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
