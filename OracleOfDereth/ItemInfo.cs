@@ -142,21 +142,21 @@ namespace OracleOfDereth
         public string GetODString()
         {
             int? od = GetODValue();
-            if (od == null || od < -15 || od > 30) return null;
+            if (od == null) return null;
             return "OD " + FormatOValue((int)od);
         }
 
         public string GetOAString()
         {
             int? oa = GetOAValue();
-            if (oa == null || oa < -15 || oa > 30) return null;
+            if (oa == null) return null;
             return "OA " + FormatOValue((int)oa);
         }
 
         public string GetOMString()
         {
             int? om = GetOMValue();
-            if (om == null || om < -15 || om > 30) return null;
+            if (om == null) return null;
             return "MD " + FormatOValue((int)om);
         }
 
@@ -179,6 +179,15 @@ namespace OracleOfDereth
             Summon summon = new() { Item = wo };
             return $"DEF {summon.DefenseScore()}%";
         }
+
+        public int RatingDamage => wo.Values((LongValueKey)370);
+        public int RatingDamageResist => wo.Values((LongValueKey)371);
+        public int RatingCrit => wo.Values((LongValueKey)372);
+        public int RatingCritResist => wo.Values((LongValueKey)373);
+        public int RatingCritDamage => wo.Values((LongValueKey)374);
+        public int RatingCritDamageResist => wo.Values((LongValueKey)375);
+        public int RatingHealBoost => wo.Values((LongValueKey)376);
+        public int RatingVitality => wo.Values((LongValueKey)379);
 
         public string GetRatingsString()
         {
@@ -436,6 +445,11 @@ namespace OracleOfDereth
             return "AL " + wo.Values(LongValueKey.ArmorLevel);
         }
 
+        public int GetArmorLevel()
+        {
+            return wo.Values(LongValueKey.ArmorLevel, 0);
+        }
+
         public string GetImbueString()
         {
             int imbued = wo.Values(LongValueKey.Imbued);
@@ -459,10 +473,15 @@ namespace OracleOfDereth
             return string.Join(" ", parts);
         }
 
+        public int GetTinksValue()
+        {
+            return wo.Values(LongValueKey.NumberTimesTinkered, 0);
+        }
+
         public string GetTinksString()
         {
-            if (wo.Values(LongValueKey.NumberTimesTinkered) <= 0) return "";
-            return "Tinks " + wo.Values(LongValueKey.NumberTimesTinkered);
+            if (GetTinksValue() <= 0) return "";
+            return "Tinks " + GetTinksValue();
         }
 
         public string GetDamageString()
@@ -486,6 +505,33 @@ namespace OracleOfDereth
             return string.Join(", ", parts);
         }
 
+        public int GetWeaponDamageLow()
+        {
+            if (wo.Values(LongValueKey.MaxDamage) == 0) return 0;
+            if (wo.Values(DoubleValueKey.Variance) == 0) return wo.Values(LongValueKey.MaxDamage);
+            return (int)Math.Round(wo.Values(LongValueKey.MaxDamage) - (wo.Values(LongValueKey.MaxDamage) * wo.Values(DoubleValueKey.Variance)));
+        }
+
+        public int GetWeaponDamageHigh()
+        {
+            return wo.Values(LongValueKey.MaxDamage, 0);
+        }
+
+        public int GetElementalDamageBonus()
+        {
+            return wo.Values(LongValueKey.ElementalDmgBonus, 0);
+        }
+
+        public double GetDamageBonusPct()
+        {
+            return Math.Round(((wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100));
+        }
+
+        public double GetElementalDamageVsMonsters()
+        {
+            return Math.Round(((wo.Values(DoubleValueKey.ElementalDamageVersusMonsters, 1) - 1) * 100));
+        }
+
         public string GetBonusesString()
         {
             var parts = new List<string>();
@@ -507,6 +553,12 @@ namespace OracleOfDereth
 
             return string.Join(", ", parts);
         }
+
+        public double GetAttackBonus() => Math.Round(((wo.Values(DoubleValueKey.AttackBonus, 1) - 1) * 100));
+        public double GetMeleeDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) - 1) * 100));
+        public double GetMagicDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MagicDBonus, 1) - 1) * 100), 1);
+        public double GetMissileDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MissileDBonus, 1) - 1) * 100), 1);
+        public double GetManaConversionBonus() => Math.Round((wo.Values(DoubleValueKey.ManaCBonus) * 100));
 
         public string GetBuffedValuesString()
         {
@@ -616,17 +668,29 @@ namespace OracleOfDereth
             return string.Join(", ", parts);
         }
 
-        public string GetWieldReqString()
+        public string GetWieldReqName()
         {
             if (wo.Values(LongValueKey.WieldReqValue) <= 0) return "";
 
             if (wo.Values(LongValueKey.WieldReqType) == 7 && wo.Values(LongValueKey.WieldReqAttribute) == 1)
-                return "Wield Lvl " + wo.Values(LongValueKey.WieldReqValue);
+                return "Wield Lvl";
 
             if (SkillInfo.TryGetValue(wo.Values(LongValueKey.WieldReqAttribute), out string skillName))
-                return skillName + " " + wo.Values(LongValueKey.WieldReqValue);
+                return skillName;
 
-            return "Unknown Skill " + wo.Values(LongValueKey.WieldReqAttribute) + " " + wo.Values(LongValueKey.WieldReqValue);
+            return "Unknown Skill " + wo.Values(LongValueKey.WieldReqAttribute);
+        }
+
+        public int GetWieldReqLevel()
+        {
+            return wo.Values(LongValueKey.WieldReqValue, 0);
+        }
+
+        public string GetWieldReqString()
+        {
+            string name = GetWieldReqName();
+            if (name.Length == 0) return "";
+            return name + " " + GetWieldReqLevel();
         }
 
         public string GetSummonReqsString()
@@ -663,10 +727,15 @@ namespace OracleOfDereth
             return string.Join(", ", parts);
         }
 
+        public int GetLoreValue()
+        {
+            return wo.Values(LongValueKey.LoreRequirement, 0);
+        }
+
         public string GetLoreString()
         {
-            if (wo.Values(LongValueKey.LoreRequirement) <= 0) return "";
-            return "Diff " + wo.Values(LongValueKey.LoreRequirement);
+            if (GetLoreValue() <= 0) return "";
+            return "Diff " + GetLoreValue();
         }
 
         public string GetWorkmanshipString()
@@ -697,6 +766,9 @@ namespace OracleOfDereth
                 wo.Values(DoubleValueKey.AcidProt).ToString("N1") + "/" +
                 wo.Values(DoubleValueKey.LightningProt).ToString("N1") + "]";
         }
+
+        public int GetValue() => wo.Values(LongValueKey.Value, 0);
+        public int GetBurden() => wo.Values(LongValueKey.Burden, 0);
 
         public string GetValueBurdenString()
         {
@@ -856,11 +928,13 @@ namespace OracleOfDereth
         {
             if (IsEquipped && !AssumeFullBuffs) return null;
 
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon) return GetMeleeOD();
-            if (wo.ObjectClass == ObjectClass.MissileWeapon) return GetMissileOD();
-            if (wo.ObjectClass == ObjectClass.WandStaffOrb) return GetCasterOD();
+            int? result = null;
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon) result = GetMeleeOD();
+            else if (wo.ObjectClass == ObjectClass.MissileWeapon) result = GetMissileOD();
+            else if (wo.ObjectClass == ObjectClass.WandStaffOrb) result = GetCasterOD();
 
-            return null;
+            if (result != null && (result < -15 || result > 30)) return null;
+            return result;
         }
 
         private int? GetMeleeOD()
@@ -1031,7 +1105,9 @@ namespace OracleOfDereth
             int maxDef = GetMaxMeleeDefense();
             if (maxDef <= 0) return null;
 
-            return totalDef - maxDef;
+            int result = totalDef - maxDef;
+            if (result < -15 || result > 30) return null;
+            return result;
         }
 
         private int GetMaxMeleeDefense()
@@ -1083,7 +1159,9 @@ namespace OracleOfDereth
 
             if (wo.ObjectClass != ObjectClass.MeleeWeapon) return null;
 
-            return GetMeleeOA();
+            int? result = GetMeleeOA();
+            if (result != null && (result < -15 || result > 30)) return null;
+            return result;
         }
 
         private int? GetMeleeOA()

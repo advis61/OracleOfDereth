@@ -81,8 +81,10 @@ namespace OracleOfDereth
         public HudButton TradeAdd { get; private set; }
         public HudButton TradeAddAll { get; private set; }
         public HudButton TradeClear { get; private set; }
-        public HudButton TradeCopy { get; private set; }
-        public HudButton TradeExport { get; private set; }
+        public HudButton TradeClipboard { get; private set; }
+        public HudButton TradeExportText { get; private set; }
+        public HudButton TradeExportCsv { get; private set; }
+        public HudButton TradeExportJson { get; private set; }
         public HudFixedLayout TradeListSortComplete { get; private set; }
         public HudPictureBox TradeListSortCompleteIcon { get; private set; }
         public HudStaticText TradeListSortName { get; private set; }
@@ -350,11 +352,17 @@ namespace OracleOfDereth
                 TradeClear = (HudButton)view["TradeClear"];
                 TradeClear.Hit += TradeClear_Hit;
 
-                TradeExport = (HudButton)view["TradeExport"];
-                TradeExport.Hit += TradeExport_Hit;
+                TradeExportText = (HudButton)view["TradeExportText"];
+                TradeExportText.Hit += TradeExportText_Hit;
 
-                TradeCopy = (HudButton)view["TradeCopy"];
-                TradeCopy.Hit += TradeCopy_Hit;
+                TradeExportCsv = (HudButton)view["TradeExportCsv"];
+                TradeExportCsv.Hit += TradeExportCsv_Hit;
+
+                TradeExportJson = (HudButton)view["TradeExportJson"];
+                TradeExportJson.Hit += TradeExportJson_Hit;
+
+                TradeClipboard = (HudButton)view["TradeClipboard"];
+                TradeClipboard.Hit += TradeClipboard_Hit;
 
                 TradeAddSelected = (HudCheckBox)view["TradeAddSelected"];
                 TradeAddSelected.Change += TradeAddSelected_Change;
@@ -547,8 +555,10 @@ namespace OracleOfDereth
                 TradeAdd.Hit -= TradeAdd_Hit;
                 TradeAddAll.Hit -= TradeAddAll_Hit;
                 TradeClear.Hit -= TradeClear_Hit;
-                TradeExport.Hit -= TradeExport_Hit;
-                TradeCopy.Hit -= TradeCopy_Hit;
+                TradeExportText.Hit -= TradeExportText_Hit;
+                TradeExportCsv.Hit -= TradeExportCsv_Hit;
+                TradeExportJson.Hit -= TradeExportJson_Hit;
+                TradeClipboard.Hit -= TradeClipboard_Hit;
                 TradeList.Click -= TradeList_Click;
                 TradeListSortCompleteIcon.Hit -= TradeListSortComplete_Click;
                 TradeListSortName.Hit -= TradeListSortName_Click;
@@ -936,12 +946,28 @@ namespace OracleOfDereth
             UpdateTradeList();
         }
 
-        private void TradeExport_Hit(object sender, EventArgs e)
+        private void TradeExportText_Hit(object sender, EventArgs e)
         {
-            // TODO: Export trade list to file
+            string path = TradeItem.ExportToText();
+            Util.ClipboardCopy(path);
+            Util.Chat($"Exported {TradeItem.TradeItems.Count} items to {path}");
         }
 
-        private void TradeCopy_Hit(object sender, EventArgs e)
+        private void TradeExportCsv_Hit(object sender, EventArgs e)
+        {
+            string path = TradeItem.ExportToCsv();
+            Util.ClipboardCopy(path);
+            Util.Chat($"Exported {TradeItem.TradeItems.Count} items to {path}");
+        }
+
+        private void TradeExportJson_Hit(object sender, EventArgs e)
+        {
+            string path = TradeItem.ExportToJson();
+            Util.ClipboardCopy(path);
+            Util.Chat($"Exported {TradeItem.TradeItems.Count} items to {path}");
+        }
+
+        private void TradeClipboard_Hit(object sender, EventArgs e)
         {
             // TODO: Copy trade list to clipboard
         }

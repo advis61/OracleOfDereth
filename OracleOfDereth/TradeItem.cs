@@ -2,7 +2,9 @@ using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace OracleOfDereth
 {
@@ -372,6 +374,142 @@ namespace OracleOfDereth
         public static void Clear()
         {
             TradeItems.Clear();
+        }
+
+        private static string ExportFilename(string extension)
+        {
+            string name = Regex.Replace(CoreManager.Current.CharacterFilter.Name.ToLower(), "[^a-z]", "-");
+            return $"{name}-{DateTime.Now:yyyyMMdd-HHmmss}-items.{extension}";
+        }
+
+        public static string ExportToText()
+        {
+            string filename = ExportFilename("txt");
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), filename);
+
+            var lines = TradeItems.Select(t => t.Description).ToList();
+            File.WriteAllLines(path, lines);
+
+            return path;
+        }
+
+        private static string[] GetExportHeaders()
+        {
+            return new[] {
+                "Character", "Name", "Type", "Set", "Armor Level", "Imbues", "Tinks",
+                "OD", "OA", "OM", "Damage", "Dmg Low", "Dmg High", "Elem Bonus", "Missile %", "Caster %",
+                "Attack", "Melee D", "Magic D", "Missile D", "Mana C",
+                "Spells", "Wield Req", "Wield Req Level", "Lore", "Craft", "Value", "Burden",
+                "D", "DR", "C", "CR", "CD", "CDR", "HB", "V"
+            };
+        }
+
+        private static string[] GetExportRow(TradeItem item)
+        {
+            WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
+            if (wo == null) return new[] { item.Name };
+
+            ItemInfo info = new ItemInfo(wo);
+
+            return new[] {
+                CoreManager.Current.CharacterFilter.Name,
+                info.GetName(),
+                info.GetItemSlotName(),
+                info.GetFullSetName(),
+                info.GetArmorLevel() > 0 ? info.GetArmorLevel().ToString() : "",
+                info.GetImbueString(),
+                info.GetTinksValue() > 0 ? info.GetTinksValue().ToString() : "",
+                info.GetODValue()?.ToString() ?? "",
+                info.GetOAValue()?.ToString() ?? "",
+                info.GetOMValue()?.ToString() ?? "",
+                info.GetDamageString(),
+                info.GetWeaponDamageLow() > 0 ? info.GetWeaponDamageLow().ToString() : "",
+                info.GetWeaponDamageHigh() > 0 ? info.GetWeaponDamageHigh().ToString() : "",
+                info.GetElementalDamageBonus() != 0 ? info.GetElementalDamageBonus().ToString() : "",
+                info.GetDamageBonusPct() != 0 ? info.GetDamageBonusPct().ToString() : "",
+                info.GetElementalDamageVsMonsters() != 0 ? info.GetElementalDamageVsMonsters().ToString() : "",
+                info.GetAttackBonus() != 0 ? info.GetAttackBonus().ToString() : "",
+                info.GetMeleeDefenseBonus() != 0 ? info.GetMeleeDefenseBonus().ToString() : "",
+                info.GetMagicDefenseBonus() != 0 ? info.GetMagicDefenseBonus().ToString() : "",
+                info.GetMissileDefenseBonus() != 0 ? info.GetMissileDefenseBonus().ToString() : "",
+                info.GetManaConversionBonus() != 0 ? info.GetManaConversionBonus().ToString() : "",
+                info.GetSpellsString(),
+                info.GetWieldReqName(),
+                info.GetWieldReqLevel() > 0 ? info.GetWieldReqLevel().ToString() : "",
+                info.GetLoreValue() > 0 ? info.GetLoreValue().ToString() : "",
+                info.GetWorkmanshipString(),
+                info.GetValue() > 0 ? info.GetValue().ToString() : "",
+                info.GetBurden() > 0 ? info.GetBurden().ToString() : "",
+                info.RatingDamage > 0 ? info.RatingDamage.ToString() : "",
+                info.RatingDamageResist > 0 ? info.RatingDamageResist.ToString() : "",
+                info.RatingCrit > 0 ? info.RatingCrit.ToString() : "",
+                info.RatingCritResist > 0 ? info.RatingCritResist.ToString() : "",
+                info.RatingCritDamage > 0 ? info.RatingCritDamage.ToString() : "",
+                info.RatingCritDamageResist > 0 ? info.RatingCritDamageResist.ToString() : "",
+                info.RatingHealBoost > 0 ? info.RatingHealBoost.ToString() : "",
+                info.RatingVitality > 0 ? info.RatingVitality.ToString() : "",
+            };
+        }
+
+        private static string CsvEscape(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return "";
+            if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+                return "\"" + value.Replace("\"", "\"\"") + "\"";
+            return value;
+        }
+
+        public static string ExportToCsv()
+        {
+            string filename = ExportFilename("csv");
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), filename);
+
+            var lines = new List<string>();
+            lines.Add(string.Join(",", GetExportHeaders().Select(CsvEscape)));
+
+            foreach (var item in TradeItems)
+            {
+                lines.Add(string.Join(",", GetExportRow(item).Select(CsvEscape)));
+            }
+
+            File.WriteAllLines(path, lines);
+            return path;
+        }
+
+        private static string JsonEscape(string value)
+        {
+            if (value == null) return "null";
+            return "\"" + value.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+        }
+
+        public static string ExportToJson()
+        {
+            string filename = ExportFilename("json");
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), filename);
+
+            var headers = GetExportHeaders();
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("[");
+
+            for (int i = 0; i < TradeItems.Count; i++)
+            {
+                var row = GetExportRow(TradeItems[i]);
+                sb.AppendLine("  {");
+
+                int colCount = Math.Min(headers.Length, row.Length);
+                for (int c = 0; c < colCount; c++)
+                {
+                    string comma = c < colCount - 1 ? "," : "";
+                    sb.AppendLine($"    {JsonEscape(headers[c])}: {JsonEscape(row[c])}{comma}");
+                }
+
+                string itemComma = i < TradeItems.Count - 1 ? "," : "";
+                sb.AppendLine("  }" + itemComma);
+            }
+
+            sb.AppendLine("]");
+            File.WriteAllText(path, sb.ToString());
+            return path;
         }
 
         public override string ToString()

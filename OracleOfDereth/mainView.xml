@@ -95,8 +95,10 @@
 						<control progid="DecalControls.PushButton" name="TradeAddAll" left="118" top="30" width="108" height="24" text="Add All"/>
 						<control progid="DecalControls.PushButton" name="TradeClear" left="231" top="30" width="108" height="24" text="Clear"/>
 						<control progid="DecalControls.CheckBox" name="TradeAddSelected" left="345" top="33" width="100" height="20" text="Add selected" checked="false"/>
-						<control progid="DecalControls.PushButton" name="TradeCopy" left="5" top="59" width="220" height="24" text="Copy to Clipboard"/>
-						<control progid="DecalControls.PushButton" name="TradeExport" left="230" top="59" width="220" height="24" text="Export to Text File"/>
+						<control progid="DecalControls.PushButton" name="TradeClipboard" left="5" top="59" width="108" height="24" text="Clipboard"/>
+						<control progid="DecalControls.PushButton" name="TradeExportText" left="118" top="59" width="108" height="24" text="Export Text"/>
+						<control progid="DecalControls.PushButton" name="TradeExportCsv" left="231" top="59" width="108" height="24" text="Export CSV"/>
+						<control progid="DecalControls.PushButton" name="TradeExportJson" left="342" top="59" width="108" height="24" text="Export JSON"/>
 						<control progid="DecalControls.FixedLayout" name="TradeListSortComplete" left="1" top="92" width="16" height="16"/>
 						<control progid="DecalControls.StaticText" name="TradeListSortName" left="49" top="88" width="210" height="17" text="Item Name"/>
 						<control progid="DecalControls.StaticText" name="TradeListSortCol1" left="266" top="88" width="90" height="17" text="Type"/>
