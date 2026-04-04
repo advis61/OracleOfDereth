@@ -23,7 +23,7 @@ namespace OracleOfDereth
     {
         public WorldObject Item;
 
-        public static SortType CurrentSortType = SortType.Name;
+        public static SortType CurrentSortType = SortType.Default;
 
         public enum SortType
         {
