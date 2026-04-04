@@ -6,66 +6,15 @@ using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Decal.Filters;
 
-// claude --resume "strip-aura-weapon-effects"
-// claude --resume 69ab0145-1287-4c96-bffe-3eae1782346b
-
 namespace OracleOfDereth
 {
-    /// <summary>
-    /// Formats a WorldObject's identification details into a readable string.
-    /// Based on MagTools ItemInfo system.
-    /// </summary>
     public class ItemInfo
     {
+        // ============================================================
+        // Constructor & Internal State
+        // ============================================================
+
         public readonly WorldObject wo;
-        public bool IsWeapon => wo.ObjectClass == ObjectClass.MeleeWeapon || wo.ObjectClass == ObjectClass.MissileWeapon || wo.ObjectClass == ObjectClass.WandStaffOrb;
-        public bool IsArmorClothing => (wo.ObjectClass == ObjectClass.Armor || wo.ObjectClass == ObjectClass.Clothing) && !IsCloak;
-        public bool IsJewelry => wo.ObjectClass == ObjectClass.Jewelry;
-        public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
-        public bool IsSummon => wo.ObjectClass == ObjectClass.Misc && wo.Values(LongValueKey.UsesTotal) == 50 && (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
-        public bool IsAetheria => wo.Name == "Aetheria";
-        public bool IsFoolproof => wo.Name.EndsWith(" Foolproof");
-        public bool IsAmmo => wo.ObjectClass == ObjectClass.MissileWeapon && wo.Values(LongValueKey.StackMax, 0) > 0;
-
-        public string GetAetheriaSurge()
-        {
-            FileService service = CoreManager.Current.Filter<FileService>();
-            for (int i = 0; i < wo.SpellCount; i++)
-            {
-                Decal.Filters.Spell spell = service.SpellTable.GetById(wo.Spell(i));
-                if (spell == null) continue;
-                string name = spell.Name;
-                if (name.Contains("Destruction")) return "Destruction";
-                if (name.Contains("Protection")) return "Protection";
-                if (name.Contains("Regeneration")) return "Regeneration";
-                if (name.Contains("Mana")) return "Mana";
-            }
-            return "";
-        }
-
-        public string GetAetheriaColor()
-        {
-            if (wo.Name.Contains("Blue")) return "Blue";
-            if (wo.Name.Contains("Yellow")) return "Yellow";
-            if (wo.Name.Contains("Red")) return "Red";
-            return "Aetheria";
-        }
-
-        public string GetItemSlotName()
-        {
-            if (IsWeapon) return GetWeaponTypeName();
-            if (IsCloak) return "Cloak";
-            if (IsSummon) return "Summon";
-            if (IsAetheria) return GetAetheriaColor();
-            if (IsFoolproof) return "Foolproof";
-            if (IsArmorClothing || IsJewelry) return GetSlotName();
-            if (wo.ObjectClass == ObjectClass.SpellComponent) return "Component";
-            if (wo.ObjectClass == ObjectClass.CraftedFletching) return "Fletching";
-            if (wo.ObjectClass == ObjectClass.CraftedAlchemy) return "Alchemy";
-            if (wo.ObjectClass == ObjectClass.CraftedCooking) return "Cooking";
-            if (wo.ObjectClass == ObjectClass.BaseCooking) return "Cooking";
-            return wo.ObjectClass.ToString();
-        }
 
         private readonly List<int> activeSpells = new List<int>();
         private readonly List<int> innateSpells = new List<int>();
@@ -104,115 +53,67 @@ namespace OracleOfDereth
             if (!dict.ContainsKey(key) && value.CompareTo(default(T)) != 0)
                 dict[key] = value;
         }
-        public static bool WeaponIdentified(WorldObject item)
+
+        // ============================================================
+        // Type Detection
+        // ============================================================
+
+        public bool IsWeapon => wo.ObjectClass == ObjectClass.MeleeWeapon
+                             || wo.ObjectClass == ObjectClass.MissileWeapon
+                             || wo.ObjectClass == ObjectClass.WandStaffOrb;
+
+        public bool IsArmorClothing => (wo.ObjectClass == ObjectClass.Armor
+                                     || wo.ObjectClass == ObjectClass.Clothing) && !IsCloak;
+
+        public bool IsJewelry => wo.ObjectClass == ObjectClass.Jewelry;
+
+        public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing
+                            && wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
+
+        public bool IsSummon => wo.ObjectClass == ObjectClass.Misc
+                             && wo.Values(LongValueKey.UsesTotal) == 50
+                             && (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
+
+        public bool IsAetheria => wo.Name == "Aetheria";
+        public bool IsFoolproof => wo.Name.EndsWith(" Foolproof");
+        public bool IsAmmo => wo.ObjectClass == ObjectClass.MissileWeapon
+                           && wo.Values(LongValueKey.StackMax, 0) > 0;
+
+        // ============================================================
+        // Identity: Name, Material, Slot, ObjectClass
+        // ============================================================
+
+        public string GetObjectClassName() => wo.ObjectClass.ToString();
+
+        public string GetMaterial()
         {
-            ItemInfo info = new ItemInfo(item);
-
-            if (!info.IsWeapon) return false;
-
-            string odString = info.ToODString();
-            if (odString == null) return false;
-
-            Util.Chat(info.GetName() + " " + odString, Util.ColorCyan, "");
-            return true;
+            if (wo.Values(LongValueKey.Material) <= 0) return "";
+            if (MaterialInfo.TryGetValue(wo.Values(LongValueKey.Material), out string mat))
+                return mat;
+            return "Unknown Material " + wo.Values(LongValueKey.Material);
         }
 
-        private string ToODString()
+        public string GetName()
         {
-            string od = GetODString();
-            string oa = GetOAString();
-            string om = GetOMString();
-
-            if (AssumeFullBuffs && od == null && om == null) return "";
-            if (od == null && oa == null && om == null) return "";
-
-            var parts = new List<string>();
-            if (od != null) parts.Add(od);
-            if (oa != null) parts.Add(oa);
-            if (om != null) parts.Add(om);
-
-            return "[" + string.Join(" | ", parts) + "]";
+            string material = GetMaterial();
+            if (material.Length > 0) return material + " " + wo.Name;
+            return wo.Name;
         }
 
-        public static string FormatOValue(int val)
+        public string GetItemSlotName()
         {
-            return val >= 0 ? "+" + val : "" + val;
-        }
-
-        public string GetODString()
-        {
-            int? od = GetODValue();
-            if (od == null) return null;
-            return "OD " + FormatOValue((int)od);
-        }
-
-        public string GetOAString()
-        {
-            int? oa = GetOAValue();
-            if (oa == null) return null;
-            return "OA " + FormatOValue((int)oa);
-        }
-
-        public string GetOMString()
-        {
-            int? om = GetOMValue();
-            if (om == null) return null;
-            return "MD " + FormatOValue((int)om);
-        }
-
-        public string GetSetName()
-        {
-            int set = wo.Values((LongValueKey)265, 0);
-            if (set != 0 && AttributeSetInfo.TryGetValue(set, out string setName))
-                return setName.Replace("Sigil of ", "").Replace("'s", "").Replace(" Proof Set", "").Replace(" Set", "").Trim();
-            return "";
-        }
-
-        public string GetSummonDamageString()
-        {
-            if (!IsSummon) return "";
-            return $"{new Summon { Item = wo }.DamageScore()}%";
-        }
-
-        public string GetSummonDefenseString()
-        {
-            if (!IsSummon) return "";
-            return $"{new Summon { Item = wo }.DefenseScore()}%";
-        }
-
-        public int RatingDamage => wo.Values((LongValueKey)370);
-        public int RatingDamageResist => wo.Values((LongValueKey)371);
-        public int RatingCrit => wo.Values((LongValueKey)372);
-        public int RatingCritResist => wo.Values((LongValueKey)373);
-        public int RatingCritDamage => wo.Values((LongValueKey)374);
-        public int RatingCritDamageResist => wo.Values((LongValueKey)375);
-        public int RatingHealBoost => wo.Values((LongValueKey)376);
-        public int RatingVitality => wo.Values((LongValueKey)379);
-
-        public string GetRatingsString()
-        {
-            int d = wo.Values((LongValueKey)370);
-            int dr = wo.Values((LongValueKey)371);
-            int c = wo.Values((LongValueKey)372);
-            int cr = wo.Values((LongValueKey)373);
-            int cd = wo.Values((LongValueKey)374);
-            int cdr = wo.Values((LongValueKey)375);
-            int hb = wo.Values((LongValueKey)376);
-            int v = wo.Values((LongValueKey)379);
-
-            if (d + dr + c + cr + cd + cdr + hb + v <= 0) return "";
-
-            var parts = new List<string>();
-            if (d > 0) parts.Add("D" + d);
-            if (dr > 0) parts.Add("DR" + dr);
-            if (c > 0) parts.Add("C" + c);
-            if (cd > 0) parts.Add("CD" + cd);
-            if (cr > 0) parts.Add("CR" + cr);
-            if (cdr > 0) parts.Add("CDR" + cdr);
-            if (hb > 0) parts.Add("HB" + hb);
-            if (v > 0) parts.Add("V" + v);
-
-            return string.Join(" ", parts);
+            if (IsWeapon) return GetWeaponTypeName();
+            if (IsCloak) return "Cloak";
+            if (IsSummon) return "Summon";
+            if (IsAetheria) return GetAetheriaColor();
+            if (IsFoolproof) return "Foolproof";
+            if (IsArmorClothing || IsJewelry) return GetSlotName();
+            if (wo.ObjectClass == ObjectClass.SpellComponent) return "Component";
+            if (wo.ObjectClass == ObjectClass.CraftedFletching) return "Fletching";
+            if (wo.ObjectClass == ObjectClass.CraftedAlchemy) return "Alchemy";
+            if (wo.ObjectClass == ObjectClass.CraftedCooking) return "Cooking";
+            if (wo.ObjectClass == ObjectClass.BaseCooking) return "Cooking";
+            return wo.ObjectClass.ToString();
         }
 
         public string GetWeaponTypeName()
@@ -245,15 +146,14 @@ namespace OracleOfDereth
                 if ((slots & 0x40) != 0) return "Pants";
             }
 
+            // Jewelry — try EquipableSlots, then fall back to name
             if (wo.ObjectClass == ObjectClass.Jewelry)
             {
-                // Try EquipableSlots first
                 if ((slots & 0xC0000) != 0) return "Ring";
                 if ((slots & 0x300000) != 0) return "Bracelet";
                 if ((slots & 0x400000) != 0) return "Necklace";
                 if ((slots & 0x2000000) != 0) return "Trinket";
 
-                // Fallback to name
                 string name = wo.Name.ToLower();
                 if (name.Contains("ring") || name.Contains("band") || name.Contains("signet")) return "Ring";
                 if (name.Contains("bracelet")) return "Bracelet";
@@ -294,136 +194,6 @@ namespace OracleOfDereth
             return "";
         }
 
-        public string GetCloakWeave()
-        {
-            FileService service = CoreManager.Current.Filter<FileService>();
-            foreach (int spellId in innateSpells)
-            {
-                Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
-                if (spell == null) continue;
-                string name = spell.Name;
-                if (name.Contains("Weave of"))
-                    return name.Replace("Weave of ", "");
-            }
-            return "";
-        }
-
-        public string GetCloakProc()
-        {
-            FileService service = CoreManager.Current.Filter<FileService>();
-
-            if (wo.SpellCount > 0)
-            {
-                Decal.Filters.Spell spell = service.SpellTable.GetById(wo.Spell(0));
-                if (spell == null) return "";
-                string name = spell.Name;
-
-                if (name.Contains("Cloaked in Skill")) return "CiS";
-                if (name.Contains("Shroud of Darkness (Melee)")) return "Melee Shroud";
-                if (name.Contains("Shroud of Darkness (Missile)")) return "Missile Shroud";
-                if (name.Contains("Shroud of Darkness (Magic)")) return "Magic Shroud";
-                if (name.Contains("Shroud of Darkness")) return "Shroud";
-                if (name.Contains("Horizon's Blades")) return "Blade Ring";
-                if (name.Contains("Tectonic Rifts")) return "Bludgeon Ring";
-                if (name.Contains("Nuhmudira's Spines")) return "Piercing Ring";
-                if (name.Contains("Searing Disc")) return "Acid Ring";
-                if (name.Contains("Cassius' Ring of Fire")) return "Fire Ring";
-                if (name.Contains("Halo of Frost")) return "Frost Ring";
-                if (name.Contains("Eye of the Storm")) return "Lightning Ring";
-                if (name.Contains("Clouded Soul")) return "Void Ring";
-
-                return name;
-            }
-
-            return "-200 Damage";
-        }
-
-        public string GetMaterial()
-        {
-            if (wo.Values(LongValueKey.Material) > 0)
-            {
-                if (MaterialInfo.TryGetValue(wo.Values(LongValueKey.Material), out string mat))
-                    return mat;
-                return "Unknown Material " + wo.Values(LongValueKey.Material);
-            }
-            return "";
-        }
-
-        public string GetName()
-        {
-            string material = GetMaterial();
-            if (material.Length > 0)
-                return material + " " + wo.Name;
-            return wo.Name;
-        }
-
-        public override string ToString()
-        {
-            var parts = new List<string>();
-
-            parts.Add(GetName());
-
-            string mastery = GetMasteryString();
-            if (mastery.Length > 0) parts[0] += " (" + mastery + ")";
-
-            string od = ToODString();
-            if (od.Length > 0) parts[0] += " " + od;
-
-            if (IsSummon) parts[0] += " [DMG " + GetSummonDamageString() + " | DEF " + GetSummonDefenseString() + "]";
-
-            string setName = GetFullSetName();
-            if (setName.Length > 0) parts.Add(setName);
-
-            string armorLevel = GetArmorLevelString();
-            if (armorLevel.Length > 0) parts.Add(armorLevel);
-
-            string imbues = GetImbueString();
-            if (imbues.Length > 0) parts.Add(imbues);
-
-            string tinks = GetTinksString();
-            if (tinks.Length > 0) parts.Add(tinks);
-
-            string damage = GetDamageString();
-            if (damage.Length > 0) parts.Add(damage);
-
-            string bonuses = GetBonusesString();
-            if (bonuses.Length > 0) parts.Add(bonuses);
-
-            string buffed = GetBuffedValuesString();
-            if (buffed.Length > 0) parts.Add(buffed);
-
-            string spells = GetSpellsString();
-            if (spells.Length > 0) parts.Add(spells);
-
-            string wield = GetWieldReqString();
-            if (wield.Length > 0) parts.Add(wield);
-
-            string summonReqs = GetSummonReqsString();
-            if (summonReqs.Length > 0) parts.Add(summonReqs);
-
-            string lore = GetLoreString();
-            if (lore.Length > 0) parts.Add(lore);
-
-            string craft = GetWorkmanshipString();
-            if (craft.Length > 0) parts.Add(craft);
-
-            string prots = GetProtectionsString();
-            if (prots.Length > 0) parts.Add(prots);
-
-            string value = GetValueBurdenString();
-            if (value.Length > 0) parts.Add(value);
-
-            string ratings = GetRatingsString();
-            if (ratings.Length > 0) parts.Add("[" + ratings + "]");
-
-            string keyring = GetKeyringString();
-            if (keyring.Length > 0) parts.Add(keyring);
-
-            return string.Join(", ", parts);
-        }
-
-        // --- ToString Section Methods ---
-
         public string GetMasteryString()
         {
             if (wo.Values((LongValueKey)353) <= 0) return "";
@@ -432,6 +202,11 @@ namespace OracleOfDereth
             return "Unknown Mastery " + wo.Values((LongValueKey)353);
         }
 
+        // ============================================================
+        // Equipment Set
+        // ============================================================
+
+        /// <summary>Returns the full set name as stored (e.g. "Adept's Set").</summary>
         public string GetFullSetName()
         {
             int set = wo.Values((LongValueKey)265, 0);
@@ -441,16 +216,204 @@ namespace OracleOfDereth
             return "Unknown Set";
         }
 
-        public string GetArmorLevelString()
+        /// <summary>Returns a shortened set name for display (e.g. "Adept").</summary>
+        public string GetSetName()
         {
-            if (wo.Values(LongValueKey.ArmorLevel) <= 0) return "";
-            return "AL " + wo.Values(LongValueKey.ArmorLevel);
+            int set = wo.Values((LongValueKey)265, 0);
+            if (set != 0 && AttributeSetInfo.TryGetValue(set, out string setName))
+                return setName.Replace("Sigil of ", "").Replace("'s", "").Replace(" Proof Set", "").Replace(" Set", "").Trim();
+            return "";
         }
 
-        public int GetArmorLevel()
+        // ============================================================
+        // Armor
+        // ============================================================
+
+        public int GetArmorLevel() => wo.Values(LongValueKey.ArmorLevel, 0);
+
+        public string GetArmorLevelString()
         {
-            return wo.Values(LongValueKey.ArmorLevel, 0);
+            if (GetArmorLevel() <= 0) return "";
+            return "AL " + GetArmorLevel();
         }
+
+        public string GetProtectionsString()
+        {
+            if (wo.ObjectClass != ObjectClass.Armor || wo.Values(LongValueKey.Unenchantable, 0) == 0) return "";
+
+            return "[" +
+                wo.Values(DoubleValueKey.SlashProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.PierceProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.BludgeonProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.ColdProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.FireProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.AcidProt).ToString("N1") + "/" +
+                wo.Values(DoubleValueKey.LightningProt).ToString("N1") + "]";
+        }
+
+        // ============================================================
+        // Ratings
+        // ============================================================
+
+        public int RatingDamage => wo.Values((LongValueKey)370);
+        public int RatingDamageResist => wo.Values((LongValueKey)371);
+        public int RatingCrit => wo.Values((LongValueKey)372);
+        public int RatingCritResist => wo.Values((LongValueKey)373);
+        public int RatingCritDamage => wo.Values((LongValueKey)374);
+        public int RatingCritDamageResist => wo.Values((LongValueKey)375);
+        public int RatingHealBoost => wo.Values((LongValueKey)376);
+        public int RatingVitality => wo.Values((LongValueKey)379);
+
+        public string GetRatingsString()
+        {
+            if (RatingDamage + RatingDamageResist + RatingCrit + RatingCritResist +
+                RatingCritDamage + RatingCritDamageResist + RatingHealBoost + RatingVitality <= 0)
+                return "";
+
+            var parts = new List<string>();
+            if (RatingDamage > 0) parts.Add("D" + RatingDamage);
+            if (RatingDamageResist > 0) parts.Add("DR" + RatingDamageResist);
+            if (RatingCrit > 0) parts.Add("C" + RatingCrit);
+            if (RatingCritDamage > 0) parts.Add("CD" + RatingCritDamage);
+            if (RatingCritResist > 0) parts.Add("CR" + RatingCritResist);
+            if (RatingCritDamageResist > 0) parts.Add("CDR" + RatingCritDamageResist);
+            if (RatingHealBoost > 0) parts.Add("HB" + RatingHealBoost);
+            if (RatingVitality > 0) parts.Add("V" + RatingVitality);
+            return string.Join(" ", parts);
+        }
+
+        // ============================================================
+        // OD / OA / OM Values & Strings
+        // ============================================================
+
+        public int? GetODValue()
+        {
+            if (IsEquipped && !AssumeFullBuffs) return null;
+
+            int? result = null;
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon) result = GetMeleeOD();
+            else if (wo.ObjectClass == ObjectClass.MissileWeapon) result = GetMissileOD();
+            else if (wo.ObjectClass == ObjectClass.WandStaffOrb) result = GetCasterOD();
+
+            if (result != null && (result < -15 || result > 30)) return null;
+            return result;
+        }
+
+        public int? GetOAValue()
+        {
+            if (IsEquipped && !AssumeFullBuffs) return null;
+            if (wo.ObjectClass != ObjectClass.MeleeWeapon) return null;
+
+            int? result = GetMeleeOA();
+            if (result != null && (result < -15 || result > 30)) return null;
+            return result;
+        }
+
+        public int? GetOMValue()
+        {
+            if (IsEquipped && !AssumeFullBuffs) return null;
+            if (!IsWeapon) return null;
+
+            double buffedDefBonus = GetBuffedDoubleValue(Key_MeleeDefenseBonus);
+            if (buffedDefBonus <= 0) return null;
+
+            int totalDef = (int)Math.Round((buffedDefBonus - 1) * 100);
+            if (AssumeFullBuffs) totalDef -= 20;
+
+            int maxDef = GetMaxMeleeDefense();
+            if (maxDef <= 0) return null;
+
+            int result = totalDef - maxDef;
+            if (result < -15 || result > 30) return null;
+            return result;
+        }
+
+        public string GetODString()
+        {
+            int? od = GetODValue();
+            if (od == null) return null;
+            return "OD " + FormatOValue((int)od);
+        }
+
+        public string GetOAString()
+        {
+            int? oa = GetOAValue();
+            if (oa == null) return null;
+            return "OA " + FormatOValue((int)oa);
+        }
+
+        public string GetOMString()
+        {
+            int? om = GetOMValue();
+            if (om == null) return null;
+            return "MD " + FormatOValue((int)om);
+        }
+
+        public static string FormatOValue(int val)
+        {
+            return val >= 0 ? "+" + val : "" + val;
+        }
+
+        // ============================================================
+        // Damage
+        // ============================================================
+
+        public int GetWeaponDamageLow()
+        {
+            if (wo.Values(LongValueKey.MaxDamage) == 0) return 0;
+            if (wo.Values(DoubleValueKey.Variance) == 0) return wo.Values(LongValueKey.MaxDamage);
+            return (int)Math.Round(wo.Values(LongValueKey.MaxDamage) - (wo.Values(LongValueKey.MaxDamage) * wo.Values(DoubleValueKey.Variance)));
+        }
+
+        public int GetWeaponDamageHigh() => wo.Values(LongValueKey.MaxDamage, 0);
+        public int GetElementalDamageBonus() => wo.Values(LongValueKey.ElementalDmgBonus, 0);
+        public double GetDamageBonusPct() => Math.Round(((wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100));
+        public double GetElementalDamageVsMonsters() => Math.Round(((wo.Values(DoubleValueKey.ElementalDamageVersusMonsters, 1) - 1) * 100));
+
+        public string GetDamageString()
+        {
+            var parts = new List<string>();
+
+            int high = GetWeaponDamageHigh();
+            if (high != 0 && wo.Values(DoubleValueKey.Variance) != 0)
+                parts.Add(GetWeaponDamageLow() + "-" + high);
+            else if (high != 0)
+                parts.Add(high.ToString());
+
+            if (GetElementalDamageBonus() != 0)
+                parts.Add("+" + GetElementalDamageBonus());
+            if (GetDamageBonusPct() != 0)
+                parts.Add("+" + GetDamageBonusPct() + "%");
+            if (GetElementalDamageVsMonsters() != 0)
+                parts.Add("+" + GetElementalDamageVsMonsters() + "%vs. Monsters");
+
+            return string.Join(", ", parts);
+        }
+
+        // ============================================================
+        // Bonuses (Attack, Defense, Mana Conversion)
+        // ============================================================
+
+        public double GetAttackBonus() => Math.Round(((wo.Values(DoubleValueKey.AttackBonus, 1) - 1) * 100));
+        public double GetMeleeDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) - 1) * 100));
+        public double GetMagicDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MagicDBonus, 1) - 1) * 100), 1);
+        public double GetMissileDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MissileDBonus, 1) - 1) * 100), 1);
+        public double GetManaConversionBonus() => Math.Round((wo.Values(DoubleValueKey.ManaCBonus) * 100));
+
+        public string GetBonusesString()
+        {
+            var parts = new List<string>();
+            if (GetAttackBonus() != 0) parts.Add("+" + GetAttackBonus() + "%a");
+            if (GetMeleeDefenseBonus() != 0) parts.Add(GetMeleeDefenseBonus() + "%md");
+            if (GetMagicDefenseBonus() != 0) parts.Add(GetMagicDefenseBonus() + "%mgc.d");
+            if (GetMissileDefenseBonus() != 0) parts.Add(GetMissileDefenseBonus() + "%msl.d");
+            if (GetManaConversionBonus() != 0) parts.Add(GetManaConversionBonus() + "%mc");
+            return string.Join(", ", parts);
+        }
+
+        // ============================================================
+        // Imbues & Tinks
+        // ============================================================
 
         public string GetImbueString()
         {
@@ -475,10 +438,7 @@ namespace OracleOfDereth
             return string.Join(" ", parts);
         }
 
-        public int GetTinksValue()
-        {
-            return wo.Values(LongValueKey.NumberTimesTinkered, 0);
-        }
+        public int GetTinksValue() => wo.Values(LongValueKey.NumberTimesTinkered, 0);
 
         public string GetTinksString()
         {
@@ -486,109 +446,9 @@ namespace OracleOfDereth
             return "Tinks " + GetTinksValue();
         }
 
-        public string GetDamageString()
-        {
-            var parts = new List<string>();
-
-            if (wo.Values(LongValueKey.MaxDamage) != 0 && wo.Values(DoubleValueKey.Variance) != 0)
-                parts.Add((wo.Values(LongValueKey.MaxDamage) - (wo.Values(LongValueKey.MaxDamage) * wo.Values(DoubleValueKey.Variance))).ToString("N2") + "-" + wo.Values(LongValueKey.MaxDamage));
-            else if (wo.Values(LongValueKey.MaxDamage) != 0)
-                parts.Add(wo.Values(LongValueKey.MaxDamage).ToString());
-
-            if (wo.Values(LongValueKey.ElementalDmgBonus, 0) != 0)
-                parts.Add("+" + wo.Values(LongValueKey.ElementalDmgBonus));
-
-            if (wo.Values(DoubleValueKey.DamageBonus, 1) != 1)
-                parts.Add("+" + Math.Round(((wo.Values(DoubleValueKey.DamageBonus) - 1) * 100)) + "%");
-
-            if (wo.Values(DoubleValueKey.ElementalDamageVersusMonsters, 1) != 1)
-                parts.Add("+" + Math.Round(((wo.Values(DoubleValueKey.ElementalDamageVersusMonsters) - 1) * 100)) + "%vs. Monsters");
-
-            return string.Join(", ", parts);
-        }
-
-        public int GetWeaponDamageLow()
-        {
-            if (wo.Values(LongValueKey.MaxDamage) == 0) return 0;
-            if (wo.Values(DoubleValueKey.Variance) == 0) return wo.Values(LongValueKey.MaxDamage);
-            return (int)Math.Round(wo.Values(LongValueKey.MaxDamage) - (wo.Values(LongValueKey.MaxDamage) * wo.Values(DoubleValueKey.Variance)));
-        }
-
-        public int GetWeaponDamageHigh()
-        {
-            return wo.Values(LongValueKey.MaxDamage, 0);
-        }
-
-        public int GetElementalDamageBonus()
-        {
-            return wo.Values(LongValueKey.ElementalDmgBonus, 0);
-        }
-
-        public double GetDamageBonusPct()
-        {
-            return Math.Round(((wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100));
-        }
-
-        public double GetElementalDamageVsMonsters()
-        {
-            return Math.Round(((wo.Values(DoubleValueKey.ElementalDamageVersusMonsters, 1) - 1) * 100));
-        }
-
-        public string GetBonusesString()
-        {
-            var parts = new List<string>();
-
-            if (wo.Values(DoubleValueKey.AttackBonus, 1) != 1)
-                parts.Add("+" + Math.Round(((wo.Values(DoubleValueKey.AttackBonus) - 1) * 100)) + "%a");
-
-            if (wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) != 1)
-                parts.Add(Math.Round(((wo.Values(DoubleValueKey.MeleeDefenseBonus) - 1) * 100)) + "%md");
-
-            if (wo.Values(DoubleValueKey.MagicDBonus, 1) != 1)
-                parts.Add(Math.Round(((wo.Values(DoubleValueKey.MagicDBonus) - 1) * 100), 1) + "%mgc.d");
-
-            if (wo.Values(DoubleValueKey.MissileDBonus, 1) != 1)
-                parts.Add(Math.Round(((wo.Values(DoubleValueKey.MissileDBonus) - 1) * 100), 1) + "%msl.d");
-
-            if (wo.Values(DoubleValueKey.ManaCBonus) != 0)
-                parts.Add(Math.Round((wo.Values(DoubleValueKey.ManaCBonus) * 100)) + "%mc");
-
-            return string.Join(", ", parts);
-        }
-
-        public double GetAttackBonus() => Math.Round(((wo.Values(DoubleValueKey.AttackBonus, 1) - 1) * 100));
-        public double GetMeleeDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) - 1) * 100));
-        public double GetMagicDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MagicDBonus, 1) - 1) * 100), 1);
-        public double GetMissileDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MissileDBonus, 1) - 1) * 100), 1);
-        public double GetManaConversionBonus() => Math.Round((wo.Values(DoubleValueKey.ManaCBonus) * 100));
-
-        public string GetBuffedValuesString()
-        {
-            if (!IsWeapon) return "";
-
-            var sb = new StringBuilder("(");
-
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon)
-                sb.Append(CalcBuffedTinkedDoT().ToString("N1") + "/" + GetBuffedIntValue(Key_MaxDamage));
-            else if (wo.ObjectClass == ObjectClass.MissileWeapon)
-                sb.Append(CalcBuffedMissileDamage().ToString("N1"));
-            else
-                sb.Append(((GetBuffedDoubleValue(Key_ElementalDmgVsMonsters) - 1) * 100).ToString("N1"));
-
-            sb.Append(" ");
-
-            if (wo.Values(DoubleValueKey.AttackBonus, 1) != 1)
-                sb.Append(Math.Round(((GetBuffedDoubleValue(Key_AttackBonus) - 1) * 100)).ToString("N1") + "/");
-
-            if (wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) != 1)
-                sb.Append(Math.Round(((GetBuffedDoubleValue(Key_MeleeDefenseBonus) - 1) * 100)).ToString("N1"));
-
-            if (wo.Values(DoubleValueKey.ManaCBonus) != 0)
-                sb.Append("/" + Math.Round(GetBuffedDoubleValue(Key_ManaCBonus) * 100));
-
-            sb.Append(")");
-            return sb.ToString();
-        }
+        // ============================================================
+        // Spells & Cantrips
+        // ============================================================
 
         public string GetSpellsString()
         {
@@ -607,48 +467,29 @@ namespace OracleOfDereth
             {
                 Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
                 if (spell == null) continue;
-
                 string name = spell.Name;
 
-                if (!isLootGenerated)
-                    goto ShowSpell;
-
-                if (name.Contains("Minor Impenetrability") || name.Contains("Major Impenetrability") || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability"))
-                    goto ShowSpell;
-
-                if (name.Contains("Augmented"))
-                    goto ShowSpell;
-
-                if (isUnenchantable)
+                if (isLootGenerated)
                 {
-                    if (name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard"))
-                        goto ShowSpell;
-                }
-                else
-                {
-                    if (name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard"))
-                        continue;
+                    bool isBaneImpen = name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard");
+
+                    if (isBaneImpen && !isUnenchantable) continue;
+
+                    bool isImpenCantrip = name.Contains("Minor Impenetrability") || name.Contains("Major Impenetrability")
+                                       || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability");
+
+                    if (!isImpenCantrip && !isBaneImpen && !name.Contains("Augmented"))
+                    {
+                        if (name.EndsWith(" I") || name.EndsWith(" II") || name.EndsWith(" III")
+                            || name.EndsWith(" IV") || name.EndsWith(" V") || name.EndsWith(" VI"))
+                            continue;
+                    }
                 }
 
-                if (name.EndsWith(" I") || name.EndsWith(" II") || name.EndsWith(" III") || name.EndsWith(" IV") || name.EndsWith(" V"))
-                    continue;
-                if (name.EndsWith(" VI"))
-                    continue;
-
-                ShowSpell:
                 parts.Add(name);
             }
 
             return string.Join(", ", parts);
-        }
-
-        private static int CantripSortOrder(string name)
-        {
-            if (name.StartsWith("Legendary ")) return 0;
-            if (name.StartsWith("Epic ")) return 1;
-            if (name.StartsWith("Major ")) return 2;
-            if (name.StartsWith("Minor ")) return 3;
-            return 4;
         }
 
         public string GetCantripsString()
@@ -670,29 +511,59 @@ namespace OracleOfDereth
             return string.Join(", ", parts);
         }
 
+        private static int CantripSortOrder(string name)
+        {
+            if (name.StartsWith("Legendary ")) return 0;
+            if (name.StartsWith("Epic ")) return 1;
+            if (name.StartsWith("Major ")) return 2;
+            if (name.StartsWith("Minor ")) return 3;
+            return 4;
+        }
+
+        // ============================================================
+        // Requirements (Wield, Lore, Summon, Workmanship)
+        // ============================================================
+
         public string GetWieldReqName()
         {
             if (wo.Values(LongValueKey.WieldReqValue) <= 0) return "";
-
             if (wo.Values(LongValueKey.WieldReqType) == 7 && wo.Values(LongValueKey.WieldReqAttribute) == 1)
                 return "Wield Lvl";
-
             if (SkillInfo.TryGetValue(wo.Values(LongValueKey.WieldReqAttribute), out string skillName))
                 return skillName;
-
             return "Unknown Skill " + wo.Values(LongValueKey.WieldReqAttribute);
         }
 
-        public int GetWieldReqLevel()
-        {
-            return wo.Values(LongValueKey.WieldReqValue, 0);
-        }
+        public int GetWieldReqLevel() => wo.Values(LongValueKey.WieldReqValue, 0);
 
         public string GetWieldReqString()
         {
             string name = GetWieldReqName();
             if (name.Length == 0) return "";
             return name + " " + GetWieldReqLevel();
+        }
+
+        public int GetLoreValue() => wo.Values(LongValueKey.LoreRequirement, 0);
+
+        public string GetLoreString()
+        {
+            if (GetLoreValue() <= 0) return "";
+            return "Diff " + GetLoreValue();
+        }
+
+        public string GetWorkmanshipString()
+        {
+            if (wo.ObjectClass == ObjectClass.Salvage)
+            {
+                if (wo.Values(DoubleValueKey.SalvageWorkmanship) > 0)
+                    return "Work " + wo.Values(DoubleValueKey.SalvageWorkmanship).ToString("N2");
+            }
+            else
+            {
+                if (wo.Values(LongValueKey.Workmanship) > 0 && GetTinksValue() != 10)
+                    return "Craft " + wo.Values(LongValueKey.Workmanship);
+            }
+            return "";
         }
 
         public string GetSummonReqsString()
@@ -729,65 +600,210 @@ namespace OracleOfDereth
             return string.Join(", ", parts);
         }
 
-        public int GetLoreValue()
+        // ============================================================
+        // Summon Scores
+        // ============================================================
+
+        public string GetSummonDamageString()
         {
-            return wo.Values(LongValueKey.LoreRequirement, 0);
+            if (!IsSummon) return "";
+            return $"{new Summon { Item = wo }.DamageScore()}%";
         }
 
-        public string GetLoreString()
+        public string GetSummonDefenseString()
         {
-            if (GetLoreValue() <= 0) return "";
-            return "Diff " + GetLoreValue();
+            if (!IsSummon) return "";
+            return $"{new Summon { Item = wo }.DefenseScore()}%";
         }
 
-        public string GetWorkmanshipString()
+        // ============================================================
+        // Cloak
+        // ============================================================
+
+        public string GetCloakWeave()
         {
-            if (wo.ObjectClass == ObjectClass.Salvage)
+            FileService service = CoreManager.Current.Filter<FileService>();
+            foreach (int spellId in innateSpells)
             {
-                if (wo.Values(DoubleValueKey.SalvageWorkmanship) > 0)
-                    return "Work " + wo.Values(DoubleValueKey.SalvageWorkmanship).ToString("N2");
-            }
-            else
-            {
-                if (wo.Values(LongValueKey.Workmanship) > 0 && wo.Values(LongValueKey.NumberTimesTinkered) != 10)
-                    return "Craft " + wo.Values(LongValueKey.Workmanship);
+                Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
+                if (spell == null) continue;
+                if (spell.Name.Contains("Weave of"))
+                    return spell.Name.Replace("Weave of ", "");
             }
             return "";
         }
 
-        public string GetProtectionsString()
+        public string GetCloakProc()
         {
-            if (wo.ObjectClass != ObjectClass.Armor || wo.Values(LongValueKey.Unenchantable, 0) == 0) return "";
+            FileService service = CoreManager.Current.Filter<FileService>();
 
-            return "[" +
-                wo.Values(DoubleValueKey.SlashProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.PierceProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.BludgeonProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.ColdProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.FireProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.AcidProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.LightningProt).ToString("N1") + "]";
+            if (wo.SpellCount > 0)
+            {
+                Decal.Filters.Spell spell = service.SpellTable.GetById(wo.Spell(0));
+                if (spell == null) return "";
+                string name = spell.Name;
+
+                if (name.Contains("Cloaked in Skill")) return "CiS";
+                if (name.Contains("Shroud of Darkness (Melee)")) return "Melee Shroud";
+                if (name.Contains("Shroud of Darkness (Missile)")) return "Missile Shroud";
+                if (name.Contains("Shroud of Darkness (Magic)")) return "Magic Shroud";
+                if (name.Contains("Shroud of Darkness")) return "Shroud";
+                if (name.Contains("Horizon's Blades")) return "Blade Ring";
+                if (name.Contains("Tectonic Rifts")) return "Bludgeon Ring";
+                if (name.Contains("Nuhmudira's Spines")) return "Piercing Ring";
+                if (name.Contains("Searing Disc")) return "Acid Ring";
+                if (name.Contains("Cassius' Ring of Fire")) return "Fire Ring";
+                if (name.Contains("Halo of Frost")) return "Frost Ring";
+                if (name.Contains("Eye of the Storm")) return "Lightning Ring";
+                if (name.Contains("Clouded Soul")) return "Void Ring";
+                if (name.Contains("Major Melee")) return "Melee Ring";
+                if (name.Contains("Major Magic")) return "Magic Ring";
+
+                return name;
+            }
+
+            return "-200 Damage";
         }
 
-        public string GetObjectClassName() => wo.ObjectClass.ToString();
+        // ============================================================
+        // Aetheria
+        // ============================================================
+
+        public string GetAetheriaColor()
+        {
+            if (wo.Name.Contains("Blue")) return "Blue";
+            if (wo.Name.Contains("Yellow")) return "Yellow";
+            if (wo.Name.Contains("Red")) return "Red";
+            return "Aetheria";
+        }
+
+        public string GetAetheriaSurge()
+        {
+            FileService service = CoreManager.Current.Filter<FileService>();
+            for (int i = 0; i < wo.SpellCount; i++)
+            {
+                Decal.Filters.Spell spell = service.SpellTable.GetById(wo.Spell(i));
+                if (spell == null) continue;
+                string name = spell.Name;
+                if (name.Contains("Destruction")) return "Destruction";
+                if (name.Contains("Protection")) return "Protection";
+                if (name.Contains("Regeneration")) return "Regeneration";
+                if (name.Contains("Mana")) return "Mana";
+            }
+            return "";
+        }
+
+        // ============================================================
+        // Value & Burden
+        // ============================================================
+
         public int GetValue() => wo.Values(LongValueKey.Value, 0);
         public int GetBurden() => wo.Values(LongValueKey.Burden, 0);
 
         public string GetValueBurdenString()
         {
             var parts = new List<string>();
-            if (wo.Values(LongValueKey.Value) > 0)
-                parts.Add("Value " + String.Format("{0:n0}", wo.Values(LongValueKey.Value)));
-            if (wo.Values(LongValueKey.Burden) > 0)
-                parts.Add("BU " + wo.Values(LongValueKey.Burden));
+            if (GetValue() > 0) parts.Add("Value " + String.Format("{0:n0}", GetValue()));
+            if (GetBurden() > 0) parts.Add("BU " + GetBurden());
             return string.Join(", ", parts);
         }
+
+        // ============================================================
+        // Misc
+        // ============================================================
 
         public string GetKeyringString()
         {
             if (wo.ObjectClass != ObjectClass.Misc || !wo.Name.Contains("Keyring")) return "";
             return "Keys: " + wo.Values(LongValueKey.KeysHeld) + ", Uses: " + wo.Values(LongValueKey.UsesRemaining);
         }
+
+        // ============================================================
+        // Weapon Identification (static entry point)
+        // ============================================================
+
+        public static bool WeaponIdentified(WorldObject item)
+        {
+            ItemInfo info = new ItemInfo(item);
+            if (!info.IsWeapon) return false;
+
+            string odString = info.ToODString();
+            if (odString == null) return false;
+
+            Util.Chat(info.GetName() + " " + odString, Util.ColorCyan, "");
+            return true;
+        }
+
+        // ============================================================
+        // ToString — Full item description
+        // ============================================================
+
+        public override string ToString()
+        {
+            var parts = new List<string>();
+
+            // Name with mastery and OD/summon inline
+            string header = GetName();
+
+            string mastery = GetMasteryString();
+            if (mastery.Length > 0) header += " (" + mastery + ")";
+
+            string od = ToODString();
+            if (od.Length > 0) header += " " + od;
+
+            if (IsSummon) header += " [DMG " + GetSummonDamageString() + " | DEF " + GetSummonDefenseString() + "]";
+
+            parts.Add(header);
+
+            // Remaining sections — each only added if non-empty
+            AddPart(parts, GetFullSetName());
+            AddPart(parts, GetArmorLevelString());
+            AddPart(parts, GetImbueString());
+            AddPart(parts, GetTinksString());
+            AddPart(parts, GetDamageString());
+            AddPart(parts, GetBonusesString());
+            AddPart(parts, GetBuffedValuesString());
+            AddPart(parts, GetSpellsString());
+            AddPart(parts, GetWieldReqString());
+            AddPart(parts, GetSummonReqsString());
+            AddPart(parts, GetLoreString());
+            AddPart(parts, GetWorkmanshipString());
+            AddPart(parts, GetProtectionsString());
+            AddPart(parts, GetValueBurdenString());
+
+            string ratings = GetRatingsString();
+            if (ratings.Length > 0) parts.Add("[" + ratings + "]");
+
+            AddPart(parts, GetKeyringString());
+
+            return string.Join(", ", parts);
+        }
+
+        private static void AddPart(List<string> parts, string value)
+        {
+            if (value.Length > 0) parts.Add(value);
+        }
+
+        private string ToODString()
+        {
+            string od = GetODString();
+            string oa = GetOAString();
+            string om = GetOMString();
+
+            if (AssumeFullBuffs && od == null && om == null) return "";
+            if (od == null && oa == null && om == null) return "";
+
+            var parts = new List<string>();
+            if (od != null) parts.Add(od);
+            if (oa != null) parts.Add(oa);
+            if (om != null) parts.Add(om);
+
+            return "[" + string.Join(" | ", parts) + "]";
+        }
+
+        // ============================================================
+        // Buffed Value Calculations (private)
+        // ============================================================
 
         #region Buffed Value Calculations
 
@@ -807,33 +823,23 @@ namespace OracleOfDereth
 
         private int GetBuffedIntValue(int key, int defaultValue = 0)
         {
-            if (!intValues.ContainsKey(key))
-                return defaultValue;
+            if (!intValues.ContainsKey(key)) return defaultValue;
 
             int value = intValues[key];
-
             foreach (int spell in activeSpells)
-            {
                 if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
                     value -= effect.Change;
-            }
-
             foreach (int spell in innateSpells)
-            {
                 if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && effect.Bonus != 0)
                     value += effect.Bonus;
-            }
-
             return value;
         }
 
         private double GetBuffedDoubleValue(int key, double defaultValue = 0)
         {
-            if (!doubleValues.ContainsKey(key))
-                return defaultValue;
+            if (!doubleValues.ContainsKey(key)) return defaultValue;
 
             double value = doubleValues[key];
-
             foreach (int spell in activeSpells)
             {
                 if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
@@ -844,7 +850,6 @@ namespace OracleOfDereth
                         value -= effect.Change;
                 }
             }
-
             foreach (int spell in innateSpells)
             {
                 if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && Math.Abs(effect.Bonus) > Double.Epsilon)
@@ -855,7 +860,6 @@ namespace OracleOfDereth
                         value += effect.Bonus;
                 }
             }
-
             return value;
         }
 
@@ -865,14 +869,39 @@ namespace OracleOfDereth
             try
             {
                 WorldObject holder = CoreManager.Current.WorldFilter[wo.Container];
-                if (holder != null)
-                    return holder.Values((LongValueKey)25, 0);
+                if (holder != null) return holder.Values((LongValueKey)25, 0);
             }
             catch { }
             return 0;
         }
 
         private bool AssumeFullBuffs => GetHolderLevel() >= 200;
+
+        public string GetBuffedValuesString()
+        {
+            if (!IsWeapon) return "";
+
+            var sb = new StringBuilder("(");
+
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon)
+                sb.Append(CalcBuffedTinkedDoT().ToString("N1") + "/" + GetBuffedIntValue(Key_MaxDamage));
+            else if (wo.ObjectClass == ObjectClass.MissileWeapon)
+                sb.Append(CalcBuffedMissileDamage().ToString("N1"));
+            else
+                sb.Append(((GetBuffedDoubleValue(Key_ElementalDmgVsMonsters) - 1) * 100).ToString("N1"));
+
+            sb.Append(" ");
+
+            if (wo.Values(DoubleValueKey.AttackBonus, 1) != 1)
+                sb.Append(Math.Round(((GetBuffedDoubleValue(Key_AttackBonus) - 1) * 100)).ToString("N1") + "/");
+            if (wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) != 1)
+                sb.Append(Math.Round(((GetBuffedDoubleValue(Key_MeleeDefenseBonus) - 1) * 100)).ToString("N1"));
+            if (wo.Values(DoubleValueKey.ManaCBonus) != 0)
+                sb.Append("/" + Math.Round(GetBuffedDoubleValue(Key_ManaCBonus) * 100));
+
+            sb.Append(")");
+            return sb.ToString();
+        }
 
         private double CalcBuffedTinkedDoT()
         {
@@ -881,13 +910,11 @@ namespace OracleOfDereth
 
             double variance = doubleValues[167772171];
             int maxDamage = GetBuffedIntValue(Key_MaxDamage);
-
             int tinks = intValues.ContainsKey(Key_Tinks) ? intValues[Key_Tinks] : 0;
             int numberOfTinksLeft = Math.Max(10 - Math.Max(tinks, 0), 0);
 
             if (!intValues.ContainsKey(Key_Imbued) || intValues[Key_Imbued] == 0)
                 numberOfTinksLeft--;
-
             if (!intValues.ContainsKey(Key_Material) || intValues[Key_Material] == 0)
                 numberOfTinksLeft = 0;
 
@@ -895,7 +922,6 @@ namespace OracleOfDereth
             {
                 double ironTinkDoT = CalculateDamageOverTime(maxDamage + 24 + 1, variance);
                 double graniteTinkDoT = CalculateDamageOverTime(maxDamage + 24, variance * .8);
-
                 if (ironTinkDoT >= graniteTinkDoT)
                     maxDamage++;
                 else
@@ -909,7 +935,6 @@ namespace OracleOfDereth
         {
             if (!intValues.ContainsKey(Key_MaxDamage) || !doubleValues.ContainsKey(Key_DamageBonus) || !intValues.ContainsKey(Key_ElementalDmgBonus))
                 return -1;
-
             return GetBuffedIntValue(Key_MaxDamage) + (((GetBuffedDoubleValue(Key_DamageBonus) - 1) * 100) / 3) + GetBuffedIntValue(Key_ElementalDmgBonus);
         }
 
@@ -920,30 +945,18 @@ namespace OracleOfDereth
 
         #endregion
 
-        #region OD (Over Damage) Calculations
-        // Uses a comprehensive lookup table keyed by (skill, mastery, multiStrike, wieldReq)
-        // to determine max weapon properties, then compares the actual weapon against those maxes.
+        // ============================================================
+        // OD / OA / OM Calculation Internals (private)
+        // ============================================================
 
-        private const int Key_WeaponSkill = 159;     // The weapon's combat skill (Heavy=44, Light=45, etc.)
-        private const int Key_CombatUse = 47;         // Weapon type for multi-strike detection
+        #region OD Calculations
 
-        public int? GetODValue()
-        {
-            if (IsEquipped && !AssumeFullBuffs) return null;
-
-            int? result = null;
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon) result = GetMeleeOD();
-            else if (wo.ObjectClass == ObjectClass.MissileWeapon) result = GetMissileOD();
-            else if (wo.ObjectClass == ObjectClass.WandStaffOrb) result = GetCasterOD();
-
-            if (result != null && (result < -15 || result > 30)) return null;
-            return result;
-        }
+        private const int Key_WeaponSkill = 159;
+        private const int Key_CombatUse = 47;
 
         private int? GetMeleeOD()
         {
-            if (!intValues.ContainsKey(Key_MaxDamage))
-                return null;
+            if (!intValues.ContainsKey(Key_MaxDamage)) return null;
 
             int skill = GetWeaponSkill();
             int mastery = GetMastery();
@@ -953,8 +966,7 @@ namespace OracleOfDereth
             if (maxDmg <= 0) return null;
 
             int buffedDmg = GetBuffedIntValue(Key_MaxDamage);
-            if (AssumeFullBuffs) buffedDmg -= 24; // Incantation of Blood Drinker
-
+            if (AssumeFullBuffs) buffedDmg -= 24;
             return (int)Math.Round(buffedDmg - maxDmg);
         }
 
@@ -982,8 +994,7 @@ namespace OracleOfDereth
                 if (numTimesTinkered > 0)
                 {
                     remainingTinks -= numTimesTinkered;
-                    if (wo.Values(LongValueKey.Imbued, 0) == 0)
-                        remainingTinks--;
+                    if (wo.Values(LongValueKey.Imbued, 0) == 0) remainingTinks--;
                 }
                 else
                 {
@@ -999,14 +1010,13 @@ namespace OracleOfDereth
             if (maxTinkedMissileMod <= 0) return null;
 
             double buffedDmg = GetBuffedIntValue(Key_MaxDamage);
-            if (AssumeFullBuffs) buffedDmg -= 24; // Strip Incantation of Blood Drinker
+            if (AssumeFullBuffs) buffedDmg -= 24;
             if (buffedDmg <= 10) buffedDmg += 24;
 
             int elemBonus = intValues.ContainsKey(Key_ElementalDmgBonus) ? intValues[Key_ElementalDmgBonus] : 0;
             double calcMissileDmg = (1 + (dmgMod + (4 * remainingTinks)) / 100) * (elemBonus + buffedDmg + arrowMax) / maxTinkedMissileMod;
 
-            double od = calcMissileDmg - (maxElemBonus + 24 + arrowMax);
-            return (int)Math.Round(od);
+            return (int)Math.Round(calcMissileDmg - (maxElemBonus + 24 + arrowMax));
         }
 
         private int? GetCasterOD()
@@ -1018,10 +1028,22 @@ namespace OracleOfDereth
             if (maxVsMon <= 0) maxVsMon = 1.18;
 
             double buffedPct = (GetBuffedDoubleValue(Key_ElementalDmgVsMonsters) - 1) * 100;
-            if (AssumeFullBuffs) buffedPct -= 8; // Incantation of Spirit Drinker
-            double maxPct = (maxVsMon - 1) * 100;
+            if (AssumeFullBuffs) buffedPct -= 8;
 
-            return (int)Math.Round(buffedPct - maxPct);
+            return (int)Math.Round(buffedPct - (maxVsMon - 1) * 100);
+        }
+
+        private int? GetMeleeOA()
+        {
+            if (!doubleValues.ContainsKey(Key_AttackBonus)) return null;
+
+            int maxAtk = GetMaxAttack();
+            if (maxAtk <= 0) return null;
+
+            double buffedPct = Math.Round((GetBuffedDoubleValue(Key_AttackBonus, 1) - 1) * 100);
+            if (AssumeFullBuffs) buffedPct -= 20;
+
+            return (int)Math.Round(buffedPct - maxAtk);
         }
 
         private int GetWeaponSkill()
@@ -1029,26 +1051,21 @@ namespace OracleOfDereth
             if (intValues.ContainsKey(Key_WeaponSkill) && intValues[Key_WeaponSkill] != 0)
                 return intValues[Key_WeaponSkill];
 
-            // Only use WieldReqAttribute if it looks like a weapon skill (>= 34)
-            // Wield Lvl requirements use attribute=1 (Level) which isn't a weapon skill
             int wieldAttr = wo.Values(LongValueKey.WieldReqAttribute, 0);
             if (wieldAttr >= 34) return wieldAttr;
 
-            // Quest weapons with no skill or wield req: infer from object class + mastery
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
 
             if (wo.ObjectClass == ObjectClass.MeleeWeapon)
             {
-                if (mastery == 11) return 41; // Two Handed
+                if (mastery == 11) return 41;
                 if (LookupMaxProperty(45, mastery, 0, e => e.MaxDmg) > 0) return 45;
                 if (LookupMaxProperty(44, mastery, 0, e => e.MaxDmg) > 0) return 44;
             }
-
             if (wo.ObjectClass == ObjectClass.MissileWeapon)
             {
                 if (LookupMaxProperty(47, mastery, 0, e => e.MaxDmgMod) > 0) return 47;
             }
-
             if (wo.ObjectClass == ObjectClass.WandStaffOrb)
             {
                 if (LookupMaxProperty(34, mastery, 0, e => e.MaxElemVsMon) > 0) return 34;
@@ -1063,11 +1080,9 @@ namespace OracleOfDereth
             int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
             if (mastery != 0) return mastery;
 
-            // Infer from skill for weapons without mastery property
             int skill = intValues.ContainsKey(Key_WeaponSkill) ? intValues[Key_WeaponSkill] : 0;
             if (skill == 0) skill = wo.Values(LongValueKey.WieldReqAttribute, 0);
-            if (skill == 41 || skill == 0x29) return 11; // Two Handed → mastery 11
-
+            if (skill == 41 || skill == 0x29) return 11;
             return 0;
         }
 
@@ -1085,135 +1100,46 @@ namespace OracleOfDereth
             return name.Contains("spear") || name.Contains("pike") || name.Contains("assagai") || name.Contains("yari") || name.Contains("naginata") || name.Contains("trident");
         }
 
-        #endregion
-
-        #region OM (Over Melee Defense) Calculations
-
-        // OM+0 = max defense roll for that weapon type. OM+N = N% above max.
-        // Not shown when equipped or below OM-10.
-
-        public int? GetOMValue()
-        {
-            if (IsEquipped && !AssumeFullBuffs) return null;
-
-            if (!IsWeapon)
-                return null;
-
-            double buffedDefBonus = GetBuffedDoubleValue(Key_MeleeDefenseBonus);
-            if (buffedDefBonus <= 0) return null;
-
-            int totalDef = (int)Math.Round((buffedDefBonus - 1) * 100);
-            if (AssumeFullBuffs) totalDef -= 20; // Incantation of Defender
-
-            int maxDef = GetMaxMeleeDefense();
-            if (maxDef <= 0) return null;
-
-            int result = totalDef - maxDef;
-            if (result < -15 || result > 30) return null;
-            return result;
-        }
-
         private int GetMaxMeleeDefense()
         {
             int mastery = GetMastery();
 
-            // Missile and Caster weapons all have 20% max defense
             if (wo.ObjectClass == ObjectClass.MissileWeapon || wo.ObjectClass == ObjectClass.WandStaffOrb)
                 return 20;
 
-            // Two-Handed weapons
             int skill = GetWeaponSkill();
             if (skill == 0x29 || mastery == 11)
                 return IsTwoHandedSpear() ? 20 : 18;
 
-            // Finesse Jitte (special case: 25% instead of normal Mace 22%)
             if ((skill == 0x2E) && mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0)
                 return 25;
 
-            // Melee weapons by mastery (same across Heavy/Light/Finesse)
             if (MaxMeleeDefenseByMastery.TryGetValue(mastery, out int maxDef))
                 return maxDef;
-
             return 0;
-        }
-
-        // Max melee defense bonus % by mastery (same for Heavy/Light/Finesse)
-        private static readonly Dictionary<int, int> MaxMeleeDefenseByMastery = new Dictionary<int, int>
-        {
-            { 1, 20 },  // UA
-            { 2, 20 },  // Sword
-            { 3, 18 },  // Axe
-            { 4, 22 },  // Mace
-            { 5, 15 },  // Spear
-            { 6, 20 },  // Dagger
-            { 7, 25 },  // Staff
-        };
-
-        #endregion
-
-        #region OA (Over Attack) Calculations
-
-        // OA+0 = max attack bonus for that weapon type. OA+N = N% above max.
-        // Only applies to melee weapons.
-
-        public int? GetOAValue()
-        {
-            if (IsEquipped && !AssumeFullBuffs) return null;
-
-            if (wo.ObjectClass != ObjectClass.MeleeWeapon) return null;
-
-            int? result = GetMeleeOA();
-            if (result != null && (result < -15 || result > 30)) return null;
-            return result;
-        }
-
-        private int? GetMeleeOA()
-        {
-            if (!doubleValues.ContainsKey(Key_AttackBonus))
-                return null;
-
-            int maxAtk = GetMaxAttack();
-            if (maxAtk <= 0) return null;
-
-            double buffedPct = Math.Round((GetBuffedDoubleValue(Key_AttackBonus, 1) - 1) * 100);
-            if (AssumeFullBuffs) buffedPct -= 20; // Incantation of Heart Seeker
-
-            return (int)Math.Round(buffedPct - maxAtk);
         }
 
         private int GetMaxAttack()
         {
             int mastery = GetMastery();
 
-            // Two-Handed weapons
             int skill = GetWeaponSkill();
             if (skill == 0x29 || mastery == 11)
                 return IsTwoHandedSpear() ? 20 : 22;
 
-            // Finesse Jitte (special case: 15% instead of normal Mace 18%)
             if ((skill == 0x2E) && mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0)
                 return 15;
 
-            // Melee weapons by mastery (same across Heavy/Light/Finesse)
             if (MaxAttackByMastery.TryGetValue(mastery, out int maxAtk))
                 return maxAtk;
-
             return 0;
         }
 
-        // Max melee attack bonus % by mastery (same for Heavy/Light/Finesse)
-        private static readonly Dictionary<int, int> MaxAttackByMastery = new Dictionary<int, int>
-        {
-            { 1, 20 },  // UA
-            { 2, 20 },  // Sword
-            { 3, 22 },  // Axe
-            { 4, 18 },  // Mace
-            { 5, 25 },  // Spear
-            { 6, 20 },  // Dagger
-            { 7, 15 },  // Staff
-        };
-
         #endregion
+
+        // ============================================================
+        // Static Data Tables
+        // ============================================================
 
         #region Weapon Max Values Lookup Table
 
@@ -1235,14 +1161,11 @@ namespace OracleOfDereth
         private static double LookupMaxProperty(int skill, int mastery, int multi, Func<WeaponMax, double> selector)
         {
             foreach (var e in WeaponMaxTable)
-            {
                 if (e.Skill == skill && e.Mastery == mastery && e.Multi == multi)
                     return selector(e);
-            }
             return 0;
         }
 
-        // Top-tier max values only (highest wield req for each weapon type)
         private static readonly WeaponMax[] WeaponMaxTable =
         {
             // Heavy Weaponry (skill 44)
@@ -1295,6 +1218,20 @@ namespace OracleOfDereth
 
         #endregion
 
+        #region Max Defense/Attack Tables
+
+        private static readonly Dictionary<int, int> MaxMeleeDefenseByMastery = new Dictionary<int, int>
+        {
+            { 1, 20 }, { 2, 20 }, { 3, 18 }, { 4, 22 }, { 5, 15 }, { 6, 20 }, { 7, 25 },
+        };
+
+        private static readonly Dictionary<int, int> MaxAttackByMastery = new Dictionary<int, int>
+        {
+            { 1, 20 }, { 2, 20 }, { 3, 22 }, { 4, 18 }, { 5, 25 }, { 6, 20 }, { 7, 15 },
+        };
+
+        #endregion
+
         #region Spell Effect Dictionaries
 
         private struct SpellEffect<T>
@@ -1305,9 +1242,7 @@ namespace OracleOfDereth
 
             public SpellEffect(int key, T change, T bonus = default(T))
             {
-                Key = key;
-                Change = change;
-                Bonus = bonus;
+                Key = key; Change = change; Bonus = bonus;
             }
         }
 
@@ -1375,291 +1310,128 @@ namespace OracleOfDereth
 
         #endregion
 
-        #region Dictionaries
+        #region Name Dictionaries
 
         private static readonly Dictionary<int, string> SkillInfo = new Dictionary<int, string>
         {
-            { 0x1, "Axe" },
-            { 0x2, "Bow" },
-            { 0x3, "Crossbow" },
-            { 0x4, "Dagger" },
-            { 0x5, "Mace" },
-            { 0x6, "Melee Defense" },
-            { 0x7, "Missile Defense" },
-            { 0x8, "Sling" },
-            { 0x9, "Spear" },
-            { 0xA, "Staff" },
-            { 0xB, "Sword" },
-            { 0xC, "Thrown Weapons" },
-            { 0xD, "Unarmed Combat" },
-            { 0xE, "Arcane Lore" },
-            { 0xF, "Magic Defense" },
-            { 0x10, "Mana Conversion" },
-            { 0x12, "Item Tinkering" },
-            { 0x13, "Assess Person" },
-            { 0x14, "Deception" },
-            { 0x15, "Healing" },
-            { 0x16, "Jump" },
-            { 0x17, "Lockpick" },
-            { 0x18, "Run" },
-            { 0x1B, "Assess Creature" },
-            { 0x1C, "Weapon Tinkering" },
-            { 0x1D, "Armor Tinkering" },
-            { 0x1E, "Magic Item Tinkering" },
-            { 0x1F, "Creature Enchantment" },
-            { 0x20, "Item Enchantment" },
-            { 0x21, "Life Magic" },
-            { 0x22, "War Magic" },
-            { 0x23, "Leadership" },
-            { 0x24, "Loyalty" },
-            { 0x25, "Fletching" },
-            { 0x26, "Alchemy" },
-            { 0x27, "Cooking" },
-            { 0x28, "Salvaging" },
-            { 0x29, "Two Handed Combat" },
-            { 0x2A, "Gearcraft" },
-            { 0x2B, "Void" },
-            { 0x2C, "Heavy Weapons" },
-            { 0x2D, "Light Weapons" },
-            { 0x2E, "Finesse Weapons" },
-            { 0x2F, "Missile Weapons" },
-            { 0x30, "Shield" },
-            { 0x31, "Dual Wield" },
-            { 0x32, "Recklessness" },
-            { 0x33, "Sneak Attack" },
-            { 0x34, "Dirty Fighting" },
-            { 0x35, "Challenge" },
-            { 0x36, "Summoning" },
+            { 0x1, "Axe" }, { 0x2, "Bow" }, { 0x3, "Crossbow" }, { 0x4, "Dagger" },
+            { 0x5, "Mace" }, { 0x6, "Melee Defense" }, { 0x7, "Missile Defense" },
+            { 0x8, "Sling" }, { 0x9, "Spear" }, { 0xA, "Staff" }, { 0xB, "Sword" },
+            { 0xC, "Thrown Weapons" }, { 0xD, "Unarmed Combat" }, { 0xE, "Arcane Lore" },
+            { 0xF, "Magic Defense" }, { 0x10, "Mana Conversion" }, { 0x12, "Item Tinkering" },
+            { 0x13, "Assess Person" }, { 0x14, "Deception" }, { 0x15, "Healing" },
+            { 0x16, "Jump" }, { 0x17, "Lockpick" }, { 0x18, "Run" },
+            { 0x1B, "Assess Creature" }, { 0x1C, "Weapon Tinkering" },
+            { 0x1D, "Armor Tinkering" }, { 0x1E, "Magic Item Tinkering" },
+            { 0x1F, "Creature Enchantment" }, { 0x20, "Item Enchantment" },
+            { 0x21, "Life Magic" }, { 0x22, "War Magic" }, { 0x23, "Leadership" },
+            { 0x24, "Loyalty" }, { 0x25, "Fletching" }, { 0x26, "Alchemy" },
+            { 0x27, "Cooking" }, { 0x28, "Salvaging" }, { 0x29, "Two Handed Combat" },
+            { 0x2A, "Gearcraft" }, { 0x2B, "Void" }, { 0x2C, "Heavy Weapons" },
+            { 0x2D, "Light Weapons" }, { 0x2E, "Finesse Weapons" },
+            { 0x2F, "Missile Weapons" }, { 0x30, "Shield" }, { 0x31, "Dual Wield" },
+            { 0x32, "Recklessness" }, { 0x33, "Sneak Attack" },
+            { 0x34, "Dirty Fighting" }, { 0x35, "Challenge" }, { 0x36, "Summoning" },
         };
 
         private static readonly Dictionary<int, string> MasteryInfo = new Dictionary<int, string>
         {
-            { 1, "Unarmed Weapon" },
-            { 2, "Sword" },
-            { 3, "Axe" },
-            { 4, "Mace" },
-            { 5, "Spear" },
-            { 6, "Dagger" },
-            { 7, "Staff" },
-            { 8, "Bow" },
-            { 9, "Crossbow" },
-            { 10, "Thrown" },
-            { 11, "Two Handed Combat" },
+            { 1, "Unarmed Weapon" }, { 2, "Sword" }, { 3, "Axe" }, { 4, "Mace" },
+            { 5, "Spear" }, { 6, "Dagger" }, { 7, "Staff" }, { 8, "Bow" },
+            { 9, "Crossbow" }, { 10, "Thrown" }, { 11, "Two Handed Combat" },
         };
 
         public static readonly Dictionary<int, string> AttributeSetInfo = new Dictionary<int, string>
         {
             { 2, "Test" },
-            { 4, "Carraida's Benediction" },
-            { 5, "Noble Relic Set" },
-            { 6, "Ancient Relic Set" },
-            { 7, "Relic Alduressa Set" },
-            { 8, "Shou-jen Set" },
-            { 9, "Empyrean Rings Set" },
-            { 10, "Arm, Mind, Heart Set" },
-            { 11, "Coat of the Perfect Light Set" },
-            { 12, "Leggings of Perfect Light Set" },
-            { 13, "Soldier's Set" },
-            { 14, "Adept's Set" },
-            { 15, "Archer's Set" },
-            { 16, "Defender's Set" },
-            { 17, "Tinker's Set" },
-            { 18, "Crafter's Set" },
-            { 19, "Hearty Set" },
-            { 20, "Dexterous Set" },
-            { 21, "Wise Set" },
-            { 22, "Swift Set" },
-            { 23, "Hardened Set" },
-            { 24, "Reinforced Set" },
-            { 25, "Interlocking Set" },
-            { 26, "Flame Proof Set" },
-            { 27, "Acid Proof Set" },
-            { 28, "Cold Proof Set" },
-            { 29, "Lightning Proof Set" },
-            { 30, "Dedication Set" },
-            { 31, "Gladiatorial Clothing Set" },
-            { 32, "Ceremonial Clothing" },
-            { 33, "Protective Clothing" },
-            { 34, "Noobie Armor" },
-            { 35, "Sigil of Defense" },
-            { 36, "Sigil of Destruction" },
-            { 37, "Sigil of Fury" },
-            { 38, "Sigil of Growth" },
-            { 39, "Sigil of Vigor" },
-            { 40, "Heroic Protector Set" },
-            { 41, "Heroic Destroyer Set" },
-            { 42, "Olthoi Armor D Red" },
-            { 43, "Olthoi Armor C Rat" },
-            { 44, "Olthoi Armor C Red" },
-            { 45, "Olthoi Armor D Rat" },
-            { 46, "Upgraded Relic Alduressa Set" },
-            { 47, "Upgraded Ancient Relic Set" },
+            { 4, "Carraida's Benediction" }, { 5, "Noble Relic Set" }, { 6, "Ancient Relic Set" },
+            { 7, "Relic Alduressa Set" }, { 8, "Shou-jen Set" }, { 9, "Empyrean Rings Set" },
+            { 10, "Arm, Mind, Heart Set" }, { 11, "Coat of the Perfect Light Set" },
+            { 12, "Leggings of Perfect Light Set" }, { 13, "Soldier's Set" },
+            { 14, "Adept's Set" }, { 15, "Archer's Set" }, { 16, "Defender's Set" },
+            { 17, "Tinker's Set" }, { 18, "Crafter's Set" }, { 19, "Hearty Set" },
+            { 20, "Dexterous Set" }, { 21, "Wise Set" }, { 22, "Swift Set" },
+            { 23, "Hardened Set" }, { 24, "Reinforced Set" }, { 25, "Interlocking Set" },
+            { 26, "Flame Proof Set" }, { 27, "Acid Proof Set" }, { 28, "Cold Proof Set" },
+            { 29, "Lightning Proof Set" }, { 30, "Dedication Set" },
+            { 31, "Gladiatorial Clothing Set" }, { 32, "Ceremonial Clothing" },
+            { 33, "Protective Clothing" }, { 34, "Noobie Armor" },
+            { 35, "Sigil of Defense" }, { 36, "Sigil of Destruction" },
+            { 37, "Sigil of Fury" }, { 38, "Sigil of Growth" }, { 39, "Sigil of Vigor" },
+            { 40, "Heroic Protector Set" }, { 41, "Heroic Destroyer Set" },
+            { 42, "Olthoi Armor D Red" }, { 43, "Olthoi Armor C Rat" },
+            { 44, "Olthoi Armor C Red" }, { 45, "Olthoi Armor D Rat" },
+            { 46, "Upgraded Relic Alduressa Set" }, { 47, "Upgraded Ancient Relic Set" },
             { 48, "Upgraded Noble Relic Set" },
-            { 49, "Weave of Alchemy" },
-            { 50, "Weave of Arcane Lore" },
-            { 51, "Weave of Armor Tinkering" },
-            { 52, "Weave of Assess Person" },
-            { 53, "Weave of Light Weapons" },
-            { 54, "Weave of Missile Weapons" },
-            { 55, "Weave of Cooking" },
-            { 56, "Weave of Creature Enchantment" },
-            { 57, "Weave of Missile Weapons" },
-            { 58, "Weave of Finesse" },
-            { 59, "Weave of Deception" },
-            { 60, "Weave of Fletching" },
-            { 61, "Weave of Healing" },
-            { 62, "Weave of Item Enchantment" },
-            { 63, "Weave of Item Tinkering" },
-            { 64, "Weave of Leadership" },
-            { 65, "Weave of Life Magic" },
-            { 66, "Weave of Loyalty" },
-            { 67, "Weave of Light Weapons" },
-            { 68, "Weave of Magic Defense" },
-            { 69, "Weave of Magic Item Tinkering" },
-            { 70, "Weave of Mana Conversion" },
-            { 71, "Weave of Melee Defense" },
-            { 72, "Weave of Missile Defense" },
-            { 73, "Weave of Salvaging" },
-            { 74, "Weave of Light Weapons" },
-            { 75, "Weave of Light Weapons" },
-            { 76, "Weave of Heavy Weapons" },
-            { 77, "Weave of Missile Weapons" },
-            { 78, "Weave of Two Handed Combat" },
-            { 79, "Weave of Light Weapons" },
-            { 80, "Weave of Void Magic" },
-            { 81, "Weave of War Magic" },
-            { 82, "Weave of Weapon Tinkering" },
-            { 83, "Weave of Assess Creature" },
-            { 84, "Weave of Dirty Fighting" },
-            { 85, "Weave of Dual Wield" },
-            { 86, "Weave of Recklessness" },
-            { 87, "Weave of Shield" },
-            { 88, "Weave of Sneak Attack" },
-            { 89, "Ninja_New" },
-            { 90, "Weave of Summoning" },
-            { 91, "Shrouded Soul" },
-            { 92, "Darkened Mind" },
-            { 93, "Clouded Spirit" },
-            { 94, "Minor Stinging Shrouded Soul" },
-            { 95, "Minor Sparking Shrouded Soul" },
-            { 96, "Minor Smoldering Shrouded Soul" },
-            { 97, "Minor Shivering Shrouded Soul" },
-            { 98, "Minor Stinging Darkened Mind" },
-            { 99, "Minor Sparking Darkened Mind" },
-            { 100, "Minor Smoldering Darkened Mind" },
-            { 101, "Minor Shivering Darkened Mind" },
-            { 102, "Minor Stinging Clouded Spirit" },
-            { 103, "Minor Sparking Clouded Spirit" },
-            { 104, "Minor Smoldering Clouded Spirit" },
-            { 105, "Minor Shivering Clouded Spirit" },
-            { 106, "Major Stinging Shrouded Soul" },
-            { 107, "Major Sparking Shrouded Soul" },
-            { 108, "Major Smoldering Shrouded Soul" },
-            { 109, "Major Shivering Shrouded Soul" },
-            { 110, "Major Stinging Darkened Mind" },
-            { 111, "Major Sparking Darkened Mind" },
-            { 112, "Major Smoldering Darkened Mind" },
-            { 113, "Major Shivering Darkened Mind" },
-            { 114, "Major Stinging Clouded Spirit" },
-            { 115, "Major Sparking Clouded Spirit" },
-            { 116, "Major Smoldering Clouded Spirit" },
-            { 117, "Major Shivering Clouded Spirit" },
-            { 118, "Blackfire Stinging Shrouded Soul" },
-            { 119, "Blackfire Sparking Shrouded Soul" },
-            { 120, "Blackfire Smoldering Shrouded Soul" },
-            { 121, "Blackfire Shivering Shrouded Soul" },
-            { 122, "Blackfire Stinging Darkened Mind" },
-            { 123, "Blackfire Sparking Darkened Mind" },
-            { 124, "Blackfire Smoldering Darkened Mind" },
-            { 125, "Blackfire Shivering Darkened Mind" },
-            { 126, "Blackfire Stinging Clouded Spirit" },
-            { 127, "Blackfire Sparking Clouded Spirit" },
-            { 128, "Blackfire Smoldering Clouded Spirit" },
-            { 129, "Blackfire Shivering Clouded Spirit" },
-            { 130, "Shimmering Shadows" },
-            { 131, "Brown Society Locket" },
-            { 132, "Yellow Society Locket" },
-            { 133, "Red Society Band" },
-            { 134, "Green Society Band" },
-            { 135, "Purple Society Band" },
-            { 136, "Blue Society Band" },
-            { 137, "Gauntlet Garb" },
+            { 49, "Weave of Alchemy" }, { 50, "Weave of Arcane Lore" },
+            { 51, "Weave of Armor Tinkering" }, { 52, "Weave of Assess Person" },
+            { 53, "Weave of Light Weapons" }, { 54, "Weave of Missile Weapons" },
+            { 55, "Weave of Cooking" }, { 56, "Weave of Creature Enchantment" },
+            { 57, "Weave of Missile Weapons" }, { 58, "Weave of Finesse" },
+            { 59, "Weave of Deception" }, { 60, "Weave of Fletching" },
+            { 61, "Weave of Healing" }, { 62, "Weave of Item Enchantment" },
+            { 63, "Weave of Item Tinkering" }, { 64, "Weave of Leadership" },
+            { 65, "Weave of Life Magic" }, { 66, "Weave of Loyalty" },
+            { 67, "Weave of Light Weapons" }, { 68, "Weave of Magic Defense" },
+            { 69, "Weave of Magic Item Tinkering" }, { 70, "Weave of Mana Conversion" },
+            { 71, "Weave of Melee Defense" }, { 72, "Weave of Missile Defense" },
+            { 73, "Weave of Salvaging" }, { 74, "Weave of Light Weapons" },
+            { 75, "Weave of Light Weapons" }, { 76, "Weave of Heavy Weapons" },
+            { 77, "Weave of Missile Weapons" }, { 78, "Weave of Two Handed Combat" },
+            { 79, "Weave of Light Weapons" }, { 80, "Weave of Void Magic" },
+            { 81, "Weave of War Magic" }, { 82, "Weave of Weapon Tinkering" },
+            { 83, "Weave of Assess Creature" }, { 84, "Weave of Dirty Fighting" },
+            { 85, "Weave of Dual Wield" }, { 86, "Weave of Recklessness" },
+            { 87, "Weave of Shield" }, { 88, "Weave of Sneak Attack" },
+            { 89, "Ninja_New" }, { 90, "Weave of Summoning" },
+            { 91, "Shrouded Soul" }, { 92, "Darkened Mind" }, { 93, "Clouded Spirit" },
+            { 94, "Minor Stinging Shrouded Soul" }, { 95, "Minor Sparking Shrouded Soul" },
+            { 96, "Minor Smoldering Shrouded Soul" }, { 97, "Minor Shivering Shrouded Soul" },
+            { 98, "Minor Stinging Darkened Mind" }, { 99, "Minor Sparking Darkened Mind" },
+            { 100, "Minor Smoldering Darkened Mind" }, { 101, "Minor Shivering Darkened Mind" },
+            { 102, "Minor Stinging Clouded Spirit" }, { 103, "Minor Sparking Clouded Spirit" },
+            { 104, "Minor Smoldering Clouded Spirit" }, { 105, "Minor Shivering Clouded Spirit" },
+            { 106, "Major Stinging Shrouded Soul" }, { 107, "Major Sparking Shrouded Soul" },
+            { 108, "Major Smoldering Shrouded Soul" }, { 109, "Major Shivering Shrouded Soul" },
+            { 110, "Major Stinging Darkened Mind" }, { 111, "Major Sparking Darkened Mind" },
+            { 112, "Major Smoldering Darkened Mind" }, { 113, "Major Shivering Darkened Mind" },
+            { 114, "Major Stinging Clouded Spirit" }, { 115, "Major Sparking Clouded Spirit" },
+            { 116, "Major Smoldering Clouded Spirit" }, { 117, "Major Shivering Clouded Spirit" },
+            { 118, "Blackfire Stinging Shrouded Soul" }, { 119, "Blackfire Sparking Shrouded Soul" },
+            { 120, "Blackfire Smoldering Shrouded Soul" }, { 121, "Blackfire Shivering Shrouded Soul" },
+            { 122, "Blackfire Stinging Darkened Mind" }, { 123, "Blackfire Sparking Darkened Mind" },
+            { 124, "Blackfire Smoldering Darkened Mind" }, { 125, "Blackfire Shivering Darkened Mind" },
+            { 126, "Blackfire Stinging Clouded Spirit" }, { 127, "Blackfire Sparking Clouded Spirit" },
+            { 128, "Blackfire Smoldering Clouded Spirit" }, { 129, "Blackfire Shivering Clouded Spirit" },
+            { 130, "Shimmering Shadows" }, { 131, "Brown Society Locket" },
+            { 132, "Yellow Society Locket" }, { 133, "Red Society Band" },
+            { 134, "Green Society Band" }, { 135, "Purple Society Band" },
+            { 136, "Blue Society Band" }, { 137, "Gauntlet Garb" },
         };
 
         private static readonly Dictionary<int, string> MaterialInfo = new Dictionary<int, string>
         {
-            { 1, "Ceramic" },
-            { 2, "Porcelain" },
-            { 4, "Linen" },
-            { 5, "Satin" },
-            { 6, "Silk" },
-            { 7, "Velvet" },
-            { 8, "Wool" },
-            { 10, "Agate" },
-            { 11, "Amber" },
-            { 12, "Amethyst" },
-            { 13, "Aquamarine" },
-            { 14, "Azurite" },
-            { 15, "Black Garnet" },
-            { 16, "Black Opal" },
-            { 17, "Bloodstone" },
-            { 18, "Carnelian" },
-            { 19, "Citrine" },
-            { 20, "Diamond" },
-            { 21, "Emerald" },
-            { 22, "Fire Opal" },
-            { 23, "Green Garnet" },
-            { 24, "Green Jade" },
-            { 25, "Hematite" },
-            { 26, "Imperial Topaz" },
-            { 27, "Jet" },
-            { 28, "Lapis Lazuli" },
-            { 29, "Lavender Jade" },
-            { 30, "Malachite" },
-            { 31, "Moonstone" },
-            { 32, "Onyx" },
-            { 33, "Opal" },
-            { 34, "Peridot" },
-            { 35, "Red Garnet" },
-            { 36, "Red Jade" },
-            { 37, "Rose Quartz" },
-            { 38, "Ruby" },
-            { 39, "Sapphire" },
-            { 40, "Smokey Quartz" },
-            { 41, "Sunstone" },
-            { 42, "Tiger Eye" },
-            { 43, "Tourmaline" },
-            { 44, "Turquoise" },
-            { 45, "White Jade" },
-            { 46, "White Quartz" },
-            { 47, "White Sapphire" },
-            { 48, "Yellow Garnet" },
-            { 49, "Yellow Topaz" },
-            { 50, "Zircon" },
-            { 51, "Ivory" },
-            { 52, "Leather" },
-            { 53, "Armoredillo Hide" },
-            { 54, "Gromnie Hide" },
-            { 55, "Reed Shark Hide" },
-            { 57, "Brass" },
-            { 58, "Bronze" },
-            { 59, "Copper" },
-            { 60, "Gold" },
-            { 61, "Iron" },
-            { 62, "Pyreal" },
-            { 63, "Silver" },
-            { 64, "Steel" },
-            { 66, "Alabaster" },
-            { 67, "Granite" },
-            { 68, "Marble" },
-            { 69, "Obsidian" },
-            { 70, "Sandstone" },
-            { 71, "Serpentine" },
-            { 73, "Ebony" },
-            { 74, "Mahogany" },
-            { 75, "Oak" },
-            { 76, "Pine" },
-            { 77, "Teak" },
+            { 1, "Ceramic" }, { 2, "Porcelain" }, { 4, "Linen" }, { 5, "Satin" },
+            { 6, "Silk" }, { 7, "Velvet" }, { 8, "Wool" }, { 10, "Agate" },
+            { 11, "Amber" }, { 12, "Amethyst" }, { 13, "Aquamarine" }, { 14, "Azurite" },
+            { 15, "Black Garnet" }, { 16, "Black Opal" }, { 17, "Bloodstone" },
+            { 18, "Carnelian" }, { 19, "Citrine" }, { 20, "Diamond" }, { 21, "Emerald" },
+            { 22, "Fire Opal" }, { 23, "Green Garnet" }, { 24, "Green Jade" },
+            { 25, "Hematite" }, { 26, "Imperial Topaz" }, { 27, "Jet" },
+            { 28, "Lapis Lazuli" }, { 29, "Lavender Jade" }, { 30, "Malachite" },
+            { 31, "Moonstone" }, { 32, "Onyx" }, { 33, "Opal" }, { 34, "Peridot" },
+            { 35, "Red Garnet" }, { 36, "Red Jade" }, { 37, "Rose Quartz" },
+            { 38, "Ruby" }, { 39, "Sapphire" }, { 40, "Smokey Quartz" },
+            { 41, "Sunstone" }, { 42, "Tiger Eye" }, { 43, "Tourmaline" },
+            { 44, "Turquoise" }, { 45, "White Jade" }, { 46, "White Quartz" },
+            { 47, "White Sapphire" }, { 48, "Yellow Garnet" }, { 49, "Yellow Topaz" },
+            { 50, "Zircon" }, { 51, "Ivory" }, { 52, "Leather" },
+            { 53, "Armoredillo Hide" }, { 54, "Gromnie Hide" }, { 55, "Reed Shark Hide" },
+            { 57, "Brass" }, { 58, "Bronze" }, { 59, "Copper" }, { 60, "Gold" },
+            { 61, "Iron" }, { 62, "Pyreal" }, { 63, "Silver" }, { 64, "Steel" },
+            { 66, "Alabaster" }, { 67, "Granite" }, { 68, "Marble" }, { 69, "Obsidian" },
+            { 70, "Sandstone" }, { 71, "Serpentine" }, { 73, "Ebony" },
+            { 74, "Mahogany" }, { 75, "Oak" }, { 76, "Pine" }, { 77, "Teak" },
         };
 
         #endregion
