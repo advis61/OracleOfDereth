@@ -252,10 +252,10 @@ namespace OracleOfDereth
 
         public string GetRatingsString()
         {
-            if (RatingDamage + RatingDamageResist + RatingCrit + RatingCritResist + RatingCritDamage + RatingCritDamageResist + RatingHealBoost + RatingVitality <= 0)
-                return "";
+            if (RatingDamage + RatingDamageResist + RatingCrit + RatingCritResist + RatingCritDamage + RatingCritDamageResist + RatingHealBoost + RatingVitality <= 0) return "";
 
             var parts = new List<string>();
+
             if (RatingDamage > 0) parts.Add("D" + RatingDamage);
             if (RatingDamageResist > 0) parts.Add("DR" + RatingDamageResist);
             if (RatingCrit > 0) parts.Add("C" + RatingCrit);
@@ -264,6 +264,7 @@ namespace OracleOfDereth
             if (RatingCritDamageResist > 0) parts.Add("CDR" + RatingCritDamageResist);
             if (RatingHealBoost > 0) parts.Add("HB" + RatingHealBoost);
             if (RatingVitality > 0) parts.Add("V" + RatingVitality);
+
             return string.Join(" ", parts);
         }
 
@@ -281,6 +282,7 @@ namespace OracleOfDereth
             else if (wo.ObjectClass == ObjectClass.WandStaffOrb) result = GetCasterOD();
 
             if (result != null && (result < -15 || result > 30)) return null;
+
             return result;
         }
 
@@ -291,6 +293,7 @@ namespace OracleOfDereth
 
             int? result = GetMeleeOA();
             if (result != null && (result < -15 || result > 30)) return null;
+
             return result;
         }
 
@@ -310,6 +313,7 @@ namespace OracleOfDereth
 
             int result = totalDef - maxDef;
             if (result < -15 || result > 30) return null;
+
             return result;
         }
 
@@ -716,7 +720,7 @@ namespace OracleOfDereth
             ItemInfo info = new ItemInfo(item);
             if (!info.IsWeapon) return false;
 
-            string odString = info.ToODString();
+            string odString = info.GetWeaponOveragesString();
             if (odString == null) return false;
 
             Util.Chat(info.GetName() + " " + odString, Util.ColorCyan, "");
@@ -733,7 +737,7 @@ namespace OracleOfDereth
 
             AddPart(parts, GetName());
             AddPart(parts, GetMasteryString());
-            AddPart(parts, ToODString());
+            AddPart(parts, GetWeaponOveragesString());
             AddPart(parts, GetSummonString());
             AddPart(parts, GetFullSetName());
             AddPart(parts, GetArmorLevelString());
@@ -764,7 +768,7 @@ namespace OracleOfDereth
             if (value.Length > 0) parts.Add(value);
         }
 
-        private string ToODString()
+        private string GetWeaponOveragesString()
         {
             string od = GetODString();
             string oa = GetOAString();

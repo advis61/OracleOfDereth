@@ -2,7 +2,7 @@
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.11.0/OracleOfDerethInstaller-1.11.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.12.0/OracleOfDerethInstaller-1.12.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
@@ -38,6 +38,9 @@ Nearby
 Fellowship
 
 ![Fellowship](./docs/Fellowship.png)
+
+Items
+![Items](./docs/Items.png)
 
 Augmentations
 
@@ -119,6 +122,13 @@ Displays your buffs and debuffs with time remaining.
 - Create a fellowship in one click with a fantasy sounding name
 - AutoRecruit will send a fellowship recruit to any players in range
 - Pauses around lifestones and bindstones.
+
+### Items
+
+- Add selected items to list.
+- Add all character items to list.
+- Sort by name, info, details, spells.
+- Export to clipboard, text, csv and json
 
 ### XP Augmentations
 

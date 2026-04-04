@@ -88,7 +88,7 @@
 						</control>
 					</control>
 				</page>
-				<page label="Trade">
+				<page label="Items">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="TradeText" left="5" top="5" width="300" height="20" text="Trade Items: 0 selected"/>
 						<control progid="DecalControls.PushButton" name="TradeAdd" left="5" top="30" width="108" height="24" text="Add"/>
