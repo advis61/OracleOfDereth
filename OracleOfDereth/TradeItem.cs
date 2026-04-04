@@ -463,7 +463,7 @@ namespace OracleOfDereth
                 info.GetOAValue()?.ToString() ?? "",
                 info.GetOMValue()?.ToString() ?? "",
                 info.GetDamageString(),
-                info.GetWeaponDamageLow() > 0 ? info.GetWeaponDamageLow().ToString() : "",
+                info.GetWeaponDamageLow() > 0 ? info.GetWeaponDamageLow().ToString("N2") : "",
                 info.GetWeaponDamageHigh() > 0 ? info.GetWeaponDamageHigh().ToString() : "",
                 info.GetElementalDamageBonus() != 0 ? info.GetElementalDamageBonus().ToString() : "",
                 info.GetDamageBonusPct() != 0 ? info.GetDamageBonusPct().ToString() : "",

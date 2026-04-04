@@ -31,8 +31,7 @@ namespace OracleOfDereth
             foreach (var key in wo.DoubleKeys)
                 doubleValues[key] = wo.Values((DoubleValueKey)key);
 
-            // Some quest weapons don't expose keys via LongKeys/DoubleKeys
-            // but the values are accessible via wo.Values() directly.
+            // Some quest weapons don't expose keys via LongKeys/DoubleKeys but the values are accessible via wo.Values() directly.
             EnsureKey(intValues, Key_MaxDamage, wo.Values(LongValueKey.MaxDamage, 0));
             EnsureKey(intValues, Key_ElementalDmgBonus, wo.Values(LongValueKey.ElementalDmgBonus, 0));
             EnsureKey(intValues, 353, wo.Values((LongValueKey)353, 0)); // Mastery
@@ -50,34 +49,21 @@ namespace OracleOfDereth
 
         private static void EnsureKey<T>(Dictionary<int, T> dict, int key, T value) where T : struct, IComparable
         {
-            if (!dict.ContainsKey(key) && value.CompareTo(default(T)) != 0)
-                dict[key] = value;
+            if (!dict.ContainsKey(key) && value.CompareTo(default(T)) != 0) dict[key] = value;
         }
 
         // ============================================================
         // Type Detection
         // ============================================================
 
-        public bool IsWeapon => wo.ObjectClass == ObjectClass.MeleeWeapon
-                             || wo.ObjectClass == ObjectClass.MissileWeapon
-                             || wo.ObjectClass == ObjectClass.WandStaffOrb;
-
-        public bool IsArmorClothing => (wo.ObjectClass == ObjectClass.Armor
-                                     || wo.ObjectClass == ObjectClass.Clothing) && !IsCloak;
-
+        public bool IsWeapon => wo.ObjectClass == ObjectClass.MeleeWeapon || wo.ObjectClass == ObjectClass.MissileWeapon || wo.ObjectClass == ObjectClass.WandStaffOrb;
+        public bool IsArmorClothing => (wo.ObjectClass == ObjectClass.Armor || wo.ObjectClass == ObjectClass.Clothing) && !IsCloak;
         public bool IsJewelry => wo.ObjectClass == ObjectClass.Jewelry;
-
-        public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing
-                            && wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
-
-        public bool IsSummon => wo.ObjectClass == ObjectClass.Misc
-                             && wo.Values(LongValueKey.UsesTotal) == 50
-                             && (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
-
+        public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
+        public bool IsSummon => wo.ObjectClass == ObjectClass.Misc && wo.Values(LongValueKey.UsesTotal) == 50 && (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
         public bool IsAetheria => wo.Name == "Aetheria";
         public bool IsFoolproof => wo.Name.EndsWith(" Foolproof");
-        public bool IsAmmo => wo.ObjectClass == ObjectClass.MissileWeapon
-                           && wo.Values(LongValueKey.StackMax, 0) > 0;
+        public bool IsAmmo => (wo.ObjectClass == ObjectClass.MissileWeapon) && (wo.Values(LongValueKey.StackMax, 0) > 0);
 
         // ============================================================
         // Identity: Name, Material, Slot, ObjectClass
@@ -88,8 +74,7 @@ namespace OracleOfDereth
         public string GetMaterial()
         {
             if (wo.Values(LongValueKey.Material) <= 0) return "";
-            if (MaterialInfo.TryGetValue(wo.Values(LongValueKey.Material), out string mat))
-                return mat;
+            if (MaterialInfo.TryGetValue(wo.Values(LongValueKey.Material), out string mat)) return mat;
             return "Unknown Material " + wo.Values(LongValueKey.Material);
         }
 
@@ -149,11 +134,13 @@ namespace OracleOfDereth
             // Jewelry — try EquipableSlots, then fall back to name
             if (wo.ObjectClass == ObjectClass.Jewelry)
             {
-                if ((slots & 0xC0000) != 0) return "Ring";
-                if ((slots & 0x300000) != 0) return "Bracelet";
-                if ((slots & 0x400000) != 0) return "Necklace";
-                if ((slots & 0x2000000) != 0) return "Trinket";
+                // EquipMask values from AC EquipMask enum
+                if ((slots & 0xC0000) != 0) return "Ring";         // FingerWearLeft | FingerWearRight
+                if ((slots & 0x30000) != 0) return "Bracelet";     // WristWearLeft | WristWearRight
+                if ((slots & 0x8000) != 0) return "Necklace";      // NeckWear
+                if ((slots & 0x4000000) != 0) return "Trinket";    // TrinketOne
 
+                // Fallback to name
                 string name = wo.Name.ToLower();
                 if (name.Contains("ring") || name.Contains("band") || name.Contains("signet")) return "Ring";
                 if (name.Contains("bracelet")) return "Bracelet";
@@ -163,33 +150,37 @@ namespace OracleOfDereth
             }
 
             // Shield
-            if ((slots & 0x200000) != 0) return "Shield";
+            if ((slots & 0x200000) != 0) return "Shield";        // Shield
 
-            // Outerwear slots
-            if ((slots & 0x200) != 0) return "Chest";
-            if ((slots & 0x1000) != 0) return "Upper Arms";
-            if ((slots & 0x2000) != 0) return "Lower Arms";
-            if ((slots & 0x4000) != 0) return "Upper Legs";
-            if ((slots & 0x8000) != 0) return "Lower Legs";
-            if ((slots & 0x0400) != 0) return "Abdomen";
+            // Armor slots (EquipMask values)
+            if ((slots & 0x200) != 0) return "Chest";            // ChestArmor
+            if ((slots & 0x400) != 0) return "Abdomen";          // AbdomenArmor
+            if ((slots & 0x800) != 0) return "Upper Arms";       // UpperArmArmor
+            if ((slots & 0x1000) != 0) return "Lower Arms";      // LowerArmArmor
+            if ((slots & 0x2000) != 0) return "Upper Legs";      // UpperLegArmor
+            if ((slots & 0x4000) != 0) return "Lower Legs";      // LowerLegArmor
 
-            // Underwear / base wear slots
-            if ((slots & 0x01) != 0) return "Head";
-            if ((slots & 0x02) != 0) return "Chest";
-            if ((slots & 0x20) != 0) return "Hands";
-            if ((slots & 0x40) != 0) return "Legs";
-            if ((slots & 0x100) != 0) return "Feet";
+            // Underwear / clothing wear slots
+            if ((slots & 0x01) != 0) return "Head";              // HeadWear
+            if ((slots & 0x02) != 0) return "Chest";             // ChestWear
+            if ((slots & 0x04) != 0) return "Abdomen";           // AbdomenWear
+            if ((slots & 0x08) != 0) return "Upper Arms";        // UpperArmWear
+            if ((slots & 0x10) != 0) return "Lower Arms";        // LowerArmWear
+            if ((slots & 0x20) != 0) return "Hands";             // HandWear
+            if ((slots & 0x40) != 0) return "Legs";              // UpperLegWear
+            if ((slots & 0x80) != 0) return "Lower Legs";        // LowerLegWear
+            if ((slots & 0x100) != 0) return "Feet";             // FootWear
 
-            // Fallback to Coverage
-            if ((coverage & 0x02) != 0 || (coverage & 0x400) != 0) return "Chest";
-            if ((coverage & 0x04) != 0 || (coverage & 0x800) != 0) return "Abdomen";
-            if ((coverage & 0x08) != 0 || (coverage & 0x1000) != 0) return "Upper Arms";
-            if ((coverage & 0x10) != 0 || (coverage & 0x2000) != 0) return "Lower Arms";
-            if ((coverage & 0x40) != 0 || (coverage & 0x4000) != 0) return "Upper Legs";
-            if ((coverage & 0x80) != 0 || (coverage & 0x8000) != 0) return "Lower Legs";
-            if ((coverage & 0x01) != 0) return "Head";
-            if ((coverage & 0x20) != 0) return "Hands";
-            if ((coverage & 0x100) != 0) return "Feet";
+            // Fallback to Coverage (CoverageMask values)
+            if ((coverage & 0x08) != 0 || (coverage & 0x400) != 0) return "Chest";       // UnderwearChest | OuterwearChest
+            if ((coverage & 0x10) != 0 || (coverage & 0x800) != 0) return "Abdomen";      // UnderwearAbdomen | OuterwearAbdomen
+            if ((coverage & 0x20) != 0 || (coverage & 0x1000) != 0) return "Upper Arms";  // UnderwearUpperArms | OuterwearUpperArms
+            if ((coverage & 0x40) != 0 || (coverage & 0x2000) != 0) return "Lower Arms";  // UnderwearLowerArms | OuterwearLowerArms
+            if ((coverage & 0x02) != 0 || (coverage & 0x100) != 0) return "Upper Legs";   // UnderwearUpperLegs | OuterwearUpperLegs
+            if ((coverage & 0x04) != 0 || (coverage & 0x200) != 0) return "Lower Legs";   // UnderwearLowerLegs | OuterwearLowerLegs
+            if ((coverage & 0x4000) != 0) return "Head";                                   // Head
+            if ((coverage & 0x8000) != 0) return "Hands";                                  // Hands
+            if ((coverage & 0x10000) != 0) return "Feet";                                  // Feet
 
             return "";
         }
@@ -197,8 +188,7 @@ namespace OracleOfDereth
         public string GetMasteryString()
         {
             if (wo.Values((LongValueKey)353) <= 0) return "";
-            if (MasteryInfo.TryGetValue(wo.Values((LongValueKey)353), out string mastery))
-                return mastery;
+            if (MasteryInfo.TryGetValue(wo.Values((LongValueKey)353), out string mastery)) return mastery;
             return "Unknown Mastery " + wo.Values((LongValueKey)353);
         }
 
@@ -211,8 +201,7 @@ namespace OracleOfDereth
         {
             int set = wo.Values((LongValueKey)265, 0);
             if (set == 0) return "";
-            if (AttributeSetInfo.TryGetValue(set, out string setName))
-                return setName;
+            if (AttributeSetInfo.TryGetValue(set, out string setName)) return setName;
             return "Unknown Set";
         }
 
@@ -358,11 +347,11 @@ namespace OracleOfDereth
         // Damage
         // ============================================================
 
-        public int GetWeaponDamageLow()
+        public double GetWeaponDamageLow()
         {
             if (wo.Values(LongValueKey.MaxDamage) == 0) return 0;
             if (wo.Values(DoubleValueKey.Variance) == 0) return wo.Values(LongValueKey.MaxDamage);
-            return (int)Math.Round(wo.Values(LongValueKey.MaxDamage) - (wo.Values(LongValueKey.MaxDamage) * wo.Values(DoubleValueKey.Variance)));
+            return wo.Values(LongValueKey.MaxDamage) - (wo.Values(LongValueKey.MaxDamage) * wo.Values(DoubleValueKey.Variance));
         }
 
         public int GetWeaponDamageHigh() => wo.Values(LongValueKey.MaxDamage, 0);
@@ -376,7 +365,7 @@ namespace OracleOfDereth
 
             int high = GetWeaponDamageHigh();
             if (high != 0 && wo.Values(DoubleValueKey.Variance) != 0)
-                parts.Add(GetWeaponDamageLow() + "-" + high);
+                parts.Add(GetWeaponDamageLow().ToString("N2") + "-" + high);
             else if (high != 0)
                 parts.Add(high.ToString());
 
@@ -527,10 +516,8 @@ namespace OracleOfDereth
         public string GetWieldReqName()
         {
             if (wo.Values(LongValueKey.WieldReqValue) <= 0) return "";
-            if (wo.Values(LongValueKey.WieldReqType) == 7 && wo.Values(LongValueKey.WieldReqAttribute) == 1)
-                return "Wield Lvl";
-            if (SkillInfo.TryGetValue(wo.Values(LongValueKey.WieldReqAttribute), out string skillName))
-                return skillName;
+            if (wo.Values(LongValueKey.WieldReqType) == 7 && wo.Values(LongValueKey.WieldReqAttribute) == 1) return "Wield Lvl";
+            if (SkillInfo.TryGetValue(wo.Values(LongValueKey.WieldReqAttribute), out string skillName)) return skillName;
             return "Unknown Skill " + wo.Values(LongValueKey.WieldReqAttribute);
         }
 
@@ -1148,9 +1135,7 @@ namespace OracleOfDereth
             public readonly int Skill, Mastery, Multi;
             public readonly double MaxDmg, MaxDmgMod, MaxElemBonus, MaxElemVsMon;
 
-            public WeaponMax(int skill, int mastery, int multi,
-                             double maxDmg = 0, double maxDmgMod = 0,
-                             double maxElemBonus = 0, double maxElemVsMon = 0)
+            public WeaponMax(int skill, int mastery, int multi, double maxDmg = 0, double maxDmgMod = 0, double maxElemBonus = 0, double maxElemVsMon = 0)
             {
                 Skill = skill; Mastery = mastery; Multi = multi;
                 MaxDmg = maxDmg; MaxDmgMod = maxDmgMod;
