@@ -280,7 +280,6 @@ namespace OracleOfDereth
             if (info.IsSummon) return "DMG " + info.GetSummonDamageString();
             if (info.IsAetheria) return info.GetSetName();
             if (info.IsArmorClothing) return info.GetSetName();
-            if (info.IsJewelry) return info.GetRatingsString();
             return "";
         }
 
@@ -291,6 +290,7 @@ namespace OracleOfDereth
             if (info.IsSummon) return "DEF " + info.GetSummonDefenseString();
             if (info.IsAetheria) return info.GetAetheriaSurge();
             if (info.IsArmorClothing) return info.GetRatingsString();
+            if (info.IsJewelry) return info.GetRatingsString();
             return "";
         }
 
