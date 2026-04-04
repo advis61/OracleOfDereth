@@ -10,6 +10,21 @@ namespace OracleOfDereth
     {
         // Collection of Trade Items
         public static List<TradeItem> TradeItems = new List<TradeItem>();
+        public static SortType CurrentSortType = SortType.NameAscending;
+
+        public enum SortType
+        {
+            NameAscending,
+            NameDescending,
+            Col1Ascending,
+            Col1Descending,
+            Col2Ascending,
+            Col2Descending,
+            Col3Ascending,
+            Col3Descending,
+            Col4Ascending,
+            Col4Descending,
+        }
 
         // Items pending identification before being added
         private static HashSet<int> PendingIds = new HashSet<int>();
@@ -28,10 +43,15 @@ namespace OracleOfDereth
         public string Name = "";
         public int Id = 0;
         public int Icon = 0;
+        public int ObjectClassId = 0;
+        public int SortCategory = 0; // Groups like items together: 0=weapon, 1=armor, 2=jewelry, 3=cloak, 4=summon, 5=aetheria, 9=other
         public string SummaryCol1 = "";
         public string SummaryCol2 = "";
         public string SummaryCol3 = "";
         public string SummaryCol4 = "";
+        public int SortCol2 = 0;
+        public int SortCol3 = 0;
+        public int SortCol4 = 0;
         public string Description = "";
 
         public static void Init()
@@ -224,10 +244,15 @@ namespace OracleOfDereth
                 Id = wo.Id,
                 Name = info.GetName(),
                 Icon = wo.Icon,
+                ObjectClassId = (int)wo.ObjectClass,
+                SortCategory = GetSortCategory(info),
                 SummaryCol1 = GetSummaryCol1(info),
                 SummaryCol2 = GetSummaryCol2(info),
                 SummaryCol3 = GetSummaryCol3(info),
                 SummaryCol4 = GetSummaryCol4(info),
+                SortCol2 = GetSortInt(info.GetODValue()),
+                SortCol3 = GetSortInt(info.GetOMValue()),
+                SortCol4 = GetSortInt(info.GetOAValue()),
                 Description = info.ToString(),
             });
         }
@@ -267,11 +292,67 @@ namespace OracleOfDereth
             return "";
         }
 
+        private static int GetSortCategory(ItemInfo info)
+        {
+            if (info.IsWeapon) return 0;
+            if (info.IsArmorClothing) return 1;
+            if (info.IsJewelry) return 2;
+            if (info.IsCloak) return 3;
+            if (info.IsSummon) return 4;
+            if (info.IsAetheria) return 5;
+            return 9;
+        }
+
+        private static int GetSortInt(int? value)
+        {
+            return value ?? 0;
+        }
+
+        private static bool IsEmpty(string s) => string.IsNullOrEmpty(s);
+
+        public static void Sort(SortType sortType)
+        {
+            CurrentSortType = sortType;
+            switch (sortType)
+            {
+                case SortType.NameAscending:
+                    TradeItems = TradeItems.OrderBy(t => t.Name).ToList();
+                    break;
+                case SortType.NameDescending:
+                    TradeItems = TradeItems.OrderByDescending(t => t.Name).ToList();
+                    break;
+                case SortType.Col1Ascending:
+                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenBy(t => t.SummaryCol1).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.Col1Descending:
+                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenByDescending(t => t.SummaryCol1).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.Col2Ascending:
+                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol2).ThenBy(t => t.SummaryCol2).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.Col2Descending:
+                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol2).ThenByDescending(t => t.SummaryCol2).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.Col3Ascending:
+                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol3).ThenBy(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.Col3Descending:
+                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.Col4Ascending:
+                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol4).ThenBy(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.Col4Descending:
+                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol4).ThenByDescending(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
+                    break;
+            }
+        }
+
         public static void Add(TradeItem item)
         {
             if (TradeItems.Any(t => t.Id == item.Id)) return;
             TradeItems.Add(item);
-            TradeItems.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
+            Sort(CurrentSortType);
         }
 
         public static void Remove(int id)

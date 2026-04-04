@@ -965,32 +965,52 @@ namespace OracleOfDereth
 
         private void TradeListSortComplete_Click(object sender, EventArgs e)
         {
-            // TODO: Sort by item type
+            TradeListSortName_Click(sender, e);
         }
 
         private void TradeListSortName_Click(object sender, EventArgs e)
         {
-            // TODO: Sort by name
+            if (TradeItem.CurrentSortType == TradeItem.SortType.NameAscending)
+                TradeItem.Sort(TradeItem.SortType.NameDescending);
+            else
+                TradeItem.Sort(TradeItem.SortType.NameAscending);
+            UpdateTradeList();
         }
 
         private void TradeListSortCol1_Click(object sender, EventArgs e)
         {
-            // TODO: Sort by type
+            if (TradeItem.CurrentSortType == TradeItem.SortType.Col1Ascending)
+                TradeItem.Sort(TradeItem.SortType.Col1Descending);
+            else
+                TradeItem.Sort(TradeItem.SortType.Col1Ascending);
+            UpdateTradeList();
         }
 
         private void TradeListSortCol2_Click(object sender, EventArgs e)
         {
-            // TODO: Sort by OD / Set
+            if (TradeItem.CurrentSortType == TradeItem.SortType.Col2Ascending)
+                TradeItem.Sort(TradeItem.SortType.Col2Descending);
+            else
+                TradeItem.Sort(TradeItem.SortType.Col2Ascending);
+            UpdateTradeList();
         }
 
         private void TradeListSortCol3_Click(object sender, EventArgs e)
         {
-            // TODO: Sort by ratings
+            if (TradeItem.CurrentSortType == TradeItem.SortType.Col3Ascending)
+                TradeItem.Sort(TradeItem.SortType.Col3Descending);
+            else
+                TradeItem.Sort(TradeItem.SortType.Col3Ascending);
+            UpdateTradeList();
         }
 
         private void TradeListSortCol4_Click(object sender, EventArgs e)
         {
-            // TODO: Sort by spells
+            if (TradeItem.CurrentSortType == TradeItem.SortType.Col4Ascending)
+                TradeItem.Sort(TradeItem.SortType.Col4Descending);
+            else
+                TradeItem.Sort(TradeItem.SortType.Col4Ascending);
+            UpdateTradeList();
         }
 
 

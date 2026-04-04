@@ -19,7 +19,7 @@ namespace OracleOfDereth
     {
         public readonly WorldObject wo;
         public bool IsWeapon => wo.ObjectClass == ObjectClass.MeleeWeapon || wo.ObjectClass == ObjectClass.MissileWeapon || wo.ObjectClass == ObjectClass.WandStaffOrb;
-        public bool IsArmorClothing => wo.ObjectClass == ObjectClass.Armor || wo.ObjectClass == ObjectClass.Clothing;
+        public bool IsArmorClothing => (wo.ObjectClass == ObjectClass.Armor || wo.ObjectClass == ObjectClass.Clothing) && !IsCloak;
         public bool IsJewelry => wo.ObjectClass == ObjectClass.Jewelry;
         public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
         public bool IsSummon => wo.ObjectClass == ObjectClass.Misc && wo.Values(LongValueKey.UsesTotal) == 50 && (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
@@ -1074,7 +1074,7 @@ namespace OracleOfDereth
         // OA+0 = max attack bonus for that weapon type. OA+N = N% above max.
         // Only applies to melee weapons.
 
-        private int? GetOAValue()
+        public int? GetOAValue()
         {
             if (IsEquipped && !AssumeFullBuffs) return null;
 
