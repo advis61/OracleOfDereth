@@ -57,6 +57,7 @@ namespace OracleOfDereth
         public bool IsSummon => wo.ObjectClass == ObjectClass.Misc && wo.Values(LongValueKey.UsesTotal) == 50 && (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
         public bool IsAetheria => wo.Name == "Aetheria";
         public bool IsFoolproof => wo.Name.EndsWith(" Foolproof");
+        public bool IsClothing => wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.ArmorLevel, 0) == 0 && !IsCloak;
         public bool IsAmmo => (wo.ObjectClass == ObjectClass.MissileWeapon) && (wo.Values(LongValueKey.StackMax, 0) > 0);
 
         // ============================================================

@@ -85,6 +85,16 @@ namespace OracleOfDereth
         public HudButton TradeExportText { get; private set; }
         public HudButton TradeExportCsv { get; private set; }
         public HudButton TradeExportJson { get; private set; }
+        public HudTextBox TradeFilterText { get; private set; }
+        public HudCheckBox TradeFilterWeapons { get; private set; }
+        public HudCheckBox TradeFilterArmor { get; private set; }
+        public HudCheckBox TradeFilterJewelry { get; private set; }
+        public HudCheckBox TradeFilterCloaks { get; private set; }
+        public HudCheckBox TradeFilterSummons { get; private set; }
+        public HudCheckBox TradeFilterClothing { get; private set; }
+        public HudCheckBox TradeFilterAetheria { get; private set; }
+        public HudCheckBox TradeFilterSalvage { get; private set; }
+        public HudCheckBox TradeFilterOther { get; private set; }
         public HudFixedLayout TradeListSortComplete { get; private set; }
         public HudPictureBox TradeListSortCompleteIcon { get; private set; }
         public HudStaticText TradeListSortName { get; private set; }
@@ -367,6 +377,28 @@ namespace OracleOfDereth
                 TradeAddSelected = (HudCheckBox)view["TradeAddSelected"];
                 TradeAddSelected.Change += TradeAddSelected_Change;
 
+                TradeFilterText = (HudTextBox)view["TradeFilterText"];
+                TradeFilterText.Change += TradeFilter_Change;
+
+                TradeFilterWeapons = (HudCheckBox)view["TradeFilterWeapons"];
+                TradeFilterWeapons.Change += TradeFilter_Change;
+                TradeFilterArmor = (HudCheckBox)view["TradeFilterArmor"];
+                TradeFilterArmor.Change += TradeFilter_Change;
+                TradeFilterClothing = (HudCheckBox)view["TradeFilterClothing"];
+                TradeFilterClothing.Change += TradeFilter_Change;
+                TradeFilterJewelry = (HudCheckBox)view["TradeFilterJewelry"];
+                TradeFilterJewelry.Change += TradeFilter_Change;
+                TradeFilterCloaks = (HudCheckBox)view["TradeFilterCloaks"];
+                TradeFilterCloaks.Change += TradeFilter_Change;
+                TradeFilterSummons = (HudCheckBox)view["TradeFilterSummons"];
+                TradeFilterSummons.Change += TradeFilter_Change;
+                TradeFilterAetheria = (HudCheckBox)view["TradeFilterAetheria"];
+                TradeFilterAetheria.Change += TradeFilter_Change;
+                TradeFilterSalvage = (HudCheckBox)view["TradeFilterSalvage"];
+                TradeFilterSalvage.Change += TradeFilter_Change;
+                TradeFilterOther = (HudCheckBox)view["TradeFilterOther"];
+                TradeFilterOther.Change += TradeFilter_Change;
+
                 TradeListSortCompleteIcon = new HudPictureBox();
                 TradeListSortCompleteIcon.Image = IconSort;
                 TradeListSortComplete = (HudFixedLayout)view["TradeListSortComplete"];
@@ -559,6 +591,16 @@ namespace OracleOfDereth
                 TradeExportCsv.Hit -= TradeExportCsv_Hit;
                 TradeExportJson.Hit -= TradeExportJson_Hit;
                 TradeClipboard.Hit -= TradeClipboard_Hit;
+                TradeFilterText.Change -= TradeFilter_Change;
+                TradeFilterWeapons.Change -= TradeFilter_Change;
+                TradeFilterArmor.Change -= TradeFilter_Change;
+                TradeFilterClothing.Change -= TradeFilter_Change;
+                TradeFilterJewelry.Change -= TradeFilter_Change;
+                TradeFilterCloaks.Change -= TradeFilter_Change;
+                TradeFilterSummons.Change -= TradeFilter_Change;
+                TradeFilterAetheria.Change -= TradeFilter_Change;
+                TradeFilterSalvage.Change -= TradeFilter_Change;
+                TradeFilterOther.Change -= TradeFilter_Change;
                 TradeList.Click -= TradeList_Click;
                 TradeListSortCompleteIcon.Hit -= TradeListSortComplete_Click;
                 TradeListSortName.Hit -= TradeListSortName_Click;
@@ -887,9 +929,41 @@ namespace OracleOfDereth
             UpdateTradeList();
         }
 
+        private bool MatchesFilter(TradeItem t, string[] terms)
+        {
+            if (terms.Length == 0) return true;
+            string combined = $"{t.Name} {t.SummaryCol1} {t.SummaryCol2} {t.SummaryCol3} {t.SummaryCol4}";
+            foreach (string term in terms)
+            {
+                if (combined.IndexOf(term, StringComparison.OrdinalIgnoreCase) < 0) return false;
+            }
+            return true;
+        }
+
+        private bool IsCategoryVisible(int sortCategory)
+        {
+            switch (sortCategory)
+            {
+                case 0: return TradeFilterWeapons.Checked;
+                case 1: return TradeFilterArmor.Checked;
+                case 2: return TradeFilterJewelry.Checked;
+                case 3: return TradeFilterCloaks.Checked;
+                case 4: return TradeFilterSummons.Checked;
+                case 5: return TradeFilterAetheria.Checked;
+                case 6: return TradeFilterSalvage.Checked;
+                case 7: return TradeFilterClothing.Checked;
+                default: return TradeFilterOther.Checked;
+            }
+        }
+
         public void UpdateTradeList()
         {
-            List<TradeItem> items = TradeItem.TradeItems.ToList();
+            string filterText = TradeFilterText?.Text?.Trim() ?? "";
+            string[] filterTerms = filterText.Length > 0 ? filterText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries) : new string[0];
+            List<TradeItem> items = TradeItem.TradeItems
+                .Where(t => IsCategoryVisible(t.SortCategory))
+                .Where(t => MatchesFilter(t, filterTerms))
+                .ToList();
 
             for (int x = 0; x < items.Count; x++)
             {
@@ -910,12 +984,20 @@ namespace OracleOfDereth
 
             while (TradeList.RowCount > items.Count) { TradeList.RemoveRow(TradeList.RowCount - 1); }
 
-            TradeText.Text = TradeItem.StatusText();
+            if (items.Count == TradeItem.TradeItems.Count)
+                TradeText.Text = TradeItem.StatusText();
+            else
+                TradeText.Text = $"Trade Items: {items.Count} shown / {TradeItem.TradeItems.Count} total";
         }
 
         private void TradeAddSelected_Change(object sender, EventArgs e)
         {
             TradeItem.AutoAddEnabled = TradeAddSelected.Checked;
+        }
+
+        private void TradeFilter_Change(object sender, EventArgs e)
+        {
+            UpdateTradeList();
         }
 
         private void TradeAdd_Hit(object sender, EventArgs e)

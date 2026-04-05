@@ -345,6 +345,7 @@ namespace OracleOfDereth
         private static int GetSortCategory(ItemInfo info)
         {
             if (info.IsWeapon) return 0;
+            if (info.IsClothing) return 7;
             if (info.IsArmorClothing) return 1;
             if (info.IsJewelry) return 2;
             if (info.IsCloak) return 3;
