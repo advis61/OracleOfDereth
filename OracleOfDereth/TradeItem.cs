@@ -155,8 +155,8 @@ namespace OracleOfDereth
             {
                 foreach (WorldObject wo in inv)
                 {
-                    if (!IsAddAllClass(wo.ObjectClass)) continue;
-                    if (wo.ObjectClass == ObjectClass.MissileWeapon && wo.Values(LongValueKey.StackMax, 0) > 0) continue;
+                    //if (!IsAddAllClass(wo.ObjectClass)) continue;
+                    //if (wo.ObjectClass == ObjectClass.MissileWeapon && wo.Values(LongValueKey.StackMax, 0) > 0) continue;
                     if (!IsInInventory(wo)) continue;
                     if (TradeItems.Any(t => t.Id == wo.Id)) continue;
 
@@ -167,12 +167,12 @@ namespace OracleOfDereth
                         continue;
                     }
 
-                    // Skip Misc items that aren't useful
-                    if (wo.ObjectClass == ObjectClass.Misc)
-                    {
-                        ItemInfo check = new ItemInfo(wo);
-                        if (!check.IsSummon && !check.IsAetheria && !check.IsFoolproof) continue;
-                    }
+                    //// Skip Misc items that aren't useful
+                    //if (wo.ObjectClass == ObjectClass.Misc)
+                    //{
+                    //    ItemInfo check = new ItemInfo(wo);
+                    //    if (!check.IsSummon && !check.IsAetheria && !check.IsFoolproof) continue;
+                    //}
 
                     if (wo.HasIdData)
                     {
