@@ -69,9 +69,11 @@ namespace OracleOfDereth
         public static bool IsTradeable(WorldObject wo)
         {
             if (wo == null) return false;
+            if (wo.Values(LongValueKey.Attuned, 0) > 0) return false;
+
             if (wo.ObjectClass == ObjectClass.Container) return false;
             if (wo.ObjectClass == ObjectClass.MissileWeapon && wo.Values(LongValueKey.StackMax, 0) > 0) return false;
-            if (wo.Values(LongValueKey.Attuned, 0) > 0) return false;
+
             if (!IsInInventory(wo)) return false;
             return true;
         }
@@ -277,8 +279,8 @@ namespace OracleOfDereth
         public static string StatusText()
         {
             int pending = IdentifyQueue.Count + PendingIds.Count;
-            if (pending > 0)
-                return $"Trade Items: {TradeItems.Count} done, {pending} pending";
+            if (pending > 0) return $"Trade Items: {TradeItems.Count} done, {pending} pending";
+
             return $"Trade Items: {TradeItems.Count} selected";
         }
 
@@ -334,7 +336,8 @@ namespace OracleOfDereth
         private static string GetSummaryCol4(ItemInfo info)
         {
             if (info.IsWeapon) return info.GetOAString();
-            if (info.IsCloak) return "";
+            if (info.IsCloak) return $"Level {info.GetCloakLevel()}, {info.GetFullSetName()}";
+            if (info.IsAetheria) return info.GetAetheriaLevel() > 0 ? "Level " + info.GetAetheriaLevel() : "";
             if (info.IsArmorClothing || info.IsJewelry) return info.GetCantripsString();
             return "";
         }
@@ -438,6 +441,7 @@ namespace OracleOfDereth
                 "Attack", "Melee D", "Magic D", "Missile D", "Mana C",
                 "Spells", "Wield Req", "Wield Req Level", "Lore", "Craft", "Value", "Burden",
                 "Summon DMG", "Summon DEF",
+                "Item Level",
                 "D", "DR", "C", "CR", "CD", "CDR", "HB", "V"
             };
         }
@@ -482,6 +486,7 @@ namespace OracleOfDereth
                 info.GetBurden() > 0 ? info.GetBurden().ToString() : "",
                 info.GetSummonDamageString(),
                 info.GetSummonDefenseString(),
+                info.IsCloak ? info.GetCloakLevel().ToString() : info.IsAetheria ? info.GetAetheriaLevel().ToString() : "",
                 info.RatingDamage > 0 ? info.RatingDamage.ToString() : "",
                 info.RatingDamageResist > 0 ? info.RatingDamageResist.ToString() : "",
                 info.RatingCrit > 0 ? info.RatingCrit.ToString() : "",

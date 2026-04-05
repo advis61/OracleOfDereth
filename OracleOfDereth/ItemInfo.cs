@@ -608,18 +608,6 @@ namespace OracleOfDereth
         // Cloak
         // ============================================================
 
-        public string GetCloakWeave()
-        {
-            FileService service = CoreManager.Current.Filter<FileService>();
-            foreach (int spellId in innateSpells)
-            {
-                Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
-                if (spell == null) continue;
-                if (spell.Name.Contains("Weave of")) return spell.Name.Replace("Weave of ", "");
-            }
-            return "";
-        }
-
         public string GetCloakProc()
         {
             FileService service = CoreManager.Current.Filter<FileService>();
@@ -654,6 +642,13 @@ namespace OracleOfDereth
             return "";
         }
 
+        public int GetCloakLevel()
+        {
+            int iconOverlay = wo.Values((LongValueKey)218103849, 0);
+            if (iconOverlay == 0) return 0;
+            return iconOverlay - 27700 + 1;
+        }
+
         // ============================================================
         // Aetheria
         // ============================================================
@@ -664,6 +659,13 @@ namespace OracleOfDereth
             if (wo.Name.Contains("Yellow")) return "Yellow";
             if (wo.Name.Contains("Red")) return "Red";
             return "Aetheria";
+        }
+
+        public int GetAetheriaLevel()
+        {
+            int iconOverlay = wo.Values((LongValueKey)218103849, 0);
+            if (iconOverlay == 0) return 0;
+            return iconOverlay - 27700 + 1;
         }
 
         public string GetAetheriaSurge()
