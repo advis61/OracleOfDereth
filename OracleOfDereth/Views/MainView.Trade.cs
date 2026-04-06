@@ -175,6 +175,7 @@ namespace OracleOfDereth
                 int requiredCount = 1;
                 string word = term;
                 int starIndex = term.LastIndexOf('*');
+
                 if (starIndex > 0 && int.TryParse(term.Substring(starIndex + 1), out int n))
                 {
                     word = term.Substring(0, starIndex);
@@ -220,10 +221,8 @@ namespace OracleOfDereth
         {
             string filterText = TradeFilterText?.Text?.Trim() ?? "";
             string[] filterTerms = filterText.Length > 0 ? filterText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries) : new string[0];
-            List<TradeItem> items = TradeItem.TradeItems
-                .Where(t => IsCategoryVisible(t.SortCategory))
-                .Where(t => MatchesFilter(t, filterTerms))
-                .ToList();
+
+            List<TradeItem> items = TradeItem.TradeItems.Where(t => IsCategoryVisible(t.SortCategory)).Where(t => MatchesFilter(t, filterTerms)).ToList();
 
             for (int x = 0; x < items.Count; x++)
             {
@@ -328,8 +327,8 @@ namespace OracleOfDereth
             else
             {
                 CoreManager.Current.Actions.SelectItem(id);
-                TradeItem item = TradeItem.TradeItems.FirstOrDefault(t => t.Id == id);
-                if (item != null) { Util.Chat(item.Description); }
+                //TradeItem item = TradeItem.TradeItems.FirstOrDefault(t => t.Id == id);
+                //if (item != null) { Util.Chat(item.Description); }
             }
         }
 
@@ -344,6 +343,7 @@ namespace OracleOfDereth
                 TradeItem.Sort(TradeItem.SortType.NameDescending);
             else
                 TradeItem.Sort(TradeItem.SortType.NameAscending);
+
             UpdateTradeList();
         }
 
@@ -353,6 +353,7 @@ namespace OracleOfDereth
                 TradeItem.Sort(TradeItem.SortType.Col1Descending);
             else
                 TradeItem.Sort(TradeItem.SortType.Col1Ascending);
+
             UpdateTradeList();
         }
 
@@ -362,6 +363,7 @@ namespace OracleOfDereth
                 TradeItem.Sort(TradeItem.SortType.Col2Descending);
             else
                 TradeItem.Sort(TradeItem.SortType.Col2Ascending);
+
             UpdateTradeList();
         }
 
@@ -371,6 +373,7 @@ namespace OracleOfDereth
                 TradeItem.Sort(TradeItem.SortType.Col3Descending);
             else
                 TradeItem.Sort(TradeItem.SortType.Col3Ascending);
+
             UpdateTradeList();
         }
 
@@ -380,6 +383,7 @@ namespace OracleOfDereth
                 TradeItem.Sort(TradeItem.SortType.Col4Descending);
             else
                 TradeItem.Sort(TradeItem.SortType.Col4Ascending);
+
             UpdateTradeList();
         }
     }
