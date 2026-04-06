@@ -1,5 +1,6 @@
 ﻿using Decal.Adapter;
 using Decal.Adapter.Wrappers;
+using OracleOfDereth.Models;
 using System;
 using System.Diagnostics;
 using System.Reflection;

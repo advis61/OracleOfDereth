@@ -1,4 +1,4 @@
-﻿using Decal.Adapter;
+using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Decal.Filters;
 using System;
@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace OracleOfDereth
+namespace OracleOfDereth.Models
 {
     // From MagTools DetectItemsIdentifiedByUser
     public class WorldObjectIdentifier : IDisposable
@@ -41,7 +41,7 @@ namespace OracleOfDereth
 
         protected virtual void Dispose(bool disposing)
         {
-            // If you need thread safety, use a lock around these 
+            // If you need thread safety, use a lock around these
             // operations, as well as in your methods that use the resource.
             if (!disposed)
             {
