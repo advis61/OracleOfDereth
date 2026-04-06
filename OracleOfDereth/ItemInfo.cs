@@ -56,6 +56,7 @@ namespace OracleOfDereth
         public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
         public bool IsSummon => wo.ObjectClass == ObjectClass.Misc && wo.Values(LongValueKey.UsesTotal) == 50 && (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
         public bool IsAetheria => wo.Name == "Aetheria";
+        public bool IsRare => wo.Values((LongValueKey)218103850, 0) == 23308;
         public bool IsSalvage => wo.ObjectClass == ObjectClass.Salvage;
         public bool IsFoolproof => wo.Name.EndsWith(" Foolproof");
         public bool IsClothing => wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.ArmorLevel, 0) == 0 && !IsCloak;
@@ -84,11 +85,12 @@ namespace OracleOfDereth
         public string GetItemSlotName()
         {
             if (IsWeapon) return GetWeaponTypeName();
+            if (IsArmorClothing || IsJewelry) return GetSlotName();
+            if (IsAetheria) return GetAetheriaColor();
             if (IsCloak) return "Cloak";
             if (IsSummon) return "Summon";
-            if (IsAetheria) return GetAetheriaColor();
+            if (IsRare) return "Rare";
             if (IsFoolproof) return "Foolproof";
-            if (IsArmorClothing || IsJewelry) return GetSlotName();
             if (wo.ObjectClass == ObjectClass.SpellComponent) return "Component";
             if (wo.ObjectClass == ObjectClass.CraftedFletching) return "Fletching";
             if (wo.ObjectClass == ObjectClass.CraftedAlchemy) return "Alchemy";
