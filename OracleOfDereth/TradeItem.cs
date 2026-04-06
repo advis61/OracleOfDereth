@@ -351,7 +351,7 @@ namespace OracleOfDereth
             if (info.IsCloak) return 3;
             if (info.IsSummon) return 4;
             if (info.IsAetheria) return 5;
-            if (info.IsFoolproof) return 6;
+            if (info.IsSalvage || info.IsFoolproof) return 6;
             return 9;
         }
 

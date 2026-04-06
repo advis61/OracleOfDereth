@@ -929,13 +929,48 @@ namespace OracleOfDereth
             UpdateTradeList();
         }
 
+        private int CountOccurrences(string text, string term)
+        {
+            int count = 0;
+            int index = 0;
+            while ((index = text.IndexOf(term, index, StringComparison.OrdinalIgnoreCase)) >= 0)
+            {
+                count++;
+                index += term.Length;
+            }
+            return count;
+        }
+
         private bool MatchesFilter(TradeItem t, string[] terms)
         {
             if (terms.Length == 0) return true;
             string combined = $"{t.Name} {t.SummaryCol1} {t.SummaryCol2} {t.SummaryCol3} {t.SummaryCol4}";
             foreach (string term in terms)
             {
-                if (combined.IndexOf(term, StringComparison.OrdinalIgnoreCase) < 0) return false;
+                int requiredCount = 1;
+                string word = term;
+                int starIndex = term.LastIndexOf('*');
+                if (starIndex > 0 && int.TryParse(term.Substring(starIndex + 1), out int n))
+                {
+                    word = term.Substring(0, starIndex);
+                    requiredCount = n;
+                }
+                else if (term.Contains(".*"))
+                {
+                    string[] parts = term.Split(new[] { ".*" }, StringSplitOptions.RemoveEmptyEntries);
+                    requiredCount = parts.Length;
+                    word = parts[0];
+                    bool allSame = true;
+                    foreach (string p in parts) { if (!p.Equals(parts[0], StringComparison.OrdinalIgnoreCase)) { allSame = false; break; } }
+                    if (!allSame)
+                    {
+                        bool allFound = true;
+                        foreach (string p in parts) { if (combined.IndexOf(p, StringComparison.OrdinalIgnoreCase) < 0) { allFound = false; break; } }
+                        if (!allFound) return false;
+                        continue;
+                    }
+                }
+                if (CountOccurrences(combined, word) < requiredCount) return false;
             }
             return true;
         }

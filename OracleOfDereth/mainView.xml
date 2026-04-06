@@ -103,13 +103,13 @@
 						<control progid="DecalControls.Edit" name="TradeFilterText" left="46" top="88" width="180" height="20" text=""/>
 						<control progid="DecalControls.CheckBox" name="TradeFilterWeapons" left="235" top="90" width="70" height="16" text="Weapons" checked="true"/>
 						<control progid="DecalControls.CheckBox" name="TradeFilterArmor" left="315" top="90" width="60" height="16" text="Armor" checked="true"/>
-						<control progid="DecalControls.CheckBox" name="TradeFilterClothing" left="380" top="90" width="70" height="16" text="Clothing" checked="true"/>
-						<control progid="DecalControls.CheckBox" name="TradeFilterJewelry" left="455" top="90" width="64" height="16" text="Jewelry" checked="true"/>
-						<control progid="DecalControls.CheckBox" name="TradeFilterCloaks" left="525" top="90" width="58" height="16" text="Cloaks" checked="true"/>
-						<control progid="DecalControls.CheckBox" name="TradeFilterSummons" left="590" top="90" width="75" height="16" text="Summons" checked="true"/>
-						<control progid="DecalControls.CheckBox" name="TradeFilterAetheria" left="670" top="90" width="70" height="16" text="Aetheria" checked="true"/>
-						<control progid="DecalControls.CheckBox" name="TradeFilterSalvage" left="745" top="90" width="64" height="16" text="Salvage" checked="true"/>
-						<control progid="DecalControls.CheckBox" name="TradeFilterOther" left="815" top="90" width="52" height="16" text="Other" checked="true"/>
+						<control progid="DecalControls.CheckBox" name="TradeFilterClothing" left="385" top="90" width="70" height="16" text="Clothing" checked="true"/>
+						<control progid="DecalControls.CheckBox" name="TradeFilterJewelry" left="465" top="90" width="64" height="16" text="Jewelry" checked="true"/>
+						<control progid="DecalControls.CheckBox" name="TradeFilterCloaks" left="539" top="90" width="58" height="16" text="Cloaks" checked="true"/>
+						<control progid="DecalControls.CheckBox" name="TradeFilterSummons" left="607" top="90" width="75" height="16" text="Summons" checked="true"/>
+						<control progid="DecalControls.CheckBox" name="TradeFilterAetheria" left="692" top="90" width="70" height="16" text="Aetheria" checked="true"/>
+						<control progid="DecalControls.CheckBox" name="TradeFilterSalvage" left="772" top="90" width="64" height="16" text="Salvage" checked="true"/>
+						<control progid="DecalControls.CheckBox" name="TradeFilterOther" left="846" top="90" width="52" height="16" text="Other" checked="true"/>
 						<control progid="DecalControls.FixedLayout" name="TradeListSortComplete" left="1" top="116" width="16" height="16"/>
 						<control progid="DecalControls.StaticText" name="TradeListSortName" left="49" top="112" width="210" height="17" text="Item Name"/>
 						<control progid="DecalControls.StaticText" name="TradeListSortCol1" left="266" top="112" width="90" height="17" text="Type"/>
