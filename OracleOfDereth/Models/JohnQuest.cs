@@ -69,7 +69,7 @@ namespace OracleOfDereth
 
                     var fields = line.Split(',');
 
-                    quests.Add(new JohnQuest
+                    var quest = new JohnQuest
                     {
                         Name = fields[0].Trim(),
                         BitMask = int.Parse(fields[1].Trim()),
@@ -77,7 +77,12 @@ namespace OracleOfDereth
                         Flag = fields[3].Trim().ToLower(),
                         Url = fields[4].Trim(),
                         Hint = fields[5].Trim()
-                    });
+                    };
+
+                    // Apostate Finale is Levistras-only
+                    if (quest.Name == "Apostate Finale" && CoreManager.Current.CharacterFilter.Server != "Levistras") continue;
+
+                    quests.Add(quest);
                 }
             }
 
