@@ -31,6 +31,7 @@ namespace OracleOfDereth
 
         public static Setting AnnouncePlayers;
         public static Setting BuffsRemaining;
+        public static Setting ShowNearbyWcid;
         public static Setting SummonScore;
         public static Setting WeaponScore;
 
@@ -43,6 +44,7 @@ namespace OracleOfDereth
             AnnouncePlayers = Register("Announce Nearby Players", "AnnouncePlayers", YesNo, "Yes");
             BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
+            ShowNearbyWcid = Register("Show WCID on Nearby Tab", "ShowNearbyWcid", YesNo, "No");
             WeaponScore = Register("Show Weapons Score", "WeaponScore", YesNo, "Yes");
         }
 
