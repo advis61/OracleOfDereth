@@ -80,8 +80,9 @@ namespace OracleOfDereth
                     AssignImage((HudPictureBox)row[0], item.Item.Icon);
                     AssignSelected(row, (item.Item.Id == targetId && !expanded), NearbyListColumns);
 
-                    //((HudStaticText)row[1]).Text = $"{group.Key} ({group.Count()})";
-                    ((HudStaticText)row[1]).Text = $"{group.Key} ({group.Count()})";
+                    ((HudStaticText)row[1]).Text = Setting.ShowNearbyWcid.IsYes
+                        ? $"[{item.Item.Type}] {group.Key} ({group.Count()})"
+                        : $"{group.Key} ({group.Count()})";
                     ((HudStaticText)row[2]).Text = (expanded ? "[-]" : "[+]");
                     ((HudStaticText)row[3]).Text = item.Item.Id.ToString();
                     ((HudStaticText)row[4]).Text = group.Key;
@@ -96,7 +97,9 @@ namespace OracleOfDereth
                         index++;
 
                         AssignImage((HudPictureBox)row[0], (isGrouped ? 0 : item.Item.Icon));
-                        ((HudStaticText)row[1]).Text = item.Item.Name;
+                        ((HudStaticText)row[1]).Text = Setting.ShowNearbyWcid.IsYes
+                            ? $"[{item.Item.Type}] {item.Item.Name}"
+                            : item.Item.Name;
 
                         if (item.Item.Id == targetId)
                         {
