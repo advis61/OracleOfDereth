@@ -723,6 +723,8 @@ namespace OracleOfDereth
 
         public static bool WeaponIdentified(WorldObject item)
         {
+            if (Setting.SummonScore.IsNo) { return false; }
+
             ItemInfo info = new ItemInfo(item);
             if (!info.IsWeapon) return false;
 

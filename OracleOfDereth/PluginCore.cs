@@ -104,7 +104,7 @@ namespace OracleOfDereth
         {
             try
             {
-                Util.Chat($"{Hud.BuffNowText()}", Util.ColorOrange);
+                if(Setting.BuffsRemaining.IsYes) Util.Chat($"{Hud.BuffNowText()}", Util.ColorOrange);
             }
             catch (Exception ex) { Util.Log(ex); }
         }

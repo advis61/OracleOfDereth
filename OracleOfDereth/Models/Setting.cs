@@ -23,26 +23,27 @@ namespace OracleOfDereth
         }
 
         public bool IsYes => Value == "Yes";
+        public bool IsNo => Value == "No";
 
         // --- Static registry of all settings ---
 
         public static List<Setting> All = new List<Setting>();
 
-        public static Setting AutoOpenFellowship;
-        public static Setting ShowTradeNotifications;
-        public static Setting ShowNearbyMonsters;
-        public static Setting ShowNearbyPlayers;
-        public static Setting AutoRefreshQuests;
+        public static Setting AnnouncePlayers;
+        public static Setting BuffsRemaining;
+        public static Setting SummonScore;
+        public static Setting WeaponScore;
 
         public static void Init()
         {
             All.Clear();
 
-            AutoOpenFellowship = Register("Auto Open Fellowship", "AutoOpenFellowship", new List<string> { "Yes", "No" }, "No");
-            ShowTradeNotifications = Register("Show Trade Notifications", "ShowTradeNotifications", new List<string> { "Yes", "No" }, "Yes");
-            ShowNearbyMonsters = Register("Show Nearby Monsters", "ShowNearbyMonsters", new List<string> { "Yes", "No" }, "Yes");
-            ShowNearbyPlayers = Register("Show Nearby Players", "ShowNearbyPlayers", new List<string> { "Yes", "No" }, "Yes");
-            AutoRefreshQuests = Register("Auto Refresh Quests", "AutoRefreshQuests", new List<string> { "Yes", "No" }, "No");
+            List<string> YesNo = new List<string> { "Yes", "No" };
+
+            AnnouncePlayers = Register("Announce Nearby Players", "AnnouncePlayers", YesNo, "Yes");
+            BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
+            SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
+            WeaponScore = Register("Show Weapons Score", "WeaponScore", YesNo, "Yes");
         }
 
         private static Setting Register(string name, string key, List<string> allowedValues, string defaultValue)

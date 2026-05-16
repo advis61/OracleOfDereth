@@ -25,8 +25,6 @@ namespace OracleOfDereth
         public static Dictionary<string, Nearby> Nearbys = new Dictionary<string, Nearby>(); // The list we match against
         public static List<WorldObject> Objects = new List<WorldObject>(); // The nearby WorldObjects we Track
 
-        public static bool Verbose = true;
-
         // Properties
         public string Landblock = "";
 
@@ -84,7 +82,7 @@ namespace OracleOfDereth
         public static void Add(WorldObject item)
         {
             // We track players differently via Fellow
-            if(item.ObjectClass == ObjectClass.Player) { 
+            if(item.ObjectClass == ObjectClass.Player && Setting.AnnouncePlayers.IsYes) { 
                 Announce(item);
                 return; 
             }
@@ -103,7 +101,6 @@ namespace OracleOfDereth
 
         public static void Announce(WorldObject item)
         {
-            if(Verbose == false) { return; }
             Util.Chat($"Detected: {item.Name}", 5, "[OD] ");
         }
     }

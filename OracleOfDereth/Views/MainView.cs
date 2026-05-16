@@ -38,6 +38,7 @@ namespace OracleOfDereth
         public HudTabView StatusViewNotebook { get; private set; }
         public HudTabView CharacterViewNotebook { get; private set; }
         public HudTabView QuestsViewNotebook { get; private set; }
+        public HudTabView AboutViewNotebook { get; private set; }
 
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
         {
@@ -64,11 +65,9 @@ namespace OracleOfDereth
             // Titles
             { 4_00, 560 }, // Available and Unavailable
 
-            // About
+            // About / Settings
             { 5_00, 350 }, // About
-
-            // Settings
-            { 6_00, 350 }, // Settings
+            { 5_01, 350 }, // Settings
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
@@ -96,11 +95,9 @@ namespace OracleOfDereth
             // Titles
             { 4_00, 545 }, // Available
 
-            // About
+            // About / Settings
             { 5_00, 270 }, // About
-
-            // Settings
-            { 6_00, 400 }, // Settings
+            { 5_01, 400 }, // Settings
         };
 
         // Assign Images Tracking
@@ -138,6 +135,10 @@ namespace OracleOfDereth
                 // Quests Notebook
                 QuestsViewNotebook = (HudTabView)view["QuestsViewNotebook"];
                 QuestsViewNotebook.OpenTabChange += Notebook_OpenTabChange;
+
+                // About Notebook
+                AboutViewNotebook = (HudTabView)view["AboutViewNotebook"];
+                AboutViewNotebook.OpenTabChange += Notebook_OpenTabChange;
 
                 InitStatusHud();
                 InitBuffs();
@@ -177,6 +178,7 @@ namespace OracleOfDereth
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 StatusViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                AboutViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
                 DisposeTrade();
                 DisposeNearby();
@@ -207,6 +209,7 @@ namespace OracleOfDereth
             if (mainTab == 1) { return (mainTab * 100) + StatusViewNotebook.CurrentTab; }
             if (mainTab == 2) { return (mainTab * 100) + CharacterViewNotebook.CurrentTab; }
             if (mainTab == 3) { return (mainTab * 100) + QuestsViewNotebook.CurrentTab; }
+            if (mainTab == 5) { return (mainTab * 100) + AboutViewNotebook.CurrentTab; }
 
             // Main Tab
             return mainTab * 100;
@@ -294,11 +297,9 @@ namespace OracleOfDereth
             if (currentTab == 4_00) { UpdateTitles(); }
             if (currentTab == 4_01) { UpdateTitles(); }
 
-            // About
+            // About / Settings
             if (currentTab == 5_00) {; }
-
-            // Settings
-            if (currentTab == 6_00) { UpdateSettings(); }
+            if (currentTab == 5_01) { UpdateSettings(); }
         }
 
         // Selected target changed

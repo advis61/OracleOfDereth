@@ -322,20 +322,23 @@
 		</page>
 
 		<page label="?">
-			<control progid="DecalControls.FixedLayout" clipped="">
-				<control progid="DecalControls.StaticText" name="About" left="5" top="5" width="340" height="300" text="&quot;Oracle of Dereth&quot; by Advis Eveldan of Levistras" />
-				<control progid="DecalControls.StaticText" name="Quote1" left="5" top="40" width="340" height="300" text="&quot;Twenty years from now you will be more disappointed by the quests that you didn't do than by the ones you did do. So throw off the bowlines. Sail away from safe portals. Catch the trade winds in your sails. Explore. Dream. Discover.&quot; -- Mark Twain"/>
-				<control progid="DecalControls.StaticText" name="Quote2" left="5" top="150" width="330" height="300" text="&quot;The world is a scrivener's satchel and those who do not travel read only one scroll.&quot; -- St. Augustine"/>
-				<control progid="DecalControls.StaticText" name="Quote3" left="5" top="200" width="290" height="300" text="&quot;Not all those who answer the call are lost.&quot; -- J.R.R. Tolkien" />
-			</control>
-		</page>
-
-		<page label="Settings">
-			<control progid="DecalControls.FixedLayout" clipped="">
-				<control progid="DecalControls.List" name="SettingsList" left="0" top="5" width="400" height="2000">
-					<column progid="DecalControls.TextColumn" name="Name" fixedwidth="220" />
-					<column progid="DecalControls.TextColumn" name="Value" fixedwidth="80" />
-				</control>
+			<control progid="DecalControls.Notebook" name="AboutViewNotebook">
+				<page label="About">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="About" left="5" top="5" width="340" height="300" text="&quot;Oracle of Dereth&quot; by Advis Eveldan of Levistras" />
+						<control progid="DecalControls.StaticText" name="Quote1" left="5" top="40" width="340" height="300" text="&quot;Twenty years from now you will be more disappointed by the quests that you didn't do than by the ones you did do. So throw off the bowlines. Sail away from safe portals. Catch the trade winds in your sails. Explore. Dream. Discover.&quot; -- Mark Twain"/>
+						<control progid="DecalControls.StaticText" name="Quote2" left="5" top="150" width="330" height="300" text="&quot;The world is a scrivener's satchel and those who do not travel read only one scroll.&quot; -- St. Augustine"/>
+						<control progid="DecalControls.StaticText" name="Quote3" left="5" top="200" width="290" height="300" text="&quot;Not all those who answer the call are lost.&quot; -- J.R.R. Tolkien" />
+					</control>
+				</page>
+				<page label="Settings">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.List" name="SettingsList" left="0" top="5" width="400" height="2000">
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="220" />
+							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="80" />
+						</control>
+					</control>
+				</page>
 			</control>
 		</page>
 	</control>

@@ -56,14 +56,11 @@ namespace OracleOfDereth
         {
             if (row < 0 || row >= Setting.All.Count) return;
 
-            if (col == 1)
-            {
-                Setting setting = Setting.All[row];
-                setting.CycleValue();
-                UpdateSettingsList();
+            Setting setting = Setting.All[row];
+            setting.CycleValue();
+            UpdateSettingsList();
 
-                Util.Chat($"{setting.Name}: {setting.Value}", Util.ColorPink);
-            }
+            Util.Chat($"{setting.Name}: {setting.Value}", Util.ColorPink);
         }
     }
 }

@@ -24,6 +24,8 @@ namespace OracleOfDereth
 
         public static bool Identified(WorldObject item)
         {
+            if(Setting.SummonScore.IsNo) { return false; }
+
             Summon summon = new() { Item = item };
             if (summon.IsSummon() == false) { return false; }
 
