@@ -329,5 +329,14 @@
 				<control progid="DecalControls.StaticText" name="Quote3" left="5" top="200" width="290" height="300" text="&quot;Not all those who answer the call are lost.&quot; -- J.R.R. Tolkien" />
 			</control>
 		</page>
+
+		<page label="Settings">
+			<control progid="DecalControls.FixedLayout" clipped="">
+				<control progid="DecalControls.List" name="SettingsList" left="0" top="5" width="400" height="2000">
+					<column progid="DecalControls.TextColumn" name="Name" fixedwidth="220" />
+					<column progid="DecalControls.TextColumn" name="Value" fixedwidth="80" />
+				</control>
+			</control>
+		</page>
 	</control>
 </view>

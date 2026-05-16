@@ -115,6 +115,10 @@ namespace OracleOfDereth
             if (didInit) return;
             didInit = true;
 
+            // Initialize Settings
+            SettingsFile.Init();
+            Setting.Init();
+
             // Initialize Collection
             Augmentation.Init();
             AugQuest.Init();

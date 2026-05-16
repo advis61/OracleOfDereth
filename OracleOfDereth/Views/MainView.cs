@@ -66,6 +66,9 @@ namespace OracleOfDereth
 
             // About
             { 5_00, 350 }, // About
+
+            // Settings
+            { 6_00, 350 }, // Settings
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
@@ -95,6 +98,9 @@ namespace OracleOfDereth
 
             // About
             { 5_00, 270 }, // About
+
+            // Settings
+            { 6_00, 400 }, // Settings
         };
 
         // Assign Images Tracking
@@ -148,6 +154,7 @@ namespace OracleOfDereth
                 InitCredits();
                 InitRecalls();
                 InitLuminance();
+                InitSettings();
 
                 Update();
             }
@@ -183,6 +190,7 @@ namespace OracleOfDereth
                 DisposeCredits();
                 DisposeRecalls();
                 DisposeLuminance();
+                DisposeSettings();
 
                 // Other cleanup
                 AssignedImages.Clear();
@@ -288,6 +296,9 @@ namespace OracleOfDereth
 
             // About
             if (currentTab == 5_00) {; }
+
+            // Settings
+            if (currentTab == 6_00) { UpdateSettings(); }
         }
 
         // Selected target changed
