@@ -440,6 +440,24 @@ namespace OracleOfDereth
             return "Tinks " + GetTinksValue();
         }
 
+        public string GetResistanceCleavingString()
+        {
+            int cleavingType = wo.Values((LongValueKey)152, 0);
+            if (cleavingType <= 0) return "";
+
+            switch (cleavingType)
+            {
+                case 1: return "Slash";
+                case 2: return "Pierce";
+                case 4: return "Bludge";
+                case 8: return "Cold";
+                case 16: return "Fire";
+                case 32: return "Acid";
+                case 64: return "Lightning";
+                default: return "Unknown(" + cleavingType + ")";
+            }
+        }
+
         // ============================================================
         // Spells & Cantrips
         // ============================================================
@@ -516,14 +534,31 @@ namespace OracleOfDereth
 
         public string GetWieldReqName()
         {
-            if (wo.Values(LongValueKey.WieldReqValue) <= 0) return "";
-            if (wo.Values(LongValueKey.WieldReqType) == 7 && wo.Values(LongValueKey.WieldReqAttribute) == 1) return "Wield Lvl";
-            if (SkillInfo.TryGetValue(wo.Values(LongValueKey.WieldReqAttribute), out string skillName)) return skillName;
+            if (wo.Values(LongValueKey.WieldReqValue) > 0)
+            {
+                if (wo.Values(LongValueKey.WieldReqType) == 7 && wo.Values(LongValueKey.WieldReqAttribute) == 1) return "Wield Lvl";
+                if (SkillInfo.TryGetValue(wo.Values(LongValueKey.WieldReqAttribute), out string skillName)) return skillName;
+                return "Unknown Skill " + wo.Values(LongValueKey.WieldReqAttribute);
+            }
 
-            return "Unknown Skill " + wo.Values(LongValueKey.WieldReqAttribute);
+            // Summon/Aetheria/Cloak fallback: property 369 = level, 366 = skill
+            if (wo.Values((LongValueKey)369) > 0) return "Wield Lvl";
+            if (wo.Values((LongValueKey)366) > 0)
+            {
+                if (SkillInfo.TryGetValue(wo.Values((LongValueKey)366), out string skillName)) return skillName;
+            }
+            return "";
         }
 
-        public int GetWieldReqLevel() => wo.Values(LongValueKey.WieldReqValue, 0);
+        public int GetWieldReqLevel()
+        {
+            if (wo.Values(LongValueKey.WieldReqValue, 0) > 0) return wo.Values(LongValueKey.WieldReqValue, 0);
+
+            // Summon/Aetheria/Cloak fallback
+            if (wo.Values((LongValueKey)369) > 0) return wo.Values((LongValueKey)369);
+            if (wo.Values((LongValueKey)367) > 0) return wo.Values((LongValueKey)367);
+            return 0;
+        }
 
         public string GetWieldReqString()
         {
@@ -584,6 +619,17 @@ namespace OracleOfDereth
             }
 
             return string.Join(", ", parts);
+        }
+
+        public string GetActivationReqString()
+        {
+            if (wo.Values(LongValueKey.SkillLevelReq) <= 0) return "";
+            if (wo.Values(LongValueKey.ActivationReqSkillId) == wo.Values(LongValueKey.WieldReqAttribute)
+                && wo.Values(LongValueKey.WieldReqValue) >= wo.Values(LongValueKey.SkillLevelReq)) return "";
+
+            if (SkillInfo.TryGetValue(wo.Values(LongValueKey.ActivationReqSkillId), out string skillName))
+                return skillName + " " + wo.Values(LongValueKey.SkillLevelReq);
+            return "";
         }
 
         // ============================================================

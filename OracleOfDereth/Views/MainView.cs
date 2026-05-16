@@ -89,7 +89,7 @@ namespace OracleOfDereth
             // Quests Tab
             { 3_00, 545}, // John
             { 3_01, 545 }, // Markers
-            { 3_02, 520 }, // Flags
+            { 3_02, 540 }, // Flags
             { 3_03, 485 }, // Facility Hub
 
             // Titles

@@ -121,7 +121,6 @@ namespace OracleOfDereth
 
             if (wo.HasIdData)
             {
-                if (!IsTradeable(wo)) return false;
                 AddFromWorldObject(wo);
                 return true;
             }
@@ -140,9 +139,6 @@ namespace OracleOfDereth
             if (!PendingIds.Contains(item.Id)) return false;
 
             PendingIds.Remove(item.Id);
-
-            if (!IsTradeable(item)) return true;
-
             AddFromWorldObject(item);
             return true;
         }
@@ -162,8 +158,8 @@ namespace OracleOfDereth
                     if (!IsInInventory(wo)) continue;
                     if (TradeItems.Any(t => t.Id == wo.Id)) continue;
 
-                    // Salvage doesn't need identification
-                    if (wo.ObjectClass == ObjectClass.Salvage)
+                    // Salvage and Spell Components don't need identification
+                    if (wo.ObjectClass == ObjectClass.Salvage || wo.ObjectClass == ObjectClass.SpellComponent)
                     {
                         AddFromWorldObject(wo);
                         continue;
@@ -440,7 +436,8 @@ namespace OracleOfDereth
                 "Character", "Server", "Name", "ObjectClass", "Type", "Set", "Armor Level", "Imbues", "Tinks",
                 "OD", "OA", "OM", "Damage", "Dmg Low", "Dmg High", "Elem Bonus", "Missile %", "Caster %",
                 "Attack", "Melee D", "Magic D", "Missile D", "Mana C",
-                "Spells", "Wield Req", "Wield Req Level", "Lore", "Craft", "Value", "Burden",
+                "Spells", "Wield Req", "Wield Req Level", "Activation Req", "Res Cleaving",
+                "Lore", "Craft", "Value", "Burden",
                 "Summon DMG", "Summon DEF",
                 "Item Level",
                 "D", "DR", "C", "CR", "CD", "CDR", "HB", "V"
@@ -481,6 +478,8 @@ namespace OracleOfDereth
                 info.GetSpellsString(),
                 info.GetWieldReqName(),
                 info.GetWieldReqLevel() > 0 ? info.GetWieldReqLevel().ToString() : "",
+                info.GetActivationReqString(),
+                info.GetResistanceCleavingString(),
                 info.GetLoreValue() > 0 ? info.GetLoreValue().ToString() : "",
                 info.GetWorkmanshipString(),
                 info.GetValue() > 0 ? info.GetValue().ToString() : "",

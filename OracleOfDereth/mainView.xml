@@ -81,7 +81,7 @@
 
 						<control progid="DecalControls.StaticText" name="FellowsName" left="1" top="165" width="150" height="17" text="Fellows"/>
 						<control progid="DecalControls.CheckBox" name="FellowshipAutoRecruit" left="150" top="168" width="180" height="20" text="Auto Recruit" checked="false"/>
-						<control progid="DecalControls.List" name="FellowsList" left="0" top="185" width="640" height="165">
+						<control progid="DecalControls.List" name="FellowsList" left="0" top="185" width="640" height="265">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="134" />
 							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="90" />
 							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="1" />
@@ -258,7 +258,7 @@
 						<control progid="DecalControls.StaticText" name="FlagsName" left="1" top="33" width="200" height="17" text="Flagging"/>
 						<control progid="DecalControls.StaticText" name="FlagsProgress" left="276" top="33" width="0" height="17" text="Progress"/>
 
-						<control progid="DecalControls.List" name="FlagsList" left="0" top="53" width="640" height="435">
+						<control progid="DecalControls.List" name="FlagsList" left="0" top="53" width="640" height="535">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
 							<column progid="DecalControls.TextColumn" name="Status" fixedwidth="70" />
