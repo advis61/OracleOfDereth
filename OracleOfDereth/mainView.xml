@@ -210,6 +210,64 @@
 						</control>
 					</control>
 				</page>
+				<page label="Society">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<!-- Section 1: Society Header & Refresh -->
+						<control progid="DecalControls.StaticText" name="SocietyText" left="5" top="5" width="300" height="20" text="No Society"/>
+						<control progid="DecalControls.PushButton" name="SocietyRefresh" left="327" top="3" width="100" height="24" text="Refresh"/>
+
+						<!-- Section 2: Status Key-Value List -->
+						<control progid="DecalControls.List" name="SocietyStatusList" left="0" top="30" width="440" height="120">
+							<column progid="DecalControls.TextColumn" name="Key" fixedwidth="180" />
+							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="200" />
+						</control>
+
+						<!-- Section 3: Investigating / Initiation -->
+						<control progid="DecalControls.StaticText" name="SocietyInitiationLabel" left="5" top="160" width="300" height="17" text="Investigating the Societies"/>
+						<control progid="DecalControls.List" name="SocietyInitiationList" left="0" top="178" width="440" height="100">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
+							<column progid="DecalControls.TextColumn" name="Status" fixedwidth="70" />
+							<column progid="DecalControls.TextColumn" name="Flag" fixedwidth="1" />
+						</control>
+
+						<!-- Section 4: Initiate Quests -->
+						<control progid="DecalControls.StaticText" name="SocietyInitiateLabel" left="5" top="288" width="300" height="17" text="Initiate Quests"/>
+						<control progid="DecalControls.List" name="SocietyInitiateList" left="0" top="306" width="440" height="200">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
+							<column progid="DecalControls.TextColumn" name="Status" fixedwidth="70" />
+							<column progid="DecalControls.TextColumn" name="Flag" fixedwidth="1" />
+						</control>
+
+						<!-- Section 5: Knight Quests -->
+						<control progid="DecalControls.StaticText" name="SocietyKnightLabel" left="5" top="516" width="300" height="17" text="Knight Quests"/>
+						<control progid="DecalControls.List" name="SocietyKnightList" left="0" top="534" width="440" height="260">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
+							<column progid="DecalControls.TextColumn" name="Status" fixedwidth="70" />
+							<column progid="DecalControls.TextColumn" name="Flag" fixedwidth="1" />
+						</control>
+
+						<!-- Section 6: Lord Quests -->
+						<control progid="DecalControls.StaticText" name="SocietyLordLabel" left="5" top="804" width="300" height="17" text="Lord Quests"/>
+						<control progid="DecalControls.List" name="SocietyLordList" left="0" top="822" width="440" height="240">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
+							<column progid="DecalControls.TextColumn" name="Status" fixedwidth="70" />
+							<column progid="DecalControls.TextColumn" name="Flag" fixedwidth="1" />
+						</control>
+
+						<!-- Section 7: Master Quests -->
+						<control progid="DecalControls.StaticText" name="SocietyMasterLabel" left="5" top="1072" width="300" height="17" text="Master Quests"/>
+						<control progid="DecalControls.List" name="SocietyMasterList" left="0" top="1090" width="440" height="80">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="225" />
+							<column progid="DecalControls.TextColumn" name="Status" fixedwidth="70" />
+							<column progid="DecalControls.TextColumn" name="Flag" fixedwidth="1" />
+						</control>
+					</control>
+				</page>
 			</control>
 		</page>
 

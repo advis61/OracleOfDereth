@@ -55,6 +55,7 @@ namespace OracleOfDereth
             { 2_02, 350 }, // Credits
             { 2_03, 650 }, // Luminance
             { 2_04, 350 }, // Recalls
+            { 2_05, 430 }, // Society
 
             // Quests Tab
             { 3_00, 430 }, // John
@@ -85,6 +86,7 @@ namespace OracleOfDereth
             { 2_02, 165 }, // Credits
             { 2_03, 550 }, // Luminance
             { 2_04, 435 }, // Recalls
+            { 2_05, 545 }, // Society
 
             // Quests Tab
             { 3_00, 545}, // John
@@ -155,6 +157,7 @@ namespace OracleOfDereth
                 InitCredits();
                 InitRecalls();
                 InitLuminance();
+                InitSociety();
                 InitSettings();
 
                 Update();
@@ -192,6 +195,7 @@ namespace OracleOfDereth
                 DisposeCredits();
                 DisposeRecalls();
                 DisposeLuminance();
+                DisposeSociety();
                 DisposeSettings();
 
                 // Other cleanup
@@ -286,6 +290,7 @@ namespace OracleOfDereth
             if (currentTab == 2_02) { UpdateCredits(); }
             if (currentTab == 2_03) { UpdateLuminance(); }
             if (currentTab == 2_04) { UpdateRecalls(); }
+            if (currentTab == 2_05) { UpdateSociety(); }
 
             // Quests Tab
             if (currentTab == 3_00) { UpdateJohn(); }

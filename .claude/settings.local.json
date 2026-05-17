@@ -4,7 +4,11 @@
       "Bash(grep \"\\\\.cs$\")",
       "Bash(ls -lh /c/Projects/OracleOfDereth/OracleOfDereth/*.cs)",
       "Bash(git log:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "WebFetch(domain:acportalstorm.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)"
     ]
   }
 }

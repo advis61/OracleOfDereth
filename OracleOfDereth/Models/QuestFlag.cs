@@ -3,6 +3,7 @@ using Decal.Adapter.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -19,13 +20,15 @@ namespace OracleOfDereth
         // Quest Flags I care to track
         private static readonly List<string> QuestFlagsToTrack = new List<string> 
             { 
-                "legendaryquestsa", 
-                "legendaryquestsb", 
-                "legendaryquestsc", 
-                "explorationmarkersfound", 
-                "burflagged(metal)", 
-                "burflagged(motes)", 
-                "burflagged(gem)" 
+                "legendaryquestsa",
+                "legendaryquestsb",
+                "legendaryquestsc",
+                "explorationmarkersfound",
+                "burflagged(metal)",
+                "burflagged(motes)",
+                "burflagged(gem)",
+                "societyribbonsperdaytimer",
+                "societyribbonsperdaycounter"
             }
             .Concat(Augmentation.Augmentations.Select(q => q.Flag))
             .Concat(AugQuest.AugQuests.Select(q => q.Flag))
