@@ -52,6 +52,7 @@
     <EmbeddedResource Include="Resources\markers.csv" />
     <EmbeddedResource Include="Resources\nearbys.csv" />
     <EmbeddedResource Include="Resources\recalls.csv" />
+    <EmbeddedResource Include="Resources\society.csv" />
     <EmbeddedResource Include="Resources\titles.csv" />
     <EmbeddedResource Include="targetView.xml" />
     <EmbeddedResource Include="Resources\johnquests.csv" />

@@ -128,6 +128,7 @@ namespace OracleOfDereth
             FellowshipTracker.Init();
             FlagQuest.Init();
             JohnQuest.Init();
+            SocietyQuest.Init();
             Marker.Init();
             Nearby.Init();
             QuestFlag.Init();

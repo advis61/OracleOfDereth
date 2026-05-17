@@ -37,6 +37,7 @@ namespace OracleOfDereth
             .Concat(FlagQuest.FlagQuests.Select(q => q.Flag))
             .Concat(FlagQuest.FlagQuests.Select(q => q.Flag2))
             .Concat(JohnQuest.JohnQuests.Select(q => q.Flag))
+            .Concat(SocietyQuest.SocietyQuests.Select(q => q.Flag))
             .Concat(Marker.Markers.Select(q => q.Flag))
             .ToList();
 

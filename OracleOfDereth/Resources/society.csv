@@ -1,55 +1,55 @@
 Name,QuestFlag,Area,Url,Hint
-Investigating the Societies,,Graveyard,https://acportalstorm.com/wiki/Investigating_the_Societies,Zaikhal - Speak with Jondor Torgren 13.6N 0.7E - Graveyard - Speak with Candrus Steady-Hand 65.8S 45.3W - Ayan Baqur - Give letter to Joku Shunja 60.1S 88.0W - Zaikhal - Speak with Jondor Torgren
-Celestial Hand Initiation,,Hebian-to,https://acportalstorm.com/wiki/Celestial_Hand_Initiation,Hebian-To 39.7S 83.6E - Corrupted Catacombs 23.9S 54.1E near Sawato - Get Slimy Key - Corrupted Mana Shard - Return to Kirina Hebian-To 39.7S 83.6E
-Eldrytch Web Initiation,,Cragstone,https://acportalstorm.com/wiki/Eldrytch_Web_Initiation,Cragstone 26.3N 49.6E - Corrupted Catacombs 23.9S 54.1E near Sawato - Get Slimy Key - Corrupted Mana Shard - Return to Arturus Cragstone 26.3N 49.6E
-Radiant Blood Initiation,,Zaikhal,https://acportalstorm.com/wiki/Radiant_Blood_Initiation,Zaikhal 12.8N 0.7E - Corrupted Catacombs 23.9S 54.1E near Sawato - Get Slimy Key - Corrupted Mana Shard - Return to Ayesha Zaikhal 12.8N 0.7E
+Investigating the Societies,JondorTurnInWait,Graveyard,https://acportalstorm.com/wiki/Investigating_the_Societies,Zaikhal - Speak with Jondor Torgren 13.6N 0.7E - Graveyard - Speak with Candrus Steady-Hand 65.8S 45.3W - Ayan Baqur - Give letter to Joku Shunja 60.1S 88.0W - Zaikhal - Speak with Jondor Torgren
+Celestial Hand Initiation,celestialhandmember,Hebian-to,https://acportalstorm.com/wiki/Celestial_Hand_Initiation,Hebian-To 39.7S 83.6E - Corrupted Catacombs 23.9S 54.1E near Sawato - Get Slimy Key - Corrupted Mana Shard - Return to Kirina Hebian-To 39.7S 83.6E
+Eldrytch Web Initiation,eldrytchwebmember,Cragstone,https://acportalstorm.com/wiki/Eldrytch_Web_Initiation,Cragstone 26.3N 49.6E - Corrupted Catacombs 23.9S 54.1E near Sawato - Get Slimy Key - Corrupted Mana Shard - Return to Arturus Cragstone 26.3N 49.6E
+Radiant Blood Initiation,radiantbloodmember,Zaikhal,https://acportalstorm.com/wiki/Radiant_Blood_Initiation,Zaikhal 12.8N 0.7E - Corrupted Catacombs 23.9S 54.1E near Sawato - Get Slimy Key - Corrupted Mana Shard - Return to Ayesha Zaikhal 12.8N 0.7E
 Blank,,,,
 Rank: Initiate,,,,
-Dark Isle Delivery,,Dark Isle,https://acportalstorm.com/wiki/Dark_Isle_Delivery,Dark Isle - The Deep 85.5N 57.2E
-Defeating Vaeshok,DefeatingVaeshok,Dark Isle,https://acportalstorm.com/wiki/Defeating_Vaeshok,Dark Isle cave 86.9N 59.7E - All rights down - Defeat Vaeshok
-Disrupting the Mana Siphon,,Gear Knight,https://acportalstorm.com/wiki/Disrupting_the_Mana_Siphon,Direlands Gear Knight Invasion - Mana Siphon 10.2S 75.1W
-Gear Knight Parts,,Gear Knight,https://acportalstorm.com/wiki/Collect_Gear_Knight_Parts,Direlands Gear Knight Invasion - Kill Gear Knights for 10 Pile of Gearknight Parts
-Gear Knight Phalanx Kill Task,,Gear Knight,https://acportalstorm.com/wiki/Gear_Knight_Phalanx_Kill_Task,Direlands Gear Knight Invasion - Kill 10 Invading Gear Knight Phalanxs
-Shambling Archivist Destroyer,,Graveyard,https://acportalstorm.com/wiki/Shambling_Archivist_Destroyer,Graveyard - Defeat Shambling Archivist 65.5S 43.9W
-Undead Jaw Collection,,Graveyard,https://acportalstorm.com/wiki/Undead_Jaw_Collection,Graveyard - Kill Pyre Minions Skeletons and Champions for 8 Pyre Skeleton Jaws
-Wight Blade Sorcerer Kill Task,,Graveyard,https://acportalstorm.com/wiki/Wight_Blade_Sorcerer_Kill_Task,Graveyard - Kill 12 Wight Blade Sorcerers (night on landscape / Wight Barrow or Mhoire Armory any time)
+Dark Isle Delivery,darkisledelivery,Dark Isle,https://acportalstorm.com/wiki/Dark_Isle_Delivery,Dark Isle - The Deep 85.5N 57.2E
+Defeating Vaeshok,defeatingvaeshok,Dark Isle,https://acportalstorm.com/wiki/Defeating_Vaeshok,Dark Isle cave 86.9N 59.7E - All rights down - Defeat Vaeshok
+Disrupting the Mana Siphon,gearknightinvasionhighsiphonwait_1009,Gear Knight,https://acportalstorm.com/wiki/Disrupting_the_Mana_Siphon,Direlands Gear Knight Invasion - Mana Siphon 10.2S 75.1W
+Gear Knight Parts,gearknightparts,Gear Knight,https://acportalstorm.com/wiki/Collect_Gear_Knight_Parts,Direlands Gear Knight Invasion - Kill Gear Knights for 10 Pile of Gearknight Parts
+Gear Knight Phalanx Kill Task,gearknightphalanxkilltask,Gear Knight,https://acportalstorm.com/wiki/Gear_Knight_Phalanx_Kill_Task,Direlands Gear Knight Invasion - Kill 10 Invading Gear Knight Phalanxs
+Shambling Archivist Destroyer,shamblingarchivistdestroyer,Graveyard,https://acportalstorm.com/wiki/Shambling_Archivist_Destroyer,Graveyard - Defeat Shambling Archivist 65.5S 43.9W
+Undead Jaw Collection,undeadjawcollection,Graveyard,https://acportalstorm.com/wiki/Undead_Jaw_Collection,Graveyard - Kill Pyre Minions Skeletons and Champions for 8 Pyre Skeleton Jaws
+Wight Blade Sorcerer Kill Task,wightbladesorcererkilltask,Graveyard,https://acportalstorm.com/wiki/Wight_Blade_Sorcerer_Kill_Task,Graveyard - Kill 12 Wight Blade Sorcerers (night on landscape / Wight Barrow or Mhoire Armory any time)
 Adept Test,,Neydisa Castle,https://acportalstorm.com/wiki/Adept_Test,Neydisa Castle portal - Rogue Delvings 74.8N 18.4E - Keys from Captains Donnarion Haroush Joroshi - Defeat Benedino - Loot Lens of Filinuvekta
 Blank,,,,
 Rank: Adept,,,,
-Black Coral Collection,,Dark Isle,https://acportalstorm.com/wiki/Black_Coral_Collection,Dark Isle - Collect 10 Black Coral from Coral Forest
-Dark Isle Scouting,,Dark Isle,https://acportalstorm.com/wiki/Dark_Isle_Scouting,Dark Isle - Use Crystal of Perception at 86.9N 59.8E - 87.4N 56.9E - Ice tower summit 96.4N 54.6E
-Falatacot Report Collector,,Dark Isle,https://acportalstorm.com/wiki/Falatacot_Report_Collector,Dark Isle - Kill Falatacot Consorts and Blood Prophetess for 10 Falatacot Battle Reports
-Graveyard Delivery,,Graveyard,https://acportalstorm.com/wiki/Graveyard_Delivery,Graveyard - Massilor's Crypt 65.4S 43.6W - Give supplies to Massilor the Withered
-Tracing The Stone,,Graveyard,https://acportalstorm.com/wiki/Tracing_The_Stone,Graveyard - Wight Barrow 65.3S 44.6W - Use tracing paper on Mhoire Carved Cenotaph
-Knight Test,,Ithaenc Island,https://acportalstorm.com/wiki/Knight_Test,Ithaenc Island - Ancient Cloister 82.5S 96.1E - Collect Leatherbound Journal
+Black Coral Collection,taskdiblackcoralcomplete,Dark Isle,https://acportalstorm.com/wiki/Black_Coral_Collection,Dark Isle - Collect 10 Black Coral from Coral Forest
+Dark Isle Scouting,taskdiscoutcomplete,Dark Isle,https://acportalstorm.com/wiki/Dark_Isle_Scouting,Dark Isle - Use Crystal of Perception at 86.9N 59.8E - 87.4N 56.9E - Ice tower summit 96.4N 54.6E
+Falatacot Report Collector,falatcotreports,Dark Isle,https://acportalstorm.com/wiki/Falatacot_Report_Collector,Dark Isle - Kill Falatacot Consorts and Blood Prophetess for 10 Falatacot Battle Reports
+Graveyard Delivery,taskgrave2fedexwait,Graveyard,https://acportalstorm.com/wiki/Graveyard_Delivery,Graveyard - Massilor's Crypt 65.4S 43.6W - Give supplies to Massilor the Withered
+Tracing The Stone,tracingthestone,Graveyard,https://acportalstorm.com/wiki/Tracing_The_Stone,Graveyard - Wight Barrow 65.3S 44.6W - Use tracing paper on Mhoire Carved Cenotaph
+Knight Test,freebooter,Ithaenc Island,https://acportalstorm.com/wiki/Knight_Test,Ithaenc Island - Ancient Cloister 82.5S 96.1E - Collect Leatherbound Journal
 Blank,,,,
 Rank: Knight,,,,
-Blessed Moarsman Kill Task,,Freebooter Isle,https://acportalstorm.com/wiki/Blessed_Moarsman_Kill_Task,Freebooter Isle - Kill 50 Blessed Moarsmen
-Commendation Ribbon Recovery,,Freebooter Isle,https://acportalstorm.com/wiki/Commendation_Ribbon_Recovery,Freebooter Phyntos Wasp Hive 63.1S 97.5E - Collect damaged commendation ribbons
-Defeating Bandit Mana Hunter Boss,,Freebooter Isle,https://acportalstorm.com/wiki/Defeating_Bandit_Mana_Hunter_Boss,Freebooter Isle - Bandit Magma Tubes 54.4S 97.2E - Stick left - Kill Bandit Mana Hunter Boss
-Glowing Jungle Lily Collector,,Freebooter Isle,https://acportalstorm.com/wiki/Glowing_Jungle_Lily_Collector,Freebooter Isle - Collect 20 Glowing Jungle Lilies
-Glowing Moar Gland Collector,,Freebooter Isle,https://acportalstorm.com/wiki/Glowing_Moar_Gland_Collector,Freebooter Isle - Kill Blessed Moars for 30 Glowing Moar Glands
-Killer Phyntos Wasp Kill Task,,Freebooter Isle,https://acportalstorm.com/wiki/Killer_Phyntos_Wasp_Kill_Task,Freebooter Phyntos Wasp Hive 63.1S 97.5E - Kill 50 Killer Phyntos Wasps
-Mana-Infused Jungle Flower Collector,,Freebooter Isle,https://acportalstorm.com/wiki/Mana-Infused_Jungle_Flower_Collector,Freebooter Isle - Collect 20 Mana-Infused Jungle Flowers
-Phyntos Honey Collector,,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Honey_Collector,Freebooter Phyntos Wasp Hive 63.1S 97.5E - Collect 10 Phyntos Honey
-Phyntos Larva Kill Task,,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Larva_Kill_Task,Freebooter Phyntos Wasp Hive 63.1S 97.5E - East to bottom rooms - Kill 20 Phyntos Larva
-Phyntos Queen Quest,,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Queen_Quest,Freebooter Phyntos Wasp Hive 63.1S 97.5E - Bottom West or East room - Kill Phyntos Queen loot Abdomen
-Phyntos Splinter Collector,,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Splinter_Collector,Freebooter Isle - Kill Killer Phyntos Hives for 10 Hive Splinters
-Lord Test,,Eastwatch,https://acportalstorm.com/wiki/Lord_Test,Eastwatch - Blighted Verdant Moarsman Tunnels 92.7N 42.3W - All lefts - Kill Prior Kothmox for Staff - Statue 87.9S 55.9W (night) or 87.9S 54.5W (day) - Temple Door 87.9S 55.2W - Kill Blind Keeper then Gate Watcher
+Blessed Moarsman Kill Task,blessedmoarsmankilltask,Freebooter Isle,https://acportalstorm.com/wiki/Blessed_Moarsman_Kill_Task,Freebooter Isle - Kill 50 Blessed Moarsmen
+Commendation Ribbon Recovery,societydamagedribbonsperdaytimer,Freebooter Isle,https://acportalstorm.com/wiki/Commendation_Ribbon_Recovery,Freebooter Phyntos Wasp Hive 63.1S 97.5E - Collect damaged commendation ribbons
+Defeating Bandit Mana Hunter Boss,taskfreebooterbanditbosskillwait,Freebooter Isle,https://acportalstorm.com/wiki/Defeating_Bandit_Mana_Hunter_Boss,Freebooter Isle - Bandit Magma Tubes 54.4S 97.2E - Stick left - Kill Bandit Mana Hunter Boss
+Glowing Jungle Lily Collector,taskfreebooterjunglelilycomplete,Freebooter Isle,https://acportalstorm.com/wiki/Glowing_Jungle_Lily_Collector,Freebooter Isle - Collect 20 Glowing Jungle Lilies
+Glowing Moar Gland Collector,taskfreebootermoarglandcomplete,Freebooter Isle,https://acportalstorm.com/wiki/Glowing_Moar_Gland_Collector,Freebooter Isle - Kill Blessed Moars for 30 Glowing Moar Glands
+Killer Phyntos Wasp Kill Task,killerphyntoswaspkilltask,Freebooter Isle,https://acportalstorm.com/wiki/Killer_Phyntos_Wasp_Kill_Task,Freebooter Phyntos Wasp Hive 63.1S 97.5E - Kill 50 Killer Phyntos Wasps
+Mana-Infused Jungle Flower Collector,taskfreebooterjungleflowercomplete,Freebooter Isle,https://acportalstorm.com/wiki/Mana-Infused_Jungle_Flower_Collector,Freebooter Isle - Collect 20 Mana-Infused Jungle Flowers
+Phyntos Honey Collector,phyntoshoneycomplete1109,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Honey_Collector,Freebooter Phyntos Wasp Hive 63.1S 97.5E - Collect 10 Phyntos Honey
+Phyntos Larva Kill Task,phyntoslarvakilltask,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Larva_Kill_Task,Freebooter Phyntos Wasp Hive 63.1S 97.5E - East to bottom rooms - Kill 20 Phyntos Larva
+Phyntos Queen Quest,killphyntosqueenpickup1109,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Queen_Quest,Freebooter Phyntos Wasp Hive 63.1S 97.5E - Bottom West or East room - Kill Phyntos Queen loot Abdomen
+Phyntos Splinter Collector,phyntoshivecomplete1109,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Splinter_Collector,Freebooter Isle - Kill Killer Phyntos Hives for 10 Hive Splinters
+Lord Test,flaggedmoarsmancity,Eastwatch,https://acportalstorm.com/wiki/Lord_Test,Eastwatch - Blighted Verdant Moarsman Tunnels 92.7N 42.3W - All lefts - Kill Prior Kothmox for Staff - Statue 87.9S 55.9W (night) or 87.9S 54.5W (day) - Temple Door 87.9S 55.2W - Kill Blind Keeper then Gate Watcher
 Blank,,,,
 Rank: Lord,,,,
-Artifact Collection,,Nyr'leha,https://acportalstorm.com/wiki/Artifact_Collection,Nyr'leha Moarsman City - Temple Horn 92.3S 52.8W - Coral's Heart 92.6S 54.1W - Sacred Deep Water 92.9S 55.5W - Blood Pearl 93.5S 57.4W - Spear of Baalfroth 93.5S 54.3W - Scroll of Prophecy 93.4S 52.9W - Finger Bone 93.3S 51.0W - Skull of Mishfain 92.5S 48.6W - Tooth Necklace 92.2S 51.2W - Eye of T'thuun 91.0S 51.9W
-Coral Tower Destroyer,,Nyr'leha,https://acportalstorm.com/wiki/Coral_Tower_Destroyer,Nyr'leha Moarsman City SE of Candeth Keep - Black Tower 93.5S 49.5W - Blue Tower 92.8S 51.3W - Green Tower 91.8S 53.6W - Red Tower 93.5S 55.2W - White Tower 92.7S 57.6W
+Artifact Collection,taskmoarsmenartifactswait,Nyr'leha,https://acportalstorm.com/wiki/Artifact_Collection,Nyr'leha Moarsman City - Temple Horn 92.3S 52.8W - Coral's Heart 92.6S 54.1W - Sacred Deep Water 92.9S 55.5W - Blood Pearl 93.5S 57.4W - Spear of Baalfroth 93.5S 54.3W - Scroll of Prophecy 93.4S 52.9W - Finger Bone 93.3S 51.0W - Skull of Mishfain 92.5S 48.6W - Tooth Necklace 92.2S 51.2W - Eye of T'thuun 91.0S 51.9W
+Coral Tower Destroyer,taskcoraltowerswait,Nyr'leha,https://acportalstorm.com/wiki/Coral_Tower_Destroyer,Nyr'leha Moarsman City SE of Candeth Keep - Black Tower 93.5S 49.5W - Blue Tower 92.8S 51.3W - Green Tower 91.8S 53.6W - Red Tower 93.5S 55.2W - White Tower 92.7S 57.6W
 Forgotten Tunnels of Nyr'leha,,Moarsman City,https://acportalstorm.com/wiki/Forgotten_Tunnels_of_Nyr%27leha,Moarsman City - Forgotten Tunnels 92.9S 56.4W or 93.1S 56.9W or 93.6S 56.6W - Collect 2 Orange 2 Purple Crystals - Golem Keys - Energy Ring - Defeat Guardian and The Secret Keeper
-High Priest of T'thuun Kill Task,,Moarsman City,https://acportalstorm.com/wiki/High_Priest_of_T%27thuun_Kill_Task,Moarsman City - Acolyte's Chamber 92.6S 53.0W - High Priest's Third 92.6S 52.6W - Second 93.0S 53.0W - First 93.0S 52.6W - Temple of T'thuun 92.8S 52.8W - Kill High Priest of T'thuun
-Magshuth Moarsmen Kill Task,,Moarsman City,https://acportalstorm.com/wiki/Magshuth_Moarsmen_Kill_Task,Moarsman City SE of Candeth Keep - Kill 20 Magshuth Moarsmen
-Moarsman Spawning Pools,,Nyr'leha,https://acportalstorm.com/wiki/Moarsman_Spawning_Pools,Nyr'leha Moarsmen City SE of Candeth Keep - Brood Mother pools 91.9S 51.9W - 92.3S 49.7W - 93.7S 52.7W - 92.9S 54.5W
-Moguth Moarsman Kill Task,,Moarsman City,https://acportalstorm.com/wiki/Moguth_Moarsman_Kill_Task,Moarsman City Southern Direland Shores SE of Candeth Keep - Kill 60 Moguth Moarsmen
-Palm Fort,,Moarsman City,https://acportalstorm.com/wiki/Palm_Fort,Moarsman City - Fort 92.1S 50.3W (CH) or 91.4S 53.8W (EW) or 93.6S 51.8W (RB) - Defend ~5 minutes
-Shoguth Moarsman Kill Task,,Moarsman City,https://acportalstorm.com/wiki/Shoguth_Moarsman_Kill_Task,Moarsman City Southern Direland Shores SE of Candeth Keep - Kill 40 Shoguth Moarsmen
-Supply Saboteur,,Moarsman City,https://acportalstorm.com/wiki/Supply_Saboteur,Faction fort 92.1S 50.3W (CH) or 91.4S 53.8W (EW) or 93.6S 51.8W (RB) - Raid two enemy forts for supplies
+High Priest of T'thuun Kill Task,highpriestoftthuunkilltask,Moarsman City,https://acportalstorm.com/wiki/High_Priest_of_T%27thuun_Kill_Task,Moarsman City - Acolyte's Chamber 92.6S 53.0W - High Priest's Third 92.6S 52.6W - Second 93.0S 53.0W - First 93.0S 52.6W - Temple of T'thuun 92.8S 52.8W - Kill High Priest of T'thuun
+Magshuth Moarsmen Kill Task,magshuthmoarsmenkilltask,Moarsman City,https://acportalstorm.com/wiki/Magshuth_Moarsmen_Kill_Task,Moarsman City SE of Candeth Keep - Kill 20 Magshuth Moarsmen
+Moarsman Spawning Pools,TaskSpawnPoolsStarted,Nyr'leha,https://acportalstorm.com/wiki/Moarsman_Spawning_Pools,Nyr'leha Moarsmen City SE of Candeth Keep - Brood Mother pools 91.9S 51.9W - 92.3S 49.7W - 93.7S 52.7W - 92.9S 54.5W
+Moguth Moarsman Kill Task,moguthmoarsmankilltask,Moarsman City,https://acportalstorm.com/wiki/Moguth_Moarsman_Kill_Task,Moarsman City Southern Direland Shores SE of Candeth Keep - Kill 60 Moguth Moarsmen
+Palm Fort,palmfortdefended1209,Moarsman City,https://acportalstorm.com/wiki/Palm_Fort,Moarsman City - Fort 92.1S 50.3W (CH) or 91.4S 53.8W (EW) or 93.6S 51.8W (RB) - Defend ~5 minutes
+Shoguth Moarsman Kill Task,shoguthmoarsmankilltask,Moarsman City,https://acportalstorm.com/wiki/Shoguth_Moarsman_Kill_Task,Moarsman City Southern Direland Shores SE of Candeth Keep - Kill 40 Shoguth Moarsmen
+Supply Saboteur,suppliesturnedin1209,Moarsman City,https://acportalstorm.com/wiki/Supply_Saboteur,Faction fort 92.1S 50.3W (CH) or 91.4S 53.8W (EW) or 93.6S 51.8W (RB) - Raid two enemy forts for supplies
 Master Test,,Freebooter Isle,https://acportalstorm.com/wiki/Master_Test,Freebooter Isle - Statue of Transport 55.7S 97.7E - Catacombs of Tar'Kelyn - Kill Skith'Kirit (CH) or Tikchti (EW) or Kathirik (RB)
 Blank,,,,
 Rank: Master,,,,
-Society Infiltration,,Stronghold,https://acportalstorm.com/wiki/Society_Infiltration,Society Chapterhouse Stronghold - Basement south then west - Supply Room Key - Burn supply crates - 2 Main Keys - Weapons Room - Prison Key - Free Captives - Smelt weapons - Defeat Commander - Press '/' for Documents
+Society Infiltration,societyaugreward_0210,Stronghold,https://acportalstorm.com/wiki/Society_Infiltration,Society Chapterhouse Stronghold - Basement south then west - Supply Room Key - Burn supply crates - 2 Main Keys - Weapons Room - Prison Key - Free Captives - Smelt weapons - Defeat Commander - Press '/' for Documents
 Tactical Defense Game,,Stronghold,https://acportalstorm.com/wiki/Tactical_Defense_Game,Faction Stronghold north wing - Survive 49 waves of tower defense - Speak with Supreme Tactician

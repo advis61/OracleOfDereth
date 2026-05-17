@@ -87,14 +87,31 @@ namespace OracleOfDereth
             return counter.Solves;
         }
 
+        public static bool HasReachedRank(string rankName)
+        {
+            int value = GetRankValue();
+            switch (rankName)
+            {
+                case "Initiate": return value >= 1;
+                case "Adept": return value >= 101;
+                case "Knight": return value >= 301;
+                case "Lord": return value >= 601;
+                case "Master": return value >= 995;
+                default: return false;
+            }
+        }
+
+        // Displayed ribbon cap. Ribbons are turned in 5 at a time, so the in-game
+        // cap lands on the nicer test-threshold numbers (95/295/595/995) rather
+        // than 94/294/etc. Used only for the "Rank Progress" display.
         public static int GetRankMax()
         {
             int value = GetRankValue();
-            if (value >= 995) return 1001;
-            if (value >= 601) return 994;
-            if (value >= 301) return 594;
-            if (value >= 101) return 294;
-            if (value >= 1) return 94;
+            if (value >= 995) return 1000;
+            if (value >= 601) return 995;
+            if (value >= 301) return 595;
+            if (value >= 101) return 295;
+            if (value >= 1) return 95;
             return 0;
         }
     }

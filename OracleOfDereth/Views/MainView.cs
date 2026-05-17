@@ -55,7 +55,7 @@ namespace OracleOfDereth
             { 2_02, 350 }, // Credits
             { 2_03, 650 }, // Luminance
             { 2_04, 350 }, // Recalls
-            { 2_05, 430 }, // Society
+            { 2_05, 530 }, // Society
 
             // Quests Tab
             { 3_00, 430 }, // John
@@ -86,7 +86,7 @@ namespace OracleOfDereth
             { 2_02, 165 }, // Credits
             { 2_03, 550 }, // Luminance
             { 2_04, 435 }, // Recalls
-            { 2_05, 545 }, // Society
+            { 2_05, 550 }, // Society
 
             // Quests Tab
             { 3_00, 545}, // John
