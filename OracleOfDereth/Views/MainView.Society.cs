@@ -59,6 +59,12 @@ namespace OracleOfDereth
             // Status key-value list
             SocietyStatusList.ClearRows();
 
+            if (name == "None")
+            {
+                AddStatusRow("Requires", "Level 180+");
+                AddStatusRow("Start with", "Investigating the Societies quest");
+            }
+
             if (name != "None")
             {
                 int value = Society.GetRankValue();
@@ -150,7 +156,7 @@ namespace OracleOfDereth
                     AssignImage((HudPictureBox)row[0], reached);
                     ((HudStaticText)row[1]).Text = societyQuest.Name;
                     ((HudStaticText)row[2]).Text = "";
-                    ((HudStaticText)row[3]).Text = reached ? "completed" : "";
+                    ((HudStaticText)row[3]).Text = "";
                     ((HudStaticText)row[4]).Text = "";
                     ((HudStaticText)row[5]).Text = "";
                     continue;
