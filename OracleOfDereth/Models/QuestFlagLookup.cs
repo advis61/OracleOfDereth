@@ -14,6 +14,9 @@ namespace OracleOfDereth
         private const string UrlTemplate =
             "https://raw.githubusercontent.com/ACEmulator/ACE-World-16PY-Patches/master/Database/Patches/9%20WeenieDefaults/Creature/Human/{0}.es";
 
+        private const string BrowseUrlTemplate =
+            "https://github.com/ACEmulator/ACE-World-16PY-Patches/blob/master/Database/Patches/9%20WeenieDefaults/Creature/Human/{0}.es";
+
         private static readonly Regex InqQuestRegex = new Regex(@"InqQuest:\s*(\S+)", RegexOptions.IgnoreCase);
 
         public static void Execute()
@@ -68,13 +71,23 @@ namespace OracleOfDereth
             if (flags.Count == 0)
             {
                 Util.Chat($"[{type}] {name}: no InqQuest entries found in script.", Util.ColorYellow);
+                Util.Chat($"  {string.Format(BrowseUrlTemplate, type)}", Util.ColorYellow);
                 return;
             }
 
-            Util.Chat($"[{type}] {name} - InqQuest flags:", Util.ColorCyan);
-            foreach (var flag in flags)
+            bool copied = false;
+            try
             {
-                Util.Chat($"  {flag}", Util.ColorCyan);
+                System.Windows.Forms.Clipboard.SetText(flags[0]);
+                copied = true;
+            }
+            catch { }
+
+            Util.Chat($"[{type}] {name} - InqQuest flags:", Util.ColorCyan);
+            for (int i = 0; i < flags.Count; i++)
+            {
+                string suffix = (i == 0 && copied) ? " (copied to clipboard)" : "";
+                Util.Chat($"  {flags[i]}{suffix}", Util.ColorCyan);
             }
         }
     }
