@@ -368,6 +368,15 @@
 						</control>
 					</control>
 				</page>
+				<page label="Help">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="HelpVersion" left="5" top="5" width="490" height="20" />
+						<control progid="DecalControls.List" name="HelpList" left="0" top="30" width="540" height="2000">
+							<column progid="DecalControls.TextColumn" name="Command" fixedwidth="220" />
+							<column progid="DecalControls.TextColumn" name="Description" fixedwidth="280" />
+						</control>
+					</control>
+				</page>
 			</control>
 		</page>
 	</control>

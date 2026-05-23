@@ -66,9 +66,10 @@ namespace OracleOfDereth
             // Titles
             { 4_00, 560 }, // Available and Unavailable
 
-            // About / Settings
+            // About / Settings / Help
             { 5_00, 350 }, // About
             { 5_01, 350 }, // Settings
+            { 5_02, 540 }, // Help
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
@@ -86,7 +87,7 @@ namespace OracleOfDereth
             { 2_02, 165 }, // Credits
             { 2_03, 550 }, // Luminance
             { 2_04, 435 }, // Recalls
-            { 2_05, 550 }, // Society
+            { 2_05, 570 }, // Society
 
             // Quests Tab
             { 3_00, 545}, // John
@@ -97,9 +98,10 @@ namespace OracleOfDereth
             // Titles
             { 4_00, 545 }, // Available
 
-            // About / Settings
+            // About / Settings / Help
             { 5_00, 270 }, // About
             { 5_01, 400 }, // Settings
+            { 5_02, 340 }, // Help
         };
 
         // Assign Images Tracking
@@ -159,6 +161,7 @@ namespace OracleOfDereth
                 InitLuminance();
                 InitSociety();
                 InitSettings();
+                InitHelp();
 
                 Update();
             }
@@ -302,9 +305,10 @@ namespace OracleOfDereth
             if (currentTab == 4_00) { UpdateTitles(); }
             if (currentTab == 4_01) { UpdateTitles(); }
 
-            // About / Settings
+            // About / Settings / Help
             if (currentTab == 5_00) {; }
             if (currentTab == 5_01) { UpdateSettings(); }
+            if (currentTab == 5_02) { UpdateHelp(); }
         }
 
         // Selected target changed
