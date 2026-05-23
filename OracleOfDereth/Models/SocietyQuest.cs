@@ -99,11 +99,33 @@ namespace OracleOfDereth
             return Society.HasReachedRank(rankName);
         }
 
+        // Rank-test quests (Adept/Knight/Lord/Master Test) don't all carry a
+        // reliable quest flag — some have none in the CSV — but reaching the
+        // matching rank proves the test was passed, so use rank as the source.
+        public bool IsRankTest()
+        {
+            return Name == "Adept Test" || Name == "Knight Test" || Name == "Lord Test" || Name == "Master Test";
+        }
+
+        private string RankTestTargetRank()
+        {
+            switch (Name)
+            {
+                case "Adept Test": return "Adept";
+                case "Knight Test": return "Knight";
+                case "Lord Test": return "Lord";
+                case "Master Test": return "Master";
+                default: return "";
+            }
+        }
+
         // A one-time quest is a permanent stamp with no repeat timer (e.g. the
         // Investigating / Initiation / rank Test quests). Repeatable society
         // quests carry a RepeatTime cooldown in /myquests.
         public bool IsOneTime()
         {
+            if (IsRankTest()) return true;
+
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return false; }
 
@@ -113,6 +135,8 @@ namespace OracleOfDereth
         // Quest rows
         public bool IsComplete()
         {
+            if (IsRankTest()) return Society.HasReachedRank(RankTestTargetRank());
+
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return false; }
 

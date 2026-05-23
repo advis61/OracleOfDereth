@@ -214,22 +214,22 @@
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<!-- Section 1: Society Header & Refresh -->
 						<control progid="DecalControls.StaticText" name="SocietyText" left="5" top="5" width="300" height="20" text="No Society"/>
-						<control progid="DecalControls.PushButton" name="SocietyRefresh" left="407" top="3" width="100" height="24" text="Refresh"/>
+						<control progid="DecalControls.PushButton" name="SocietyRefresh" left="428" top="3" width="100" height="24" text="Refresh"/>
 
 						<!-- Section 2: Status Key-Value List -->
-						<control progid="DecalControls.List" name="SocietyStatusList" left="0" top="30" width="530" height="120">
+						<control progid="DecalControls.List" name="SocietyStatusList" left="0" top="30" width="530" height="80">
 							<column progid="DecalControls.TextColumn" name="Key" fixedwidth="180" />
 							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="400" />
 						</control>
 
 						<!-- Section 3: Quest List Headers -->
-						<control progid="DecalControls.StaticText" name="SocietyListName" left="1" top="160" width="226" height="17" text="Quest Name"/>
-						<control progid="DecalControls.StaticText" name="SocietyListArea" left="285" top="160" width="106" height="17" text="Area"/>
-						<control progid="DecalControls.StaticText" name="SocietyListReady" left="416" top="160" width="80" height="17" text="Ready In"/>
-						<control progid="DecalControls.StaticText" name="SocietyListSolves" left="480" top="160" width="50" height="17" text="Solves"/>
+						<control progid="DecalControls.StaticText" name="SocietyListName" left="1" top="120" width="226" height="17" text="Quest Name"/>
+						<control progid="DecalControls.StaticText" name="SocietyListArea" left="285" top="120" width="106" height="17" text="Area"/>
+						<control progid="DecalControls.StaticText" name="SocietyListReady" left="416" top="120" width="80" height="17" text="Ready In"/>
+						<control progid="DecalControls.StaticText" name="SocietyListSolves" left="480" top="120" width="50" height="17" text="Solves"/>
 
 						<!-- Section 4: Combined Quest List -->
-						<control progid="DecalControls.List" name="SocietyList" left="0" top="178" width="530" height="1100">
+						<control progid="DecalControls.List" name="SocietyList" left="0" top="138" width="530" height="1500">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="240" />
 							<column progid="DecalControls.TextColumn" name="Area" fixedwidth="110" />

@@ -163,7 +163,10 @@ namespace OracleOfDereth
                 ((HudStaticText)row[1]).Text = societyQuest.Name;
                 ((HudStaticText)row[2]).Text = societyQuest.Area;
 
-                if (questFlag == null) {
+                if (societyQuest.IsRankTest()) {
+                    ((HudStaticText)row[3]).Text = societyQuest.IsComplete() ? "completed" : "ready";
+                    ((HudStaticText)row[4]).Text = "";
+                } else if (questFlag == null) {
                     ((HudStaticText)row[3]).Text = "ready";
                     ((HudStaticText)row[4]).Text = "";
                 } else if (societyQuest.IsOneTime()) {
@@ -200,7 +203,10 @@ namespace OracleOfDereth
 
             // Quest Flag
             if (col >= 3) {
-                if (questFlag == null) {
+                if (societyQuest.IsRankTest()) {
+                    string status = societyQuest.IsComplete() ? "Completed" : "Not completed";
+                    Util.Chat($"{societyQuest.Name}: {status}", Util.ColorPink);
+                } else if (questFlag == null) {
                     Util.Chat($"{societyQuest.Flag}: Never completed", Util.ColorPink);
                 } else {
                     Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
