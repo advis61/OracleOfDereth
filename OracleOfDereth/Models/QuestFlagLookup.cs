@@ -38,7 +38,7 @@ namespace OracleOfDereth
 
             if (type == 0)
             {
-                Util.Chat($"(no Type / weenie id; skipping lookup)", Util.ColorYellow, ChatPrefix);
+                Util.Chat($"(no Type / weenie id; skipping lookup)", Util.ColorRed, ChatPrefix);
                 return;
             }
 
@@ -52,7 +52,7 @@ namespace OracleOfDereth
         {
             string slug = Uri.EscapeDataString(name.Replace(' ', '_'));
             string wikiUrl = string.Format(WikiUrlTemplate, slug);
-            Util.Chat($"Wiki: {wikiUrl}", Util.ColorCyan, ChatPrefix);
+            Util.Chat($"Wiki: {Util.WikiUrl(wikiUrl)}", Util.ColorCyan, ChatPrefix);
 
             string html;
             try
@@ -61,25 +61,25 @@ namespace OracleOfDereth
             }
             catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
             {
-                Util.Chat($"(no wiki page at that URL)", Util.ColorYellow, ChatPrefix);
+                Util.Chat($"(no wiki page at that URL)", Util.ColorCyan, ChatPrefix);
                 return;
             }
             catch (Exception ex)
             {
-                Util.Chat($"Wiki fetch failed: {ex.Message}", Util.ColorRed, ChatPrefix);
+                Util.Chat($"Wiki fetch failed: {ex.Message}", Util.ColorCyan, ChatPrefix);
                 return;
             }
 
             var quests = ExtractRelatedQuests(html);
             if (quests.Count == 0)
             {
-                Util.Chat($"(page found, no Related Quests section)", Util.ColorYellow, ChatPrefix);
+                Util.Chat($"(page found, no Related Quests section)", Util.ColorCyan, ChatPrefix);
                 return;
             }
 
             foreach (var quest in quests)
             {
-                Util.Chat($"Related quest: {quest.Name} - {quest.Url}", Util.ColorCyan, ChatPrefix);
+                Util.Chat($"Related quest: {Util.WikiUrl(quest.Url)}", Util.ColorCyan, ChatPrefix);
             }
         }
 
@@ -116,12 +116,12 @@ namespace OracleOfDereth
             }
             catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
             {
-                Util.Chat($"No script for [{type}] {name} (not in Creature/Human/).", Util.ColorRed, ChatPrefix);
+                Util.Chat($"No script for [{type}] {name} (not in Creature/Human/).", Util.ColorCyan, ChatPrefix);
                 return;
             }
             catch (Exception ex)
             {
-                Util.Chat($"Script fetch failed: {ex.Message}", Util.ColorRed, ChatPrefix);
+                Util.Chat($"Script fetch failed: {ex.Message}", Util.ColorCyan, ChatPrefix);
                 return;
             }
 
@@ -129,8 +129,8 @@ namespace OracleOfDereth
 
             if (flags.Count == 0)
             {
-                Util.Chat($"No InqQuest entries in script.", Util.ColorYellow, ChatPrefix);
-                Util.Chat($"{string.Format(EsBrowseUrlTemplate, type)}", Util.ColorYellow, ChatPrefix);
+                Util.Chat($"No InqQuest entries in script.", Util.ColorCyan, ChatPrefix);
+                Util.Chat($"{string.Format(EsBrowseUrlTemplate, type)}", Util.ColorCyan, ChatPrefix);
                 return;
             }
 
