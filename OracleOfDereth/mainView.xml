@@ -219,7 +219,7 @@
 						<!-- Section 2: Status Key-Value List -->
 						<control progid="DecalControls.List" name="SocietyStatusList" left="0" top="30" width="530" height="120">
 							<column progid="DecalControls.TextColumn" name="Key" fixedwidth="180" />
-							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="200" />
+							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="400" />
 						</control>
 
 						<!-- Section 3: Quest List Headers -->

@@ -99,7 +99,7 @@ namespace OracleOfDereth
         // next tier. Breakpoints per society NPC weenie 38232 emote script.
         private string GetSocietyStatusText(int value)
         {
-            if (value >= 1001) return "Grand Master - Trade 50 ribbons for Trade Token";
+            if (value >= 1001) return "Trade 50 ribbons for Trade Token";
             if (value >= 998) return "Return to be promoted to Master";
             if (value >= 995) return "Cap reached - Take the Master Test";
             if (value >= 601) return "Turn in ribbons - Master Test at 995";
@@ -156,7 +156,7 @@ namespace OracleOfDereth
                     continue;
                 }
 
-                // Repeatable quest row
+                // Quest row
                 QuestFlag.QuestFlags.TryGetValue(societyQuest.Flag, out QuestFlag questFlag);
 
                 AssignImage((HudPictureBox)row[0], societyQuest.IsComplete());
@@ -165,6 +165,9 @@ namespace OracleOfDereth
 
                 if (questFlag == null) {
                     ((HudStaticText)row[3]).Text = "ready";
+                    ((HudStaticText)row[4]).Text = "";
+                } else if (societyQuest.IsOneTime()) {
+                    ((HudStaticText)row[3]).Text = "completed";
                     ((HudStaticText)row[4]).Text = "";
                 } else {
                     ((HudStaticText)row[3]).Text = questFlag.NextAvailable();

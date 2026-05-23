@@ -99,10 +99,28 @@ namespace OracleOfDereth
             return Society.HasReachedRank(rankName);
         }
 
-        // Quest rows (repeatable)
+        // A one-time quest is a permanent stamp with no repeat timer (e.g. the
+        // Investigating / Initiation / rank Test quests). Repeatable society
+        // quests carry a RepeatTime cooldown in /myquests.
+        public bool IsOneTime()
+        {
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
+            if (questFlag == null) { return false; }
+
+            return questFlag.RepeatTime == TimeSpan.Zero;
+        }
+
+        // Quest rows
         public bool IsComplete()
         {
-            return !Ready();
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
+            if (questFlag == null) { return false; }
+
+            // One-time quests are complete once the stamp is present
+            if (questFlag.RepeatTime == TimeSpan.Zero) { return questFlag.Solves > 0; }
+
+            // Repeatable quests count as complete while on cooldown (recently done)
+            return !questFlag.Ready();
         }
 
         public DateTime? CompletedOn()

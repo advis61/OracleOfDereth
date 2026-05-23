@@ -1,5 +1,18 @@
 using Decal.Adapter;
 
+
+// societyribbonsperdaycounter: "Limiter for amount of ribbons a player has turned in per day CompletedOn:5/16/2026 2:59:00 AM Solves:30 MaxSolves:200 RepeatTime:0s
+// societyribbonsperdaytimer:  "Timer for how often a player can turn in the per rank, per day limit of ribbons CompletedOn:5/16/2026 2:58:37 AM Solves:1 MaxSolves:-1 RepeatTime:20h
+// https://github.com/ACEmulator/ACE-World-16PY-Patches/blob/master/Database/Patches/9%20WeenieDefaults/Creature/Human/38233.es
+//
+// Then I handed in 4, but it took 5 from my inventory
+// 
+// societyribbonsperdaycounter: "Limiter for amount of ribbons a player has turned in per day CompletedOn:5/23/2026 1:12:35 AM Solves:5 MaxSolves:200 RepeatTime:0s
+// societyribbonsperdaytimer: "Timer for how often a player can turn in the per rank, per day limit of ribbons CompletedOn:5/23/2026 1:12:35 AM Solves:2 MaxSolves:-1 RepeatTime:20h
+//
+// "Sorry! I only deal in transactions in lots of 5, and you have less than that, so you'll need to get more before you come back here."
+
+
 namespace OracleOfDereth
 {
     public static class Society
@@ -80,8 +93,15 @@ namespace OracleOfDereth
             return threshold - GetRankValue();
         }
 
+
+        // counter.Solves is frozen at the last turn-in batch; the server only
+        // resets it on the *next* turn-in. So once the 20h timer is Ready, the
+        // counter is stale and the player effectively has 0 ribbons turned in today.
         public static int GetRibbonsToday()
         {
+            QuestFlag.QuestFlags.TryGetValue("societyribbonsperdaytimer", out QuestFlag timer);
+            if (timer == null || timer.Ready()) return 0;
+
             QuestFlag.QuestFlags.TryGetValue("societyribbonsperdaycounter", out QuestFlag counter);
             if (counter == null) return 0;
             return counter.Solves;
