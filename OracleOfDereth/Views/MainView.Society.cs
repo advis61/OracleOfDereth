@@ -68,8 +68,8 @@ namespace OracleOfDereth
                 int ribbonsToNext = Society.GetRibbonsToNextRank();
                 string nextRankName = Society.GetNextRankName();
 
-                // Value can briefly exceed the cap (95-100 etc); never show more than max
-                AddStatusRow("Rank Progress", $"{Math.Min(value, max)} / {max} ribbons");
+                // Value can briefly exceed the cap (95-100 etc); never show more than max.
+                AddStatusRow("Rank Progress", $"{Math.Min(Society.GetRankProgress(), max)} / {max} ribbons");
                 AddStatusRow("Ribbons Today", $"{ribbonsToday} / {dailyLimit}");
 
                 if (ribbonsToNext > 0)

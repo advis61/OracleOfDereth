@@ -11,6 +11,16 @@ using Decal.Adapter;
 // societyribbonsperdaytimer: "Timer for how often a player can turn in the per rank, per day limit of ribbons CompletedOn:5/23/2026 1:12:35 AM Solves:2 MaxSolves:-1 RepeatTime:20h
 //
 // "Sorry! I only deal in transactions in lots of 5, and you have less than that, so you'll need to get more before you come back here."
+//
+// Turned in 2 more stacks.
+// societyribbonsperdaycounter: "Limiter for amount of ribbons a player has turned in per day CompletedOn:5/23/2026 1:24:18 AM Solves:15 MaxSolves:200 RepeatTime:0s
+// societyribbonsperdaytimer:  "Timer for how often a player can turn in the per rank, per day limit of ribbons CompletedOn:5/23/2026 1:12:35 AM Solves:2 MaxSolves:-1 RepeatTime:20h
+//
+// Turned in 1 more stack:
+// societyribbonsperdaycounter:  "Limiter for amount of ribbons a player has turned in per day CompletedOn:5/23/2026 1:25:44 AM Solves:20 MaxSolves:200 RepeatTime:0s
+
+
+
 
 
 namespace OracleOfDereth
@@ -86,19 +96,38 @@ namespace OracleOfDereth
             return "";
         }
 
+        // True at the floor of a rank — initiation (1) or just-promoted (101, 301, 601).
+        // The +1 came from the promotion itself; no ribbons turned in this tier yet.
+        public static bool IsFreshlyPromoted()
+        {
+            int value = GetRankValue();
+            return value == 1 || value == 101 || value == 301 || value == 601;
+        }
+
+        // Rank value minus the +1 grant when IsFreshlyPromoted, so the displayed
+        // number reflects ribbons turned in. Use GetRankValue for rank detection.
+        public static int GetRankProgress()
+        {
+            int value = GetRankValue();
+            return IsFreshlyPromoted() ? value - 1 : value;
+        }
+
         public static int GetRibbonsToNextRank()
         {
             int threshold = GetNextRankThreshold();
             if (threshold == 0) return 0;
-            return threshold - GetRankValue();
+            return threshold - GetRankProgress();
         }
 
 
         // counter.Solves is frozen at the last turn-in batch; the server only
         // resets it on the *next* turn-in. So once the 20h timer is Ready, the
         // counter is stale and the player effectively has 0 ribbons turned in today.
+        // Also force 0 at tier floors for visual consistency with GetRankProgress.
         public static int GetRibbonsToday()
         {
+            if (IsFreshlyPromoted()) return 0;
+
             QuestFlag.QuestFlags.TryGetValue("societyribbonsperdaytimer", out QuestFlag timer);
             if (timer == null || timer.Ready()) return 0;
 
