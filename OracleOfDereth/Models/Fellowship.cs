@@ -304,9 +304,18 @@ namespace OracleOfDereth
             return IsInFellowship() && (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._share_xp == 1;
         }
 
+        public static int MaxFellowCount()
+        {
+            switch (CoreManager.Current.CharacterFilter.Server)
+            {
+                case "Conquest": return 14;
+                default: return 9;            
+            }
+        }
+
         public unsafe static bool IsFull()
         {
-            return FellowCount() >= 9;
+            return FellowCount() >= MaxFellowCount();
         }
 
         public unsafe static bool CanRecruit()
