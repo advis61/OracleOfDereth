@@ -7,9 +7,9 @@ Blank,,,,
 Rank: Initiate,,,,
 Dark Isle Delivery,darkisledelivery,Dark Isle,https://acportalstorm.com/wiki/Dark_Isle_Delivery,Dark Isle - The Deep 85.5N 57.2E
 Defeating Vaeshok,defeatingvaeshok,Dark Isle,https://acportalstorm.com/wiki/Defeating_Vaeshok,Dark Isle cave 86.9N 59.7E - All rights down - Defeat Vaeshok
-Disrupting the Mana Siphon,gearknightinvasionhighsiphonwait_1009,Gear Knight,https://acportalstorm.com/wiki/Disrupting_the_Mana_Siphon,Direlands Gear Knight Invasion - Mana Siphon 10.2S 75.1W
-Gear Knight Parts,gearknightparts,Gear Knight,https://acportalstorm.com/wiki/Collect_Gear_Knight_Parts,Direlands Gear Knight Invasion - Kill Gear Knights for 10 Pile of Gearknight Parts
-Gear Knight Phalanx Kill Task,gearknightphalanxkilltask,Gear Knight,https://acportalstorm.com/wiki/Gear_Knight_Phalanx_Kill_Task,Direlands Gear Knight Invasion - Kill 10 Invading Gear Knight Phalanxs
+Disrupting the Mana Siphon,GearknightInvasionHighSiphonWait_1009,Gear Knight,https://acportalstorm.com/wiki/Disrupting_the_Mana_Siphon,Direlands Gear Knight Invasion - Mana Siphon 10.2S 75.1W
+Gear Knight Parts,GearknightPartsCollectionWait_0513,Gear Knight,https://acportalstorm.com/wiki/Collect_Gear_Knight_Parts,Direlands Gear Knight Invasion - Kill Gear Knights for 10 Pile of Gearknight Parts
+Gear Knight Phalanx Kill Task,GearknightInvasionPhalanxKillWait_0513,Gear Knight,https://acportalstorm.com/wiki/Gear_Knight_Phalanx_Kill_Task,Direlands Gear Knight Invasion - Kill 10 Invading Gear Knight Phalanxs
 Shambling Archivist Destroyer,shamblingarchivistdestroyer,Graveyard,https://acportalstorm.com/wiki/Shambling_Archivist_Destroyer,Graveyard - Defeat Shambling Archivist 65.5S 43.9W
 Undead Jaw Collection,undeadjawcollection,Graveyard,https://acportalstorm.com/wiki/Undead_Jaw_Collection,Graveyard - Kill Pyre Minions Skeletons and Champions for 8 Pyre Skeleton Jaws
 Wight Blade Sorcerer Kill Task,wightbladesorcererkilltask,Graveyard,https://acportalstorm.com/wiki/Wight_Blade_Sorcerer_Kill_Task,Graveyard - Kill 12 Wight Blade Sorcerers (night on landscape / Wight Barrow or Mhoire Armory any time)
@@ -43,7 +43,7 @@ Coral Tower Destroyer,taskcoraltowerswait,Nyr'leha,https://acportalstorm.com/wik
 Forgotten Tunnels of Nyr'leha,,Moarsman City,https://acportalstorm.com/wiki/Forgotten_Tunnels_of_Nyr%27leha,Moarsman City - Forgotten Tunnels 92.9S 56.4W or 93.1S 56.9W or 93.6S 56.6W - Collect 2 Orange 2 Purple Crystals - Golem Keys - Energy Ring - Defeat Guardian and The Secret Keeper
 High Priest of T'thuun Kill Task,highpriestoftthuunkilltask,Moarsman City,https://acportalstorm.com/wiki/High_Priest_of_T%27thuun_Kill_Task,Moarsman City - Acolyte's Chamber 92.6S 53.0W - High Priest's Third 92.6S 52.6W - Second 93.0S 53.0W - First 93.0S 52.6W - Temple of T'thuun 92.8S 52.8W - Kill High Priest of T'thuun
 Magshuth Moarsmen Kill Task,magshuthmoarsmenkilltask,Moarsman City,https://acportalstorm.com/wiki/Magshuth_Moarsmen_Kill_Task,Moarsman City SE of Candeth Keep - Kill 20 Magshuth Moarsmen
-Moarsman Spawning Pools,TaskSpawnPoolsStarted,Nyr'leha,https://acportalstorm.com/wiki/Moarsman_Spawning_Pools,Nyr'leha Moarsmen City SE of Candeth Keep - Brood Mother pools 91.9S 51.9W - 92.3S 49.7W - 93.7S 52.7W - 92.9S 54.5W
+Moarsman Spawning Pools,,Nyr'leha,https://acportalstorm.com/wiki/Moarsman_Spawning_Pools,Nyr'leha Moarsmen City SE of Candeth Keep - Brood Mother pools 91.9S 51.9W - 92.3S 49.7W - 93.7S 52.7W - 92.9S 54.5W
 Moguth Moarsman Kill Task,moguthmoarsmankilltask,Moarsman City,https://acportalstorm.com/wiki/Moguth_Moarsman_Kill_Task,Moarsman City Southern Direland Shores SE of Candeth Keep - Kill 60 Moguth Moarsmen
 Palm Fort,palmfortdefended1209,Moarsman City,https://acportalstorm.com/wiki/Palm_Fort,Moarsman City - Fort 92.1S 50.3W (CH) or 91.4S 53.8W (EW) or 93.6S 51.8W (RB) - Defend ~5 minutes
 Shoguth Moarsman Kill Task,shoguthmoarsmankilltask,Moarsman City,https://acportalstorm.com/wiki/Shoguth_Moarsman_Kill_Task,Moarsman City Southern Direland Shores SE of Candeth Keep - Kill 40 Shoguth Moarsmen

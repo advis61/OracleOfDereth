@@ -216,6 +216,7 @@ namespace OracleOfDereth
                 else if (cmd == "/od fellow create") { Fellowship.Create(); }
                 else if (cmd == "/od fellow quit") { Fellowship.Quit(); }
                 else if (cmd.StartsWith("/od fellow recruit ")) { Fellowship.Recruit(cmd.Substring(19, cmd.Length - 19)); }
+                else if (cmd == "/od questflag") { QuestFlagLookup.Execute(); }
                 else { return; }
 
                 e.Eat = true;            
