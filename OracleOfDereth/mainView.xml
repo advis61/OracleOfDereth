@@ -234,7 +234,7 @@
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="240" />
 							<column progid="DecalControls.TextColumn" name="Area" fixedwidth="110" />
 							<column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
-							<column progid="DecalControls.TextColumn" name="Solves" fixedwidth="20" />
+							<column progid="DecalControls.TextColumn" name="Solves" fixedwidth="30" />
 							<column progid="DecalControls.TextColumn" name="Flag" fixedwidth="1" />
 						</control>
 					</control>
