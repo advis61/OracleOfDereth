@@ -22,7 +22,8 @@ namespace OracleOfDereth
         // Properties
         public string Name = "";
         public string Flag = "";
-        public string Url = "";
+        private string _url = "";
+        public string Url { get => Util.WikiUrl(_url); set => _url = value; }
         public string Hint = "";
 
         public static void Init()

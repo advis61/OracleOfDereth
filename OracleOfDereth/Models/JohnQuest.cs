@@ -37,7 +37,8 @@ namespace OracleOfDereth
         public int BitMask = 0;
         public string LegendaryQuestsFlag = "";
         public string Flag = "";
-        public string Url = "";
+        private string _url = "";
+        public string Url { get => Util.WikiUrl(_url); set => _url = value; }
         public string Hint = "";
 
         public static void Init()

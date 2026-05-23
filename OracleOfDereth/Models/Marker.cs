@@ -137,7 +137,7 @@ namespace OracleOfDereth {
 
         public string Url()
         {
-            return $"https://acportalstorm.com/wiki/Dereth_Exploration/Markers_by_Efficiency#{Location.Replace(" ", "_")}";
+            return Util.WikiUrl($"https://acportalstorm.com/wiki/Dereth_Exploration/Markers_by_Efficiency#{Location.Replace(" ", "_")}");
         }
 
         public bool IsComplete()
