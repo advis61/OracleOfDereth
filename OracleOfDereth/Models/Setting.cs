@@ -34,6 +34,7 @@ namespace OracleOfDereth
         public static Setting ShowNearbyWcid;
         public static Setting SummonScore;
         public static Setting WeaponScore;
+        public static Setting WikiSource;
 
         public static void Init()
         {
@@ -46,6 +47,7 @@ namespace OracleOfDereth
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "ShowNearbyWcid", YesNo, "No");
             WeaponScore = Register("Show Weapons Score", "WeaponScore", YesNo, "Yes");
+            WikiSource = Register("Wiki Source", "WikiSource", new List<string> { "Levistras", "ACPedia", "Fandom" }, "Levistras");
         }
 
         private static Setting Register(string name, string key, List<string> allowedValues, string defaultValue)

@@ -139,8 +139,7 @@ namespace OracleOfDereth
             int copyIndex = 0;
             for (int i = 0; i < flags.Count; i++)
             {
-                if (flags[i].IndexOf("Wait", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    flags[i].IndexOf("Complete", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (flags[i].IndexOf("Wait", StringComparison.OrdinalIgnoreCase) >= 0 || flags[i].IndexOf("Complete", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     copyIndex = i;
                     break;

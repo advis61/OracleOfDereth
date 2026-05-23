@@ -92,6 +92,26 @@ namespace OracleOfDereth
             }
         }
 
+        // Rewrites any /wiki/X URL to use the currently selected wiki host
+        // (Setting.WikiSource). Leaves non-wiki URLs unchanged.
+        public static string WikiUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url)) return url;
+
+            int idx = url.IndexOf("/wiki/");
+            if (idx < 0) return url;
+
+            string host;
+            switch (Setting.WikiSource.Value)
+            {
+                case "ACPedia": host = "acpedia.org"; break;
+                case "Fandom": host = "asheron.fandom.com"; break;
+                default: host = "acportalstorm.com"; break;
+            }
+
+            return $"https://{host}{url.Substring(idx)}";
+        }
+
     public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
