@@ -90,8 +90,9 @@ namespace OracleOfDereth
             // Add all items
             Objects.Add(item);
 
-            Nearby nearby = Nearbys[item.Name.ToLower()];
-            if (nearby != null) { Announce(item); }
+            // Announcing other objects disabled
+            //Nearby nearby = Nearbys[item.Name.ToLower()];
+            //if (nearby != null) { Announce(item); }
         }
 
         public static void Remove(WorldObject item)
