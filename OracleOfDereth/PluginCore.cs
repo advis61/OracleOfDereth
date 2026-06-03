@@ -10,8 +10,8 @@ using WindowsTimer = System.Windows.Forms.Timer;
 
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
-[assembly: AssemblyVersion("1.12.3.0")]
-[assembly: AssemblyFileVersion("1.12.3.0")]
+[assembly: AssemblyVersion("1.12.1.0")]
+[assembly: AssemblyFileVersion("1.12.1.0")]
 
 namespace OracleOfDereth
 {
@@ -81,7 +81,7 @@ namespace OracleOfDereth
 
                 // Initialize
                 if (CoreManager.Current.CharacterFilter.LoginStatus >= 1) {
-                    Util.Chat($"Hot Reloaded", Util.ColorOrange);
+                    Util.Chat($"Hot Reloaded", Util.ColorOrange, "[Oracle of Dereth] ");
                     Init();
                 } else {
                     CoreManager.Current.CharacterFilter.Login += CharacterFilter_Login;
@@ -105,6 +105,7 @@ namespace OracleOfDereth
             try
             {
                 if(Setting.BuffsRemaining.IsYes) Util.Chat($"{Hud.BuffNowText()}", Util.ColorOrange);
+                if(Setting.CheckForUpdates.IsYes) UpdateChecker.Arm();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -155,6 +156,7 @@ namespace OracleOfDereth
                 Target.RemoveAllExpired();
                 FellowshipTracker.Update();
                 Fellowship.AutoOpenFellow();
+                UpdateChecker.Tick();
 
                 mainView.Update();
                 targetView.Update();
@@ -217,6 +219,7 @@ namespace OracleOfDereth
                 else if (cmd == "/od fellow quit") { Fellowship.Quit(); }
                 else if (cmd.StartsWith("/od fellow recruit ")) { Fellowship.Recruit(cmd.Substring(19, cmd.Length - 19)); }
                 else if (cmd == "/od questflag") { QuestFlagLookup.Execute(); }
+                else if (cmd == "/od update") { UpdateChecker.Check(true); }
                 else { return; }
 
                 e.Eat = true;            

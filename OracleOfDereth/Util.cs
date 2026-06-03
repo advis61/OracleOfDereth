@@ -64,7 +64,7 @@ namespace OracleOfDereth
         public static readonly int ColorLoot = 14; // Same as Magtools
         public static readonly int ColorOrange = 18;
 
-        public static void Chat(string message, int color = 1, string prefix = "[Oracle of Dereth] ")
+        public static void Chat(string message, int color = 1, string prefix = "[OD] ")
         {
             CoreManager.Current.Actions.AddChatText(prefix + message, color);
         }
