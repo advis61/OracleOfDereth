@@ -104,7 +104,7 @@ namespace OracleOfDereth
         {
             try
             {
-                if(Setting.BuffsRemaining.IsYes) Util.Chat($"{Hud.BuffNowText()}", Util.ColorOrange);
+                if(Setting.BuffsRemaining.IsYes) Util.Chat($"{Hud.BuffNowText()}", Util.ColorOrange, "[Oracle of Dereth] ");
                 if(Setting.CheckForUpdates.IsYes) UpdateChecker.Arm();
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -137,6 +137,7 @@ namespace OracleOfDereth
             Target.Init();
             Title.Init();
             TradeItem.Init();
+
 
             // Initialize Views
             mainView = new MainView();

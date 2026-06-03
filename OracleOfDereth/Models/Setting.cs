@@ -44,8 +44,8 @@ namespace OracleOfDereth
             List<string> YesNo = new List<string> { "Yes", "No" };
 
             AnnouncePlayers = Register("Announce Nearby Players", "AnnouncePlayers", YesNo, "Yes");
-            BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
             CheckForUpdates = Register("Check For Updates On Login", "CheckForUpdates", YesNo, "Yes");
+            BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "ShowNearbyWcid", YesNo, "No");
             WeaponScore = Register("Show Weapons Score", "WeaponScore", YesNo, "Yes");

@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace OracleOfDereth
 {
@@ -28,10 +29,18 @@ namespace OracleOfDereth
             if (DateTime.UtcNow - armedAt.Value < Delay) return;
 
             ran = true;
-            Check(verbose: false);
+            Check();
         }
 
-        public static void Check(bool verbose)
+        public static void Check(bool verbose = false)
+        {
+            new Thread(() => { 
+                Thread.CurrentThread.IsBackground = true;
+                Run(verbose);
+            }).Start();
+        }
+
+        private static void Run(bool verbose)
         {
             Version local = Assembly.GetExecutingAssembly().GetName().Version;
             Version remote = null;
