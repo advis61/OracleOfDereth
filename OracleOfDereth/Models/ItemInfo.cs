@@ -339,7 +339,7 @@ namespace OracleOfDereth
         {
             int? om = GetOMValue();
             if (om == null) return "";
-            return "MD " + FormatOValue((int)om);
+            return "OM " + FormatOValue((int)om);
         }
 
         public static string FormatOValue(int val)
