@@ -12,15 +12,16 @@ namespace OracleOfDereth
         private static readonly List<(string Command, string Description)> HelpCommands = new List<(string, string)>
         {
             ("/od",                       "Show plugin version"),
-            ("/od questflag",             "Look up quest info for the selected NPC"),
-            ("/od landblock",             "Print the current landblock ID"),
-            ("/od logout",                "Log out of the game"),
             ("/od fellow create",         "Create a new fellowship"),
             ("/od fellow open",           "Open the fellowship to recruiting"),
             ("/od fellow close",          "Close the fellowship to recruiting"),
             ("/od fellow quit",           "Leave the current fellowship"),
             ("/od fellow disband",        "Disband the fellowship (leader only)"),
             ("/od fellow recruit <name>", "Recruit a nearby player by name"),
+            ("/od landblock",             "Print the current landblock ID"),
+            ("/od logout",                "Log out of the game"),
+            ("/od questflag",             "Look up quest info for the selected NPC"),
+            ("/od update",                "Checks for available updates"),
         };
 
         private void InitHelp()

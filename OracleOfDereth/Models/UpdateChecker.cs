@@ -10,6 +10,8 @@ namespace OracleOfDereth
     {
         private const string ReleasesApiUrl = "https://api.github.com/repos/advis61/OracleOfDereth/releases/latest";
         private const string ReleasesPageUrl = "https://github.com/advis61/OracleOfDereth/releases";
+        private const string LastCheckedKey = "LastCheckedForUpdates";
+        private const string DateFormat = "yyyy-MM-dd";
         private static readonly TimeSpan Delay = TimeSpan.FromSeconds(10);
         private static readonly Regex TagNameRegex = new Regex("\"tag_name\"\\s*:\\s*\"v?(\\d+(?:\\.\\d+){1,3})\"", RegexOptions.IgnoreCase);
         private static readonly Regex AssetUrlRegex = new Regex("\"browser_download_url\"\\s*:\\s*\"(https://[^\"]+\\.exe)\"", RegexOptions.IgnoreCase);
@@ -20,6 +22,7 @@ namespace OracleOfDereth
         public static void Arm()
         {
             if (ran) return;
+            if (SettingsFile.GetSetting(LastCheckedKey, "") == DateTime.Today.ToString(DateFormat)) { ran = true; return; }
             armedAt = DateTime.UtcNow;
         }
 
@@ -63,6 +66,8 @@ namespace OracleOfDereth
                 if (verbose) Util.Chat("Update check failed. See log.txt for details.", Util.ColorPink);
                 return;
             }
+
+            SettingsFile.PutSetting(LastCheckedKey, DateTime.Today.ToString(DateFormat));
 
             if (remote > local)
             {
