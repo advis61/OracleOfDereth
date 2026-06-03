@@ -56,14 +56,19 @@ namespace OracleOfDereth
 
                     var fields = line.Split(',');
 
-                    quests.Add(new FlagQuest
+                    var quest = new FlagQuest
                     {
                         Name = fields[0].Trim(),
                         Flag = fields[1].Trim().ToLower(),
                         Flag2 = fields[2].Trim().ToLower(),
                         Url = fields[3].Trim(),
                         Hint = fields[4].Trim()
-                    });
+                    };
+
+                    // Uber BSD is Levistras-only
+                    if (quest.Name == "Uber BSD" && CoreManager.Current.CharacterFilter.Server != "Levistras") continue;
+
+                    quests.Add(quest);
                 }
             }
 
@@ -79,9 +84,8 @@ namespace OracleOfDereth
 
         public bool IsComplete()
         {
-            if(Flag == "freebooter") {
-                return CoreManager.Current.CharacterFilter.GetCharProperty(287) >= 300;
-            }
+            if (Flag == "knight") { return Society.HasReachedRank("Knight"); }
+            if (Flag == "lord") { return Society.HasReachedRank("Lord"); }
 
             // Asheron's Departure Lower
             if (Flag == "burflagged(permanent)")
