@@ -105,7 +105,7 @@ namespace OracleOfDereth
         // next tier. Breakpoints per society NPC weenie 38232 emote script.
         private string GetSocietyStatusText(int value)
         {
-            if (value >= 1001) return "Trade 50 ribbons for Trade Token";
+            if (value >= 1001) return "Turn in 50 ribbons for Trade Token";
             if (value >= 998) return "Return to be promoted to Master";
             if (value >= 995) return "Cap reached - Take the Master Test";
             if (value >= 601) return "Turn in ribbons - Master Test at 995";
