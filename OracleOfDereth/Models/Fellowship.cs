@@ -105,7 +105,8 @@ namespace OracleOfDereth
             if (!fellow.FellowshipNameBlank()) return;
 
             if (!CanRecruit()) return;
-            if (NearbyLifestone() || NearbyBindstone()) return;
+            if (NearbyLifestone() || NearbyBindstone() || NearbyTownNetworkPortal()) return;
+            if (RecentlyZoned()) return;
 
             if (fellow.WasRecruited() && !force) return;
 
@@ -123,7 +124,7 @@ namespace OracleOfDereth
             WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByObjectClass(ObjectClass.Lifestone);
 
             foreach (WorldObject item in items) {
-                if(Util.GetDistanceFromPlayer(item) < 50.0) { return true; }
+                if(Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
             }
 
             return false;
@@ -135,10 +136,37 @@ namespace OracleOfDereth
 
             foreach (WorldObject item in items)
             {
-                if (Util.GetDistanceFromPlayer(item) < 50.0) { return true; }
+                if (Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
             }
 
             return false;
+        }
+
+        public static bool NearbyTownNetworkPortal()
+        {
+            WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByName("Portal to Town Network");
+
+            foreach (WorldObject item in items)
+            {
+                if (Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
+            }
+
+            return false;
+        }
+
+        private static string _lastLandblock = "";
+        private static DateTime _zonedAt = DateTime.MinValue;
+        private static readonly double ZoneGraceSeconds = 10.0;
+
+        public static bool RecentlyZoned()
+        {
+            // Self-contained poll: the first call after a landblock change stamps
+            // _zonedAt = now and returns true, so even event-driven recruits
+            // (via CreateObject) are gated for the grace window.
+            string current = Util.CurrentLandblock();
+            if (current != _lastLandblock) { _lastLandblock = current; _zonedAt = DateTime.Now; }
+
+            return (DateTime.Now - _zonedAt).TotalSeconds < ZoneGraceSeconds;
         }
 
         public unsafe static void Create(string name = "")
@@ -203,6 +231,12 @@ namespace OracleOfDereth
             }
             else if (AutoRecruitEnabled && NearbyBindstone()) {
                 status.Add("Auto Recruit", "Paused by Bind Stone");
+            }
+            else if (AutoRecruitEnabled && NearbyTownNetworkPortal()) {
+                status.Add("Auto Recruit", "Paused by Town Portal");
+            }
+            else if (AutoRecruitEnabled && RecentlyZoned()) {
+                status.Add("Auto Recruit", "Paused (zoning in)");
             }
             else if (AutoRecruitEnabled && CanRecruit()) {
                 status.Add("Auto Recruit", "Recruiting players");
