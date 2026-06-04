@@ -486,7 +486,7 @@ namespace OracleOfDereth
                     bool isBaneImpen = name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard");
                     if (isBaneImpen && !isUnenchantable) continue;
 
-                    bool isImpenCantrip = name.Contains("Minor Impenetrability") || name.Contains("Major Impenetrability") || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability");
+                    bool isImpenCantrip = name.Contains("Minor Impenetrability") || name.Contains("Moderate Impenetrability") || name.Contains("Major Impenetrability") || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability");
 
                     if (!isImpenCantrip && !isBaneImpen && !name.Contains("Augmented"))
                     {
@@ -497,7 +497,17 @@ namespace OracleOfDereth
                 parts.Add(name);
             }
 
-            return string.Join(", ", parts);
+            var cantrips = new List<string>();
+            var others = new List<string>();
+            foreach (string name in parts)
+            {
+                if (CantripSortOrder(name) < 5) cantrips.Add(name);
+                else others.Add(name);
+            }
+            cantrips.Sort((a, b) => CantripSortOrder(a).CompareTo(CantripSortOrder(b)));
+            cantrips.AddRange(others);
+
+            return string.Join(", ", cantrips);
         }
 
         public string GetCantripsString()
@@ -512,7 +522,7 @@ namespace OracleOfDereth
                 if (spell == null) continue;
                 string name = spell.Name;
                 if (name.EndsWith(" Bane")) continue;
-                if (name.StartsWith("Legendary ") || name.StartsWith("Epic ") || name.StartsWith("Major ") || name.StartsWith("Minor ")) parts.Add(name);
+                if (name.StartsWith("Legendary ") || name.StartsWith("Epic ") || name.StartsWith("Major ") || name.StartsWith("Moderate ") || name.StartsWith("Minor ")) parts.Add(name);
             }
             parts.Sort((a, b) => CantripSortOrder(a).CompareTo(CantripSortOrder(b)));
 
@@ -524,8 +534,9 @@ namespace OracleOfDereth
             if (name.StartsWith("Legendary ")) return 0;
             if (name.StartsWith("Epic ")) return 1;
             if (name.StartsWith("Major ")) return 2;
-            if (name.StartsWith("Minor ")) return 3;
-            return 4;
+            if (name.StartsWith("Moderate ")) return 3;
+            if (name.StartsWith("Minor ")) return 4;
+            return 5;
         }
 
         // ============================================================
