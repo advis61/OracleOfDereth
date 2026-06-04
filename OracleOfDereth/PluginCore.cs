@@ -10,8 +10,8 @@ using WindowsTimer = System.Windows.Forms.Timer;
 
 [assembly: Guid("153809C7-5D30-12E1-8730-11111104AC1E")]
 
-[assembly: AssemblyVersion("1.12.1.0")]
-[assembly: AssemblyFileVersion("1.12.1.0")]
+[assembly: AssemblyVersion("1.12.4.0")]
+[assembly: AssemblyFileVersion("1.12.4.0")]
 
 namespace OracleOfDereth
 {
@@ -209,7 +209,7 @@ namespace OracleOfDereth
 
             try 
             {
-                if (cmd == "/od" || cmd == "/ood") { Util.Chat($"Oracle of Dereth v{Assembly.GetExecutingAssembly().GetName().Version}", 1); }
+                if (cmd == "/od" || cmd == "/ood" || cmd == "/od version") { Util.Chat($"Oracle of Dereth v{Assembly.GetExecutingAssembly().GetName().Version}", 1); }
                 else if (cmd == "/od exception") { throw new InvalidOperationException("An error occurred."); }
                 else if (cmd == "/od landblock") { Util.Chat($"Current landblock: {Util.CurrentLandblock()}"); }
                 else if (cmd == "/od logout") { CoreManager.Current.Actions.Logout(); }

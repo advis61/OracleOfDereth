@@ -2,7 +2,7 @@
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.12.3/OracleOfDerethInstaller-1.12.3.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.12.3/OracleOfDerethInstaller-1.13.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
@@ -62,6 +62,10 @@ Luminance
 Recalls
 
 ![Recall Spells](./docs/Recalls.png)
+
+Society
+
+![Society](./docs/Society.png)
 
 John Tracker
 
@@ -183,6 +187,10 @@ Displays which facility hub items you've turned in.
 ### Flagging quests
 
 Displays which major flagging quests you've completed.
+
+### Society
+
+Displays your society, number of ribbons to next rank, number of ribbons today, and available quests.
 
 ### Titles Tracker
 

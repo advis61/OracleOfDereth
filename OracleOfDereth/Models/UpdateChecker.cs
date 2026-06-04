@@ -75,7 +75,7 @@ namespace OracleOfDereth
                 return;
             }
 
-            if (verbose) Util.Chat($"Oracle of Dereth is up to date (v{local}).", Util.ColorPink, "");
+            if (verbose) Util.Chat($"Oracle of Dereth is up to date (v{local})", Util.ColorPink, "");
         }
 
         private static string Fetch(string url)
