@@ -110,7 +110,7 @@ namespace OracleOfDereth
                 case 46: return "Finesse";
                 case 41: return "Two Hand";
                 case 34: return "War";
-                case 43: return "Nether";
+                case 43: return "Void";
             }
 
             // Not appraised yet (and missile sub-types aren't in the skill anyway) —
@@ -130,7 +130,7 @@ namespace OracleOfDereth
             string name = wo.Name ?? "";
 
             if (wo.ObjectClass == ObjectClass.WandStaffOrb)
-                return NetherCasterRegex.IsMatch(name) ? "Nether" : "War";
+                return NetherCasterRegex.IsMatch(name) ? "Void" : "War";
 
             if (wo.ObjectClass == ObjectClass.MeleeWeapon)
             {
@@ -148,7 +148,7 @@ namespace OracleOfDereth
             if (wo.ObjectClass == ObjectClass.MissileWeapon)
             {
                 if (CrossbowRegex.IsMatch(name)) return "Crossbow";
-                if (AtlatlRegex.IsMatch(name)) return "Atlatl";
+                if (AtlatlRegex.IsMatch(name)) return "Thrown";
                 return "Bow";
             }
 
@@ -170,7 +170,7 @@ namespace OracleOfDereth
             new Regex(@"\b(Crossbow|Arbalest)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex AtlatlRegex =
-            new Regex(@"\b(Atlatl)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            new Regex(@"\b(Atlatl|Slingshot)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex LightWeaponRegex = new Regex(
             @"\b(Dolabra|Ono|Hand|War Hammer|Khanjar|Dagger|Club|Kasrullah|Spear|Yari|Quarter|Broad|Shamshir|Epee|Katar|Knuckles)\b",
