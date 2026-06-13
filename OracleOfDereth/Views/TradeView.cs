@@ -267,7 +267,7 @@ namespace OracleOfDereth
             {
                 Item item = RequireSelectedTradeItem();
                 if (item == null) return;
-                Trade.SendCommand("check " + item.Id);
+                Trade.CheckPrice(item.Id);
             }
             catch (Exception ex) { Util.Log(ex); }
         }

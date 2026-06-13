@@ -110,6 +110,14 @@ namespace OracleOfDereth
             PayPoints = 0;
         }
 
+        // Price-check an item without buying. Cancels any half-finished Buy first so the
+        // reply to this check can't be mistaken for a buy confirmation and trigger a purchase.
+        public static void CheckPrice(int itemId)
+        {
+            PendingBuyId = 0;
+            SendCommand("check " + itemId);
+        }
+
         // A CyWorks-style "// ..." tell from the partner — flag it as a CyTrader bot.
         public static void NoteBotTell(string chatText)
         {
