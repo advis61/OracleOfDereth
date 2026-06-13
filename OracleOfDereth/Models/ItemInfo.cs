@@ -111,10 +111,15 @@ namespace OracleOfDereth
                 case 47: return "Missile";
                 case 34: return "War";
                 case 43: return "Void";
-                default:
-                    if (wo.ObjectClass == ObjectClass.WandStaffOrb) return "Caster";
-                    return "";
             }
+
+            // The precise melee skill needs an appraisal, but the broad weapon type
+            // is in the object class, which we have before identifying.
+            if (wo.ObjectClass == ObjectClass.WandStaffOrb) return "Caster";
+            if (wo.ObjectClass == ObjectClass.MissileWeapon) return "Missile";
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon) return "Melee";
+
+            return "";
         }
 
         public string GetSlotName()
