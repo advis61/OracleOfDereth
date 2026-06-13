@@ -250,7 +250,7 @@ namespace OracleOfDereth
         {
             if (e.Text == null) return;
 
-            try 
+            try
             {
                 if (Target.YouCastRegex.IsMatch(e.Text))
                 {
@@ -264,6 +264,14 @@ namespace OracleOfDereth
                 else if (QuestFlag.MyQuestRegex.IsMatch(e.Text))
                 {
                     QuestFlag.Add(e.Text);
+                }
+                else if (TradeView.CheckPriceRegex.IsMatch(e.Text))
+                {
+                    tradeView.NotePriceTell(e.Text);
+                }
+                else if (TradeView.TradeStartedRegex.IsMatch(e.Text))
+                {
+                    tradeView.NoteBotTell(e.Text);
                 }
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -331,8 +339,14 @@ namespace OracleOfDereth
                     foreach (WorldObject wo in inv) { tradeMyItems.Add(wo.Id); }
                 }
 
+                // The id that isn't ours is the trade partner (the bot we send commands to).
+                int myId = CoreManager.Current.CharacterFilter.Id;
+                int partnerId = e.TradeeId == myId ? e.TraderId : e.TradeeId;
+                string partnerName = CoreManager.Current.WorldFilter[partnerId]?.Name ?? "";
+
                 // Fresh window: drop whatever the previous trade left and show it.
                 ItemList.Trade.Clear();
+                tradeView.SetTradePartner(partnerName);
                 tradeView.Show();
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -349,7 +363,7 @@ namespace OracleOfDereth
                 bool mine = tradeMyItems.Contains(e.ItemId) || ItemList.IsInInventory(wo);
 
                 // TODO(debug): confirm ownership classification in-game, then remove this line.
-                Util.Chat($"AddTradeItem '{wo?.Name ?? "?"}' snap={tradeMyItems.Contains(e.ItemId)} inInv={ItemList.IsInInventory(wo)} -> {(mine ? "MINE" : "PARTNER")}", Util.ColorOrange, "[Oracle of Dereth] ");
+                //Util.Chat($"AddTradeItem '{wo?.Name ?? "?"}' snap={tradeMyItems.Contains(e.ItemId)} inInv={ItemList.IsInInventory(wo)} -> {(mine ? "MINE" : "PARTNER")}", Util.ColorOrange, "[Oracle of Dereth] ");
 
                 if (mine) return; // our own offer — only show the partner's items
                 ItemList.Trade.AddTradeItem(e.ItemId);
@@ -375,6 +389,7 @@ namespace OracleOfDereth
             {
                 tradeMyItems.Clear();
                 ItemList.Trade.Clear();
+                tradeView.SetTradePartner(null);
                 tradeView.Hide();
             }
             catch (Exception ex) { Util.Log(ex); }

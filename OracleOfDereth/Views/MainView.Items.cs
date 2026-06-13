@@ -193,7 +193,7 @@ namespace OracleOfDereth
             InventoryList.PrioritizeIdentify(items.Select(t => t.Id));
 
             ItemListRenderer.Render(ItemsList, items, AssignedImages, IconNotComplete);
-            ItemsText.Text = ItemListRenderer.StatusText("Items", InventoryList.Items.Count, items.Count, InventoryList.QueueCount);
+            ItemsText.Text = ItemListRenderer.StatusText("Items", InventoryList.Items.Count, items.Count, InventoryList.UnidentifiedCount);
         }
 
         private void ItemsAddSelected_Change(object sender, EventArgs e)

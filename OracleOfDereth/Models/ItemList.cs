@@ -58,7 +58,7 @@ namespace OracleOfDereth
 
         // In-flight identify requests: item id -> when we sent it + how many tries.
         // Tracked so a dropped server response can be retried instead of stalling.
-        private struct Pending { public DateTime SentAt; public int Attempts; }
+        private struct Pending { public DateTime SentAt; }
         private Dictionary<int, Pending> PendingIds = new Dictionary<int, Pending>();
 
         // Queue of item ids waiting to be identified (for Add All)
@@ -70,7 +70,6 @@ namespace OracleOfDereth
         // server answers them in a burst. Safe because Tick() retries/drops any it doesn't.
         private const int MaxConcurrentRequests = 100;
         private static readonly TimeSpan IdTimeout = TimeSpan.FromSeconds(5);
-        private const int MaxIdAttempts = 5;
 
         // Throttle list rebuilds during bulk identify (sort + repaint is O(n)).
         private DateTime _lastRefresh = DateTime.MinValue;
@@ -83,6 +82,11 @@ namespace OracleOfDereth
         public Action OnQueueFinished;
 
         public int QueueCount => IdentifyQueue.Count + PendingIds.Count;
+
+        // Rows still showing as stubs (greyed, no detail columns). This is what the status
+        // line reports as "identifying" — it matches what the user actually sees, unlike the
+        // in-flight queue count which drops to 0 the moment requests resolve or are dropped.
+        public int UnidentifiedCount => Items.Count(t => !t.IsIdentified);
 
         // Whether to include the item in the list. We intentionally keep attuned
         // items (they're shown, just not actually tradeable). All checks here are
@@ -340,7 +344,7 @@ namespace OracleOfDereth
         // Send an identify request and remember when, for timeout/retry in Tick().
         private void SendId(int id)
         {
-            PendingIds[id] = new Pending { SentAt = DateTime.UtcNow, Attempts = 1 };
+            PendingIds[id] = new Pending { SentAt = DateTime.UtcNow };
             CoreManager.Current.Actions.RequestId(id);
         }
 
@@ -368,9 +372,10 @@ namespace OracleOfDereth
             MaybeRefresh();
         }
 
-        // Called once per second from the plugin tick. Re-issues or gives up on
-        // identify requests the server never answered, so a dropped response
-        // can't permanently stall the queue.
+        // Called once per second from the plugin tick. Drives the list to converge: fills
+        // stubs whose data arrived, drops timed-out requests, and re-queues any row that's
+        // still a stub so it gets requested again. We don't permanently give up on a present
+        // item — that's what used to leave grey rows after the "identifying" count hit 0.
         public void Tick()
         {
             // Self-heal: fill any stub whose appraisal data is already available. Covers
@@ -378,31 +383,32 @@ namespace OracleOfDereth
             // notably trade items, where the appraisal can land before the row is queued.
             PopulateReadyStubs();
 
-            if (PendingIds.Count == 0) return;
-
-            DateTime now = DateTime.UtcNow;
-            List<int> timedOut = null;
-            foreach (var kvp in PendingIds)
+            // Drop timed-out in-flight requests so they can be re-issued below.
+            if (PendingIds.Count > 0)
             {
-                if (now - kvp.Value.SentAt < IdTimeout) continue;
-                (timedOut ?? (timedOut = new List<int>())).Add(kvp.Key);
+                DateTime now = DateTime.UtcNow;
+                List<int> timedOut = null;
+                foreach (var kvp in PendingIds)
+                {
+                    if (now - kvp.Value.SentAt < IdTimeout) continue;
+                    (timedOut ?? (timedOut = new List<int>())).Add(kvp.Key);
+                }
+                if (timedOut != null)
+                    foreach (int id in timedOut) PendingIds.Remove(id);
             }
-            if (timedOut == null) return;
 
-            foreach (int id in timedOut)
+            // Re-queue any present, still-unidentified row that isn't already in flight or
+            // queued, so the list keeps converging instead of leaving stuck grey rows. Items
+            // that have left the world (null WorldObject) can't be appraised, so we skip them.
+            foreach (Item item in Items)
             {
-                Pending p = PendingIds[id];
-                if (p.Attempts < MaxIdAttempts && CoreManager.Current.WorldFilter[id] != null)
-                {
-                    PendingIds[id] = new Pending { SentAt = now, Attempts = p.Attempts + 1 };
-                    CoreManager.Current.Actions.RequestId(id);
-                }
-                else
-                {
-                    // Out of retries. Stop chasing it and free the slot, but keep the
-                    // row — it just keeps showing "..." instead of vanishing from the list.
-                    PendingIds.Remove(id);
-                }
+                if (item.IsIdentified) continue;
+                if (PendingIds.ContainsKey(item.Id) || IdentifyQueue.Contains(item.Id)) continue;
+
+                WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
+                if (wo == null || wo.HasIdData) continue;   // gone, or PopulateReadyStubs already handled it
+
+                IdentifyQueue.Add(item.Id);
             }
 
             PumpQueue();
