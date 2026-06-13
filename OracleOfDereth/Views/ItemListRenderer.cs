@@ -13,15 +13,15 @@ namespace OracleOfDereth
     public class ItemFilter
     {
         public string Text = "";
-        public bool Weapons = true;
-        public bool Armor = true;
-        public bool Clothing = true;
-        public bool Jewelry = true;
-        public bool Cloaks = true;
-        public bool Summons = true;
-        public bool Aetheria = true;
-        public bool Salvage = true;
-        public bool Other = true;
+        public bool Weapons = false;
+        public bool Armor = false;
+        public bool Clothing = false;
+        public bool Jewelry = false;
+        public bool Cloaks = false;
+        public bool Summons = false;
+        public bool Aetheria = false;
+        public bool Salvage = false;
+        public bool Other = false;
 
         public bool Matches(Item t)
         {
@@ -29,8 +29,17 @@ namespace OracleOfDereth
             return MatchesText(t);
         }
 
+        // Category checkboxes act as a whitelist: with none ticked there's no category
+        // filtering at all (everything shows); tick one or more to show only those.
+        private bool AnyCategorySelected()
+        {
+            return Weapons || Armor || Clothing || Jewelry || Cloaks || Summons || Aetheria || Salvage || Other;
+        }
+
         private bool IsCategoryVisible(int sortCategory)
         {
+            if (!AnyCategorySelected()) return true;
+
             switch (sortCategory)
             {
                 case 0: return Weapons;
