@@ -147,6 +147,9 @@ namespace OracleOfDereth
             ItemFilter filter = Filter();
             List<Item> items = Trade.Items.Where(filter.Matches).ToList();
 
+            // Appraise what's on screen first (e.g. when filtered down to one category).
+            Trade.PrioritizeIdentify(items.Select(t => t.Id));
+
             ItemListRenderer.Render(TradeList, items, AssignedImages, IconNotComplete);
             TradeText.Text = ItemListRenderer.StatusText("Trade", Trade.Items.Count, items.Count, Trade.QueueCount);
         }

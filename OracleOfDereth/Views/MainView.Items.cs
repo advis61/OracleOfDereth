@@ -180,6 +180,9 @@ namespace OracleOfDereth
             ItemFilter filter = ItemsFilter();
             List<Item> items = InventoryList.Items.Where(filter.Matches).ToList();
 
+            // Appraise what's on screen first (e.g. when filtered down to one category).
+            InventoryList.PrioritizeIdentify(items.Select(t => t.Id));
+
             ItemListRenderer.Render(ItemsList, items, AssignedImages, IconNotComplete);
             ItemsText.Text = ItemListRenderer.StatusText("Items", InventoryList.Items.Count, items.Count, InventoryList.QueueCount);
         }
@@ -261,7 +264,10 @@ namespace OracleOfDereth
             }
             else
             {
+                // Select it in the world and (re)request its appraisal immediately — fills
+                // any stub whose identify gave up. The result lands via the Tick self-heal.
                 CoreManager.Current.Actions.SelectItem(id);
+                CoreManager.Current.Actions.RequestId(id);
             }
         }
 

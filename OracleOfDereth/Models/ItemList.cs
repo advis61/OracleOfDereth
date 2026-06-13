@@ -248,6 +248,28 @@ namespace OracleOfDereth
             PumpQueue();
         }
 
+        // Bump the given item ids to the front of the identify queue so they're appraised
+        // next, without disturbing in-flight requests. The view calls this with whatever's
+        // currently visible (e.g. when a filter narrows to Weapons), so the rows you're
+        // actually looking at fill in first. Order within each group is preserved.
+        public void PrioritizeIdentify(IEnumerable<int> priorityIds)
+        {
+            if (IdentifyQueue.Count < 2 || priorityIds == null) return;
+
+            var priority = new HashSet<int>(priorityIds);
+            if (priority.Count == 0) return;
+
+            var front = new List<int>();
+            var back = new List<int>();
+            foreach (int id in IdentifyQueue) { (priority.Contains(id) ? front : back).Add(id); }
+
+            // Nothing visible is waiting, or everything waiting is visible — order unchanged.
+            if (front.Count == 0 || back.Count == 0) return;
+
+            front.AddRange(back);
+            IdentifyQueue = front;
+        }
+
         // Issue identify requests until we hit the concurrency cap. Items already
         // identified (by us or another plugin) are added without a request.
         private void PumpQueue()
