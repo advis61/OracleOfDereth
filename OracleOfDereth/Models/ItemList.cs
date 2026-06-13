@@ -101,6 +101,33 @@ namespace OracleOfDereth
             return true;
         }
 
+        // ObjectClasses whose items carry no appraisal-only detail — the name/icon is the whole
+        // story. We mark these identified immediately instead of spending an appraisal request
+        // that returns nothing useful (and would otherwise leave the row stuck "loading", and
+        // re-requested every tick since it never gets HasIdData).
+        public static bool NeedsNoAppraisal(WorldObject wo)
+        {
+            switch (wo.ObjectClass)
+            {
+                case ObjectClass.Salvage:
+                case ObjectClass.SpellComponent:
+                case ObjectClass.HealingKit:
+                case ObjectClass.Food:
+                case ObjectClass.Money:
+                case ObjectClass.TradeNote:
+                case ObjectClass.Gem:
+                case ObjectClass.Plant:
+                case ObjectClass.Ust:
+                case ObjectClass.ManaStone:
+                case ObjectClass.Foci:
+                case ObjectClass.Bundle:
+                case ObjectClass.Container:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         // Whether this item is currently in our inventory (chains up to our character).
         // Note: an item we drag into the trade pane may leave this chain, so callers that
         // need to recognise our own offered items also snapshot inventory at trade start.
@@ -153,7 +180,8 @@ namespace OracleOfDereth
             if (Items.Any(t => t.Id == id)) return false;
             if (PendingIds.ContainsKey(id) || IdentifyQueue.Contains(id)) return false;
 
-            if (wo.HasIdData)
+            // Already appraised, or never needs one — add it as a finished row, no request.
+            if (wo.HasIdData || NeedsNoAppraisal(wo))
             {
                 AddFromWorldObject(wo);
                 RefreshList();
@@ -197,8 +225,8 @@ namespace OracleOfDereth
                     if (PendingIds.ContainsKey(wo.Id) || IdentifyQueue.Contains(wo.Id)) continue;  // already in flight
                     // (an unidentified stub that gave up falls through here and gets re-queued)
 
-                    // Salvage and Spell Components don't need identification
-                    if (wo.ObjectClass == ObjectClass.Salvage || wo.ObjectClass == ObjectClass.SpellComponent)
+                    // Salvage, food, gems, healing kits, etc. carry no appraisal info — add now.
+                    if (NeedsNoAppraisal(wo))
                     {
                         AddFromWorldObject(wo);
                         added = true;
@@ -414,7 +442,11 @@ namespace OracleOfDereth
                 if (item.IsIdentified) continue;
 
                 WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
-                if (wo == null || !wo.HasIdData) continue;
+                if (wo == null) continue;
+
+                // Fill once we have the appraisal, or once we can tell it never needs one
+                // (its ObjectClass may not have loaded when the stub was first created).
+                if (!wo.HasIdData && !NeedsNoAppraisal(wo)) continue;
 
                 Fill(item, wo);
                 PendingIds.Remove(item.Id);
