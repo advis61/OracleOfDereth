@@ -23,6 +23,9 @@ namespace OracleOfDereth
         public bool Salvage = false;
         public bool Other = false;
 
+        // True when the filter actually narrows the list (some category ticked or text typed).
+        public bool IsActive => AnyCategorySelected() || !string.IsNullOrWhiteSpace(Text);
+
         public bool Matches(Item t)
         {
             if (!IsCategoryVisible(t.SortCategory)) return false;

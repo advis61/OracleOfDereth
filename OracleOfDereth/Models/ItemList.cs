@@ -65,9 +65,10 @@ namespace OracleOfDereth
         private List<int> IdentifyQueue = new List<int>();
         public bool IsProcessingQueue = false;
 
-        // Up to this many identify requests in flight at once. Safe to keep high
-        // because Tick() retries/drops anything the server doesn't answer.
-        private const int MaxConcurrentRequests = 6;
+        // Up to this many identify requests in flight at once. Kept high so a whole trade
+        // window / pack fires almost immediately (like rapid-clicking items in-game); the
+        // server answers them in a burst. Safe because Tick() retries/drops any it doesn't.
+        private const int MaxConcurrentRequests = 100;
         private static readonly TimeSpan IdTimeout = TimeSpan.FromSeconds(5);
         private const int MaxIdAttempts = 5;
 
@@ -270,6 +271,41 @@ namespace OracleOfDereth
             IdentifyQueue = front;
         }
 
+        // Appraise these ids right now, ahead of everything else — used when a filter
+        // narrows the view so the rows you're looking at jump the line even though the
+        // queue's already been blasted out. Re-requests them (bypassing the concurrency
+        // cap); the server answers a fresh request promptly. Already-available data fills
+        // in place. Ignores ids that aren't unidentified rows in this list.
+        public void RequestIdentifyNow(IEnumerable<int> ids)
+        {
+            if (ids == null) return;
+
+            bool changed = false;
+            foreach (int id in ids)
+            {
+                Item item = Items.FirstOrDefault(t => t.Id == id);
+                if (item == null || item.IsIdentified) continue;
+
+                WorldObject wo = CoreManager.Current.WorldFilter[id];
+                if (wo == null) continue;
+
+                if (wo.HasIdData)
+                {
+                    item.Populate(wo);
+                    PendingIds.Remove(id);
+                    IdentifyQueue.Remove(id);
+                    changed = true;
+                    continue;
+                }
+
+                IdentifyQueue.Remove(id);
+                SendId(id);     // (re)request immediately
+            }
+
+            UpdateProcessingState();
+            if (changed) RefreshList();
+        }
+
         // Issue identify requests until we hit the concurrency cap. Items already
         // identified (by us or another plugin) are added without a request.
         private void PumpQueue()
@@ -316,7 +352,13 @@ namespace OracleOfDereth
 
             bool wasPending = PendingIds.Remove(changed.Id);
             bool wasQueued = IdentifyQueue.Remove(changed.Id);
-            if (!wasPending && !wasQueued) return;
+
+            // Act on any appraisal for a row we're still showing as a stub — even one whose
+            // request already gave up, or that we never requested (e.g. the user clicked the
+            // item in-game). This fills it the instant the data lands instead of waiting for
+            // the next Tick self-heal. Ignore appraisals for items not in this list.
+            Item existing = Items.FirstOrDefault(t => t.Id == changed.Id);
+            if (!wasPending && !wasQueued && (existing == null || existing.IsIdentified)) return;
 
             // Fill the stub in place. We don't remove it here — an item earns its
             // spot when added (already pre-filtered) and keeps it while details load.

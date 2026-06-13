@@ -195,6 +195,15 @@ namespace OracleOfDereth
         private void ItemsFilter_Change(object sender, EventArgs e)
         {
             UpdateItemsList();
+
+            // Re-request the now-visible items so a filter (e.g. just Weapons) appraises
+            // those first, even though the whole queue has already been sent.
+            ItemFilter filter = ItemsFilter();
+            if (filter.IsActive)
+            {
+                InventoryList.RequestIdentifyNow(
+                    InventoryList.Items.Where(filter.Matches).Where(t => !t.IsIdentified).Select(t => t.Id).ToList());
+            }
         }
 
         private void ItemsAdd_Hit(object sender, EventArgs e)

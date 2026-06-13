@@ -157,6 +157,15 @@ namespace OracleOfDereth
         private void Filter_Change(object sender, EventArgs e)
         {
             UpdateList();
+
+            // Re-request the now-visible items so a filter (e.g. just Weapons) appraises
+            // those first, even though the whole queue has already been sent.
+            ItemFilter filter = Filter();
+            if (filter.IsActive)
+            {
+                Trade.RequestIdentifyNow(
+                    Trade.Items.Where(filter.Matches).Where(t => !t.IsIdentified).Select(t => t.Id).ToList());
+            }
         }
 
         // Click a row to select the item in the world and (re)request its appraisal — handy
