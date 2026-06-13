@@ -12,6 +12,10 @@ namespace OracleOfDereth
         // The inventory-backed list shown on the Items tab. (TradeView drives ItemList.Trade.)
         private ItemList InventoryList => ItemList.Inventory;
 
+        // Set while Reset clears all the filter controls, so each control's Change event
+        // doesn't trigger a refresh/re-request — we do one refresh at the end instead.
+        private bool suppressItemsFilter = false;
+
         // Items
         public HudStaticText ItemsText { get; private set; }
         public HudCheckBox ItemsAddSelected { get; private set; }
@@ -23,6 +27,7 @@ namespace OracleOfDereth
         public HudButton ItemsExportCsv { get; private set; }
         public HudButton ItemsExportJson { get; private set; }
         public HudTextBox ItemsFilterText { get; private set; }
+        public HudButton ItemsFilterReset { get; private set; }
         public HudCheckBox ItemsFilterWeapons { get; private set; }
         public HudCheckBox ItemsFilterArmor { get; private set; }
         public HudCheckBox ItemsFilterJewelry { get; private set; }
@@ -75,6 +80,9 @@ namespace OracleOfDereth
 
             ItemsFilterText = (HudTextBox)view["ItemsFilterText"];
             ItemsFilterText.Change += ItemsFilter_Change;
+
+            ItemsFilterReset = (HudButton)view["ItemsFilterReset"];
+            ItemsFilterReset.Hit += ItemsFilterReset_Hit;
 
             ItemsFilterWeapons = (HudCheckBox)view["ItemsFilterWeapons"];
             ItemsFilterWeapons.Change += ItemsFilter_Change;
@@ -134,6 +142,7 @@ namespace OracleOfDereth
             ItemsExportJson.Hit -= ItemsExportJson_Hit;
             ItemsClipboard.Hit -= ItemsClipboard_Hit;
             ItemsFilterText.Change -= ItemsFilter_Change;
+            ItemsFilterReset.Hit -= ItemsFilterReset_Hit;
             ItemsFilterWeapons.Change -= ItemsFilter_Change;
             ItemsFilterArmor.Change -= ItemsFilter_Change;
             ItemsFilterClothing.Change -= ItemsFilter_Change;
@@ -194,6 +203,8 @@ namespace OracleOfDereth
 
         private void ItemsFilter_Change(object sender, EventArgs e)
         {
+            if (suppressItemsFilter) return;
+
             UpdateItemsList();
 
             // Re-request the now-visible items so a filter (e.g. just Weapons) appraises
@@ -204,6 +215,25 @@ namespace OracleOfDereth
                 InventoryList.RequestIdentifyNow(
                     InventoryList.Items.Where(filter.Matches).Where(t => !t.IsIdentified).Select(t => t.Id).ToList());
             }
+        }
+
+        // Clear the filter text box and uncheck every category, then refresh once.
+        private void ItemsFilterReset_Hit(object sender, EventArgs e)
+        {
+            suppressItemsFilter = true;
+            ItemsFilterText.Text = "";
+            ItemsFilterWeapons.Checked = false;
+            ItemsFilterArmor.Checked = false;
+            ItemsFilterClothing.Checked = false;
+            ItemsFilterJewelry.Checked = false;
+            ItemsFilterCloaks.Checked = false;
+            ItemsFilterSummons.Checked = false;
+            ItemsFilterAetheria.Checked = false;
+            ItemsFilterSalvage.Checked = false;
+            ItemsFilterOther.Checked = false;
+            suppressItemsFilter = false;
+
+            UpdateItemsList();
         }
 
         private void ItemsAdd_Hit(object sender, EventArgs e)

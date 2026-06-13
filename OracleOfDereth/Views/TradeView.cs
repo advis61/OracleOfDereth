@@ -25,6 +25,7 @@ namespace OracleOfDereth
 
         public HudStaticText TradeText { get; private set; }
         public HudTextBox TradeFilterText { get; private set; }
+        public HudButton TradeFilterReset { get; private set; }
         public HudCheckBox TradeFilterWeapons { get; private set; }
         public HudCheckBox TradeFilterArmor { get; private set; }
         public HudCheckBox TradeFilterClothing { get; private set; }
@@ -44,6 +45,10 @@ namespace OracleOfDereth
         public HudList TradeList { get; private set; }
 
         private ItemList Trade => ItemList.Trade;
+
+        // Set while Reset clears the filter controls, so their Change events don't each
+        // trigger a refresh/re-request — we refresh once at the end instead.
+        private bool suppressFilter = false;
 
         public TradeView()
         {
@@ -66,6 +71,9 @@ namespace OracleOfDereth
 
                 TradeFilterText = (HudTextBox)view["TradeFilterText"];
                 TradeFilterText.Change += Filter_Change;
+
+                TradeFilterReset = (HudButton)view["TradeFilterReset"];
+                TradeFilterReset.Hit += FilterReset_Hit;
 
                 TradeFilterWeapons = (HudCheckBox)view["TradeFilterWeapons"];
                 TradeFilterWeapons.Change += Filter_Change;
@@ -156,6 +164,8 @@ namespace OracleOfDereth
 
         private void Filter_Change(object sender, EventArgs e)
         {
+            if (suppressFilter) return;
+
             UpdateList();
 
             // Re-request the now-visible items so a filter (e.g. just Weapons) appraises
@@ -166,6 +176,25 @@ namespace OracleOfDereth
                 Trade.RequestIdentifyNow(
                     Trade.Items.Where(filter.Matches).Where(t => !t.IsIdentified).Select(t => t.Id).ToList());
             }
+        }
+
+        // Clear the filter text box and uncheck every category, then refresh once.
+        private void FilterReset_Hit(object sender, EventArgs e)
+        {
+            suppressFilter = true;
+            TradeFilterText.Text = "";
+            TradeFilterWeapons.Checked = false;
+            TradeFilterArmor.Checked = false;
+            TradeFilterClothing.Checked = false;
+            TradeFilterJewelry.Checked = false;
+            TradeFilterCloaks.Checked = false;
+            TradeFilterSummons.Checked = false;
+            TradeFilterAetheria.Checked = false;
+            TradeFilterSalvage.Checked = false;
+            TradeFilterOther.Checked = false;
+            suppressFilter = false;
+
+            UpdateList();
         }
 
         // Click a row to select the item in the world and (re)request its appraisal — handy
@@ -231,6 +260,7 @@ namespace OracleOfDereth
             if (TradeList != null) TradeList.Click -= List_Click;
 
             if (TradeFilterText != null) TradeFilterText.Change -= Filter_Change;
+            if (TradeFilterReset != null) TradeFilterReset.Hit -= FilterReset_Hit;
             if (TradeFilterWeapons != null) TradeFilterWeapons.Change -= Filter_Change;
             if (TradeFilterArmor != null) TradeFilterArmor.Change -= Filter_Change;
             if (TradeFilterClothing != null) TradeFilterClothing.Change -= Filter_Change;
