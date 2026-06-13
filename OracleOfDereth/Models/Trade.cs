@@ -161,6 +161,7 @@ namespace OracleOfDereth
             if (wo.Name != PaymentItemName || StackCount(wo) != PendingSplitCount) return;
 
             PendingSplitCount = 0;
+            MyItems.Add(wo.Id);   // it's ours — keep it out of the partner's item list
             CoreManager.Current.Actions.TradeAdd(wo.Id);
         }
 
@@ -203,6 +204,7 @@ namespace OracleOfDereth
                 int count = StackCount(note);
                 if (count <= remaining)
                 {
+                    MyItems.Add(note.Id);   // ours — keep it out of the partner's item list
                     CoreManager.Current.Actions.TradeAdd(note.Id);
                     remaining -= count;
                 }

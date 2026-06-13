@@ -57,10 +57,9 @@ namespace OracleOfDereth
             Col4Descending,
         }
 
-        // In-flight identify requests: item id -> when we sent it + how many tries.
-        // Tracked so a dropped server response can be retried instead of stalling.
-        private struct Pending { public DateTime SentAt; }
-        private Dictionary<int, Pending> PendingIds = new Dictionary<int, Pending>();
+        // In-flight identify requests: item id -> when we sent it. Tracked so a dropped
+        // server response can be re-issued by Tick() instead of stalling the queue.
+        private Dictionary<int, DateTime> PendingIds = new Dictionary<int, DateTime>();
 
         // Queue of item ids waiting to be identified (for Add All)
         private List<int> IdentifyQueue = new List<int>();
@@ -121,62 +120,38 @@ namespace OracleOfDereth
             return false;
         }
 
-        private static bool IsAddAllClass(ObjectClass objClass)
-        {
-            return objClass == ObjectClass.MeleeWeapon
-                || objClass == ObjectClass.MissileWeapon
-                || objClass == ObjectClass.WandStaffOrb
-                || objClass == ObjectClass.Armor
-                || objClass == ObjectClass.Clothing
-                || objClass == ObjectClass.Jewelry
-                || objClass == ObjectClass.Misc   // Aetheria and Summons
-                || objClass == ObjectClass.Salvage;
-        }
-
         /// <summary>
-        /// Request to add an item by id. If already identified, adds it immediately.
-        /// Otherwise it's queued for identification and added when the id arrives
-        /// (via IdentReceived). Returns true if added immediately.
+        /// Request to add an inventory item by id. If already identified, adds it immediately;
+        /// otherwise stubs it and queues it for identification. Returns true if added immediately.
         /// </summary>
         public bool RequestAdd(int id)
         {
-            if (id == 0) return false;
-
-            WorldObject wo = CoreManager.Current.WorldFilter[id];
+            WorldObject wo = id == 0 ? null : CoreManager.Current.WorldFilter[id];
             if (wo == null) return false;
-
             if (wo.ObjectClass == ObjectClass.Container) return false;
             if (!IsInInventory(wo)) return false;
-            if (Items.Any(t => t.Id == id)) return false;
-            if (PendingIds.ContainsKey(id) || IdentifyQueue.Contains(id)) return false;
 
-            if (wo.HasIdData)
-            {
-                AddFromWorldObject(wo);
-                RefreshList();
-                return true;
-            }
-
-            // Show a stub now (icon + name); details fill in when the id arrives.
-            AddStub(wo);
-            IdentifyQueue.Add(id);
-            RefreshList();
-            PumpQueue();
-            return false;
+            return Add(wo, useCache: false);
         }
 
         /// <summary>
-        /// Add an item the trade partner dropped into the trade window. Mirrors RequestAdd
-        /// but skips the inventory/container gating — a partner's offered item lives in the
-        /// trade window, not our packs, so IsInInventory would wrongly reject it.
+        /// Add an item the trade partner dropped into the trade window. Unlike RequestAdd there's
+        /// no inventory/container gating — a partner's offered item lives in the trade pane, not
+        /// our packs — and a recent appraisal may be reused from the cache.
         /// </summary>
         public bool AddTradeItem(int id)
         {
-            if (id == 0) return false;
-
-            WorldObject wo = CoreManager.Current.WorldFilter[id];
+            WorldObject wo = id == 0 ? null : CoreManager.Current.WorldFilter[id];
             if (wo == null) return false;
 
+            return Add(wo, useCache: true);
+        }
+
+        // Shared add path: skip duplicates/in-flight, fill from live appraisal or (for trade)
+        // the cache, else show a stub and queue the identify. Returns true if added identified.
+        private bool Add(WorldObject wo, bool useCache)
+        {
+            int id = wo.Id;
             if (Items.Any(t => t.Id == id)) return false;
             if (PendingIds.ContainsKey(id) || IdentifyQueue.Contains(id)) return false;
 
@@ -188,12 +163,15 @@ namespace OracleOfDereth
             }
 
             // Reopened a recent trade? Reuse the cached appraisal instead of re-identifying.
-            Item cached = ItemCache.Get(id, wo.Name);
-            if (cached != null)
+            if (useCache)
             {
-                Items.Add(cached);
-                RefreshList();
-                return true;
+                Item cached = ItemCache.Get(id, wo.Name);
+                if (cached != null)
+                {
+                    Items.Add(cached);
+                    RefreshList();
+                    return true;
+                }
             }
 
             // Show a stub now (icon + name); details fill in when the id arrives.
@@ -355,7 +333,7 @@ namespace OracleOfDereth
         // Send an identify request and remember when, for timeout/retry in Tick().
         private void SendId(int id)
         {
-            PendingIds[id] = new Pending { SentAt = DateTime.UtcNow };
+            PendingIds[id] = DateTime.UtcNow;
             CoreManager.Current.Actions.RequestId(id);
         }
 
@@ -401,7 +379,7 @@ namespace OracleOfDereth
                 List<int> timedOut = null;
                 foreach (var kvp in PendingIds)
                 {
-                    if (now - kvp.Value.SentAt < IdTimeout) continue;
+                    if (now - kvp.Value < IdTimeout) continue;
                     (timedOut ?? (timedOut = new List<int>())).Add(kvp.Key);
                 }
                 if (timedOut != null)
@@ -532,6 +510,13 @@ namespace OracleOfDereth
         }
 
         private static bool IsEmpty(string s) => string.IsNullOrEmpty(s);
+
+        // Toggle a column header: descending if we're already sorted ascending on it, else
+        // ascending. Lets the views' header-click handlers be one-liners.
+        public void ToggleSort(SortType ascending, SortType descending)
+        {
+            Sort(CurrentSortType == ascending ? descending : ascending);
+        }
 
         public void Sort(SortType sortType)
         {

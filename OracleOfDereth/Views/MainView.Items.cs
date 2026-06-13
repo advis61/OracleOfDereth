@@ -315,54 +315,10 @@ namespace OracleOfDereth
             ItemsListSortName_Click(sender, e);
         }
 
-        private void ItemsListSortName_Click(object sender, EventArgs e)
-        {
-            if (InventoryList.CurrentSortType == ItemList.SortType.NameAscending)
-                InventoryList.Sort(ItemList.SortType.NameDescending);
-            else
-                InventoryList.Sort(ItemList.SortType.NameAscending);
-
-            UpdateItemsList();
-        }
-
-        private void ItemsListSortCol1_Click(object sender, EventArgs e)
-        {
-            if (InventoryList.CurrentSortType == ItemList.SortType.Col1Ascending)
-                InventoryList.Sort(ItemList.SortType.Col1Descending);
-            else
-                InventoryList.Sort(ItemList.SortType.Col1Ascending);
-
-            UpdateItemsList();
-        }
-
-        private void ItemsListSortCol2_Click(object sender, EventArgs e)
-        {
-            if (InventoryList.CurrentSortType == ItemList.SortType.Col2Ascending)
-                InventoryList.Sort(ItemList.SortType.Col2Descending);
-            else
-                InventoryList.Sort(ItemList.SortType.Col2Ascending);
-
-            UpdateItemsList();
-        }
-
-        private void ItemsListSortCol3_Click(object sender, EventArgs e)
-        {
-            if (InventoryList.CurrentSortType == ItemList.SortType.Col3Ascending)
-                InventoryList.Sort(ItemList.SortType.Col3Descending);
-            else
-                InventoryList.Sort(ItemList.SortType.Col3Ascending);
-
-            UpdateItemsList();
-        }
-
-        private void ItemsListSortCol4_Click(object sender, EventArgs e)
-        {
-            if (InventoryList.CurrentSortType == ItemList.SortType.Col4Ascending)
-                InventoryList.Sort(ItemList.SortType.Col4Descending);
-            else
-                InventoryList.Sort(ItemList.SortType.Col4Ascending);
-
-            UpdateItemsList();
-        }
+        private void ItemsListSortName_Click(object sender, EventArgs e) { InventoryList.ToggleSort(ItemList.SortType.NameAscending, ItemList.SortType.NameDescending); UpdateItemsList(); }
+        private void ItemsListSortCol1_Click(object sender, EventArgs e) { InventoryList.ToggleSort(ItemList.SortType.Col1Ascending, ItemList.SortType.Col1Descending); UpdateItemsList(); }
+        private void ItemsListSortCol2_Click(object sender, EventArgs e) { InventoryList.ToggleSort(ItemList.SortType.Col2Ascending, ItemList.SortType.Col2Descending); UpdateItemsList(); }
+        private void ItemsListSortCol3_Click(object sender, EventArgs e) { InventoryList.ToggleSort(ItemList.SortType.Col3Ascending, ItemList.SortType.Col3Descending); UpdateItemsList(); }
+        private void ItemsListSortCol4_Click(object sender, EventArgs e) { InventoryList.ToggleSort(ItemList.SortType.Col4Ascending, ItemList.SortType.Col4Descending); UpdateItemsList(); }
     }
 }

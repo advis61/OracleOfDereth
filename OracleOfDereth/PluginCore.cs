@@ -284,9 +284,9 @@ namespace OracleOfDereth
                     ItemList.Inventory.RequestAdd(e.ItemGuid);
                 }
 
-                // Selection changed — repaint so the matching row shows as selected.
-                mainView.UpdateItemsList();
-                tradeView.UpdateList();
+                // Selection changed — repaint the visible lists so the matching row highlights.
+                if (mainView.IsItemsTabActive()) mainView.UpdateItemsList();
+                if (Trade.IsOpen) tradeView.UpdateList();
             }
             catch (Exception ex) { Util.Log(ex); }
         }

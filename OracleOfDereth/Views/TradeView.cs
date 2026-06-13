@@ -55,10 +55,6 @@ namespace OracleOfDereth
         // Set while Reset clears the filter controls, so their Change events don't each
         // trigger a refresh/re-request — we refresh once at the end instead.
         private bool suppressFilter = false;
-
-        // What Add/Check act on is the item selected in-game (Target.CurrentTargetId), resolved
-        // against the trade list — you can only have one item selected at a time.
-
         public TradeView()
         {
             try
@@ -293,40 +289,11 @@ namespace OracleOfDereth
             return item;
         }
 
-        private void SortName_Click(object sender, EventArgs e)
-        {
-            TradeItems.Sort(TradeItems.CurrentSortType == ItemList.SortType.NameAscending
-                ? ItemList.SortType.NameDescending : ItemList.SortType.NameAscending);
-            UpdateList();
-        }
-
-        private void SortCol1_Click(object sender, EventArgs e)
-        {
-            TradeItems.Sort(TradeItems.CurrentSortType == ItemList.SortType.Col1Ascending
-                ? ItemList.SortType.Col1Descending : ItemList.SortType.Col1Ascending);
-            UpdateList();
-        }
-
-        private void SortCol2_Click(object sender, EventArgs e)
-        {
-            TradeItems.Sort(TradeItems.CurrentSortType == ItemList.SortType.Col2Ascending
-                ? ItemList.SortType.Col2Descending : ItemList.SortType.Col2Ascending);
-            UpdateList();
-        }
-
-        private void SortCol3_Click(object sender, EventArgs e)
-        {
-            TradeItems.Sort(TradeItems.CurrentSortType == ItemList.SortType.Col3Ascending
-                ? ItemList.SortType.Col3Descending : ItemList.SortType.Col3Ascending);
-            UpdateList();
-        }
-
-        private void SortCol4_Click(object sender, EventArgs e)
-        {
-            TradeItems.Sort(TradeItems.CurrentSortType == ItemList.SortType.Col4Ascending
-                ? ItemList.SortType.Col4Descending : ItemList.SortType.Col4Ascending);
-            UpdateList();
-        }
+        private void SortName_Click(object sender, EventArgs e) { TradeItems.ToggleSort(ItemList.SortType.NameAscending, ItemList.SortType.NameDescending); UpdateList(); }
+        private void SortCol1_Click(object sender, EventArgs e) { TradeItems.ToggleSort(ItemList.SortType.Col1Ascending, ItemList.SortType.Col1Descending); UpdateList(); }
+        private void SortCol2_Click(object sender, EventArgs e) { TradeItems.ToggleSort(ItemList.SortType.Col2Ascending, ItemList.SortType.Col2Descending); UpdateList(); }
+        private void SortCol3_Click(object sender, EventArgs e) { TradeItems.ToggleSort(ItemList.SortType.Col3Ascending, ItemList.SortType.Col3Descending); UpdateList(); }
+        private void SortCol4_Click(object sender, EventArgs e) { TradeItems.ToggleSort(ItemList.SortType.Col4Ascending, ItemList.SortType.Col4Descending); UpdateList(); }
 
         public void Dispose()
         {
