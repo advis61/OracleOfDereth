@@ -148,7 +148,7 @@ namespace OracleOfDereth
             if (wo.ObjectClass == ObjectClass.MissileWeapon)
             {
                 if (CrossbowRegex.IsMatch(name)) return "Crossbow";
-                if (AtlatlRegex.IsMatch(name)) return "Thrown";
+                if (ThrownRegex.IsMatch(name)) return "Thrown";
                 return "Bow";
             }
 
@@ -166,15 +166,15 @@ namespace OracleOfDereth
             @"\b(Hatchet|Shou-ono|Tungi|Hammer|Poniard|Knife|Lancet|Board|Tofun|Dabus|Naginata|Budiaq|Jo|Bastone|Scimitar|Yaoji|Short|Sabra|Simi|Rapier|Claw|Wraps)\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex CrossbowRegex =
-            new Regex(@"\b(Crossbow|Arbalest)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-        private static readonly Regex AtlatlRegex =
-            new Regex(@"\b(Atlatl|Slingshot)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
         private static readonly Regex LightWeaponRegex = new Regex(
             @"\b(Dolabra|Ono|Hand|War Hammer|Khanjar|Dagger|Club|Kasrullah|Spear|Yari|Quarter|Broad|Shamshir|Epee|Katar|Knuckles)\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex CrossbowRegex =
+            new Regex(@"\b(Crossbow|Arbalest)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex ThrownRegex =
+            new Regex(@"\b(Atlatl|Slingshot)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public string GetSlotName()
         {
