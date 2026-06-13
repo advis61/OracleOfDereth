@@ -29,7 +29,16 @@ namespace OracleOfDereth
 
                 // Update
                 Cantrip cantrip = cantrips[x];
-                if(cantrip.Name == "Blank") { continue; }
+
+                // Blank entries are spacer rows. Clear them explicitly rather than
+                // skipping, otherwise a row that previously held a real cantrip keeps
+                // its stale content when the list shifts (e.g. after an in-game respec).
+                if (cantrip.Name == "Blank") {
+                    AssignImage((HudPictureBox)row[0], 0);
+                    ((HudStaticText)row[1]).Text = "";
+                    ((HudStaticText)row[2]).Text = "";
+                    continue;
+                }
 
                 AssignImage((HudPictureBox)row[0], cantrip.Icon());
                 ((HudStaticText)row[1]).Text = cantrip.Name;
