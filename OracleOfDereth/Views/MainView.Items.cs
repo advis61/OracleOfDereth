@@ -266,21 +266,21 @@ namespace OracleOfDereth
 
         private void ItemsExportText_Hit(object sender, EventArgs e)
         {
-            string path = InventoryList.ExportToText();
+            string path = ItemExport.ToText(InventoryList.Items);
             Util.ClipboardCopy(path);
             Util.Chat($"Exported {InventoryList.Items.Count} items to {path}");
         }
 
         private void ItemsExportCsv_Hit(object sender, EventArgs e)
         {
-            string path = InventoryList.ExportToCsv();
+            string path = ItemExport.ToCsv(InventoryList.Items);
             Util.ClipboardCopy(path);
             Util.Chat($"Exported {InventoryList.Items.Count} items to {path}");
         }
 
         private void ItemsExportJson_Hit(object sender, EventArgs e)
         {
-            string path = InventoryList.ExportToJson();
+            string path = ItemExport.ToJson(InventoryList.Items);
             Util.ClipboardCopy(path);
             Util.Chat($"Exported {InventoryList.Items.Count} items to {path}");
         }

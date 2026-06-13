@@ -9,7 +9,6 @@ namespace OracleOfDereth
         public string Name = "";
         public int Id = 0;
         public int Icon = 0;
-        public int ObjectClassId = 0;
         public int SortCategory = 0; // Groups like items together: 0=weapon, 1=armor, 2=jewelry, 3=cloak, 4=summon, 5=aetheria, 9=other
         public string SummaryCol1 = "";
         public string SummaryCol2 = "";
@@ -33,7 +32,6 @@ namespace OracleOfDereth
 
             Name = wo.Name;
             Icon = wo.Icon;
-            ObjectClassId = (int)wo.ObjectClass;
             SummaryCol1 = info.GetItemSlotName();
             SortCategory = GetSortCategory(info);
             IsIdentified = false;
@@ -46,7 +44,6 @@ namespace OracleOfDereth
 
             Name = info.GetName();
             Icon = wo.Icon;
-            ObjectClassId = (int)wo.ObjectClass;
             SortCategory = GetSortCategory(info);
             SummaryCol1 = GetSummaryCol1(info);
             SummaryCol2 = GetSummaryCol2(info);
