@@ -112,6 +112,10 @@ namespace OracleOfDereth
             return value ?? 0;
         }
 
+        // Shallow copy — all fields are value types or immutable strings, so this is a full,
+        // independent copy. Used to stash/restore rows in ItemCache.
+        public Item Clone() => (Item)MemberwiseClone();
+
         public override string ToString()
         {
             return $"{Name} ({Id})";

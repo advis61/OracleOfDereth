@@ -44,9 +44,9 @@ namespace OracleOfDereth
         // the partner's — this snapshot does.
         private static readonly HashSet<int> MyItems = new HashSet<int>();
 
-        // Auto-pay bookkeeping for a Buy: how many points to pay once the bought item lands,
-        // and the count we're waiting on a stack split to produce.
-        private static bool PayArmed = false;
+        // Buy bookkeeping: the item awaiting its price check, how many points to pay once the
+        // bought item lands, and the count we're waiting on a stack split to produce.
+        private static int PendingBuyId = 0;
         private static int PayPoints = 0;
         private static int PendingSplitCount = 0;
 
@@ -91,23 +91,22 @@ namespace OracleOfDereth
 
             ItemList.Trade.AddTradeItem(itemId);
 
-            if (PayArmed && PayPoints > 0)
+            if (PayPoints > 0)
             {
                 int points = PayPoints;
-                PayArmed = false;
                 PayPoints = 0;
                 PayWithNotes(points);
             }
         }
 
-        // Ask the bot to add an item for purchase and arm auto-payment. The bot replies with a
-        // price (NotePriceTell), then adds the item (AddItem), which triggers the payment. We
-        // check/add by item id — exact, unlike a name which can match several items.
+        // Start a purchase: price-check the item first. We only commit the "add" once the price
+        // comes back and we've confirmed we can pay (NotePriceTell), so an item we can't afford
+        // never gets sent — the bot doesn't reset/re-add and we stay in the trade. We check/add
+        // by item id (exact, unlike a name which can match several items).
         public static void Buy(int itemId)
         {
             SendCommand("check " + itemId);
-            SendCommand("add " + itemId);
-            PayArmed = true;
+            PendingBuyId = itemId;
             PayPoints = 0;
         }
 
@@ -118,8 +117,8 @@ namespace OracleOfDereth
             if (m.Success && IsPartner(m.Groups[1].Value)) MarkCyTrader();
         }
 
-        // A price-check reply ("// <item> is worth <N> points.") — record the quote, and if a
-        // Buy is armed, remember how many points to pay (rounded up to whole notes).
+        // A price-check reply ("// <item> is worth <N> points."). Records the quote, and if a
+        // Buy is waiting on this price, only commits the "add" when we can pay for it.
         public static void NotePriceTell(string chatText)
         {
             Match m = CheckPriceRegex.Match(chatText);
@@ -128,8 +127,24 @@ namespace OracleOfDereth
             MarkCyTrader();
             PricedItem = m.Groups[2].Value;
             PricePoints = m.Groups[3].Value;
-            if (PayArmed) PayPoints = PointsFromPrice(PricePoints);
             OnChanged?.Invoke();
+
+            if (PendingBuyId == 0) return; // just a price check, not a Buy
+
+            int itemId = PendingBuyId;
+            PendingBuyId = 0;
+
+            int points = PointsFromPrice(PricePoints);
+            GatherNotes(out int have);
+            if (have < points)
+            {
+                Util.Chat($"Not enough {PaymentItemName}: need {points}, have {have}. {PricedItem} not added.", Util.ColorOrange, "[Oracle of Dereth] ");
+                return;
+            }
+
+            // Affordable — now add it, and pay when it lands (after the bot's reset).
+            SendCommand("add " + itemId);
+            PayPoints = points;
         }
 
         // Send a command tell to the partner, the same way CyTrader bots talk to each other.
@@ -149,11 +164,11 @@ namespace OracleOfDereth
             CoreManager.Current.Actions.TradeAdd(wo.Id);
         }
 
-        // Add exactly `points` trade notes to our side of the trade, or chat if we can't.
-        private static void PayWithNotes(int points)
+        // Our trade notes in inventory; `total` is their combined count.
+        private static List<WorldObject> GatherNotes(out int total)
         {
             var notes = new List<WorldObject>();
-            int total = 0;
+            total = 0;
             using (var inv = CoreManager.Current.WorldFilter.GetInventory())
             {
                 foreach (WorldObject wo in inv)
@@ -163,6 +178,13 @@ namespace OracleOfDereth
                     total += StackCount(wo);
                 }
             }
+            return notes;
+        }
+
+        // Add exactly `points` trade notes to our side of the trade, or chat if we can't.
+        private static void PayWithNotes(int points)
+        {
+            List<WorldObject> notes = GatherNotes(out int total);
 
             if (total < points)
             {
@@ -241,7 +263,7 @@ namespace OracleOfDereth
             IsCyTrader = false;
             PricedItem = "";
             PricePoints = "";
-            PayArmed = false;
+            PendingBuyId = 0;
             PayPoints = 0;
             PendingSplitCount = 0;
             OnChanged?.Invoke();

@@ -26,6 +26,7 @@ namespace OracleOfDereth
 
         public static void TickAll()
         {
+            ItemCache.Tick();
             Inventory?.Tick();
             Trade?.Tick();
         }
@@ -186,6 +187,15 @@ namespace OracleOfDereth
                 return true;
             }
 
+            // Reopened a recent trade? Reuse the cached appraisal instead of re-identifying.
+            Item cached = ItemCache.Get(id, wo.Name);
+            if (cached != null)
+            {
+                Items.Add(cached);
+                RefreshList();
+                return true;
+            }
+
             // Show a stub now (icon + name); details fill in when the id arrives.
             AddStub(wo);
             IdentifyQueue.Add(id);
@@ -296,7 +306,7 @@ namespace OracleOfDereth
 
                 if (wo.HasIdData)
                 {
-                    item.Populate(wo);
+                    Fill(item, wo);
                     PendingIds.Remove(id);
                     IdentifyQueue.Remove(id);
                     changed = true;
@@ -430,7 +440,7 @@ namespace OracleOfDereth
                 WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
                 if (wo == null || !wo.HasIdData) continue;
 
-                item.Populate(wo);
+                Fill(item, wo);
                 PendingIds.Remove(item.Id);
                 IdentifyQueue.Remove(item.Id);
                 added = true;
@@ -500,7 +510,15 @@ namespace OracleOfDereth
                 item = new Item { Id = wo.Id };
                 Items.Add(item);
             }
+            Fill(item, wo);
+        }
+
+        // Populate an item from its appraisal and remember it in the short-lived cache, so a
+        // trade window reopened shortly after can reuse it instead of re-identifying.
+        private static void Fill(Item item, WorldObject wo)
+        {
             item.Populate(wo);
+            ItemCache.Store(item.Id, item, wo.Name);
         }
 
         // Add a placeholder row carrying the base data available before ID.
