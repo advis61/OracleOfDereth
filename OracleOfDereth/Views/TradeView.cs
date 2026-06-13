@@ -191,11 +191,14 @@ namespace OracleOfDereth
 
             ItemListRenderer.Render(TradeList, items, AssignedImages, IconNotComplete);
 
-            // Label the status with the partner, noting when it looks like a CyTrader bot.
-            string label = "Trade";
+            // Window title carries who we're trading with and whether it's a CyTrader bot.
+            string title = "Trade";
             if (!string.IsNullOrEmpty(Trade.PartnerName))
-                label += Trade.IsCyTrader ? $" — {Trade.PartnerName} (CyTrader bot)" : $" — {Trade.PartnerName}";
-            TradeText.Text = ItemListRenderer.StatusText(label, TradeItems.Items.Count, items.Count, TradeItems.UnidentifiedCount);
+                title = Trade.IsCyTrader ? $"{Trade.PartnerName} (CyTrader bot)" : Trade.PartnerName;
+            view.Title = title;
+
+            // The status line is just the item counts.
+            TradeText.Text = ItemListRenderer.StatusText("Total Items", TradeItems.Items.Count, items.Count, TradeItems.UnidentifiedCount);
 
             // Show the last price the bot quoted (it names the item, so a stale quote is clear).
             TradePriceText.Text = Trade.PricePoints.Length > 0 ? $"{Trade.PricedItem}: {Trade.PricePoints} points" : "";

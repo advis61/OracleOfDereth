@@ -65,10 +65,11 @@ namespace OracleOfDereth
         private List<int> IdentifyQueue = new List<int>();
         public bool IsProcessingQueue = false;
 
-        // Up to this many identify requests in flight at once. Kept high so a whole trade
-        // window / pack fires almost immediately (like rapid-clicking items in-game); the
-        // server answers them in a burst. Safe because Tick() retries/drops any it doesn't.
-        private const int MaxConcurrentRequests = 100;
+        // Up to this many identify requests in flight at once. Deliberately a modest batch,
+        // not the whole list: anything over the cap waits in IdentifyQueue, where a filter
+        // can reorder it (PrioritizeIdentify) so the rows you're looking at — e.g. just
+        // Weapons — get appraised before the rest. Tick() retries/drops any the server drops.
+        private const int MaxConcurrentRequests = 10;
         private static readonly TimeSpan IdTimeout = TimeSpan.FromSeconds(5);
 
         // Throttle list rebuilds during bulk identify (sort + repaint is O(n)).

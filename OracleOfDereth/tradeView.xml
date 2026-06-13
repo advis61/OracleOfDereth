@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <view icon="8894" title="Oracle of Dereth - Trade" width="950" height="530">
 	<control progid="DecalControls.FixedLayout" clipped="">
-		<control progid="DecalControls.StaticText" name="TradeText" left="5" top="5" width="430" height="20" text="Trade: 0"/>
+		<control progid="DecalControls.StaticText" name="TradeText" left="5" top="5" width="630" height="20" text="Trade: 0"/>
 
 		<control progid="DecalControls.StaticText" name="TradeSelectedLabel" left="5" top="30" width="60" height="16" text="Selected:"/>
 		<control progid="DecalControls.StaticText" name="TradeSelectedText" left="72" top="30" width="360" height="16" text="(none)"/>
