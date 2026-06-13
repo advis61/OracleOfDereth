@@ -41,7 +41,7 @@ namespace OracleOfDereth
         // Up to this many identify requests in flight at once. Safe to keep high
         // because Tick() retries/drops anything the server doesn't answer.
         private const int MaxConcurrentRequests = 6;
-        private static readonly TimeSpan IdTimeout = TimeSpan.FromSeconds(3);
+        private static readonly TimeSpan IdTimeout = TimeSpan.FromSeconds(5);
         private const int MaxIdAttempts = 5;
 
         // Throttle list rebuilds during bulk identify (sort + repaint is O(n)).
@@ -84,10 +84,12 @@ namespace OracleOfDereth
 
         public static int QueueCount => IdentifyQueue.Count + PendingIds.Count;
 
+        // Whether to include the item in the list. We intentionally keep attuned
+        // items (they're shown, just not actually tradeable). All checks here are
+        // known pre-ID, so an item never gets stubbed and then removed after its id.
         public static bool IsTradeable(WorldObject wo)
         {
             if (wo == null) return false;
-            if (wo.Values(LongValueKey.Attuned, 0) > 0) return false;
 
             if (wo.ObjectClass == ObjectClass.Container) return false;
             if (wo.ObjectClass == ObjectClass.MissileWeapon && wo.Values(LongValueKey.StackMax, 0) > 0) return false;
@@ -167,8 +169,9 @@ namespace OracleOfDereth
                 foreach (WorldObject wo in inv)
                 {
                     if (!IsInInventory(wo)) continue;
-                    if (Items.Any(t => t.Id == wo.Id)) continue;
-                    if (PendingIds.ContainsKey(wo.Id) || IdentifyQueue.Contains(wo.Id)) continue;
+                    if (Items.Any(t => t.Id == wo.Id && t.IsIdentified)) continue;                 // already done
+                    if (PendingIds.ContainsKey(wo.Id) || IdentifyQueue.Contains(wo.Id)) continue;  // already in flight
+                    // (an unidentified stub that gave up falls through here and gets re-queued)
 
                     // Salvage and Spell Components don't need identification
                     if (wo.ObjectClass == ObjectClass.Salvage || wo.ObjectClass == ObjectClass.SpellComponent)
@@ -192,9 +195,9 @@ namespace OracleOfDereth
                         if (!check.IsSummon && !check.IsAetheria && !check.IsFoolproof) continue;
                     }
 
-                    // Drop clearly non-tradeable items (containers, attuned, stackable
-                    // missiles, not in inventory) before stubbing, so the count doesn't
-                    // pop them in and then remove them once their id comes back.
+                    // Drop items we never list (containers, stackable missiles, not in
+                    // inventory) before stubbing. All known pre-ID, so nothing gets
+                    // popped in and then removed once its id comes back.
                     if (!IsTradeable(wo)) continue;
 
                     // Show a stub now; details fill in when its id arrives.
@@ -204,7 +207,12 @@ namespace OracleOfDereth
                 }
             }
 
-            if (added) RefreshList();
+            if (added) { Sort(CurrentSortType); RefreshList(); }
+
+            // Work the identify queue in display order (alphabetical by base name)
+            // so rows fill in top-to-bottom instead of in inventory order.
+            IdentifyQueue = IdentifyQueue.OrderBy(id => CoreManager.Current.WorldFilter[id]?.Name ?? "").ToList();
+
             PumpQueue();
         }
 
@@ -220,15 +228,15 @@ namespace OracleOfDereth
                 IdentifyQueue.RemoveAt(0);
 
                 WorldObject wo = CoreManager.Current.WorldFilter[id];
-                if (wo == null) { Items.RemoveAll(t => t.Id == id); continue; }     // item left the world; drop its stub
+                if (wo == null) continue;                                            // can't appraise it right now; leave its row as-is
                 if (Items.Any(t => t.Id == id && t.IsIdentified)) continue;          // already filled in (stubs don't block)
                 if (PendingIds.ContainsKey(id)) continue;
 
                 // Already identified — fill the stub in now, no request needed
                 if (wo.HasIdData)
                 {
-                    if (IsTradeable(wo)) { AddFromWorldObject(wo); added = true; }
-                    else Items.RemoveAll(t => t.Id == id);
+                    AddFromWorldObject(wo);
+                    added = true;
                     continue;
                 }
 
@@ -256,9 +264,9 @@ namespace OracleOfDereth
             bool wasQueued = IdentifyQueue.Remove(changed.Id);
             if (!wasPending && !wasQueued) return;
 
-            // Fill the stub in place; drop it if the appraisal says it can't trade.
-            if (IsTradeable(changed)) AddFromWorldObject(changed);
-            else Items.RemoveAll(t => t.Id == changed.Id);
+            // Fill the stub in place. We don't remove it here — an item earns its
+            // spot when added (already pre-filtered) and keeps it while details load.
+            AddFromWorldObject(changed);
 
             PumpQueue();    // refill the freed slot
             MaybeRefresh();
@@ -290,10 +298,9 @@ namespace OracleOfDereth
                 }
                 else
                 {
-                    // Gave up (server never answered, or the item is gone). Free
-                    // the slot and drop its stub row so it doesn't sit on "..." forever.
+                    // Out of retries. Stop chasing it and free the slot, but keep the
+                    // row — it just keeps showing "..." instead of vanishing from the list.
                     PendingIds.Remove(id);
-                    Items.RemoveAll(t => t.Id == id);
                 }
             }
 
@@ -319,16 +326,17 @@ namespace OracleOfDereth
             }
         }
 
-        // Sort + repaint now.
+        // Repaint now. Does NOT re-sort — rows keep their position so details fill
+        // in place without the list shuffling. Sorting is explicit only: once when
+        // Add All builds the list, or when the user clicks a column header.
         private static void RefreshList()
         {
-            Sort(CurrentSortType);
             _lastRefresh = DateTime.UtcNow;
             OnItemsListChanged?.Invoke();
         }
 
-        // Sort + repaint, but at most once per RefreshInterval, so a bulk identify
-        // doesn't re-sort and rebuild the whole list on every single item.
+        // Repaint, at most once per RefreshInterval, so a bulk identify doesn't
+        // rebuild the whole list on every single item.
         private static void MaybeRefresh()
         {
             if (DateTime.UtcNow - _lastRefresh < RefreshInterval) return;
@@ -360,18 +368,22 @@ namespace OracleOfDereth
             Populate(item, wo);
         }
 
-        // Add a placeholder row with only the base data available before ID.
+        // Add a placeholder row with the base data available before ID. Type and
+        // category are derivable without an appraisal, so set them now — that keeps
+        // the row in its final category (filter) bucket from the start.
         private static void AddStub(WorldObject wo)
         {
             if (Items.Any(t => t.Id == wo.Id)) return;
 
+            ItemInfo info = new ItemInfo(wo);
             Items.Add(new Item
             {
                 Id = wo.Id,
                 Name = wo.Name,
                 Icon = wo.Icon,
                 ObjectClassId = (int)wo.ObjectClass,
-                SummaryCol1 = new ItemInfo(wo).GetItemSlotName(),   // Type is known without ID
+                SummaryCol1 = info.GetItemSlotName(),
+                SortCategory = GetSortCategory(info),
                 IsIdentified = false,
             });
         }
@@ -492,12 +504,26 @@ namespace OracleOfDereth
 
         public static void Remove(int id)
         {
+            // Also pull it from the identify pipeline so a pending appraisal can't
+            // re-add the row after it's been removed.
             Items.RemoveAll(t => t.Id == id);
+            IdentifyQueue.Remove(id);
+            PendingIds.Remove(id);
         }
 
         public static void Clear()
         {
+            // Reset the whole pipeline, not just the visible rows — otherwise stale
+            // queued/in-flight ids survive and re-add rows on the next Add All.
             Items.Clear();
+            IdentifyQueue.Clear();
+            PendingIds.Clear();
+
+            if (IsProcessingQueue)
+            {
+                IsProcessingQueue = false;
+                OnQueueFinished?.Invoke();
+            }
         }
 
         private static string ExportFilename(string extension)

@@ -222,9 +222,7 @@ namespace OracleOfDereth
             string filterText = ItemsFilterText?.Text?.Trim() ?? "";
             string[] filterTerms = filterText.Length > 0 ? filterText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries) : new string[0];
 
-            // Unidentified stubs have no real category yet, so don't let the category
-            // filter hide them while they're still being identified.
-            List<Item> items = Item.Items.Where(t => !t.IsIdentified || IsCategoryVisible(t.SortCategory)).Where(t => MatchesFilter(t, filterTerms)).ToList();
+            List<Item> items = Item.Items.Where(t => IsCategoryVisible(t.SortCategory)).Where(t => MatchesFilter(t, filterTerms)).ToList();
 
             for (int x = 0; x < items.Count; x++)
             {
@@ -236,28 +234,33 @@ namespace OracleOfDereth
                 AssignImage((HudPictureBox)row[0], IconNotComplete);
                 AssignImage((HudPictureBox)row[1], item.Icon);
                 ((HudStaticText)row[2]).Text = item.Name;
-                ((HudStaticText)row[3]).Text = item.SummaryCol1;   // Type — known immediately, even for stubs
-
-                if (item.IsIdentified)
-                {
-                    ((HudStaticText)row[4]).Text = item.SummaryCol2;
-                    ((HudStaticText)row[5]).Text = item.SummaryCol3;
-                    ((HudStaticText)row[6]).Text = item.SummaryCol4;
-                }
-                else
-                {
-                    // Stub row: icon, name and type are known; still waiting on the appraisal.
-                    ((HudStaticText)row[4]).Text = "";
-                    ((HudStaticText)row[5]).Text = "";
-                    ((HudStaticText)row[6]).Text = "...";
-                }
-
+                ((HudStaticText)row[3]).Text = item.SummaryCol1;
+                ((HudStaticText)row[4]).Text = item.SummaryCol2;
+                ((HudStaticText)row[5]).Text = item.SummaryCol3;
+                ((HudStaticText)row[6]).Text = item.SummaryCol4;
                 ((HudStaticText)row[7]).Text = item.Id.ToString();
+
+                // Dim the row while it's still waiting on its appraisal.
+                SetRowLoading(row, !item.IsIdentified);
             }
 
             while (ItemsList.RowCount > items.Count) { ItemsList.RemoveRow(ItemsList.RowCount - 1); }
 
             ItemsText.Text = ItemsStatusText(items.Count);
+        }
+
+        // Dim grey for rows still waiting on their appraisal details.
+        private static readonly Color ColorLoading = Color.FromArgb(255, 150, 150, 150);
+
+        // Tint the row's text columns (Name..Details) grey while loading, or reset
+        // to the default colour once the item's details are filled in.
+        private void SetRowLoading(HudList.HudListRowAccessor row, bool loading)
+        {
+            for (int col = 2; col <= 6; col++)
+            {
+                if (loading) ((HudStaticText)row[col]).TextColor = ColorLoading;
+                else ((HudStaticText)row[col]).ResetTextColor();
+            }
         }
 
         // One consistent format regardless of filters: total, plus optional
