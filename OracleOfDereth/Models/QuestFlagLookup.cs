@@ -125,12 +125,14 @@ namespace OracleOfDereth
                 return;
             }
 
+            // Script was found — always surface the human-browseable .es URL.
+            Util.Chat($"Script: {string.Format(EsBrowseUrlTemplate, type)}", Util.ColorCyan, ChatPrefix);
+
             var flags = InqQuestRegex.Matches(content).Cast<Match>().Select(m => m.Groups[1].Value).Distinct().ToList();
 
             if (flags.Count == 0)
             {
                 Util.Chat($"No InqQuest entries in script.", Util.ColorCyan, ChatPrefix);
-                Util.Chat($"{string.Format(EsBrowseUrlTemplate, type)}", Util.ColorCyan, ChatPrefix);
                 return;
             }
 
