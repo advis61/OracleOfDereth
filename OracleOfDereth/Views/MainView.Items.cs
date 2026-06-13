@@ -257,10 +257,23 @@ namespace OracleOfDereth
 
             while (ItemsList.RowCount > items.Count) { ItemsList.RemoveRow(ItemsList.RowCount - 1); }
 
-            if (items.Count == Item.Items.Count)
-                ItemsText.Text = Item.StatusText();
-            else
-                ItemsText.Text = $"Items: {items.Count} shown / {Item.Items.Count} total";
+            ItemsText.Text = ItemsStatusText(items.Count);
+        }
+
+        // One consistent format regardless of filters: total, plus optional
+        // "(X shown)" when a filter hides some and "(N identifying)" while ids load.
+        private string ItemsStatusText(int shownCount)
+        {
+            int total = Item.Items.Count;
+            int identifying = Item.QueueCount;
+
+            var notes = new List<string>();
+            if (shownCount != total) notes.Add($"{shownCount} shown");
+            if (identifying > 0) notes.Add($"{identifying} identifying");
+
+            string status = $"Items: {total}";
+            if (notes.Count > 0) status += " (" + string.Join(", ", notes) + ")";
+            return status;
         }
 
         private void ItemsAddSelected_Change(object sender, EventArgs e)

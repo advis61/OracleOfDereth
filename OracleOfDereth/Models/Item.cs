@@ -192,6 +192,11 @@ namespace OracleOfDereth
                         if (!check.IsSummon && !check.IsAetheria && !check.IsFoolproof) continue;
                     }
 
+                    // Drop clearly non-tradeable items (containers, attuned, stackable
+                    // missiles, not in inventory) before stubbing, so the count doesn't
+                    // pop them in and then remove them once their id comes back.
+                    if (!IsTradeable(wo)) continue;
+
                     // Show a stub now; details fill in when its id arrives.
                     AddStub(wo);
                     IdentifyQueue.Add(wo.Id);
@@ -341,14 +346,6 @@ namespace OracleOfDereth
                 RefreshList();
                 OnQueueFinished?.Invoke();
             }
-        }
-
-        public static string StatusText()
-        {
-            int pending = IdentifyQueue.Count + PendingIds.Count;
-            if (pending > 0) return $"Items: {Items.Count} ({pending} identifying)";
-
-            return $"Items: {Items.Count} selected";
         }
 
         // Add an already-identified item, or fill in its existing stub row.
