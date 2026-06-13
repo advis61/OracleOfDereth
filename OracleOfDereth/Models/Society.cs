@@ -53,6 +53,25 @@ namespace OracleOfDereth
             return "None";
         }
 
+        // The three Initiation quest flags grant society membership. Membership is
+        // proven by the society rank character property (> 0), which is reliable
+        // regardless of whether the member quest flag is present in /myquests.
+        public static bool IsMembershipFlag(string flag)
+        {
+            return flag == "celestialhandmember" || flag == "eldrytchwebmember" || flag == "radiantbloodmember";
+        }
+
+        public static bool IsMember(string memberFlag)
+        {
+            switch (memberFlag)
+            {
+                case "celestialhandmember": return CoreManager.Current.CharacterFilter.GetCharProperty(PropCelhan) > 0;
+                case "eldrytchwebmember": return CoreManager.Current.CharacterFilter.GetCharProperty(PropEldweb) > 0;
+                case "radiantbloodmember": return CoreManager.Current.CharacterFilter.GetCharProperty(PropRadblo) > 0;
+                default: return false;
+            }
+        }
+
         public static string GetRankName()
         {
             int value = GetRankValue();

@@ -26,8 +26,12 @@ namespace OracleOfDereth
         public static List<SocietyQuest> VisibleQuests()
         {
             string society = Society.GetSocietyName();
+            if (society == "None") return SocietyQuests.ToList();
+
+            // In a society: hide "Investigating the Societies" (the precursor) and
+            // the other two societies' Initiation quests; keep this society's own.
             return SocietyQuests
-                .Where(q => society == "None" || !q.Name.EndsWith(" Initiation") || q.Name.StartsWith(society))
+                .Where(q => q.Name != "Investigating the Societies" && (!q.Name.EndsWith(" Initiation") || q.Name.StartsWith(society)))
                 .ToList();
         }
 
@@ -142,6 +146,10 @@ namespace OracleOfDereth
         public bool IsComplete()
         {
             if (IsRankTest()) return Society.HasReachedRank(RankTestTargetRank());
+
+            // Society Initiation quests: completion is read from the society rank
+            // character property, not the member quest flag.
+            if (Society.IsMembershipFlag(Flag)) return Society.IsMember(Flag);
 
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return false; }
