@@ -115,11 +115,14 @@ namespace OracleOfDereth
         // Dim grey for rows still waiting on their appraisal details.
         private static readonly Color ColorLoading = Color.FromArgb(255, 150, 150, 150);
 
+        // Highlight for the currently-picked row.
+        private static readonly Color ColorSelected = Color.FromArgb(255, 130, 210, 255);
+
         // Paint the given items into the HudList: status/loading icon, item icon, name and
         // the four summary columns, with the id stashed in the (hidden) last column. The
         // caller passes its own image-tracking dict (so repeated repaints skip identical
-        // images) and the "not complete" icon to show in column 0.
-        public static void Render(HudList list, List<Item> items, Dictionary<HudPictureBox, int> assigned, int iconNotComplete)
+        // images), the "not complete" icon for column 0, and the id of the selected row.
+        public static void Render(HudList list, List<Item> items, Dictionary<HudPictureBox, int> assigned, int iconNotComplete, int selectedId)
         {
             for (int x = 0; x < items.Count; x++)
             {
@@ -137,21 +140,22 @@ namespace OracleOfDereth
                 ((HudStaticText)row[6]).Text = item.SummaryCol4;
                 ((HudStaticText)row[7]).Text = item.Id.ToString();
 
-                // Dim the row while it's still waiting on its appraisal.
-                SetRowLoading(row, !item.IsIdentified);
+                SetRowColor(row, selected: item.Id == selectedId && selectedId != 0, loading: !item.IsIdentified);
             }
 
             while (list.RowCount > items.Count) { list.RemoveRow(list.RowCount - 1); }
         }
 
-        // Tint the row's text columns (Name..Details) grey while loading, or reset
-        // to the default colour once the item's details are filled in.
-        private static void SetRowLoading(HudList.HudListRowAccessor row, bool loading)
+        // Tint the row's text columns (Name..Details): highlighted when selected, dim grey
+        // while still loading its appraisal, otherwise the default colour.
+        private static void SetRowColor(HudList.HudListRowAccessor row, bool selected, bool loading)
         {
             for (int col = 2; col <= 6; col++)
             {
-                if (loading) ((HudStaticText)row[col]).TextColor = ColorLoading;
-                else ((HudStaticText)row[col]).ResetTextColor();
+                HudStaticText cell = (HudStaticText)row[col];
+                if (selected) cell.TextColor = ColorSelected;
+                else if (loading) cell.TextColor = ColorLoading;
+                else cell.ResetTextColor();
             }
         }
 

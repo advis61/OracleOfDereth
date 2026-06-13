@@ -56,9 +56,8 @@ namespace OracleOfDereth
         // trigger a refresh/re-request — we refresh once at the end instead.
         private bool suppressFilter = false;
 
-        // The item currently picked in the list — what Add/Check act on.
-        private int selectedId = 0;
-        private string selectedName = "";
+        // What Add/Check act on is the item selected in-game (Target.CurrentTargetId), resolved
+        // against the trade list — you can only have one item selected at a time.
 
         public TradeView()
         {
@@ -146,12 +145,6 @@ namespace OracleOfDereth
         public void Show()
         {
             if (view == null) return;
-
-            // Fresh trade: drop the previous pick.
-            selectedId = 0;
-            selectedName = "";
-            if (TradeSelectedText != null) TradeSelectedText.Text = "(none)";
-
             view.Visible = true;
             UpdateList();
         }
@@ -189,7 +182,12 @@ namespace OracleOfDereth
             // Appraise what's on screen first (e.g. when filtered down to one category).
             TradeItems.PrioritizeIdentify(items.Select(t => t.Id));
 
-            ItemListRenderer.Render(TradeList, items, AssignedImages, IconNotComplete);
+            // Track the in-game selection: highlight that row and name it as the picked item.
+            int selectedId = Target.CurrentTargetId;
+            Item selected = TradeItems.Items.FirstOrDefault(t => t.Id == selectedId);
+            TradeSelectedText.Text = selected != null ? selected.Name : "(none)";
+
+            ItemListRenderer.Render(TradeList, items, AssignedImages, IconNotComplete, selectedId);
 
             // Window title carries who we're trading with and whether it's a CyTrader bot.
             string title = "Trade";
@@ -239,8 +237,8 @@ namespace OracleOfDereth
             UpdateList();
         }
 
-        // Click a row to pick the item: select it in the world, (re)request its appraisal
-        // (fills stubs whose identify gave up), and make it the target of Add / Check Price.
+        // Click a row to select that item in-game (which highlights the row via the
+        // ItemSelected event) and re-request its appraisal — fills stubs whose identify gave up.
         private void List_Click(object sender, int row, int col)
         {
             try
@@ -248,53 +246,51 @@ namespace OracleOfDereth
                 int id = int.Parse(((HudStaticText)TradeList[row][7]).Text);
                 CoreManager.Current.Actions.SelectItem(id);
                 CoreManager.Current.Actions.RequestId(id);
-
-                selectedId = id;
-                selectedName = TradeItems.Items.FirstOrDefault(t => t.Id == id)?.Name ?? "";
-                TradeSelectedText.Text = selectedName.Length > 0 ? selectedName : "(none)";
             }
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        // Tell the bot to add the picked item to the trade for purchase. We check its price
-        // first so the bot's "worth N points" reply shows before it's added, then send the
-        // add by item id (the bot's "add <itemId>" matches exactly, avoiding name ambiguity).
+        // Tell the bot to add the selected item for purchase (price-checked first, paid once it
+        // lands). Acts on the in-game-selected trade item; the add is by id (exact).
         private void AddButton_Hit(object sender, EventArgs e)
         {
             try
             {
-                if (!CanCommandPartner()) return;
-                Trade.Buy(selectedId);
-                Util.Chat($"Buying {selectedName} from {Trade.PartnerName}", Util.ColorOrange, "[Oracle of Dereth] ");
+                Item item = RequireSelectedTradeItem();
+                if (item == null) return;
+                Trade.Buy(item.Id);
+                Util.Chat($"Buying {item.Name} from {Trade.PartnerName}", Util.ColorOrange, "[Oracle of Dereth] ");
             }
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        // Ask the bot what the picked item is worth. The bot replies in a tell that the Trade
-        // model parses, which repaints the price here.
+        // Ask the bot what the selected item is worth; the reply repaints the price here.
         private void CheckButton_Hit(object sender, EventArgs e)
         {
             try
             {
-                if (!CanCommandPartner()) return;
-                Trade.SendCommand("check " + selectedId);
+                Item item = RequireSelectedTradeItem();
+                if (item == null) return;
+                Trade.SendCommand("check " + item.Id);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        private bool CanCommandPartner()
+        // The in-game-selected trade item if we can act on it, else null (with a chat note).
+        private Item RequireSelectedTradeItem()
         {
             if (string.IsNullOrEmpty(Trade.PartnerName))
             {
                 Util.Chat("No trade partner.", Util.ColorOrange, "[Oracle of Dereth] ");
-                return false;
+                return null;
             }
-            if (selectedId == 0)
+            Item item = TradeItems.Items.FirstOrDefault(t => t.Id == Target.CurrentTargetId);
+            if (item == null)
             {
-                Util.Chat("Click an item in the trade window first.", Util.ColorOrange, "[Oracle of Dereth] ");
-                return false;
+                Util.Chat("Select one of the trade items first.", Util.ColorOrange, "[Oracle of Dereth] ");
+                return null;
             }
-            return true;
+            return item;
         }
 
         private void SortName_Click(object sender, EventArgs e)

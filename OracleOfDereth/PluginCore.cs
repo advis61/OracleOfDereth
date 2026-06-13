@@ -282,8 +282,11 @@ namespace OracleOfDereth
                 if (ItemList.Inventory.AutoAddEnabled && mainView.IsItemsTabActive())
                 {
                     ItemList.Inventory.RequestAdd(e.ItemGuid);
-                    mainView.UpdateItemsList();
                 }
+
+                // Selection changed — repaint so the matching row shows as selected.
+                mainView.UpdateItemsList();
+                tradeView.UpdateList();
             }
             catch (Exception ex) { Util.Log(ex); }
         }

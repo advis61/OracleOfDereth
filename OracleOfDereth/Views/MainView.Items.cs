@@ -192,7 +192,7 @@ namespace OracleOfDereth
             // Appraise what's on screen first (e.g. when filtered down to one category).
             InventoryList.PrioritizeIdentify(items.Select(t => t.Id));
 
-            ItemListRenderer.Render(ItemsList, items, AssignedImages, IconNotComplete);
+            ItemListRenderer.Render(ItemsList, items, AssignedImages, IconNotComplete, Target.CurrentTargetId);
             ItemsText.Text = ItemListRenderer.StatusText("Items", InventoryList.Items.Count, items.Count, InventoryList.UnidentifiedCount);
         }
 
@@ -303,8 +303,8 @@ namespace OracleOfDereth
             }
             else
             {
-                // Select it in the world and (re)request its appraisal immediately — fills
-                // any stub whose identify gave up. The result lands via the Tick self-heal.
+                // Select it in the world (highlights the row via the ItemSelected event) and
+                // (re)request its appraisal — fills any stub whose identify gave up.
                 CoreManager.Current.Actions.SelectItem(id);
                 CoreManager.Current.Actions.RequestId(id);
             }
