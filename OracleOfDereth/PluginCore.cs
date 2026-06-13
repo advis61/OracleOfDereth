@@ -61,11 +61,6 @@ namespace OracleOfDereth
         private TargetView targetView;
         private TradeView tradeView;
 
-        // Ids of items we owned when the trade opened. An item we drag into the trade pane
-        // can leave our inventory chain, so we can't rely on a live check to tell our own
-        // offers from the partner's — this snapshot does.
-        private readonly System.Collections.Generic.HashSet<int> tradeMyItems = new System.Collections.Generic.HashSet<int>();
-
         /// <summary>
         /// Called when your plugin is first loaded.
         /// </summary>
@@ -265,13 +260,13 @@ namespace OracleOfDereth
                 {
                     QuestFlag.Add(e.Text);
                 }
-                else if (TradeView.CheckPriceRegex.IsMatch(e.Text))
+                else if (Trade.CheckPriceRegex.IsMatch(e.Text))
                 {
-                    tradeView.NotePriceTell(e.Text);
+                    Trade.NotePriceTell(e.Text);
                 }
-                else if (TradeView.TradeStartedRegex.IsMatch(e.Text))
+                else if (Trade.TradeStartedRegex.IsMatch(e.Text))
                 {
-                    tradeView.NoteBotTell(e.Text);
+                    Trade.NoteBotTell(e.Text);
                 }
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -324,61 +319,35 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        // Opening a trade window with another player. Separate from the Items tab
-        // (which scans our own packs) — here we only care about the partner's items.
-        // EnterTrade reports both sides; the id that isn't ours is the trade partner.
+        // Opening a trade window with another player. The Trade model snapshots our inventory,
+        // works out the partner, and resets the item list; we just show the window.
         private void WorldFilter_EnterTrade(object sender, EnterTradeEventArgs e)
         {
             try
             {
-                // Snapshot what we own now, so items we drag in can be told from the
-                // partner's (ours leave the inventory chain once they hit the trade pane).
-                tradeMyItems.Clear();
-                using (var inv = CoreManager.Current.WorldFilter.GetInventory())
-                {
-                    foreach (WorldObject wo in inv) { tradeMyItems.Add(wo.Id); }
-                }
-
-                // The id that isn't ours is the trade partner (the bot we send commands to).
-                int myId = CoreManager.Current.CharacterFilter.Id;
-                int partnerId = e.TradeeId == myId ? e.TraderId : e.TradeeId;
-                string partnerName = CoreManager.Current.WorldFilter[partnerId]?.Name ?? "";
-
-                // Fresh window: drop whatever the previous trade left and show it.
-                ItemList.Trade.Clear();
-                tradeView.SetTradePartner(partnerName);
+                Trade.Begin(e);
                 tradeView.Show();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        // The partner (or we) dropped an item into the trade window. Show only the
-        // partner's side — the item whose side isn't us. SideId is the id of the side
-        // the item belongs to, so an item that isn't on our side is the partner's.
+        // An item was dropped into the trade window. Trade decides whether it's the partner's
+        // (vs. our own offer) and adds it to the list.
         private void WorldFilter_AddTradeItem(object sender, AddTradeItemEventArgs e)
         {
             try
             {
-                WorldObject wo = CoreManager.Current.WorldFilter[e.ItemId];
-                bool mine = tradeMyItems.Contains(e.ItemId) || ItemList.IsInInventory(wo);
-
-                // TODO(debug): confirm ownership classification in-game, then remove this line.
-                //Util.Chat($"AddTradeItem '{wo?.Name ?? "?"}' snap={tradeMyItems.Contains(e.ItemId)} inInv={ItemList.IsInInventory(wo)} -> {(mine ? "MINE" : "PARTNER")}", Util.ColorOrange, "[Oracle of Dereth] ");
-
-                if (mine) return; // our own offer — only show the partner's items
-                ItemList.Trade.AddTradeItem(e.ItemId);
+                Trade.AddItem(e.ItemId);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        // Either side cleared their offered items; the trade window stays open. Drop the
-        // list and repaint empty (Clear doesn't fire the refresh callback on its own).
+        // Either side cleared their offered items; the trade window stays open.
         private void WorldFilter_ResetTrade(object sender, ResetTradeEventArgs e)
         {
             try
             {
-                ItemList.Trade.Clear();
-                tradeView.UpdateList();
+                Trade.Reset();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -387,9 +356,7 @@ namespace OracleOfDereth
         {
             try
             {
-                tradeMyItems.Clear();
-                ItemList.Trade.Clear();
-                tradeView.SetTradePartner(null);
+                Trade.End();
                 tradeView.Hide();
             }
             catch (Exception ex) { Util.Log(ex); }

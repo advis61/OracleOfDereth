@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text.RegularExpressions;
 using VirindiViewService.Controls;
 
 namespace OracleOfDereth
 {
     // A standalone floating window (like TargetView) showing the items a trade partner
-    // has dropped into the trade window. Backed by ItemList.Trade and rendered through the
-    // same ItemListRenderer as the Items tab; PluginCore drives Show/Hide from trade events.
+    // has dropped into the trade window. Backed by ItemList.Trade for the items and the
+    // Trade model for the session (partner, bot detection, price quotes); PluginCore drives
+    // Show/Hide and feeds Trade the chat. Pure presentation — no parsing lives here.
     class TradeView : IDisposable
     {
         readonly VirindiViewService.ViewProperties properties;
@@ -49,29 +49,16 @@ namespace OracleOfDereth
         public HudStaticText TradeListSortCol4 { get; private set; }
         public HudList TradeList { get; private set; }
 
-        private ItemList Trade => ItemList.Trade;
+        // The partner's offered items. (The Trade model holds the session: partner, price, etc.)
+        private ItemList TradeItems => ItemList.Trade;
 
         // Set while Reset clears the filter controls, so their Change events don't each
         // trigger a refresh/re-request — we refresh once at the end instead.
         private bool suppressFilter = false;
 
-        // The trade partner (the bot) we send "add"/"check" tells to, set by PluginCore from
-        // the trade events. Null when no trade is open.
-        private string tradePartnerName = null;
-
-        // True once we've seen the partner send a CyWorks-style "// ..." tell, so we can
-        // surface "looks like a CyTrader bot" in the status line.
-        private bool cyTraderDetected = false;
-
         // The item currently picked in the list — what Add/Check act on.
         private int selectedId = 0;
         private string selectedName = "";
-
-        // Chat patterns for the CyWorks/CyTrader bot. PluginCore matches these against chat
-        // (same style as Target/QuestFlag regexes) and hands the text to the methods below,
-        // keeping the parsing here in the trade view. Group 1 is always the sender.
-        public static readonly Regex TradeStartedRegex = new Regex("^(.+?) tells you, \"//");
-        public static readonly Regex CheckPriceRegex = new Regex("^(.+?) tells you, \"// (.+?) is worth ([\\d.,]+) points");
 
         public TradeView()
         {
@@ -87,7 +74,9 @@ namespace OracleOfDereth
                 view.ShowInBar = false;
                 view.Visible = false;
 
-                Trade.OnItemsListChanged = () => UpdateList();
+                // Repaint whenever the item list or the trade session changes.
+                TradeItems.OnItemsListChanged = () => UpdateList();
+                Trade.OnChanged = () => UpdateList();
 
                 TradeText = (HudStaticText)view["TradeText"];
                 TradeText.FontHeight = 10;
@@ -157,6 +146,12 @@ namespace OracleOfDereth
         public void Show()
         {
             if (view == null) return;
+
+            // Fresh trade: drop the previous pick.
+            selectedId = 0;
+            selectedName = "";
+            if (TradeSelectedText != null) TradeSelectedText.Text = "(none)";
+
             view.Visible = true;
             UpdateList();
         }
@@ -189,18 +184,21 @@ namespace OracleOfDereth
             if (view == null) return;
 
             ItemFilter filter = Filter();
-            List<Item> items = Trade.Items.Where(filter.Matches).ToList();
+            List<Item> items = TradeItems.Items.Where(filter.Matches).ToList();
 
             // Appraise what's on screen first (e.g. when filtered down to one category).
-            Trade.PrioritizeIdentify(items.Select(t => t.Id));
+            TradeItems.PrioritizeIdentify(items.Select(t => t.Id));
 
             ItemListRenderer.Render(TradeList, items, AssignedImages, IconNotComplete);
 
             // Label the status with the partner, noting when it looks like a CyTrader bot.
             string label = "Trade";
-            if (!string.IsNullOrEmpty(tradePartnerName))
-                label += cyTraderDetected ? $" — {tradePartnerName} (CyTrader bot)" : $" — {tradePartnerName}";
-            TradeText.Text = ItemListRenderer.StatusText(label, Trade.Items.Count, items.Count, Trade.UnidentifiedCount);
+            if (!string.IsNullOrEmpty(Trade.PartnerName))
+                label += Trade.IsCyTrader ? $" — {Trade.PartnerName} (CyTrader bot)" : $" — {Trade.PartnerName}";
+            TradeText.Text = ItemListRenderer.StatusText(label, TradeItems.Items.Count, items.Count, TradeItems.UnidentifiedCount);
+
+            // Show the last price the bot quoted (it names the item, so a stale quote is clear).
+            TradePriceText.Text = Trade.PricePoints.Length > 0 ? $"{Trade.PricedItem}: {Trade.PricePoints} points" : "";
         }
 
         private void Filter_Change(object sender, EventArgs e)
@@ -214,8 +212,8 @@ namespace OracleOfDereth
             ItemFilter filter = Filter();
             if (filter.IsActive)
             {
-                Trade.RequestIdentifyNow(
-                    Trade.Items.Where(filter.Matches).Where(t => !t.IsIdentified).Select(t => t.Id).ToList());
+                TradeItems.RequestIdentifyNow(
+                    TradeItems.Items.Where(filter.Matches).Where(t => !t.IsIdentified).Select(t => t.Id).ToList());
             }
         }
 
@@ -249,9 +247,8 @@ namespace OracleOfDereth
                 CoreManager.Current.Actions.RequestId(id);
 
                 selectedId = id;
-                selectedName = Trade.Items.FirstOrDefault(t => t.Id == id)?.Name ?? "";
+                selectedName = TradeItems.Items.FirstOrDefault(t => t.Id == id)?.Name ?? "";
                 TradeSelectedText.Text = selectedName.Length > 0 ? selectedName : "(none)";
-                TradePriceText.Text = ""; // price is for the previous item; clear until re-checked
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -264,28 +261,28 @@ namespace OracleOfDereth
             try
             {
                 if (!CanCommandPartner()) return;
-                SendTell("check " + selectedName);
-                SendTell("add " + selectedId);
-                Util.Chat($"Asked {tradePartnerName} to add {selectedName}", Util.ColorOrange, "[Oracle of Dereth] ");
+                Trade.SendCommand("check " + selectedName);
+                Trade.SendCommand("add " + selectedId);
+                Util.Chat($"Asked {Trade.PartnerName} to add {selectedName}", Util.ColorOrange, "[Oracle of Dereth] ");
             }
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        // Ask the bot what the picked item is worth. The bot replies in a tell:
-        // "// <name> is worth <points> points."
+        // Ask the bot what the picked item is worth. The bot replies in a tell that the Trade
+        // model parses, which repaints the price here.
         private void CheckButton_Hit(object sender, EventArgs e)
         {
             try
             {
                 if (!CanCommandPartner()) return;
-                SendTell("check " + selectedName);
+                Trade.SendCommand("check " + selectedName);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
 
         private bool CanCommandPartner()
         {
-            if (string.IsNullOrEmpty(tradePartnerName))
+            if (string.IsNullOrEmpty(Trade.PartnerName))
             {
                 Util.Chat("No trade partner.", Util.ColorOrange, "[Oracle of Dereth] ");
                 return false;
@@ -298,87 +295,37 @@ namespace OracleOfDereth
             return true;
         }
 
-        // Send a tell to the trade partner, the same way CyTrader bots talk to each other.
-        private void SendTell(string message)
-        {
-            CoreManager.Current.Actions.InvokeChatParser($"@t {tradePartnerName}, {message}");
-        }
-
-        // Called by PluginCore when a trade opens/closes. Resets the picked item and the
-        // CyTrader detection for the new partner.
-        public void SetTradePartner(string name)
-        {
-            tradePartnerName = name;
-            cyTraderDetected = false;
-            selectedId = 0;
-            selectedName = "";
-            if (TradeSelectedText != null) TradeSelectedText.Text = "(none)";
-            if (TradePriceText != null) TradePriceText.Text = "";
-            UpdateList();
-        }
-
-        // A CyWorks-style "// ..." tell from the partner — flag it as a CyTrader bot.
-        public void NoteBotTell(string chatText)
-        {
-            Match m = TradeStartedRegex.Match(chatText);
-            if (m.Success && IsPartner(m.Groups[1].Value)) MarkCyTraderDetected();
-        }
-
-        // A price-check reply ("// <item> is worth <N> points.") — show the quoted price.
-        public void NotePriceTell(string chatText)
-        {
-            Match m = CheckPriceRegex.Match(chatText);
-            if (!m.Success || !IsPartner(m.Groups[1].Value)) return;
-
-            MarkCyTraderDetected();
-            if (TradePriceText != null) TradePriceText.Text = $"{m.Groups[2].Value}: {m.Groups[3].Value} points";
-        }
-
-        // Only react to tells from the player we're actually trading with.
-        private bool IsPartner(string sender)
-        {
-            return !string.IsNullOrEmpty(tradePartnerName)
-                && sender.IndexOf(tradePartnerName, StringComparison.OrdinalIgnoreCase) >= 0;
-        }
-
-        private void MarkCyTraderDetected()
-        {
-            if (cyTraderDetected) return;
-            cyTraderDetected = true;
-            UpdateList();
-        }
-
         private void SortName_Click(object sender, EventArgs e)
         {
-            Trade.Sort(Trade.CurrentSortType == ItemList.SortType.NameAscending
+            TradeItems.Sort(TradeItems.CurrentSortType == ItemList.SortType.NameAscending
                 ? ItemList.SortType.NameDescending : ItemList.SortType.NameAscending);
             UpdateList();
         }
 
         private void SortCol1_Click(object sender, EventArgs e)
         {
-            Trade.Sort(Trade.CurrentSortType == ItemList.SortType.Col1Ascending
+            TradeItems.Sort(TradeItems.CurrentSortType == ItemList.SortType.Col1Ascending
                 ? ItemList.SortType.Col1Descending : ItemList.SortType.Col1Ascending);
             UpdateList();
         }
 
         private void SortCol2_Click(object sender, EventArgs e)
         {
-            Trade.Sort(Trade.CurrentSortType == ItemList.SortType.Col2Ascending
+            TradeItems.Sort(TradeItems.CurrentSortType == ItemList.SortType.Col2Ascending
                 ? ItemList.SortType.Col2Descending : ItemList.SortType.Col2Ascending);
             UpdateList();
         }
 
         private void SortCol3_Click(object sender, EventArgs e)
         {
-            Trade.Sort(Trade.CurrentSortType == ItemList.SortType.Col3Ascending
+            TradeItems.Sort(TradeItems.CurrentSortType == ItemList.SortType.Col3Ascending
                 ? ItemList.SortType.Col3Descending : ItemList.SortType.Col3Ascending);
             UpdateList();
         }
 
         private void SortCol4_Click(object sender, EventArgs e)
         {
-            Trade.Sort(Trade.CurrentSortType == ItemList.SortType.Col4Ascending
+            TradeItems.Sort(TradeItems.CurrentSortType == ItemList.SortType.Col4Ascending
                 ? ItemList.SortType.Col4Descending : ItemList.SortType.Col4Ascending);
             UpdateList();
         }
@@ -393,7 +340,8 @@ namespace OracleOfDereth
         {
             if (!disposing) return;
 
-            if (Trade != null) Trade.OnItemsListChanged = null;
+            if (TradeItems != null) TradeItems.OnItemsListChanged = null;
+            Trade.OnChanged = null;
 
             if (TradeList != null) TradeList.Click -= List_Click;
 
