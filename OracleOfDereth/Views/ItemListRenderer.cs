@@ -143,7 +143,15 @@ namespace OracleOfDereth
                 SetRowColor(row, selected: item.Id == selectedId && selectedId != 0, loading: !item.IsIdentified);
             }
 
-            while (list.RowCount > items.Count) { list.RemoveRow(list.RowCount - 1); }
+            // Trim surplus rows, dropping their image boxes from the tracking dict — otherwise
+            // those (now destroyed) boxes leak as dead keys every time the list shrinks.
+            while (list.RowCount > items.Count)
+            {
+                HudList.HudListRowAccessor row = list[list.RowCount - 1];
+                assigned.Remove((HudPictureBox)row[0]);
+                assigned.Remove((HudPictureBox)row[1]);
+                list.RemoveRow(list.RowCount - 1);
+            }
         }
 
         // Tint the row's text columns (Name..Details): highlighted when selected, dim grey

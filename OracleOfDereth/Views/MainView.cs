@@ -245,6 +245,11 @@ namespace OracleOfDereth
 
         private void AssignImage(HudPictureBox row, int icon)
         {
+            // Lists that rebuild via ClearRows()/RemoveRow() leave their old (destroyed) boxes
+            // as dead keys here. Cap the cache so those can't accumulate without bound — the
+            // live rows just re-cache on the next paint. Cheaper than cleaning every call site.
+            if (AssignedImages.Count > 1000) AssignedImages.Clear();
+
             if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
 
             if (icon == 0) {
