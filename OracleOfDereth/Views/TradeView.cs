@@ -1,0 +1,243 @@
+using Decal.Adapter;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using VirindiViewService.Controls;
+
+namespace OracleOfDereth
+{
+    // A standalone floating window (like TargetView) showing the items a trade partner
+    // has dropped into the trade window. Backed by ItemList.Trade and rendered through the
+    // same ItemListRenderer as the Items tab; PluginCore drives Show/Hide from trade events.
+    class TradeView : IDisposable
+    {
+        readonly VirindiViewService.ViewProperties properties;
+        readonly VirindiViewService.ControlGroup controls;
+        readonly VirindiViewService.HudView view;
+
+        // Icons (mirrors MainView's constants — these views don't share a base class).
+        readonly int IconNotComplete = 0x60011F8;   // Red Circle
+        readonly int IconSort = 0x60011F7;           // Sort Icon
+
+        // Per-view image tracking so repeated repaints skip identical image assignments.
+        private readonly Dictionary<HudPictureBox, int> AssignedImages = new Dictionary<HudPictureBox, int>();
+
+        public HudStaticText TradeText { get; private set; }
+        public HudTextBox TradeFilterText { get; private set; }
+        public HudCheckBox TradeFilterWeapons { get; private set; }
+        public HudCheckBox TradeFilterArmor { get; private set; }
+        public HudCheckBox TradeFilterClothing { get; private set; }
+        public HudCheckBox TradeFilterJewelry { get; private set; }
+        public HudCheckBox TradeFilterCloaks { get; private set; }
+        public HudCheckBox TradeFilterSummons { get; private set; }
+        public HudCheckBox TradeFilterAetheria { get; private set; }
+        public HudCheckBox TradeFilterSalvage { get; private set; }
+        public HudCheckBox TradeFilterOther { get; private set; }
+        public HudFixedLayout TradeListSortComplete { get; private set; }
+        public HudPictureBox TradeListSortCompleteIcon { get; private set; }
+        public HudStaticText TradeListSortName { get; private set; }
+        public HudStaticText TradeListSortCol1 { get; private set; }
+        public HudStaticText TradeListSortCol2 { get; private set; }
+        public HudStaticText TradeListSortCol3 { get; private set; }
+        public HudStaticText TradeListSortCol4 { get; private set; }
+        public HudList TradeList { get; private set; }
+
+        private ItemList Trade => ItemList.Trade;
+
+        public TradeView()
+        {
+            try
+            {
+                VirindiViewService.XMLParsers.Decal3XMLParser parser = new VirindiViewService.XMLParsers.Decal3XMLParser();
+                parser.ParseFromResource("OracleOfDereth.tradeView.xml", out properties, out controls);
+
+                view = new VirindiViewService.HudView(properties, controls);
+                if (view == null) { return; }
+
+                // Hidden until a trade opens; never shown in the Decal bar.
+                view.ShowInBar = false;
+                view.Visible = false;
+
+                Trade.OnItemsListChanged = () => UpdateList();
+
+                TradeText = (HudStaticText)view["TradeText"];
+                TradeText.FontHeight = 10;
+
+                TradeFilterText = (HudTextBox)view["TradeFilterText"];
+                TradeFilterText.Change += Filter_Change;
+
+                TradeFilterWeapons = (HudCheckBox)view["TradeFilterWeapons"];
+                TradeFilterWeapons.Change += Filter_Change;
+                TradeFilterArmor = (HudCheckBox)view["TradeFilterArmor"];
+                TradeFilterArmor.Change += Filter_Change;
+                TradeFilterClothing = (HudCheckBox)view["TradeFilterClothing"];
+                TradeFilterClothing.Change += Filter_Change;
+                TradeFilterJewelry = (HudCheckBox)view["TradeFilterJewelry"];
+                TradeFilterJewelry.Change += Filter_Change;
+                TradeFilterCloaks = (HudCheckBox)view["TradeFilterCloaks"];
+                TradeFilterCloaks.Change += Filter_Change;
+                TradeFilterSummons = (HudCheckBox)view["TradeFilterSummons"];
+                TradeFilterSummons.Change += Filter_Change;
+                TradeFilterAetheria = (HudCheckBox)view["TradeFilterAetheria"];
+                TradeFilterAetheria.Change += Filter_Change;
+                TradeFilterSalvage = (HudCheckBox)view["TradeFilterSalvage"];
+                TradeFilterSalvage.Change += Filter_Change;
+                TradeFilterOther = (HudCheckBox)view["TradeFilterOther"];
+                TradeFilterOther.Change += Filter_Change;
+
+                TradeListSortCompleteIcon = new HudPictureBox();
+                TradeListSortCompleteIcon.Image = IconSort;
+                TradeListSortComplete = (HudFixedLayout)view["TradeListSortComplete"];
+                TradeListSortComplete.AddControl(TradeListSortCompleteIcon, new Rectangle(0, 0, 16, 16));
+                TradeListSortCompleteIcon.Hit += SortName_Click;
+
+                TradeListSortName = (HudStaticText)view["TradeListSortName"];
+                TradeListSortName.Hit += SortName_Click;
+                TradeListSortCol1 = (HudStaticText)view["TradeListSortCol1"];
+                TradeListSortCol1.Hit += SortCol1_Click;
+                TradeListSortCol2 = (HudStaticText)view["TradeListSortCol2"];
+                TradeListSortCol2.Hit += SortCol2_Click;
+                TradeListSortCol3 = (HudStaticText)view["TradeListSortCol3"];
+                TradeListSortCol3.Hit += SortCol3_Click;
+                TradeListSortCol4 = (HudStaticText)view["TradeListSortCol4"];
+                TradeListSortCol4.Hit += SortCol4_Click;
+
+                TradeList = (HudList)view["TradeList"];
+                TradeList.Click += List_Click;
+                TradeList.ClearRows();
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        public void Show()
+        {
+            if (view == null) return;
+            view.Visible = true;
+            UpdateList();
+        }
+
+        public void Hide()
+        {
+            if (view == null) return;
+            view.Visible = false;
+        }
+
+        private ItemFilter Filter()
+        {
+            return new ItemFilter
+            {
+                Text = TradeFilterText?.Text ?? "",
+                Weapons = TradeFilterWeapons.Checked,
+                Armor = TradeFilterArmor.Checked,
+                Clothing = TradeFilterClothing.Checked,
+                Jewelry = TradeFilterJewelry.Checked,
+                Cloaks = TradeFilterCloaks.Checked,
+                Summons = TradeFilterSummons.Checked,
+                Aetheria = TradeFilterAetheria.Checked,
+                Salvage = TradeFilterSalvage.Checked,
+                Other = TradeFilterOther.Checked,
+            };
+        }
+
+        public void UpdateList()
+        {
+            if (view == null) return;
+
+            ItemFilter filter = Filter();
+            List<Item> items = Trade.Items.Where(filter.Matches).ToList();
+
+            ItemListRenderer.Render(TradeList, items, AssignedImages, IconNotComplete);
+            TradeText.Text = ItemListRenderer.StatusText("Trade", Trade.Items.Count, items.Count, Trade.QueueCount);
+        }
+
+        private void Filter_Change(object sender, EventArgs e)
+        {
+            UpdateList();
+        }
+
+        // Click a row to select the item in the world and (re)request its appraisal — handy
+        // for stubs whose identify gave up. The result fills the row via the Tick self-heal.
+        private void List_Click(object sender, int row, int col)
+        {
+            try
+            {
+                int id = int.Parse(((HudStaticText)TradeList[row][7]).Text);
+                CoreManager.Current.Actions.SelectItem(id);
+                CoreManager.Current.Actions.RequestId(id);
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        private void SortName_Click(object sender, EventArgs e)
+        {
+            Trade.Sort(Trade.CurrentSortType == ItemList.SortType.NameAscending
+                ? ItemList.SortType.NameDescending : ItemList.SortType.NameAscending);
+            UpdateList();
+        }
+
+        private void SortCol1_Click(object sender, EventArgs e)
+        {
+            Trade.Sort(Trade.CurrentSortType == ItemList.SortType.Col1Ascending
+                ? ItemList.SortType.Col1Descending : ItemList.SortType.Col1Ascending);
+            UpdateList();
+        }
+
+        private void SortCol2_Click(object sender, EventArgs e)
+        {
+            Trade.Sort(Trade.CurrentSortType == ItemList.SortType.Col2Ascending
+                ? ItemList.SortType.Col2Descending : ItemList.SortType.Col2Ascending);
+            UpdateList();
+        }
+
+        private void SortCol3_Click(object sender, EventArgs e)
+        {
+            Trade.Sort(Trade.CurrentSortType == ItemList.SortType.Col3Ascending
+                ? ItemList.SortType.Col3Descending : ItemList.SortType.Col3Ascending);
+            UpdateList();
+        }
+
+        private void SortCol4_Click(object sender, EventArgs e)
+        {
+            Trade.Sort(Trade.CurrentSortType == ItemList.SortType.Col4Ascending
+                ? ItemList.SortType.Col4Descending : ItemList.SortType.Col4Ascending);
+            UpdateList();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+
+            if (Trade != null) Trade.OnItemsListChanged = null;
+
+            if (TradeList != null) TradeList.Click -= List_Click;
+
+            if (TradeFilterText != null) TradeFilterText.Change -= Filter_Change;
+            if (TradeFilterWeapons != null) TradeFilterWeapons.Change -= Filter_Change;
+            if (TradeFilterArmor != null) TradeFilterArmor.Change -= Filter_Change;
+            if (TradeFilterClothing != null) TradeFilterClothing.Change -= Filter_Change;
+            if (TradeFilterJewelry != null) TradeFilterJewelry.Change -= Filter_Change;
+            if (TradeFilterCloaks != null) TradeFilterCloaks.Change -= Filter_Change;
+            if (TradeFilterSummons != null) TradeFilterSummons.Change -= Filter_Change;
+            if (TradeFilterAetheria != null) TradeFilterAetheria.Change -= Filter_Change;
+            if (TradeFilterSalvage != null) TradeFilterSalvage.Change -= Filter_Change;
+            if (TradeFilterOther != null) TradeFilterOther.Change -= Filter_Change;
+
+            if (TradeListSortCompleteIcon != null) TradeListSortCompleteIcon.Hit -= SortName_Click;
+            if (TradeListSortName != null) TradeListSortName.Hit -= SortName_Click;
+            if (TradeListSortCol1 != null) TradeListSortCol1.Hit -= SortCol1_Click;
+            if (TradeListSortCol2 != null) TradeListSortCol2.Hit -= SortCol2_Click;
+            if (TradeListSortCol3 != null) TradeListSortCol3.Hit -= SortCol3_Click;
+            if (TradeListSortCol4 != null) TradeListSortCol4.Hit -= SortCol4_Click;
+
+            AssignedImages.Clear();
+            view?.Dispose();
+        }
+    }
+}

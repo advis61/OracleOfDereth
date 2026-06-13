@@ -9,6 +9,9 @@ namespace OracleOfDereth
 {
     partial class MainView
     {
+        // The inventory-backed list shown on the Items tab. (TradeView drives ItemList.Trade.)
+        private ItemList InventoryList => ItemList.Inventory;
+
         // Items
         public HudStaticText ItemsText { get; private set; }
         public HudCheckBox ItemsAddSelected { get; private set; }
@@ -40,8 +43,8 @@ namespace OracleOfDereth
 
         private void InitItems()
         {
-            Item.OnItemsListChanged = () => UpdateItemsList();
-            Item.OnQueueFinished = () => { ItemsAddAll.Text = "Add All"; UpdateItemsList(); };
+            InventoryList.OnItemsListChanged = () => UpdateItemsList();
+            InventoryList.OnQueueFinished = () => { ItemsAddAll.Text = "Add All"; UpdateItemsList(); };
 
             ItemsText = (HudStaticText)view["ItemsText"];
             ItemsText.FontHeight = 10;
@@ -120,8 +123,8 @@ namespace OracleOfDereth
 
         private void DisposeItems()
         {
-            Item.OnItemsListChanged = null;
-            Item.OnQueueFinished = null;
+            InventoryList.OnItemsListChanged = null;
+            InventoryList.OnQueueFinished = null;
             ItemsAddSelected.Change -= ItemsAddSelected_Change;
             ItemsAdd.Hit -= ItemsAdd_Hit;
             ItemsAddAll.Hit -= ItemsAddAll_Hit;
@@ -154,134 +157,36 @@ namespace OracleOfDereth
             UpdateItemsList();
         }
 
-        private int CountOccurrences(string text, string term)
+        // Build the filter from the tab's checkboxes + search box.
+        private ItemFilter ItemsFilter()
         {
-            int count = 0;
-            int index = 0;
-            while ((index = text.IndexOf(term, index, StringComparison.OrdinalIgnoreCase)) >= 0)
+            return new ItemFilter
             {
-                count++;
-                index += term.Length;
-            }
-            return count;
-        }
-
-        private bool MatchesFilter(Item t, string[] terms)
-        {
-            if (terms.Length == 0) return true;
-            string combined = $"{t.Name} {t.SummaryCol1} {t.SummaryCol2} {t.SummaryCol3} {t.SummaryCol4}";
-            foreach (string term in terms)
-            {
-                int requiredCount = 1;
-                string word = term;
-                int starIndex = term.LastIndexOf('*');
-
-                if (starIndex > 0 && int.TryParse(term.Substring(starIndex + 1), out int n))
-                {
-                    word = term.Substring(0, starIndex);
-                    requiredCount = n;
-                }
-                else if (term.Contains(".*"))
-                {
-                    string[] parts = term.Split(new[] { ".*" }, StringSplitOptions.RemoveEmptyEntries);
-                    requiredCount = parts.Length;
-                    word = parts[0];
-                    bool allSame = true;
-                    foreach (string p in parts) { if (!p.Equals(parts[0], StringComparison.OrdinalIgnoreCase)) { allSame = false; break; } }
-                    if (!allSame)
-                    {
-                        bool allFound = true;
-                        foreach (string p in parts) { if (combined.IndexOf(p, StringComparison.OrdinalIgnoreCase) < 0) { allFound = false; break; } }
-                        if (!allFound) return false;
-                        continue;
-                    }
-                }
-                if (CountOccurrences(combined, word) < requiredCount) return false;
-            }
-            return true;
-        }
-
-        private bool IsCategoryVisible(int sortCategory)
-        {
-            switch (sortCategory)
-            {
-                case 0: return ItemsFilterWeapons.Checked;
-                case 1: return ItemsFilterArmor.Checked;
-                case 2: return ItemsFilterJewelry.Checked;
-                case 3: return ItemsFilterCloaks.Checked;
-                case 4: return ItemsFilterSummons.Checked;
-                case 5: return ItemsFilterAetheria.Checked;
-                case 6: return ItemsFilterSalvage.Checked;
-                case 7: return ItemsFilterClothing.Checked;
-                default: return ItemsFilterOther.Checked;
-            }
+                Text = ItemsFilterText?.Text ?? "",
+                Weapons = ItemsFilterWeapons.Checked,
+                Armor = ItemsFilterArmor.Checked,
+                Clothing = ItemsFilterClothing.Checked,
+                Jewelry = ItemsFilterJewelry.Checked,
+                Cloaks = ItemsFilterCloaks.Checked,
+                Summons = ItemsFilterSummons.Checked,
+                Aetheria = ItemsFilterAetheria.Checked,
+                Salvage = ItemsFilterSalvage.Checked,
+                Other = ItemsFilterOther.Checked,
+            };
         }
 
         public void UpdateItemsList()
         {
-            string filterText = ItemsFilterText?.Text?.Trim() ?? "";
-            string[] filterTerms = filterText.Length > 0 ? filterText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries) : new string[0];
+            ItemFilter filter = ItemsFilter();
+            List<Item> items = InventoryList.Items.Where(filter.Matches).ToList();
 
-            List<Item> items = Item.Items.Where(t => IsCategoryVisible(t.SortCategory)).Where(t => MatchesFilter(t, filterTerms)).ToList();
-
-            for (int x = 0; x < items.Count; x++)
-            {
-                HudList.HudListRowAccessor row;
-                if (x >= ItemsList.RowCount) { row = ItemsList.AddRow(); } else { row = ItemsList[x]; }
-
-                Item item = items[x];
-
-                AssignImage((HudPictureBox)row[0], IconNotComplete);
-                AssignImage((HudPictureBox)row[1], item.Icon);
-                ((HudStaticText)row[2]).Text = item.Name;
-                ((HudStaticText)row[3]).Text = item.SummaryCol1;
-                ((HudStaticText)row[4]).Text = item.SummaryCol2;
-                ((HudStaticText)row[5]).Text = item.SummaryCol3;
-                ((HudStaticText)row[6]).Text = item.SummaryCol4;
-                ((HudStaticText)row[7]).Text = item.Id.ToString();
-
-                // Dim the row while it's still waiting on its appraisal.
-                SetRowLoading(row, !item.IsIdentified);
-            }
-
-            while (ItemsList.RowCount > items.Count) { ItemsList.RemoveRow(ItemsList.RowCount - 1); }
-
-            ItemsText.Text = ItemsStatusText(items.Count);
-        }
-
-        // Dim grey for rows still waiting on their appraisal details.
-        private static readonly Color ColorLoading = Color.FromArgb(255, 150, 150, 150);
-
-        // Tint the row's text columns (Name..Details) grey while loading, or reset
-        // to the default colour once the item's details are filled in.
-        private void SetRowLoading(HudList.HudListRowAccessor row, bool loading)
-        {
-            for (int col = 2; col <= 6; col++)
-            {
-                if (loading) ((HudStaticText)row[col]).TextColor = ColorLoading;
-                else ((HudStaticText)row[col]).ResetTextColor();
-            }
-        }
-
-        // One consistent format regardless of filters: total, plus optional
-        // "(X shown)" when a filter hides some and "(N identifying)" while ids load.
-        private string ItemsStatusText(int shownCount)
-        {
-            int total = Item.Items.Count;
-            int identifying = Item.QueueCount;
-
-            var notes = new List<string>();
-            if (shownCount != total) notes.Add($"{shownCount} shown");
-            if (identifying > 0) notes.Add($"{identifying} identifying");
-
-            string status = $"Items: {total}";
-            if (notes.Count > 0) status += " (" + string.Join(", ", notes) + ")";
-            return status;
+            ItemListRenderer.Render(ItemsList, items, AssignedImages, IconNotComplete);
+            ItemsText.Text = ItemListRenderer.StatusText("Items", InventoryList.Items.Count, items.Count, InventoryList.QueueCount);
         }
 
         private void ItemsAddSelected_Change(object sender, EventArgs e)
         {
-            Item.AutoAddEnabled = ItemsAddSelected.Checked;
+            InventoryList.AutoAddEnabled = ItemsAddSelected.Checked;
         }
 
         private void ItemsFilter_Change(object sender, EventArgs e)
@@ -291,58 +196,58 @@ namespace OracleOfDereth
 
         private void ItemsAdd_Hit(object sender, EventArgs e)
         {
-            Item.RequestAdd(Target.CurrentTargetId);
+            InventoryList.RequestAdd(Target.CurrentTargetId);
             UpdateItemsList();
         }
 
         private void ItemsAddAll_Hit(object sender, EventArgs e)
         {
-            if (Item.IsProcessingQueue)
+            if (InventoryList.IsProcessingQueue)
             {
-                Item.CancelQueue();
+                InventoryList.CancelQueue();
                 ItemsAddAll.Text = "Add All";
                 UpdateItemsList();
                 return;
             }
 
             ItemsAddAll.Text = "Adding...";
-            Item.AddAll();
-            if (Item.QueueCount == 0) { ItemsAddAll.Text = "Add All"; }
+            InventoryList.AddAll();
+            if (InventoryList.QueueCount == 0) { ItemsAddAll.Text = "Add All"; }
             UpdateItemsList();
         }
 
         private void ItemsClear_Hit(object sender, EventArgs e)
         {
-            Item.Clear();
+            InventoryList.Clear();
             UpdateItemsList();
         }
 
         private void ItemsExportText_Hit(object sender, EventArgs e)
         {
-            string path = Item.ExportToText();
+            string path = InventoryList.ExportToText();
             Util.ClipboardCopy(path);
-            Util.Chat($"Exported {Item.Items.Count} items to {path}");
+            Util.Chat($"Exported {InventoryList.Items.Count} items to {path}");
         }
 
         private void ItemsExportCsv_Hit(object sender, EventArgs e)
         {
-            string path = Item.ExportToCsv();
+            string path = InventoryList.ExportToCsv();
             Util.ClipboardCopy(path);
-            Util.Chat($"Exported {Item.Items.Count} items to {path}");
+            Util.Chat($"Exported {InventoryList.Items.Count} items to {path}");
         }
 
         private void ItemsExportJson_Hit(object sender, EventArgs e)
         {
-            string path = Item.ExportToJson();
+            string path = InventoryList.ExportToJson();
             Util.ClipboardCopy(path);
-            Util.Chat($"Exported {Item.Items.Count} items to {path}");
+            Util.Chat($"Exported {InventoryList.Items.Count} items to {path}");
         }
 
         private void ItemsClipboard_Hit(object sender, EventArgs e)
         {
-            string text = string.Join("\n", Item.Items.Select(t => t.Description));
+            string text = string.Join("\n", InventoryList.Items.Select(t => t.Description));
             Util.ClipboardCopy(text);
-            Util.Chat($"Copied {Item.Items.Count} items to clipboard");
+            Util.Chat($"Copied {InventoryList.Items.Count} items to clipboard");
         }
 
         private void ItemsList_Click(object sender, int row, int col)
@@ -351,14 +256,12 @@ namespace OracleOfDereth
 
             if (col == 0)
             {
-                Item.Remove(id);
+                InventoryList.Remove(id);
                 UpdateItemsList();
             }
             else
             {
                 CoreManager.Current.Actions.SelectItem(id);
-                //Item item = Item.Items.FirstOrDefault(t => t.Id == id);
-                //if (item != null) { Util.Chat(item.Description); }
             }
         }
 
@@ -369,50 +272,50 @@ namespace OracleOfDereth
 
         private void ItemsListSortName_Click(object sender, EventArgs e)
         {
-            if (Item.CurrentSortType == Item.SortType.NameAscending)
-                Item.Sort(Item.SortType.NameDescending);
+            if (InventoryList.CurrentSortType == ItemList.SortType.NameAscending)
+                InventoryList.Sort(ItemList.SortType.NameDescending);
             else
-                Item.Sort(Item.SortType.NameAscending);
+                InventoryList.Sort(ItemList.SortType.NameAscending);
 
             UpdateItemsList();
         }
 
         private void ItemsListSortCol1_Click(object sender, EventArgs e)
         {
-            if (Item.CurrentSortType == Item.SortType.Col1Ascending)
-                Item.Sort(Item.SortType.Col1Descending);
+            if (InventoryList.CurrentSortType == ItemList.SortType.Col1Ascending)
+                InventoryList.Sort(ItemList.SortType.Col1Descending);
             else
-                Item.Sort(Item.SortType.Col1Ascending);
+                InventoryList.Sort(ItemList.SortType.Col1Ascending);
 
             UpdateItemsList();
         }
 
         private void ItemsListSortCol2_Click(object sender, EventArgs e)
         {
-            if (Item.CurrentSortType == Item.SortType.Col2Ascending)
-                Item.Sort(Item.SortType.Col2Descending);
+            if (InventoryList.CurrentSortType == ItemList.SortType.Col2Ascending)
+                InventoryList.Sort(ItemList.SortType.Col2Descending);
             else
-                Item.Sort(Item.SortType.Col2Ascending);
+                InventoryList.Sort(ItemList.SortType.Col2Ascending);
 
             UpdateItemsList();
         }
 
         private void ItemsListSortCol3_Click(object sender, EventArgs e)
         {
-            if (Item.CurrentSortType == Item.SortType.Col3Ascending)
-                Item.Sort(Item.SortType.Col3Descending);
+            if (InventoryList.CurrentSortType == ItemList.SortType.Col3Ascending)
+                InventoryList.Sort(ItemList.SortType.Col3Descending);
             else
-                Item.Sort(Item.SortType.Col3Ascending);
+                InventoryList.Sort(ItemList.SortType.Col3Ascending);
 
             UpdateItemsList();
         }
 
         private void ItemsListSortCol4_Click(object sender, EventArgs e)
         {
-            if (Item.CurrentSortType == Item.SortType.Col4Ascending)
-                Item.Sort(Item.SortType.Col4Descending);
+            if (InventoryList.CurrentSortType == ItemList.SortType.Col4Ascending)
+                InventoryList.Sort(ItemList.SortType.Col4Descending);
             else
-                Item.Sort(Item.SortType.Col4Ascending);
+                InventoryList.Sort(ItemList.SortType.Col4Ascending);
 
             UpdateItemsList();
         }

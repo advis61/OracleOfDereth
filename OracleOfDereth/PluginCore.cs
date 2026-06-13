@@ -59,6 +59,12 @@ namespace OracleOfDereth
         // Views, depends on VirindiViewService.dll
         private MainView mainView;
         private TargetView targetView;
+        private TradeView tradeView;
+
+        // Ids of items we owned when the trade opened. An item we drag into the trade pane
+        // can leave our inventory chain, so we can't rely on a live check to tell our own
+        // offers from the partner's — this snapshot does.
+        private readonly System.Collections.Generic.HashSet<int> tradeMyItems = new System.Collections.Generic.HashSet<int>();
 
         /// <summary>
         /// Called when your plugin is first loaded.
@@ -78,6 +84,8 @@ namespace OracleOfDereth
                 CoreManager.Current.WorldFilter.ChangeObject += WorldFilter_ChangeObject;
                 CoreManager.Current.WorldFilter.EnterTrade += WorldFilter_EnterTrade;
                 CoreManager.Current.WorldFilter.EndTrade += WorldFilter_EndTrade;
+                CoreManager.Current.WorldFilter.AddTradeItem += WorldFilter_AddTradeItem;
+                CoreManager.Current.WorldFilter.ResetTrade += WorldFilter_ResetTrade;
 
                 worldObjectIdentifier = new WorldObjectIdentifier();
                 worldObjectIdentifier.Identified += WorldObjectIdentifier_Identified;
@@ -139,12 +147,13 @@ namespace OracleOfDereth
             Recall.Init();
             Target.Init();
             Title.Init();
-            Item.Init();
+            ItemList.Init();
 
 
             // Initialize Views
             mainView = new MainView();
             targetView = new TargetView();
+            tradeView = new TradeView();
 
             // Initialize 1second update timer
             timer = new WindowsTimer();
@@ -161,7 +170,7 @@ namespace OracleOfDereth
                 FellowshipTracker.Update();
                 Fellowship.AutoOpenFellow();
                 UpdateChecker.Tick();
-                Item.Tick();
+                ItemList.TickAll();
 
                 mainView.Update();
                 targetView.Update();
@@ -188,6 +197,8 @@ namespace OracleOfDereth
                 CoreManager.Current.WorldFilter.ChangeObject -= WorldFilter_ChangeObject;
                 CoreManager.Current.WorldFilter.EnterTrade -= WorldFilter_EnterTrade;
                 CoreManager.Current.WorldFilter.EndTrade -= WorldFilter_EndTrade;
+                CoreManager.Current.WorldFilter.AddTradeItem -= WorldFilter_AddTradeItem;
+                CoreManager.Current.WorldFilter.ResetTrade -= WorldFilter_ResetTrade;
                 worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
 
                 // Shutdown timer
@@ -205,6 +216,7 @@ namespace OracleOfDereth
                 // Dispose all views
                 mainView?.Dispose();
                 targetView?.Dispose();
+                tradeView?.Dispose();
 
             } catch (Exception ex) { Util.Log(ex); }
         }
@@ -264,9 +276,9 @@ namespace OracleOfDereth
                 targetView.Update();
                 mainView.UpdateTarget();
 
-                if (Item.AutoAddEnabled && mainView.IsItemsTabActive())
+                if (ItemList.Inventory.AutoAddEnabled && mainView.IsItemsTabActive())
                 {
-                    Item.RequestAdd(e.ItemGuid);
+                    ItemList.Inventory.RequestAdd(e.ItemGuid);
                     mainView.UpdateItemsList();
                 }
             }
@@ -299,7 +311,7 @@ namespace OracleOfDereth
         {
             try
             {
-                if (e.Change == WorldChangeType.IdentReceived) { Item.IdentReceived(e.Changed); }
+                if (e.Change == WorldChangeType.IdentReceived) { ItemList.IdentReceivedAll(e.Changed); }
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -311,11 +323,48 @@ namespace OracleOfDereth
         {
             try
             {
-                int myId = CoreManager.Current.CharacterFilter.Id;
-                int partnerId = e.TradeeId == myId ? e.TraderId : e.TradeeId;
+                // Snapshot what we own now, so items we drag in can be told from the
+                // partner's (ours leave the inventory chain once they hit the trade pane).
+                tradeMyItems.Clear();
+                using (var inv = CoreManager.Current.WorldFilter.GetInventory())
+                {
+                    foreach (WorldObject wo in inv) { tradeMyItems.Add(wo.Id); }
+                }
 
-                string partnerName = CoreManager.Current.WorldFilter[partnerId]?.Name ?? "unknown";
-                Util.Chat($"Trade opened with {partnerName} (0x{partnerId:X8})", Util.ColorOrange, "[Oracle of Dereth] ");
+                // Fresh window: drop whatever the previous trade left and show it.
+                ItemList.Trade.Clear();
+                tradeView.Show();
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        // The partner (or we) dropped an item into the trade window. Show only the
+        // partner's side — the item whose side isn't us. SideId is the id of the side
+        // the item belongs to, so an item that isn't on our side is the partner's.
+        private void WorldFilter_AddTradeItem(object sender, AddTradeItemEventArgs e)
+        {
+            try
+            {
+                WorldObject wo = CoreManager.Current.WorldFilter[e.ItemId];
+                bool mine = tradeMyItems.Contains(e.ItemId) || ItemList.IsInInventory(wo);
+
+                // TODO(debug): confirm ownership classification in-game, then remove this line.
+                Util.Chat($"AddTradeItem '{wo?.Name ?? "?"}' snap={tradeMyItems.Contains(e.ItemId)} inInv={ItemList.IsInInventory(wo)} -> {(mine ? "MINE" : "PARTNER")}", Util.ColorOrange, "[Oracle of Dereth] ");
+
+                if (mine) return; // our own offer — only show the partner's items
+                ItemList.Trade.AddTradeItem(e.ItemId);
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        // Either side cleared their offered items; the trade window stays open. Drop the
+        // list and repaint empty (Clear doesn't fire the refresh callback on its own).
+        private void WorldFilter_ResetTrade(object sender, ResetTradeEventArgs e)
+        {
+            try
+            {
+                ItemList.Trade.Clear();
+                tradeView.UpdateList();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -324,7 +373,9 @@ namespace OracleOfDereth
         {
             try
             {
-                Util.Chat($"Trade closed", Util.ColorOrange, "[Oracle of Dereth] ");
+                tradeMyItems.Clear();
+                ItemList.Trade.Clear();
+                tradeView.Hide();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
