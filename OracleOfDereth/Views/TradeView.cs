@@ -264,9 +264,8 @@ namespace OracleOfDereth
             try
             {
                 if (!CanCommandPartner()) return;
-                Trade.SendCommand("check " + selectedName);
-                Trade.SendCommand("add " + selectedId);
-                Util.Chat($"Asked {Trade.PartnerName} to add {selectedName}", Util.ColorOrange, "[Oracle of Dereth] ");
+                Trade.Buy(selectedId);
+                Util.Chat($"Buying {selectedName} from {Trade.PartnerName}", Util.ColorOrange, "[Oracle of Dereth] ");
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -278,7 +277,7 @@ namespace OracleOfDereth
             try
             {
                 if (!CanCommandPartner()) return;
-                Trade.SendCommand("check " + selectedName);
+                Trade.SendCommand("check " + selectedId);
             }
             catch (Exception ex) { Util.Log(ex); }
         }

@@ -301,6 +301,7 @@ namespace OracleOfDereth
         {
             FellowshipTracker.Add(e.New);
             Nearby.Add(e.New);
+            Trade.OnObjectCreated(e.New); // trade the stack split off for an auto-payment
         }
 
         private void WorldFilter_ReleaseObject(object sender, ReleaseObjectEventArgs e)
