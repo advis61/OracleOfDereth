@@ -29,16 +29,28 @@ namespace OracleOfDereth
             Col4Descending,
         }
 
-        // Items pending identification before being added
-        private static HashSet<int> PendingIds = new HashSet<int>();
+        // In-flight identify requests: item id -> when we sent it + how many tries.
+        // Tracked so a dropped server response can be retried instead of stalling.
+        private struct Pending { public DateTime SentAt; public int Attempts; }
+        private static Dictionary<int, Pending> PendingIds = new Dictionary<int, Pending>();
 
         // Queue of item ids waiting to be identified (for Add All)
         private static List<int> IdentifyQueue = new List<int>();
         public static bool IsProcessingQueue = false;
 
+        // Up to this many identify requests in flight at once. Safe to keep high
+        // because Tick() retries/drops anything the server doesn't answer.
+        private const int MaxConcurrentRequests = 6;
+        private static readonly TimeSpan IdTimeout = TimeSpan.FromSeconds(3);
+        private const int MaxIdAttempts = 3;
+
+        // Throttle list rebuilds during bulk identify (sort + repaint is O(n)).
+        private static DateTime _lastRefresh = DateTime.MinValue;
+        private static readonly TimeSpan RefreshInterval = TimeSpan.FromMilliseconds(250);
+
         public static bool AutoAddEnabled = false;
 
-        // Callback to refresh the UI after an item is added from the queue
+        // Callbacks to refresh the UI / signal the identify queue finished.
         public static Action OnItemsListChanged;
         public static Action OnQueueFinished;
 
@@ -63,6 +75,7 @@ namespace OracleOfDereth
             PendingIds.Clear();
             IdentifyQueue.Clear();
             IsProcessingQueue = false;
+            _lastRefresh = DateTime.MinValue;
         }
 
         public static int QueueCount => IdentifyQueue.Count + PendingIds.Count;
@@ -106,8 +119,9 @@ namespace OracleOfDereth
         }
 
         /// <summary>
-        /// Request to add an item by id. If already identified, adds immediately and returns true.
-        /// Otherwise requests identification and returns false (will be added via Identified()).
+        /// Request to add an item by id. If already identified, adds it immediately.
+        /// Otherwise it's queued for identification and added when the id arrives
+        /// (via IdentReceived). Returns true if added immediately.
         /// </summary>
         public static bool RequestAdd(int id)
         {
@@ -119,87 +133,65 @@ namespace OracleOfDereth
             if (wo.ObjectClass == ObjectClass.Container) return false;
             if (!IsInInventory(wo)) return false;
             if (Items.Any(t => t.Id == id)) return false;
+            if (PendingIds.ContainsKey(id) || IdentifyQueue.Contains(id)) return false;
 
             if (wo.HasIdData)
             {
                 AddFromWorldObject(wo);
+                RefreshList();
                 return true;
             }
 
-            PendingIds.Add(id);
-            CoreManager.Current.Actions.RequestId(id);
+            IdentifyQueue.Add(id);
+            PumpQueue();
             return false;
         }
 
         /// <summary>
-        /// Called from WorldObjectIdentifier_Identified when an item finishes identification.
-        /// Returns true if this item was pending for the trade list.
-        /// </summary>
-        public static bool Identified(WorldObject item)
-        {
-            if (!PendingIds.Contains(item.Id)) return false;
-
-            PendingIds.Remove(item.Id);
-            AddFromWorldObject(item);
-            return true;
-        }
-
-        /// <summary>
-        /// Scans the entire inventory. Adds identified tradeable items immediately,
-        /// queues unidentified items for identification one at a time.
+        /// Scans the entire inventory. Adds already-identified tradeable items
+        /// immediately and queues the rest for identification.
         /// </summary>
         public static void AddAll()
         {
+            bool added = false;
+
             using (var inv = CoreManager.Current.WorldFilter.GetInventory())
             {
                 foreach (WorldObject wo in inv)
                 {
-                    //if (!IsAddAllClass(wo.ObjectClass)) continue;
-                    //if (wo.ObjectClass == ObjectClass.MissileWeapon && wo.Values(LongValueKey.StackMax, 0) > 0) continue;
                     if (!IsInInventory(wo)) continue;
                     if (Items.Any(t => t.Id == wo.Id)) continue;
+                    if (PendingIds.ContainsKey(wo.Id) || IdentifyQueue.Contains(wo.Id)) continue;
 
                     // Salvage and Spell Components don't need identification
                     if (wo.ObjectClass == ObjectClass.Salvage || wo.ObjectClass == ObjectClass.SpellComponent)
                     {
                         AddFromWorldObject(wo);
+                        added = true;
                         continue;
                     }
 
-                    //// Skip Misc items that aren't useful
-                    //if (wo.ObjectClass == ObjectClass.Misc)
-                    //{
-                    //    ItemInfo check = new ItemInfo(wo);
-                    //    if (!check.IsSummon && !check.IsAetheria && !check.IsFoolproof) continue;
-                    //}
-
                     if (wo.HasIdData)
                     {
-                        if (!IsTradeable(wo)) continue;
-                        AddFromWorldObject(wo);
+                        if (IsTradeable(wo)) { AddFromWorldObject(wo); added = true; }
                     }
                     else
                     {
-                        if (!PendingIds.Contains(wo.Id) && !IdentifyQueue.Contains(wo.Id))
-                        {
-                            IdentifyQueue.Add(wo.Id);
-                        }
+                        IdentifyQueue.Add(wo.Id);
                     }
                 }
             }
 
-            if (IdentifyQueue.Count > 0 && !IsProcessingQueue)
-            {
-                IsProcessingQueue = true;
-                CoreManager.Current.WorldFilter.ChangeObject += Item_ChangeObject;
-                ProcessNextInQueue();
-            }
+            if (added) RefreshList();
+            PumpQueue();
         }
 
-        private const int MaxConcurrentRequests = 3;
-
-        private static void ProcessNextInQueue()
+        // Issue identify requests until we hit the concurrency cap. Items already
+        // identified (by us or another plugin) are added without a request.
+        private static void PumpQueue()
         {
+            bool added = false;
+
             while (IdentifyQueue.Count > 0 && PendingIds.Count < MaxConcurrentRequests)
             {
                 int id = IdentifyQueue[0];
@@ -208,6 +200,7 @@ namespace OracleOfDereth
                 WorldObject wo = CoreManager.Current.WorldFilter[id];
                 if (wo == null) continue;
                 if (Items.Any(t => t.Id == id)) continue;
+                if (PendingIds.ContainsKey(id)) continue;
 
                 // Skip non-tradeable Misc items (not summons or aetheria)
                 if (wo.ObjectClass == ObjectClass.Misc)
@@ -216,61 +209,122 @@ namespace OracleOfDereth
                     if (!check.IsSummon && !check.IsAetheria && !check.IsFoolproof) continue;
                 }
 
-                // Already identified by another plugin — process immediately
+                // Already identified — no request needed
                 if (wo.HasIdData)
                 {
-                    if (IsTradeable(wo)) AddFromWorldObject(wo);
-                    OnItemsListChanged?.Invoke();
+                    if (IsTradeable(wo)) { AddFromWorldObject(wo); added = true; }
                     continue;
                 }
 
-                PendingIds.Add(id);
-                CoreManager.Current.Actions.RequestId(id);
+                SendId(id);
             }
 
-            // Queue is empty and no pending requests, stop listening
-            if (IdentifyQueue.Count == 0 && PendingIds.Count == 0)
+            if (added) MaybeRefresh();
+            UpdateProcessingState();
+        }
+
+        // Send an identify request and remember when, for timeout/retry in Tick().
+        private static void SendId(int id)
+        {
+            PendingIds[id] = new Pending { SentAt = DateTime.UtcNow, Attempts = 1 };
+            CoreManager.Current.Actions.RequestId(id);
+        }
+
+        // An identification arrived (forwarded from PluginCore's ChangeObject).
+        // Handles single Adds and the Add All queue uniformly.
+        public static void IdentReceived(WorldObject changed)
+        {
+            if (changed == null) return;
+
+            bool wasPending = PendingIds.Remove(changed.Id);
+            bool wasQueued = IdentifyQueue.Remove(changed.Id);
+            if (!wasPending && !wasQueued) return;
+
+            if (IsTradeable(changed)) AddFromWorldObject(changed);
+
+            PumpQueue();    // refill the freed slot
+            MaybeRefresh();
+        }
+
+        // Called once per second from the plugin tick. Re-issues or gives up on
+        // identify requests the server never answered, so a dropped response
+        // can't permanently stall the queue.
+        public static void Tick()
+        {
+            if (PendingIds.Count == 0) return;
+
+            DateTime now = DateTime.UtcNow;
+            List<int> timedOut = null;
+            foreach (var kvp in PendingIds)
             {
-                StopProcessingQueue();
+                if (now - kvp.Value.SentAt < IdTimeout) continue;
+                (timedOut ?? (timedOut = new List<int>())).Add(kvp.Key);
+            }
+            if (timedOut == null) return;
+
+            foreach (int id in timedOut)
+            {
+                Pending p = PendingIds[id];
+                if (p.Attempts < MaxIdAttempts && CoreManager.Current.WorldFilter[id] != null)
+                {
+                    PendingIds[id] = new Pending { SentAt = now, Attempts = p.Attempts + 1 };
+                    CoreManager.Current.Actions.RequestId(id);
+                }
+                else
+                {
+                    PendingIds.Remove(id);   // give up; free the slot
+                }
+            }
+
+            PumpQueue();
+            MaybeRefresh();
+        }
+
+        // True while there's outstanding identify work; flips the "Adding..." button
+        // back and fires OnQueueFinished when the last request resolves.
+        private static void UpdateProcessingState()
+        {
+            bool active = PendingIds.Count > 0 || IdentifyQueue.Count > 0;
+
+            if (active)
+            {
+                IsProcessingQueue = true;
+            }
+            else if (IsProcessingQueue)
+            {
+                IsProcessingQueue = false;
+                RefreshList();          // final sorted repaint
+                OnQueueFinished?.Invoke();
             }
         }
 
-        private static void Item_ChangeObject(object sender, ChangeObjectEventArgs e)
+        // Sort + repaint now.
+        private static void RefreshList()
         {
-            try
-            {
-                if (e.Change != WorldChangeType.IdentReceived) return;
+            Sort(CurrentSortType);
+            _lastRefresh = DateTime.UtcNow;
+            OnItemsListChanged?.Invoke();
+        }
 
-                bool wasPending = PendingIds.Remove(e.Changed.Id);
-                bool wasQueued = IdentifyQueue.Remove(e.Changed.Id);
-
-                if (!wasPending && !wasQueued) return;
-
-                if (IsTradeable(e.Changed))
-                {
-                    AddFromWorldObject(e.Changed);
-                }
-
-                OnItemsListChanged?.Invoke();
-
-                if (wasPending) ProcessNextInQueue();
-            }
-            catch (Exception ex) { Util.Log(ex); }
+        // Sort + repaint, but at most once per RefreshInterval, so a bulk identify
+        // doesn't re-sort and rebuild the whole list on every single item.
+        private static void MaybeRefresh()
+        {
+            if (DateTime.UtcNow - _lastRefresh < RefreshInterval) return;
+            RefreshList();
         }
 
         public static void CancelQueue()
         {
             IdentifyQueue.Clear();
             PendingIds.Clear();
-            StopProcessingQueue();
-        }
 
-        private static void StopProcessingQueue()
-        {
-            if (!IsProcessingQueue) return;
-            IsProcessingQueue = false;
-            CoreManager.Current.WorldFilter.ChangeObject -= Item_ChangeObject;
-            OnQueueFinished?.Invoke();
+            if (IsProcessingQueue)
+            {
+                IsProcessingQueue = false;
+                RefreshList();
+                OnQueueFinished?.Invoke();
+            }
         }
 
         public static string StatusText()
@@ -397,11 +451,11 @@ namespace OracleOfDereth
             }
         }
 
+        // Adds a row without sorting/repainting — callers refresh in batches.
         public static void Add(Item item)
         {
             if (Items.Any(t => t.Id == item.Id)) return;
             Items.Add(item);
-            Sort(CurrentSortType);
         }
 
         public static void Remove(int id)

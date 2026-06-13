@@ -75,6 +75,7 @@ namespace OracleOfDereth
                 CoreManager.Current.EchoFilter.ServerDispatch += EchoFilter_ServerDispatch;
                 CoreManager.Current.WorldFilter.CreateObject += WorldFilter_CreateObject;
                 CoreManager.Current.WorldFilter.ReleaseObject += WorldFilter_ReleaseObject;
+                CoreManager.Current.WorldFilter.ChangeObject += WorldFilter_ChangeObject;
                 CoreManager.Current.WorldFilter.EnterTrade += WorldFilter_EnterTrade;
                 CoreManager.Current.WorldFilter.EndTrade += WorldFilter_EndTrade;
 
@@ -160,6 +161,7 @@ namespace OracleOfDereth
                 FellowshipTracker.Update();
                 Fellowship.AutoOpenFellow();
                 UpdateChecker.Tick();
+                Item.Tick();
 
                 mainView.Update();
                 targetView.Update();
@@ -183,6 +185,7 @@ namespace OracleOfDereth
                 CoreManager.Current.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch;
                 CoreManager.Current.WorldFilter.CreateObject -= WorldFilter_CreateObject;
                 CoreManager.Current.WorldFilter.ReleaseObject -= WorldFilter_ReleaseObject;
+                CoreManager.Current.WorldFilter.ChangeObject -= WorldFilter_ChangeObject;
                 CoreManager.Current.WorldFilter.EnterTrade -= WorldFilter_EnterTrade;
                 CoreManager.Current.WorldFilter.EndTrade -= WorldFilter_EndTrade;
                 worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
@@ -290,6 +293,17 @@ namespace OracleOfDereth
             Nearby.Remove(e.Released);
         }
 
+        // Central identify funnel: forward completed appraisals to the Items list,
+        // which matches them against its pending/queued requests.
+        private void WorldFilter_ChangeObject(object sender, ChangeObjectEventArgs e)
+        {
+            try
+            {
+                if (e.Change == WorldChangeType.IdentReceived) { Item.IdentReceived(e.Changed); }
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
         // Opening a trade window with another player. Separate from the Items tab
         // (which scans our own packs) — here we only care about the partner's items.
         // EnterTrade reports both sides; the id that isn't ours is the trade partner.
@@ -315,19 +329,12 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
+        // User-identified items (manual clicks). Item-list completion no longer
+        // flows through here — it's handled centrally by WorldFilter_ChangeObject.
         private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
         {
-            if (mainView.IsItemsTabActive())
-            {
-                Item.Identified(item);
-                mainView.UpdateItemsList();
-            }
-
             Summon.Identified(item);
             ItemInfo.WeaponIdentified(item);
-
-            //ItemInfo info = new ItemInfo(item);
-            //Util.Chat(info.ToString(), Util.ColorCyan, "");
         }
 
         // https://github.com/ACEmulator/ACE/blob/master/Source/ACE.Server/Network/GameEvent/GameEventType.cs
