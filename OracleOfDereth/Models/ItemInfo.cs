@@ -109,22 +109,22 @@ namespace OracleOfDereth
                 case 45: return "Light";
                 case 46: return "Finesse";
                 case 41: return "Two Hand";
-                case 47: return "Missile";
                 case 34: return "War";
                 case 43: return "Nether";
             }
 
-            // Not appraised yet — guess the type from the item name (replaced by the
-            // exact skill above once the appraisal loads). Missile needs no guess.
-            if (wo.ObjectClass == ObjectClass.MissileWeapon) return "Missile";
+            // Not appraised yet (and missile sub-types aren't in the skill anyway) —
+            // guess the type from the item name.
             return GuessWeaponTypeFromName();
         }
 
-        // Best-effort weapon type from the item name alone, for showing a class before
-        // the item is appraised. Weapon-name keywords come from the levistras / LootSnob
-        // VirindiTank loot profiles; any melee name that isn't Heavy/Finesse/Two-Hand is
-        // Light, and casters are War unless the name marks them nether. Matched on word
-        // boundaries so short keywords (Jo, Ken, Star) don't hit inside other words.
+        // Best-effort weapon type for showing a class before the item is appraised.
+        // Two-handers come from the equip slot (certain, no guessing). Otherwise it's
+        // name-based: melee one-handers are Heavy/Finesse/Light by weapon-name keyword
+        // (from the levistras / LootSnob loot profiles; unknown names are "Melee"),
+        // missiles are Crossbow/Atlatl by name else Bow, and casters are War unless the
+        // name marks them nether. Keywords match on word boundaries so short ones (Jo,
+        // Ken) don't hit inside other words.
         public string GuessWeaponTypeFromName()
         {
             string name = wo.Name ?? "";
@@ -134,11 +134,22 @@ namespace OracleOfDereth
 
             if (wo.ObjectClass == ObjectClass.MeleeWeapon)
             {
+                // Two-handers are certain from the equip slot (the game uses it to
+                // block the shield slot), so don't name-guess them — some two-hand
+                // maces/etc. share keywords with one-handed types.
+                if ((wo.Values(LongValueKey.EquipableSlots, 0) & 0x02000000) != 0) return "Two Hand";
+
                 if (HeavyWeaponRegex.IsMatch(name)) return "Heavy";
                 if (FinesseWeaponRegex.IsMatch(name)) return "Finesse";
-                if (TwoHandWeaponRegex.IsMatch(name)) return "Two Hand";
                 if (LightWeaponRegex.IsMatch(name)) return "Light";
                 return "Melee";   // melee weapon whose name we don't recognise yet
+            }
+
+            if (wo.ObjectClass == ObjectClass.MissileWeapon)
+            {
+                if (CrossbowRegex.IsMatch(name)) return "Crossbow";
+                if (AtlatlRegex.IsMatch(name)) return "Atlatl";
+                return "Bow";
             }
 
             return "";
@@ -155,9 +166,11 @@ namespace OracleOfDereth
             @"\b(Hatchet|Shou-ono|Tungi|Hammer|Poniard|Knife|Lancet|Board|Tofun|Dabus|Naginata|Budiaq|Jo|Bastone|Scimitar|Yaoji|Short|Sabra|Simi|Rapier|Claw|Wraps)\b",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        private static readonly Regex TwoHandWeaponRegex = new Regex(
-            @"\b(Nodachi|Shashqa|Spadone|Greataxe|Quadrelle|Khanda-handled|Tetsubo|Star|Assagai|Pike|Magari|Corsesca)\b",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex CrossbowRegex =
+            new Regex(@"\b(Crossbow|Arbalest)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex AtlatlRegex =
+            new Regex(@"\b(Atlatl)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static readonly Regex LightWeaponRegex = new Regex(
             @"\b(Dolabra|Ono|Hand|War Hammer|Khanjar|Dagger|Club|Kasrullah|Spear|Yari|Quarter|Broad|Shamshir|Epee|Katar|Knuckles)\b",
