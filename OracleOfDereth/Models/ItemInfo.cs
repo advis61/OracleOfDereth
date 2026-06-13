@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Decal.Adapter;
 using Decal.Adapter.Wrappers;
@@ -110,17 +111,57 @@ namespace OracleOfDereth
                 case 41: return "Two Hand";
                 case 47: return "Missile";
                 case 34: return "War";
-                case 43: return "Void";
+                case 43: return "Nether";
             }
 
-            // The precise melee skill needs an appraisal, but the broad weapon type
-            // is in the object class, which we have before identifying.
-            if (wo.ObjectClass == ObjectClass.WandStaffOrb) return "Caster";
+            // Not appraised yet — guess the type from the item name (replaced by the
+            // exact skill above once the appraisal loads). Missile needs no guess.
             if (wo.ObjectClass == ObjectClass.MissileWeapon) return "Missile";
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon) return "Melee";
+            return GuessWeaponTypeFromName();
+        }
+
+        // Best-effort weapon type from the item name alone, for showing a class before
+        // the item is appraised. Weapon-name keywords come from the levistras / LootSnob
+        // VirindiTank loot profiles; any melee name that isn't Heavy/Finesse/Two-Hand is
+        // Light, and casters are War unless the name marks them nether. Matched on word
+        // boundaries so short keywords (Jo, Ken, Star) don't hit inside other words.
+        public string GuessWeaponTypeFromName()
+        {
+            string name = wo.Name ?? "";
+
+            if (wo.ObjectClass == ObjectClass.WandStaffOrb)
+                return NetherCasterRegex.IsMatch(name) ? "Nether" : "War";
+
+            if (wo.ObjectClass == ObjectClass.MeleeWeapon)
+            {
+                if (HeavyWeaponRegex.IsMatch(name)) return "Heavy";
+                if (FinesseWeaponRegex.IsMatch(name)) return "Finesse";
+                if (TwoHandWeaponRegex.IsMatch(name)) return "Two Hand";
+                if (LightWeaponRegex.IsMatch(name)) return "Light";
+                return "Melee";   // melee weapon whose name we don't recognise yet
+            }
 
             return "";
         }
+
+        private static readonly Regex NetherCasterRegex =
+            new Regex(@"\b(Nether|Corrupted)\b", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex HeavyWeaponRegex = new Regex(
+            @"\b(Silifi|Lugian|War Axe|Battle|Dirk|Stiletto|Jambiya|Mazule|Mace|Morning|Glaive|Trident|Partizan|Nabut|Stick|Takuba|Flamberge|Ken|Long|Tachi|Schlager|Nekode|Cestus)\b",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex FinesseWeaponRegex = new Regex(
+            @"\b(Hatchet|Shou-ono|Tungi|Hammer|Poniard|Knife|Lancet|Board|Tofun|Dabus|Naginata|Budiaq|Jo|Bastone|Scimitar|Yaoji|Short|Sabra|Simi|Rapier|Claw|Wraps)\b",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex TwoHandWeaponRegex = new Regex(
+            @"\b(Nodachi|Shashqa|Spadone|Greataxe|Quadrelle|Khanda-handled|Tetsubo|Star|Assagai|Pike|Magari|Corsesca)\b",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        private static readonly Regex LightWeaponRegex = new Regex(
+            @"\b(Dolabra|Ono|Hand|War Hammer|Khanjar|Dagger|Club|Kasrullah|Spear|Yari|Quarter|Broad|Shamshir|Epee|Katar|Knuckles)\b",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public string GetSlotName()
         {
