@@ -3,6 +3,10 @@ Investigating the Societies,jondorturnin,Graveyard,https://acportalstorm.com/wik
 Celestial Hand Initiation,celestialhandmember,Hebian-to,https://acportalstorm.com/wiki/Celestial_Hand_Initiation,Hebian-To - Speak with Kirina of the Celestial Hand 39.7S 83.6E - Sawato - Corrupted Catacombs 23.9S 54.1E - Get Slimy Key - Get Corrupted Mana Shard - Give to Kirina
 Eldrytch Web Initiation,eldrytchwebmember,Cragstone,https://acportalstorm.com/wiki/Eldrytch_Web_Initiation,Cragstone - Speak with Arturus of the Eldrytch Web 26.3N 49.6E - Sawato - Corrupted Catacombs 23.9S 54.1E - Get Slimy Key - Get Corrupted Mana Shard - Give to Arturu
 Radiant Blood Initiation,radiantbloodmember,Zaikhal,https://acportalstorm.com/wiki/Radiant_Blood_Initiation,Zaikhal - Speak with Ayesha of the Radiant Blood 12.8N 0.7E - Sawato - Corrupted Catacombs 23.9S 54.1E - Get Slimy Key - Get Corrupted Mana Shard - Give to Ayesha
+Adept Test,,Neydisa Castle,https://acportalstorm.com/wiki/Adept_Test,Talk to Inspector of Adepts - Neydisa Castle - Rogue Delvings 74.8N 18.4E - Get keys from north / west / east - Go south - Kill Benedino - Loot Lens of Filinuvekta - Return to inspector
+Knight Test,,Ithaenc Island,https://acportalstorm.com/wiki/Knight_Test,Talk to Inspector of Knights - Ithaenc Island - Ancient Cloister 82.5S 96.1E - Keep going down and never up - Collect Leatherbound Journal - Return to inspector
+Lord Test,,Eastwatch,https://acportalstorm.com/wiki/Lord_Test,Talk to Inspector of Lords - Eastwatch - Blighted Verdant Moarsman Tunnels 92.7N 42.3W - All lefts - Enter Moarseman Priory - Kill Prior Kothmox for Staff - Statue 87.9S 55.9W (night) or 87.9S 54.5W (day) - Temple Door 87.9S 55.2W - Kill Blind Keeper then Gate Watcher
+Master Test,,Freebooter Isle,https://acportalstorm.com/wiki/Master_Test,Talk to Inspector of Masters - Freebooter Isle - Statue of Transport 55.7S 97.7E - Catacombs of Tar'Kelyn - Kill (CH) Skith'Kirit or (EW) Tikchti or (RB) Kathirik
 Blank,,,,
 Rank: Initiate,,,,
 Dark Isle Delivery,TaskDIDeliveryWait,Dark Isle,https://acportalstorm.com/wiki/Dark_Isle_Delivery,Dark Isle - Give Altered Dark Remoran Fin to The Deep 85.5N 57.2E
@@ -13,7 +17,6 @@ Gear Knight Phalanx Kill Task,GearknightInvasionPhalanxKillWait_0513,Gear Knight
 Shambling Archivist Destroyer,TaskGrave1BossKillWait,Graveyard,https://acportalstorm.com/wiki/Shambling_Archivist_Destroyer,Graveyard - Kill Shambling Archivist 65.5S 43.9W
 Undead Jaw Collection,TaskGrave1JawCollectWait,Graveyard,https://acportalstorm.com/wiki/Undead_Jaw_Collection,Graveyard - Kill Pyre Minions Skeletons and Champions for 8 Pyre Skeleton Jaws
 Wight Blade Sorcerer Kill Task,TaskGrave1WightMageWait,Graveyard,https://acportalstorm.com/wiki/Wight_Blade_Sorcerer_Kill_Task,Graveyard - Wight Barrow 65.3S 44.6W - Kill 12 Wight Blade Sorcerers
-Adept Test,,Neydisa Castle,https://acportalstorm.com/wiki/Adept_Test,Talk to Inspector of Adepts - Neydisa Castle - Rogue Delvings 74.8N 18.4E - Get keys from north / west / east - Go south - Kill Benedino - Loot Lens of Filinuvekta - Return to inspector
 Blank,,,,
 Rank: Adept,,,,
 Black Coral Collection,TaskDIBlackCoralComplete,Dark Isle,https://acportalstorm.com/wiki/Black_Coral_Collection,Dark Isle - Collect 10 Black Coral from Coral Forest
@@ -21,7 +24,6 @@ Dark Isle Scouting,TaskDIScoutComplete,Dark Isle,https://acportalstorm.com/wiki/
 Falatacot Report Collector,TaskDIReportWait,Dark Isle,https://acportalstorm.com/wiki/Falatacot_Report_Collector,Dark Isle - Kill Falatacot Consorts and Blood Prophetess for 10 Falatacot Battle Reports
 Graveyard Delivery,TaskGrave2FedExWait,Graveyard,https://acportalstorm.com/wiki/Graveyard_Delivery,Graveyard - Massilor's Crypt 65.4S 43.6W - Give supplies to Massilor the Withered
 Tracing The Stone,TaskGrave2WallCarvingWait,Graveyard,https://acportalstorm.com/wiki/Tracing_The_Stone,Graveyard - Wight Barrow 65.3S 44.6W - Use tracing paper on Mhoire Carved Cenotaph
-Knight Test,,Ithaenc Island,https://acportalstorm.com/wiki/Knight_Test,Talk to Inspector of Knights - Ithaenc Island - Ancient Cloister 82.5S 96.1E - Keep going down and never up - Collect Leatherbound Journal - Return to inspector
 Blank,,,,
 Rank: Knight,,,,
 Blessed Moarsman Kill Task,TaskFreebooterMoarsmanKilltaskWait,Freebooter Isle,https://acportalstorm.com/wiki/Blessed_Moarsman_Kill_Task,Freebooter Isle - Kill 50 Blessed Moarsmen
@@ -35,7 +37,6 @@ Phyntos Honey Collector,phyntoshoneycomplete1109,Freebooter Isle,https://acporta
 Phyntos Larva Kill Task,KillTaskPhyntosLarvaeWait1109,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Larva_Kill_Task,Freebooter Isle - Phyntos Wasp Hive 63.1S 97.5E - East to bottom rooms - Kill 20 Phyntos Larva
 Phyntos Queen Quest,killphyntosqueenpickup1109,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Queen_Quest,Freebooter Isle - Phyntos Wasp Hive 63.1S 97.5E - Bottom West or East room - Kill Phyntos Queen loot Abdomen
 Phyntos Splinter Collector,PhyntosHiveComplete1109,Freebooter Isle,https://acportalstorm.com/wiki/Phyntos_Splinter_Collector,Freebooter Isle - Kill Killer Phyntos Hives and loot 10 Hive Splinters
-Lord Test,,Eastwatch,https://acportalstorm.com/wiki/Lord_Test,Talk to Inspector of Lords - Eastwatch - Blighted Verdant Moarsman Tunnels 92.7N 42.3W - All lefts - Enter Moarseman Priory - Kill Prior Kothmox for Staff - Statue 87.9S 55.9W (night) or 87.9S 54.5W (day) - Temple Door 87.9S 55.2W - Kill Blind Keeper then Gate Watcher
 Blank,,,,
 Rank: Lord,,,,
 Artifact Collection,TaskMoarsmenArtifactsWait,Moarsman City,https://acportalstorm.com/wiki/Artifact_Collection,Moarsman City - Use shrines - (#1) Temple Horn 92.3S 52.8W - (#2) Coral's Heart 92.6S 54.1W - (#3) Sacred Deep Water 92.9S 55.5W - (#4) Blood Pearl 93.5S 57.4W - (#5) Spear of Baalfroth 93.5S 54.3W - (#6) Scroll of Prophecy 93.4S 52.9W - (#7) Finger Bone 93.3S 51.0W - (#8) Skull of Mishfain 92.5S 48.6W - (#9) Tooth Necklace 92.2S 51.2W - (#10) Eye of T'thuun 91.0S 51.9W
@@ -48,7 +49,6 @@ Moguth Moarsman Kill Task,KilltaskMoguthMoarsmanWait,Moarsman City,https://acpor
 Palm Fort,palmfortdefended1209,Moarsman City,https://acportalstorm.com/wiki/Palm_Fort,Moarsman City - Fort Commander (CH) 92.1S 50.3W - (EW) 91.4S 53.8W - (RB) 93.6S 51.8W - Defend for about 5 minutes. Keep Reinforcement Soldiers alive. Speak with Fort Commander
 Shoguth Moarsman Kill Task,KilltaskShoguthMoarsmanWait,Moarsman City,https://acportalstorm.com/wiki/Shoguth_Moarsman_Kill_Task,Moarsman City - Kill 40 Shoguth Moarsmen
 Supply Saboteur,suppliesturnedin1209,Moarsman City,https://acportalstorm.com/wiki/Supply_Saboteur,Moarsman City - Fort Commander (CH) 92.1S 50.3W - (EW) 91.4S 53.8W - (RB) 93.6S 51.8W - Raid two enemy forts for suppplies - Kill Master Mages / Archers / Soldiers for key - Loot cage
-Master Test,,Freebooter Isle,https://acportalstorm.com/wiki/Master_Test,Talk to Inspector of Masters - Freebooter Isle - Statue of Transport 55.7S 97.7E - Catacombs of Tar'Kelyn - Kill (CH) Skith'Kirit or (EW) Tikchti or (RB) Kathirik
 Blank,,,,
 Rank: Master,,,,
 Society Infiltration,societyaugreward_0210,Stronghold,https://acportalstorm.com/wiki/Society_Infiltration,Society Chapterhouse Stronghold - Basement south then west - Supply Room Key - Burn supply crates - 2 Main Keys - Weapons Room - Prison Key - Free Captives - Smelt weapons - Defeat Commander - Loot Documents from ground

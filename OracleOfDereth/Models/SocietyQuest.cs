@@ -19,6 +19,18 @@ namespace OracleOfDereth
         // Collection of SocietyQuests loaded from society.csv
         public static List<SocietyQuest> SocietyQuests = new List<SocietyQuest>();
 
+        // Quests to actually show. Once the player joins a society, the other two
+        // societies' Initiation quests are unreachable, so hide them — matched by
+        // quest name against Society.GetSocietyName() (e.g. "Celestial Hand
+        // Initiation" stays only while in Celestial Hand). Before joining, all show.
+        public static List<SocietyQuest> VisibleQuests()
+        {
+            string society = Society.GetSocietyName();
+            return SocietyQuests
+                .Where(q => society == "None" || !q.Name.EndsWith(" Initiation") || q.Name.StartsWith(society))
+                .ToList();
+        }
+
         // Properties
         public string Name = "";
         public string Flag = "";
@@ -91,13 +103,6 @@ namespace OracleOfDereth
         public bool IsQuest()
         {
             return !IsBlank() && !IsHeader();
-        }
-
-        // Header rows: whether the player has reached this rank
-        public bool RankReached()
-        {
-            string rankName = Name.Replace("Rank:", "").Trim();
-            return Society.HasReachedRank(rankName);
         }
 
         // Rank-test quests (Adept/Knight/Lord/Master Test) don't all carry a

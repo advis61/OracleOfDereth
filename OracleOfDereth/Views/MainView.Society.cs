@@ -123,9 +123,9 @@ namespace OracleOfDereth
 
         private void UpdateSocietyList()
         {
-            List<SocietyQuest> societyQuests = SocietyQuest.SocietyQuests.ToList();
+            List<SocietyQuest> societyQuests = SocietyQuest.VisibleQuests();
 
-            // Rows map 1:1 to SocietyQuests (never skip a row) so row index == list index
+            // Rows map 1:1 to the visible quests (never skip a row) so row index == list index
             for (int x = 0; x < societyQuests.Count; x++)
             {
                 HudList.HudListRowAccessor row;
@@ -152,9 +152,8 @@ namespace OracleOfDereth
                 }
 
                 if (societyQuest.IsHeader()) {
-                    bool reached = societyQuest.RankReached();
-                    AssignImage((HudPictureBox)row[0], reached);
-                    ((HudStaticText)row[1]).Text = societyQuest.Name;
+                    AssignImage((HudPictureBox)row[0], 0);
+                    ((HudStaticText)row[1]).Text = societyQuest.Name.Replace("Rank: ", "");
                     ((HudStaticText)row[2]).Text = "";
                     ((HudStaticText)row[3]).Text = "";
                     ((HudStaticText)row[4]).Text = "";
@@ -185,13 +184,18 @@ namespace OracleOfDereth
 
                 ((HudStaticText)row[5]).Text = societyQuest.Flag;
             }
+
+            // Filtering can shrink the visible count (e.g. after joining a society);
+            // drop any leftover trailing rows so they don't linger.
+            while (SocietyList.RowCount > societyQuests.Count) { SocietyList.RemoveRow(SocietyList.RowCount - 1); }
         }
 
         void SocietyList_Click(object sender, int row, int col)
         {
-            if (row < 0 || row >= SocietyQuest.SocietyQuests.Count) { return; }
+            List<SocietyQuest> societyQuests = SocietyQuest.VisibleQuests();
+            if (row < 0 || row >= societyQuests.Count) { return; }
 
-            SocietyQuest societyQuest = SocietyQuest.SocietyQuests[row];
+            SocietyQuest societyQuest = societyQuests[row];
             if (!societyQuest.IsQuest()) { return; }
 
             QuestFlag.QuestFlags.TryGetValue(societyQuest.Flag, out QuestFlag questFlag);
