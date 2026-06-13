@@ -185,12 +185,23 @@ namespace OracleOfDereth
             return closest;
         }
 
-        public unsafe static string CurrentLandblock()
+        public unsafe static int CurrentLandblockId()
         {
             var p = CoreManager.Current.Actions.Underlying.GetPhysicsObjectPtr(CoreManager.Current.CharacterFilter.Id);
-            int landblock = *(int*)(p + 0x4C);
+            return *(int*)(p + 0x4C);
+        }
 
-            return $"0x{landblock:X8}";
+        // The high 16 bits identify the 192m landblock; the low 16 bits are the cell within it
+        // (which changes as you simply walk around). Use this to tell "moved to a new landblock"
+        // apart from "took a few steps".
+        public static int CurrentLandblock()
+        {
+            return (int)((uint)CurrentLandblockId() >> 16);
+        }
+
+        public static string CurrentLandblockHex()
+        {
+            return $"0x{CurrentLandblockId():X8}";
         }
 
 

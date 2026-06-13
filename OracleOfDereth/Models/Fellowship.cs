@@ -65,7 +65,32 @@ namespace OracleOfDereth
         };
 
         public static int CurrentFellowId = 0;
-        public static bool AutoRecruitEnabled = false;
+
+        // Auto Recruit pausing 
+        private static bool _autoRecruitEnabled = false;
+        private static DateTime _lastPauseAt = DateTime.MinValue;
+        private static string _lastPauseReason = "";
+        private static readonly double PauseGraceSeconds = 3.0;
+
+        public static bool AutoRecruitEnabled
+        {
+            get { return _autoRecruitEnabled; }
+            set
+            {
+                // Turning it on adopts the current spot as the baseline and clears any stale pause
+                // hold, so recruiting starts immediately — unless a station is actually nearby right
+                // now. Without this, re-enabling after moving to a new landblock would read as a
+                // fresh zone-in and pause for the grace window.
+                if (value && !_autoRecruitEnabled)
+                {
+                    _lastLandblock = -1;
+                    _lastPauseAt = DateTime.MinValue;
+                    _lastPauseReason = "";
+                }
+
+                _autoRecruitEnabled = value;
+            }
+        }
 
         // If my current target is in the fellow, return that.
         // Otherwise last selected fellow on the FellowsList UI
@@ -105,8 +130,7 @@ namespace OracleOfDereth
             if (!fellow.FellowshipNameBlank()) return;
 
             if (!CanRecruit()) return;
-            if (NearbyLifestone() || NearbyBindstone() || NearbyTownNetworkPortal()) return;
-            if (RecentlyZoned()) return;
+            if (AutoRecruitPauseReason() != "") return;
 
             if (fellow.WasRecruited() && !force) return;
 
@@ -154,19 +178,59 @@ namespace OracleOfDereth
             return false;
         }
 
-        private static string _lastLandblock = "";
-        private static DateTime _zonedAt = DateTime.MinValue;
-        private static readonly double ZoneGraceSeconds = 10.0;
 
-        public static bool RecentlyZoned()
+        // Returns the active pause reason ("Zoning In", "Life Stone", "Bind Stone", "Town Portal"), or "" if auto-recruit is clear to fire.
+        public static string AutoRecruitPauseReason()
         {
-            // Self-contained poll: the first call after a landblock change stamps
-            // _zonedAt = now and returns true, so even event-driven recruits
-            // (via CreateObject) are gated for the grace window.
-            string current = Util.CurrentLandblock();
-            if (current != _lastLandblock) { _lastLandblock = current; _zonedAt = DateTime.Now; }
+            string reason =
+                RecentlyZoned() ? "Zoning In" :
+                NearbyLifestone() ? "Life Stone" :
+                NearbyBindstone() ? "Bind Stone" :
+                NearbyTownNetworkPortal() ? "Town Portal" : "";
 
-            return (DateTime.Now - _zonedAt).TotalSeconds < ZoneGraceSeconds;
+            if (reason != "")
+            {
+                _lastPauseAt = DateTime.Now;
+                _lastPauseReason = reason;
+                return reason;
+            }
+
+            if ((DateTime.Now - _lastPauseAt).TotalSeconds < PauseGraceSeconds) return _lastPauseReason;
+
+            return "";
+        }
+
+        private static int _lastLandblock = -1;
+
+        // A landblock jump of this many cells or more counts as a zone (portal/recall/dungeon).
+        // Smaller steps are ordinary outdoor movement into an adjacent landblock and are ignored.
+        private static readonly int ZoneJumpThreshold = 2;
+
+        private static bool RecentlyZoned()
+        {
+            // Edge detector: true only on the first poll after a zone-sized landblock jump. The shared
+            // PauseGraceSeconds hold in AutoRecruitPauseReason supplies the actual pause window, so this
+            // just needs to flag the moment we arrive somewhere new.
+            //
+            // Compares the landblock (high 16 bits) only -- the low 16 bits are the cell within the
+            // landblock and flip as you walk around. The landblock's X (high byte) and Y (low byte) are
+            // world-grid coordinates; adjacent landblocks differ by 1. We re-baseline on every change,
+            // so running across outdoor boundaries is a series of distance-1 steps that never trip,
+            // while a teleport is a single large-distance jump that does.
+            int current = Util.CurrentLandblock();
+
+            // The very first poll only establishes a baseline. RecentlyZoned() isn't called until
+            // auto-recruit is enabled, so without this the act of turning it on would look like a zone-in.
+            if (_lastLandblock == -1) { _lastLandblock = current; return false; }
+            if (current == _lastLandblock) return false;
+
+            int dx = Math.Abs(((current >> 8) & 0xFF) - ((_lastLandblock >> 8) & 0xFF));
+            int dy = Math.Abs((current & 0xFF) - (_lastLandblock & 0xFF));
+            int distance = Math.Max(dx, dy);
+
+            _lastLandblock = current;
+
+            return distance >= ZoneJumpThreshold;
         }
 
         public unsafe static void Create(string name = "")
@@ -223,20 +287,15 @@ namespace OracleOfDereth
             }
 
             // Recruit or Auto-Recruit
+            // Poll the pause hold every tick (when enabled) so its sticky timestamp stays fresh,
+            // even while the fellowship is full. The held reason carries through brief WorldFilter gaps.
+            string pauseReason = AutoRecruitEnabled ? AutoRecruitPauseReason() : "";
+
             if (AutoRecruitEnabled && IsFull()) {
                 status.Add("Auto Recruit", "Fellowship full");
             }
-            else if (AutoRecruitEnabled && NearbyLifestone()) {
-                status.Add("Auto Recruit", "Paused by Life Stone");
-            }
-            else if (AutoRecruitEnabled && NearbyBindstone()) {
-                status.Add("Auto Recruit", "Paused by Bind Stone");
-            }
-            else if (AutoRecruitEnabled && NearbyTownNetworkPortal()) {
-                status.Add("Auto Recruit", "Paused by Town Portal");
-            }
-            else if (AutoRecruitEnabled && RecentlyZoned()) {
-                status.Add("Auto Recruit", "Paused (zoning in)");
+            else if (AutoRecruitEnabled && pauseReason != "") {
+                status.Add("Auto Recruit", $"Paused by {pauseReason}");
             }
             else if (AutoRecruitEnabled && CanRecruit()) {
                 status.Add("Auto Recruit", "Recruiting players");

@@ -211,7 +211,7 @@ namespace OracleOfDereth
             {
                 if (cmd == "/od" || cmd == "/ood" || cmd == "/od version") { Util.Chat($"Oracle of Dereth v{Assembly.GetExecutingAssembly().GetName().Version}", 1); }
                 else if (cmd == "/od exception") { throw new InvalidOperationException("An error occurred."); }
-                else if (cmd == "/od landblock") { Util.Chat($"Current landblock: {Util.CurrentLandblock()}"); }
+                else if (cmd == "/od landblock") { Util.Chat($"Current landblock: {Util.CurrentLandblockHex()} (block 0x{Util.CurrentLandblock():X4})"); }
                 else if (cmd == "/od logout") { CoreManager.Current.Actions.Logout(); }
                 else if (cmd == "/od fellow open") { Fellowship.Open(); }
                 else if (cmd == "/od fellow close") { Fellowship.Close(); }
