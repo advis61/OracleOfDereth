@@ -47,7 +47,7 @@ namespace OracleOfDereth
             { 1_01, 460 }, // Buffs
             { 1_02, 290 }, // Nearby
             { 1_03, 250 }, // Fellowship
-            { 1_04, 950 }, // Trade
+            { 1_04, 950 }, // Items
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -79,7 +79,7 @@ namespace OracleOfDereth
             { 1_01, 545 }, // Buffs
             { 1_02, 320 }, // Nearbys
             { 1_03, 380 }, // Fellowship
-            { 1_04, 450 }, // Trade
+            { 1_04, 450 }, // Items
 
             // Character Tab
             { 2_00, 550 }, // Augmentations
@@ -147,7 +147,7 @@ namespace OracleOfDereth
                 InitStatusHud();
                 InitBuffs();
                 InitFellowship();
-                InitTrade();
+                InitItems();
                 InitNearby();
                 InitJohn();
                 InitMarkers();
@@ -186,7 +186,7 @@ namespace OracleOfDereth
                 QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 AboutViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
-                DisposeTrade();
+                DisposeItems();
                 DisposeNearby();
                 DisposeFellowship();
                 DisposeJohn();
@@ -207,7 +207,7 @@ namespace OracleOfDereth
             }
         }
 
-        public bool IsTradeTabActive() { return view.Visible && CurrentTab() == 1_04; }
+        public bool IsItemsTabActive() { return view.Visible && CurrentTab() == 1_04; }
 
         private int CurrentTab()
         {
@@ -285,7 +285,7 @@ namespace OracleOfDereth
             if (currentTab == 1_01) { UpdateBuffs(); }
             if (currentTab == 1_02) { UpdateNearby(); } // If this changes update UpdateTarget() method below
             if (currentTab == 1_03) { UpdateFellowship(); } // If this changes update UpdateTarget() method below
-            if (currentTab == 1_04) { UpdateTrade(); }
+            if (currentTab == 1_04) { UpdateItems(); }
 
             // Character Tab
             if (currentTab == 2_00) { UpdateAugmentations(); }

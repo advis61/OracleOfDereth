@@ -9,10 +9,10 @@ using System.Text.RegularExpressions;
 
 namespace OracleOfDereth
 {
-    public class TradeItem
+    public class Item
     {
-        // Collection of Trade Items
-        public static List<TradeItem> TradeItems = new List<TradeItem>();
+        // Collection of Items
+        public static List<Item> Items = new List<Item>();
         public static SortType CurrentSortType = SortType.NameAscending;
 
         public enum SortType
@@ -39,7 +39,7 @@ namespace OracleOfDereth
         public static bool AutoAddEnabled = false;
 
         // Callback to refresh the UI after an item is added from the queue
-        public static Action OnTradeListChanged;
+        public static Action OnItemsListChanged;
         public static Action OnQueueFinished;
 
         // Properties
@@ -59,7 +59,7 @@ namespace OracleOfDereth
 
         public static void Init()
         {
-            TradeItems.Clear();
+            Items.Clear();
             PendingIds.Clear();
             IdentifyQueue.Clear();
             IsProcessingQueue = false;
@@ -118,7 +118,7 @@ namespace OracleOfDereth
 
             if (wo.ObjectClass == ObjectClass.Container) return false;
             if (!IsInInventory(wo)) return false;
-            if (TradeItems.Any(t => t.Id == id)) return false;
+            if (Items.Any(t => t.Id == id)) return false;
 
             if (wo.HasIdData)
             {
@@ -157,7 +157,7 @@ namespace OracleOfDereth
                     //if (!IsAddAllClass(wo.ObjectClass)) continue;
                     //if (wo.ObjectClass == ObjectClass.MissileWeapon && wo.Values(LongValueKey.StackMax, 0) > 0) continue;
                     if (!IsInInventory(wo)) continue;
-                    if (TradeItems.Any(t => t.Id == wo.Id)) continue;
+                    if (Items.Any(t => t.Id == wo.Id)) continue;
 
                     // Salvage and Spell Components don't need identification
                     if (wo.ObjectClass == ObjectClass.Salvage || wo.ObjectClass == ObjectClass.SpellComponent)
@@ -191,7 +191,7 @@ namespace OracleOfDereth
             if (IdentifyQueue.Count > 0 && !IsProcessingQueue)
             {
                 IsProcessingQueue = true;
-                CoreManager.Current.WorldFilter.ChangeObject += TradeItem_ChangeObject;
+                CoreManager.Current.WorldFilter.ChangeObject += Item_ChangeObject;
                 ProcessNextInQueue();
             }
         }
@@ -207,7 +207,7 @@ namespace OracleOfDereth
 
                 WorldObject wo = CoreManager.Current.WorldFilter[id];
                 if (wo == null) continue;
-                if (TradeItems.Any(t => t.Id == id)) continue;
+                if (Items.Any(t => t.Id == id)) continue;
 
                 // Skip non-tradeable Misc items (not summons or aetheria)
                 if (wo.ObjectClass == ObjectClass.Misc)
@@ -220,7 +220,7 @@ namespace OracleOfDereth
                 if (wo.HasIdData)
                 {
                     if (IsTradeable(wo)) AddFromWorldObject(wo);
-                    OnTradeListChanged?.Invoke();
+                    OnItemsListChanged?.Invoke();
                     continue;
                 }
 
@@ -235,7 +235,7 @@ namespace OracleOfDereth
             }
         }
 
-        private static void TradeItem_ChangeObject(object sender, ChangeObjectEventArgs e)
+        private static void Item_ChangeObject(object sender, ChangeObjectEventArgs e)
         {
             try
             {
@@ -251,7 +251,7 @@ namespace OracleOfDereth
                     AddFromWorldObject(e.Changed);
                 }
 
-                OnTradeListChanged?.Invoke();
+                OnItemsListChanged?.Invoke();
 
                 if (wasPending) ProcessNextInQueue();
             }
@@ -269,23 +269,23 @@ namespace OracleOfDereth
         {
             if (!IsProcessingQueue) return;
             IsProcessingQueue = false;
-            CoreManager.Current.WorldFilter.ChangeObject -= TradeItem_ChangeObject;
+            CoreManager.Current.WorldFilter.ChangeObject -= Item_ChangeObject;
             OnQueueFinished?.Invoke();
         }
 
         public static string StatusText()
         {
             int pending = IdentifyQueue.Count + PendingIds.Count;
-            if (pending > 0) return $"Trade Items: {TradeItems.Count} done, {pending} pending";
+            if (pending > 0) return $"Items: {Items.Count} done, {pending} pending";
 
-            return $"Trade Items: {TradeItems.Count} selected";
+            return $"Items: {Items.Count} selected";
         }
 
         private static void AddFromWorldObject(WorldObject wo)
         {
             ItemInfo info = new ItemInfo(wo);
 
-            Add(new TradeItem
+            Add(new Item
             {
                 Id = wo.Id,
                 Name = info.GetName(),
@@ -365,53 +365,53 @@ namespace OracleOfDereth
             switch (sortType)
             {
                 case SortType.NameAscending:
-                    TradeItems = TradeItems.OrderBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => t.Name).ToList();
                     break;
                 case SortType.NameDescending:
-                    TradeItems = TradeItems.OrderByDescending(t => t.Name).ToList();
+                    Items = Items.OrderByDescending(t => t.Name).ToList();
                     break;
                 case SortType.Col1Ascending:
-                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenBy(t => t.SummaryCol1).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenBy(t => t.SummaryCol1).ThenBy(t => t.Name).ToList();
                     break;
                 case SortType.Col1Descending:
-                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenByDescending(t => t.SummaryCol1).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenByDescending(t => t.SummaryCol1).ThenBy(t => t.Name).ToList();
                     break;
                 case SortType.Col2Ascending:
-                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol2).ThenBy(t => t.SummaryCol2).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol2).ThenBy(t => t.SummaryCol2).ThenBy(t => t.Name).ToList();
                     break;
                 case SortType.Col2Descending:
-                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol2).ThenByDescending(t => t.SummaryCol2).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol2).ThenByDescending(t => t.SummaryCol2).ThenBy(t => t.Name).ToList();
                     break;
                 case SortType.Col3Ascending:
-                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol3).ThenBy(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol3).ThenBy(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
                     break;
                 case SortType.Col3Descending:
-                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
                     break;
                 case SortType.Col4Ascending:
-                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol4).ThenBy(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol4).ThenBy(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
                     break;
                 case SortType.Col4Descending:
-                    TradeItems = TradeItems.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol4).ThenByDescending(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol4).ThenByDescending(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
                     break;
             }
         }
 
-        public static void Add(TradeItem item)
+        public static void Add(Item item)
         {
-            if (TradeItems.Any(t => t.Id == item.Id)) return;
-            TradeItems.Add(item);
+            if (Items.Any(t => t.Id == item.Id)) return;
+            Items.Add(item);
             Sort(CurrentSortType);
         }
 
         public static void Remove(int id)
         {
-            TradeItems.RemoveAll(t => t.Id == id);
+            Items.RemoveAll(t => t.Id == id);
         }
 
         public static void Clear()
         {
-            TradeItems.Clear();
+            Items.Clear();
         }
 
         private static string ExportFilename(string extension)
@@ -425,7 +425,7 @@ namespace OracleOfDereth
             string filename = ExportFilename("txt");
             string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), filename);
 
-            var lines = TradeItems.Select(t => t.Description).ToList();
+            var lines = Items.Select(t => t.Description).ToList();
             File.WriteAllLines(path, lines);
 
             return path;
@@ -445,7 +445,7 @@ namespace OracleOfDereth
             };
         }
 
-        private static string[] GetExportRow(TradeItem item)
+        private static string[] GetExportRow(Item item)
         {
             WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
             if (wo == null) return new[] { item.Name };
@@ -515,7 +515,7 @@ namespace OracleOfDereth
             var lines = new List<string>();
             lines.Add(string.Join(",", GetExportHeaders().Select(CsvEscape)));
 
-            foreach (var item in TradeItems)
+            foreach (var item in Items)
             {
                 lines.Add(string.Join(",", GetExportRow(item).Select(CsvEscape)));
             }
@@ -539,9 +539,9 @@ namespace OracleOfDereth
             var sb = new System.Text.StringBuilder();
             sb.AppendLine("[");
 
-            for (int i = 0; i < TradeItems.Count; i++)
+            for (int i = 0; i < Items.Count; i++)
             {
-                var row = GetExportRow(TradeItems[i]);
+                var row = GetExportRow(Items[i]);
                 sb.AppendLine("  {");
 
                 int colCount = Math.Min(headers.Length, row.Length);
@@ -551,7 +551,7 @@ namespace OracleOfDereth
                     sb.AppendLine($"    {JsonEscape(headers[c])}: {JsonEscape(row[c])}{comma}");
                 }
 
-                string itemComma = i < TradeItems.Count - 1 ? "," : "";
+                string itemComma = i < Items.Count - 1 ? "," : "";
                 sb.AppendLine("  }" + itemComma);
             }
 

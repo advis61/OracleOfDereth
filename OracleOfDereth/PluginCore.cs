@@ -75,6 +75,8 @@ namespace OracleOfDereth
                 CoreManager.Current.EchoFilter.ServerDispatch += EchoFilter_ServerDispatch;
                 CoreManager.Current.WorldFilter.CreateObject += WorldFilter_CreateObject;
                 CoreManager.Current.WorldFilter.ReleaseObject += WorldFilter_ReleaseObject;
+                CoreManager.Current.WorldFilter.EnterTrade += WorldFilter_EnterTrade;
+                CoreManager.Current.WorldFilter.EndTrade += WorldFilter_EndTrade;
 
                 worldObjectIdentifier = new WorldObjectIdentifier();
                 worldObjectIdentifier.Identified += WorldObjectIdentifier_Identified;
@@ -136,7 +138,7 @@ namespace OracleOfDereth
             Recall.Init();
             Target.Init();
             Title.Init();
-            TradeItem.Init();
+            Item.Init();
 
 
             // Initialize Views
@@ -181,6 +183,8 @@ namespace OracleOfDereth
                 CoreManager.Current.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch;
                 CoreManager.Current.WorldFilter.CreateObject -= WorldFilter_CreateObject;
                 CoreManager.Current.WorldFilter.ReleaseObject -= WorldFilter_ReleaseObject;
+                CoreManager.Current.WorldFilter.EnterTrade -= WorldFilter_EnterTrade;
+                CoreManager.Current.WorldFilter.EndTrade -= WorldFilter_EndTrade;
                 worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
 
                 // Shutdown timer
@@ -257,10 +261,10 @@ namespace OracleOfDereth
                 targetView.Update();
                 mainView.UpdateTarget();
 
-                if (TradeItem.AutoAddEnabled && mainView.IsTradeTabActive())
+                if (Item.AutoAddEnabled && mainView.IsItemsTabActive())
                 {
-                    TradeItem.RequestAdd(e.ItemGuid);
-                    mainView.UpdateTradeList();
+                    Item.RequestAdd(e.ItemGuid);
+                    mainView.UpdateItemsList();
                 }
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -286,12 +290,37 @@ namespace OracleOfDereth
             Nearby.Remove(e.Released);
         }
 
+        // Opening a trade window with another player. Separate from the Items tab
+        // (which scans our own packs) — here we only care about the partner's items.
+        // EnterTrade reports both sides; the id that isn't ours is the trade partner.
+        private void WorldFilter_EnterTrade(object sender, EnterTradeEventArgs e)
+        {
+            try
+            {
+                int myId = CoreManager.Current.CharacterFilter.Id;
+                int partnerId = e.TradeeId == myId ? e.TraderId : e.TradeeId;
+
+                string partnerName = CoreManager.Current.WorldFilter[partnerId]?.Name ?? "unknown";
+                Util.Chat($"Trade opened with {partnerName} (0x{partnerId:X8})", Util.ColorOrange, "[Oracle of Dereth] ");
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        private void WorldFilter_EndTrade(object sender, EndTradeEventArgs e)
+        {
+            try
+            {
+                Util.Chat($"Trade closed", Util.ColorOrange, "[Oracle of Dereth] ");
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
         private void WorldObjectIdentifier_Identified(object sender, WorldObject item)
         {
-            if (mainView.IsTradeTabActive())
+            if (mainView.IsItemsTabActive())
             {
-                TradeItem.Identified(item);
-                mainView.UpdateTradeList();
+                Item.Identified(item);
+                mainView.UpdateItemsList();
             }
 
             Summon.Identified(item);
