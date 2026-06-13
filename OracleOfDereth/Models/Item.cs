@@ -42,7 +42,7 @@ namespace OracleOfDereth
         // because Tick() retries/drops anything the server doesn't answer.
         private const int MaxConcurrentRequests = 6;
         private static readonly TimeSpan IdTimeout = TimeSpan.FromSeconds(3);
-        private const int MaxIdAttempts = 3;
+        private const int MaxIdAttempts = 5;
 
         // Throttle list rebuilds during bulk identify (sort + repaint is O(n)).
         private static DateTime _lastRefresh = DateTime.MinValue;
@@ -68,6 +68,10 @@ namespace OracleOfDereth
         public int SortCol3 = 0;
         public int SortCol4 = 0;
         public string Description = "";
+
+        // False until the appraisal arrives. Stub rows (icon + name only) show
+        // immediately on Add; the detail columns fill in once this flips true.
+        public bool IsIdentified = false;
 
         public static void Init()
         {
@@ -142,7 +146,10 @@ namespace OracleOfDereth
                 return true;
             }
 
+            // Show a stub now (icon + name); details fill in when the id arrives.
+            AddStub(wo);
             IdentifyQueue.Add(id);
+            RefreshList();
             PumpQueue();
             return false;
         }
@@ -174,11 +181,21 @@ namespace OracleOfDereth
                     if (wo.HasIdData)
                     {
                         if (IsTradeable(wo)) { AddFromWorldObject(wo); added = true; }
+                        continue;
                     }
-                    else
+
+                    // Skip junk Misc up front so it never gets a stub (the only
+                    // ObjectClass we can't tell apart without looking closer).
+                    if (wo.ObjectClass == ObjectClass.Misc)
                     {
-                        IdentifyQueue.Add(wo.Id);
+                        ItemInfo check = new ItemInfo(wo);
+                        if (!check.IsSummon && !check.IsAetheria && !check.IsFoolproof) continue;
                     }
+
+                    // Show a stub now; details fill in when its id arrives.
+                    AddStub(wo);
+                    IdentifyQueue.Add(wo.Id);
+                    added = true;
                 }
             }
 
@@ -198,21 +215,15 @@ namespace OracleOfDereth
                 IdentifyQueue.RemoveAt(0);
 
                 WorldObject wo = CoreManager.Current.WorldFilter[id];
-                if (wo == null) continue;
-                if (Items.Any(t => t.Id == id)) continue;
+                if (wo == null) { Items.RemoveAll(t => t.Id == id); continue; }     // item left the world; drop its stub
+                if (Items.Any(t => t.Id == id && t.IsIdentified)) continue;          // already filled in (stubs don't block)
                 if (PendingIds.ContainsKey(id)) continue;
 
-                // Skip non-tradeable Misc items (not summons or aetheria)
-                if (wo.ObjectClass == ObjectClass.Misc)
-                {
-                    ItemInfo check = new ItemInfo(wo);
-                    if (!check.IsSummon && !check.IsAetheria && !check.IsFoolproof) continue;
-                }
-
-                // Already identified — no request needed
+                // Already identified — fill the stub in now, no request needed
                 if (wo.HasIdData)
                 {
                     if (IsTradeable(wo)) { AddFromWorldObject(wo); added = true; }
+                    else Items.RemoveAll(t => t.Id == id);
                     continue;
                 }
 
@@ -240,7 +251,9 @@ namespace OracleOfDereth
             bool wasQueued = IdentifyQueue.Remove(changed.Id);
             if (!wasPending && !wasQueued) return;
 
+            // Fill the stub in place; drop it if the appraisal says it can't trade.
             if (IsTradeable(changed)) AddFromWorldObject(changed);
+            else Items.RemoveAll(t => t.Id == changed.Id);
 
             PumpQueue();    // refill the freed slot
             MaybeRefresh();
@@ -272,7 +285,10 @@ namespace OracleOfDereth
                 }
                 else
                 {
-                    PendingIds.Remove(id);   // give up; free the slot
+                    // Gave up (server never answered, or the item is gone). Free
+                    // the slot and drop its stub row so it doesn't sit on "..." forever.
+                    PendingIds.Remove(id);
+                    Items.RemoveAll(t => t.Id == id);
                 }
             }
 
@@ -330,31 +346,57 @@ namespace OracleOfDereth
         public static string StatusText()
         {
             int pending = IdentifyQueue.Count + PendingIds.Count;
-            if (pending > 0) return $"Items: {Items.Count} done, {pending} pending";
+            if (pending > 0) return $"Items: {Items.Count} ({pending} identifying)";
 
             return $"Items: {Items.Count} selected";
         }
 
+        // Add an already-identified item, or fill in its existing stub row.
         private static void AddFromWorldObject(WorldObject wo)
+        {
+            Item item = Items.FirstOrDefault(t => t.Id == wo.Id);
+            if (item == null)
+            {
+                item = new Item { Id = wo.Id };
+                Items.Add(item);
+            }
+            Populate(item, wo);
+        }
+
+        // Add a placeholder row with only the base data available before ID.
+        private static void AddStub(WorldObject wo)
+        {
+            if (Items.Any(t => t.Id == wo.Id)) return;
+
+            Items.Add(new Item
+            {
+                Id = wo.Id,
+                Name = wo.Name,
+                Icon = wo.Icon,
+                ObjectClassId = (int)wo.ObjectClass,
+                SummaryCol1 = new ItemInfo(wo).GetItemSlotName(),   // Type is known without ID
+                IsIdentified = false,
+            });
+        }
+
+        // Fill the identify-dependent fields from the appraised WorldObject.
+        private static void Populate(Item item, WorldObject wo)
         {
             ItemInfo info = new ItemInfo(wo);
 
-            Add(new Item
-            {
-                Id = wo.Id,
-                Name = info.GetName(),
-                Icon = wo.Icon,
-                ObjectClassId = (int)wo.ObjectClass,
-                SortCategory = GetSortCategory(info),
-                SummaryCol1 = GetSummaryCol1(info),
-                SummaryCol2 = GetSummaryCol2(info),
-                SummaryCol3 = GetSummaryCol3(info),
-                SummaryCol4 = GetSummaryCol4(info),
-                SortCol2 = GetSortInt(info.GetODValue()),
-                SortCol3 = GetSortInt(info.GetOMValue()),
-                SortCol4 = GetSortInt(info.GetOAValue()),
-                Description = info.ToString(),
-            });
+            item.Name = info.GetName();
+            item.Icon = wo.Icon;
+            item.ObjectClassId = (int)wo.ObjectClass;
+            item.SortCategory = GetSortCategory(info);
+            item.SummaryCol1 = GetSummaryCol1(info);
+            item.SummaryCol2 = GetSummaryCol2(info);
+            item.SummaryCol3 = GetSummaryCol3(info);
+            item.SummaryCol4 = GetSummaryCol4(info);
+            item.SortCol2 = GetSortInt(info.GetODValue());
+            item.SortCol3 = GetSortInt(info.GetOMValue());
+            item.SortCol4 = GetSortInt(info.GetOAValue());
+            item.Description = info.ToString();
+            item.IsIdentified = true;
         }
 
 
@@ -449,13 +491,6 @@ namespace OracleOfDereth
                     Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol4).ThenByDescending(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
                     break;
             }
-        }
-
-        // Adds a row without sorting/repainting — callers refresh in batches.
-        public static void Add(Item item)
-        {
-            if (Items.Any(t => t.Id == item.Id)) return;
-            Items.Add(item);
         }
 
         public static void Remove(int id)
