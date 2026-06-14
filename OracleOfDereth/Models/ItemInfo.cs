@@ -445,42 +445,18 @@ namespace OracleOfDereth
             return val >= 0 ? "+" + val : "" + val;
         }
 
-        // Raw weapon modifiers, formatted as a percentage (e.g. "20%"). These replace OA/OM
-        // in the display: rather than the overage above the masterable max, they show the
-        // weapon's actual attack / melee-defense modifier. The OA/OM code above is kept intact.
-        public string GetAttackModString()
-        {
-            if (!IsWeapon) return "";
-            double atk = GetAttackBonus();
-            if (atk == 0) return "";
-            return atk + "%";
-        }
-
-        public string GetMeleeDefenseModString()
-        {
-            if (!IsWeapon) return "";
-            double md = GetMeleeDefenseBonus();
-            if (md == 0) return "";
-            return md + "%";
-        }
-
-        public string GetMagicDefenseModString()
-        {
-            if (!IsWeapon) return "";
-            double md = GetMagicDefenseBonus();
-            if (md == 0) return "";
-            return md + "%";
-        }
-
         // Attack / melee-defense modifiers combined into one segment, e.g. "18% | 20%".
         // Uses the totals (base + innate cantrip, e.g. Heart Thirst / Defender). Zeros dropped.
         public string GetWeaponModsString()
         {
             if (!IsWeapon) return "";
 
+            double atk = GetTotalAttack();
+            double md = GetTotalMeleeDefense();
+
             var mods = new List<string>();
-            if (GetTotalAttack() != 0) mods.Add(GetTotalAttack() + "%");
-            if (GetTotalMeleeDefense() != 0) mods.Add(GetTotalMeleeDefense() + "%");
+            if (atk != 0) mods.Add(atk + "%");
+            if (md != 0) mods.Add(md + "%");
             return string.Join(" | ", mods);
         }
 

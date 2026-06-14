@@ -127,15 +127,17 @@ namespace OracleOfDereth
             else if (info.IsSalvage) col4 = info.GetSalvageDescriptionString();
             else if (info.wo.ObjectClass == ObjectClass.BaseCooking || info.wo.ObjectClass == ObjectClass.CraftedCooking) col4 = info.GetFullDescription();
 
-            // Append the wield requirement (level or skill, e.g. "Wield Lvl 180" /
-            // "Two Handed Combat 420") and tinks (e.g. "Tinks 5") to whatever the column shows.
+            // Append the wield requirement and tinks (e.g. "Tinks 5") to whatever the column
+            // shows. Only skill-based wield reqs ("Two Handed Combat 420") in general; a plain
+            // level req ("Wield Lvl 180") isn't worth a slot — except summons, whose wield level
+            // is their key gating and is always shown.
+            string wield = info.GetWieldReqString();
+            string tinks = info.GetTinksString();
+
             var parts = new List<string>();
             if (col4.Length > 0) parts.Add(col4);
-            // Only skill-based wield reqs (e.g. "Two Handed Combat 420") in general; a plain
-            // level requirement ("Wield Lvl 180") isn't worth a column slot — except for summons,
-            // where the wield level is their key gating and is always shown.
-            if (info.GetWieldReqString().Length > 0 && (info.IsSummon || info.GetWieldReqName() != "Wield Lvl")) parts.Add(info.GetWieldReqString());
-            if (info.GetTinksString().Length > 0) parts.Add(info.GetTinksString());
+            if (wield.Length > 0 && (info.IsSummon || info.GetWieldReqName() != "Wield Lvl")) parts.Add(wield);
+            if (tinks.Length > 0) parts.Add(tinks);
 
             return string.Join(", ", parts);
         }
