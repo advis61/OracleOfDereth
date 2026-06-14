@@ -23,13 +23,21 @@ namespace OracleOfDereth
 
         // Chat patterns for the bot, matched in PluginCore's chat handler (same style as
         // Target/QuestFlag). Group 1 is the sender; CheckPriceRegex also captures item + points.
+        // Both CyTrader and SkunkTrader (same author) prefix bot tells with "// ".
         public static readonly Regex TradeStartedRegex = new Regex("^(.+?) tells you, \"//");
-        public static readonly Regex CheckPriceRegex = new Regex("^(.+?) tells you, \"// (.+?) is worth ([\\d.,]+) points");
 
-        // "// My points: <name> [<value>], ..." — the items the bot accepts as payment and what
-        // each is worth. We pull our note's value out of the (comma-joined) list by name.
-        public static readonly Regex PointsReplyRegex = new Regex("^(.+?) tells you, \"// My points: (.*)\"");
-        private static readonly Regex NoteValueRegex = new Regex(Regex.Escape(PaymentItemName) + @"\s*\[(\d+(?:\.\d+)?)\]");
+        // Price-check reply. CyTrader says "<item> is worth <N> points"; SkunkTrader says
+        // "<item> is <N> points[, I have <amount> available]". "worth" is optional to match both.
+        public static readonly Regex CheckPriceRegex = new Regex("^(.+?) tells you, \"// (.+?) is (?:worth )?([\\d.,]+) points");
+
+        // The list of items the bot accepts as payment and what each is worth. CyTrader replies
+        // "// My points: <list>"; SkunkTrader "// Payment items: <list>". We pull our note's value
+        // out of the (comma-joined) list by name.
+        public static readonly Regex PointsReplyRegex = new Regex("^(.+?) tells you, \"// (?:My points|Payment items): (.*)\"");
+
+        // "<name> [<value>]" — SkunkTrader writes the first entry's value as "[<value> points]"
+        // and the rest as "[<value>]", so the trailing " points" label is optional.
+        private static readonly Regex NoteValueRegex = new Regex(Regex.Escape(PaymentItemName) + @"\s*\[(\d+(?:\.\d+)?)(?:\s*points)?\]");
 
         // True between EnterTrade and EndTrade. Lets handlers ignore stray events that arrive
         // while no trade is open, so one trade's leftovers can't bleed into the next.
