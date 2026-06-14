@@ -3,13 +3,13 @@
 	<control progid="DecalControls.FixedLayout" clipped="">
 		<control progid="DecalControls.StaticText" name="TradeText" left="5" top="5" width="630" height="20" text="Trade: 0"/>
 
-		<control progid="DecalControls.PushButton" name="TradeClipboard" left="5" top="30" width="108" height="24" text="Clipboard"/>
-		<control progid="DecalControls.PushButton" name="TradeExportText" left="118" top="30" width="108" height="24" text="Export Text"/>
-		<control progid="DecalControls.PushButton" name="TradeExportCsv" left="231" top="30" width="108" height="24" text="Export CSV"/>
-		<control progid="DecalControls.PushButton" name="TradeExportJson" left="344" top="30" width="108" height="24" text="Export JSON"/>
+		<control progid="DecalControls.PushButton" name="TradeAddButton" left="5" top="30" width="108" height="24" text="Add to Trade"/>
+		<control progid="DecalControls.StaticText" name="TradeStatusText" left="123" top="33" width="822" height="16" text=""/>
 
-		<control progid="DecalControls.PushButton" name="TradeAddButton" left="5" top="59" width="108" height="24" text="Add to Trade"/>
-		<control progid="DecalControls.StaticText" name="TradeStatusText" left="123" top="62" width="822" height="16" text=""/>
+		<control progid="DecalControls.PushButton" name="TradeClipboard" left="5" top="59" width="108" height="24" text="Clipboard"/>
+		<control progid="DecalControls.PushButton" name="TradeExportText" left="118" top="59" width="108" height="24" text="Export Text"/>
+		<control progid="DecalControls.PushButton" name="TradeExportCsv" left="231" top="59" width="108" height="24" text="Export CSV"/>
+		<control progid="DecalControls.PushButton" name="TradeExportJson" left="344" top="59" width="108" height="24" text="Export JSON"/>
 
 		<control progid="DecalControls.StaticText" name="TradeFilterLabel" left="5" top="90" width="38" height="16" text="Filter:"/>
 		<control progid="DecalControls.Edit" name="TradeFilterText" left="46" top="88" width="180" height="20" text=""/><control progid="DecalControls.PushButton" name="TradeFilterReset" left="230" top="87" width="50" height="22" text="Reset"/>
