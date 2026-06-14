@@ -849,6 +849,26 @@ namespace OracleOfDereth
             return "DMG " + GetSummonDamageString() + " | DEF " + GetSummonDefenseString();
         }
 
+        // The summon's specialization, derived from the creature name in the essence's name
+        // (keywords taken from the levistras loot profile). Generic essences match none.
+        public string GetSummonSpecString()
+        {
+            if (!IsSummon) return "";
+
+            string name = wo.Name;
+            if (SummonNaturalistRegex.IsMatch(name)) return "Naturalist";
+            if (SummonNecromancerRegex.IsMatch(name)) return "Necromancer";
+            if (SummonPrimalistRegex.IsMatch(name)) return "Primalist";
+            return "Generic";
+        }
+
+        private static readonly Regex SummonNaturalistRegex =
+            new Regex(@"Moar|Grievver|Phyntos", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex SummonNecromancerRegex =
+            new Regex(@"Zombie|Spectre|Skeleton|Maiden", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex SummonPrimalistRegex =
+            new Regex(@"Elemental|Child|Wisp|Knight|K'nath", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         // ============================================================
         // Cloak
         // ============================================================
@@ -924,6 +944,8 @@ namespace OracleOfDereth
                 if (name.Contains("Destruction")) return "Destruction";
                 if (name.Contains("Protection")) return "Protection";
                 if (name.Contains("Regeneration")) return "Regeneration";
+                if (name.Contains("Affliction")) return "Affliction";
+                if (name.Contains("Festering")) return "Festering";
                 if (name.Contains("Mana")) return "Mana";
             }
             return "";

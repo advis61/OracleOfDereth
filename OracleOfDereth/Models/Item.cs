@@ -87,6 +87,10 @@ namespace OracleOfDereth
                     type += " " + element;
                 }
             }
+            else if (info.IsSummon)
+            {
+                type = info.GetSummonSpecString(); // Primalist / Necromancer / Naturalist / Generic
+            }
             return type;
         }
 
@@ -127,9 +131,10 @@ namespace OracleOfDereth
             // "Two Handed Combat 420") and tinks (e.g. "Tinks 5") to whatever the column shows.
             var parts = new List<string>();
             if (col4.Length > 0) parts.Add(col4);
-            // Only skill-based wield reqs (e.g. "Two Handed Combat 420"); a plain level
-            // requirement ("Wield Lvl 180") isn't worth a column slot.
-            if (info.GetWieldReqName() != "Wield Lvl" && info.GetWieldReqString().Length > 0) parts.Add(info.GetWieldReqString());
+            // Only skill-based wield reqs (e.g. "Two Handed Combat 420") in general; a plain
+            // level requirement ("Wield Lvl 180") isn't worth a column slot — except for summons,
+            // where the wield level is their key gating and is always shown.
+            if (info.GetWieldReqString().Length > 0 && (info.IsSummon || info.GetWieldReqName() != "Wield Lvl")) parts.Add(info.GetWieldReqString());
             if (info.GetTinksString().Length > 0) parts.Add(info.GetTinksString());
 
             return string.Join(", ", parts);
