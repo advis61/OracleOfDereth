@@ -24,6 +24,10 @@ namespace OracleOfDereth
         // The client's reply on a server without bank: "Unknown command: bank".
         public static readonly Regex NoBankReplyRegex = new Regex(@"unknown command.*bank", RegexOptions.IgnoreCase);
 
+        // Confirmation of a successful withdrawal, e.g.
+        // "[BANK] Withdrew 1 250,000 pyreal trade notes (250,000 pyreals). Balance: 349,274,916".
+        public static readonly Regex WithdrawConfirmRegex = new Regex(@"\[BANK\]\s*Withdrew", RegexOptions.IgnoreCase);
+
         // A check is in flight, waiting on a reply.
         private static bool pending = false;
 
@@ -56,12 +60,22 @@ namespace OracleOfDereth
             if (KnownServers.TryGetValue(server, out bool known)) Supported = known;
         }
 
+        // Hard safety cap: never withdraw more than this many MMDs in a single request, no matter
+        // what a caller asks for. Guards against a runaway/buggy amount draining the bank.
+        public const int MaxWithdrawMmds = 2500;
+
         // Withdraw `mmds` MMD trade notes (250k each) from the server bank. The base "trade notes"
-        // denomination is MMD, so the command is "/b w n <count> mmd". First of the (eventual) bank
-        // command API; the trade view uses it to cover a purchase shortfall.
+        // denomination is MMD, so the command is "/b w n mmd <count>". First of the (eventual) bank
+        // command API; the trade view uses it to cover a purchase shortfall. Requests over the
+        // MaxWithdrawMmds cap are refused outright rather than partially filled.
         public static void Withdraw(int mmds)
         {
             if (mmds <= 0) return;
+            if (mmds > MaxWithdrawMmds)
+            {
+                Util.Chat($"Refusing to withdraw {mmds} MMD — over the {MaxWithdrawMmds} MMD safety cap.", Util.ColorOrange, ChatPrefix);
+                return;
+            }
             Util.Command($"/b w n mmd {mmds}");
         }
 

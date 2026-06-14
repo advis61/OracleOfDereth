@@ -264,6 +264,10 @@ namespace OracleOfDereth
                 {
                     QuestFlag.Add(e.Text);
                 }
+                else if (Bank.WithdrawConfirmRegex.IsMatch(e.Text))
+                {
+                    Trade.RecheckFunds();
+                }
                 else if (Bank.Matches(e.Text))
                 {
                     Bank.NoteChat(e.Text);

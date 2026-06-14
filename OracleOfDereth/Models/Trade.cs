@@ -218,8 +218,15 @@ namespace OracleOfDereth
                 return;
             }
 
-            int mmdsNeeded = MmdsFor(price);
+            EvaluateAffordability(MmdsFor(price));
+            OnChanged?.Invoke();
+        }
 
+        // Compare what the priced item costs (in MMDs) against the notes we hold, updating the
+        // affordability flag, the shortfall, and the status line. Shared by a fresh price check
+        // and the post-withdrawal recheck. Does not fire OnChanged — the caller decides when.
+        private static void EvaluateAffordability(int mmdsNeeded)
+        {
             GatherNotes(out int have);
             LastCheckNotes = mmdsNeeded;
             CanCheckout = have >= mmdsNeeded;
@@ -228,7 +235,33 @@ namespace OracleOfDereth
             TradeStatus = CanCheckout
                 ? $"{PriceLabel()} -- You have enough ({mmdsNeeded} MMD)"
                 : $"{PriceLabel()} -- Insufficient funds. Need {MmdShortfall} more MMD";
-            OnChanged?.Invoke();
+        }
+
+        // Withdraw exactly the MMD shortfall from the server bank. The bank's "[BANK] Withdrew ..."
+        // confirmation (routed to RecheckFunds) re-evaluates affordability once the notes land, so
+        // the view flips to Checkout on its own.
+        public static void WithdrawShortfall()
+        {
+            int mmds = MmdShortfall;
+            if (mmds <= 0) return;
+
+            Bank.Withdraw(mmds);
+            Util.Chat($"Withdrawing {mmds} MMD from bank", Util.ColorOrange, "[Oracle of Dereth] ");
+        }
+
+        // Re-run affordability for the last-checked item against the notes we now hold — same as a
+        // fresh check would, but without re-asking the bot (the price hasn't changed). Called when
+        // the bank confirms a withdrawal. Repaints only when the outcome actually changed.
+        public static void RecheckFunds()
+        {
+            if (LastCheckId == 0 || LastCheckNotes <= 0) return;
+
+            bool wasCheckout = CanCheckout;
+            int wasShortfall = MmdShortfall;
+
+            EvaluateAffordability(LastCheckNotes);
+
+            if (CanCheckout != wasCheckout || MmdShortfall != wasShortfall) OnChanged?.Invoke();
         }
 
         // Send a command tell to the partner, the same way CyTrader bots talk to each other.

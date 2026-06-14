@@ -288,13 +288,7 @@ namespace OracleOfDereth
         // afford the checked item. The next price check (or re-select) will see the new notes.
         private void WithdrawBankButton_Hit(object sender, EventArgs e)
         {
-            try
-            {
-                int mmds = Trade.MmdShortfall;
-                if (mmds <= 0) return;
-                Bank.Withdraw(mmds);
-                Util.Chat($"Withdrawing {mmds} MMD from bank", Util.ColorOrange, "[Oracle of Dereth] ");
-            }
+            try { Trade.WithdrawShortfall(); }
             catch (Exception ex) { Util.Log(ex); }
         }
 
