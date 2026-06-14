@@ -48,9 +48,9 @@ namespace OracleOfDereth
             CheckForUpdates = Register("Check For Updates On Login", "CheckForUpdates", YesNo, "Yes");
             BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
-            ShowNearbyWcid = Register("Show WCID on Nearby Tab", "ShowNearbyWcid", YesNo, "No");
-            ShowTradeWindow = Register("Show Trade Window", "ShowTradeWindow", YesNo, "Yes");
+            ShowNearbyWcid = Register("Show WCID on Nearby Tab", "NearbyWcid", YesNo, "No");
             WeaponScore = Register("Show Weapons Score", "WeaponScore", YesNo, "Yes");
+            ShowTradeWindow = Register("Use Trade Window", "TradeWindow", YesNo, "Yes");
             WikiSource = Register("Wiki Source", "WikiSource", new List<string> { "Levistras", "ACPedia", "Fandom" }, "Levistras");
         }
 
