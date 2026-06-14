@@ -222,7 +222,7 @@ namespace OracleOfDereth
             Bank.ResolveKnownServer();
             TradeWithdrawBank.Visible = Bank.Supported == true && Trade.MmdShortfall > 0;
             if (TradeWithdrawBank.Visible)
-                TradeWithdrawBank.Text = $"Withdraw {Trade.MmdShortfall}mmds from Bank";
+                TradeWithdrawBank.Text = $"Withdraw {Trade.MmdShortfall} MMD from Bank";
         }
 
         private void Filter_Change(object sender, EventArgs e)
