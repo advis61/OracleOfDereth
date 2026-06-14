@@ -71,6 +71,15 @@ namespace OracleOfDereth
 
         public string GetFullDescription() => wo.Values(StringValueKey.FullDescription, "");
 
+        // Salvage isn't appraised (its tinker use is fixed per material), so look the description
+        // up from a hardcoded table keyed by Material — which is available without an identify.
+        public string GetSalvageDescriptionString()
+        {
+            if (!IsSalvage) return "";
+            if (SalvageDescriptionInfo.TryGetValue(wo.Values(LongValueKey.Material, 0), out string desc)) return desc;
+            return "";
+        }
+
         public string GetMaterial()
         {
             if (wo.Values(LongValueKey.Material) <= 0) return "";
@@ -1779,6 +1788,84 @@ namespace OracleOfDereth
             { 75, "Oak" },
             { 76, "Pine" },
             { 77, "Teak" },
+        };
+
+        // Tinkering use per salvage material, keyed by Material id (same ids as MaterialInfo).
+        // Armature materials have paragraph-long in-game text; summarised here for the column.
+        private static readonly Dictionary<int, string> SalvageDescriptionInfo = new Dictionary<int, string>
+        {
+            { 1, "Increases Armor's Fire Protection by 0.4" },                       // Ceramic
+            { 2, "Changes heritage requirement to Sho" },                           // Porcelain
+            { 4, "Reduces the item's burden by 25%" },                              // Linen
+            { 5, "Changes heritage requirement to Viamontian" },                    // Satin
+            { 6, "Removes the rank activation requirement" },                       // Silk
+            { 7, "Increases the weapon's attack skill bonus by 1%" },               // Velvet
+            { 8, "Increases Armor's Cold Protection by 0.4" },                      // Wool
+            { 10, "Imbues the target with Minor Focus" },                          // Agate
+            { 11, "Imbues the target with Augmented Stamina" },        // Amber
+            { 12, "No Apparent Use" },                                            // Amethyst
+            { 13, "Imbues the target with Cold Rending" },                        // Aquamarine
+            { 14, "Imbues the target with Wizard's Intellect" },                  // Azurite
+            { 15, "Imbues the target with Pierce Rending" },                      // Black Garnet
+            { 16, "Imbues the target with Critical Strike" },                     // Black Opal
+            { 17, "Imbues the target with Minor Endurance" },                     // Bloodstone
+            { 18, "Imbues the target with Minor Strength" },                      // Carnelian
+            { 19, "Imbues the target with Minor Stamina Gain" },                  // Citrine
+            { 20, "Imbues the target with Augmented Damage" },         // Diamond
+            { 21, "Imbues the target with Acid Rending" },                       // Emerald
+            { 22, "Imbues the target with Crippling Blow" },                     // Fire Opal
+            { 23, "Improves a wand's PvM and PvP damage modifier by 1%" },        // Green Garnet
+            { 24, "No Apparent Use" },                                           // Green Jade
+            { 25, "Imbues the target with Warrior's Vitality" },                 // Hematite
+            { 26, "Imbues the target with Slash Rending" },                      // Imperial Topaz
+            { 27, "Imbues the target with Lightning Rending" },                  // Jet
+            { 28, "Imbues the target with Minor Willpower" },                    // Lapis Lazuli
+            { 29, "Imbues the target with Minor Mana Gain" },                    // Lavender Jade
+            { 30, "Imbues the target with Warrior's Vigor" },                    // Malachite
+            { 31, "Increases the item's Maximum Mana by 500" },                  // Moonstone
+            { 32, "No Apparent Use" },                                           // Onyx
+            { 33, "Increases the item's Mana Conversion bonus by 1%" },           // Opal
+            { 34, "Imbues the target with a +1 bonus to Melee Defense" },         // Peridot
+            { 35, "Imbues the target with Fire Rending" },                       // Red Garnet
+            { 36, "Imbues the target with Minor Health Gain" },                  // Red Jade
+            { 37, "Imbues the target with Minor Quickness" },                    // Rose Quartz
+            { 38, "Imbues the target with Augmented Health" },         // Ruby
+            { 39, "Imbues the target with Augmented Mana" },           // Sapphire
+            { 40, "Imbues the target with Minor Coordination" },                 // Smokey Quartz
+            { 41, "Imbues the target with Armor Rending" },                      // Sunstone
+            { 42, "No Apparent Use" },                                           // Tiger Eye
+            { 43, "No Apparent Use" },                                           // Tourmaline
+            { 44, "No Apparent Use" },                                           // Turquoise
+            { 45, "No Apparent Use" },                                           // White Jade
+            { 46, "No Apparent Use" },                                           // White Quartz
+            { 47, "Imbues the target with Bludgeon Rending" },                   // White Sapphire
+            { 48, "No Apparent Use" },                                           // Yellow Garnet
+            { 49, "Imbues the target with a +1 bonus to Missile Defense" },       // Yellow Topaz
+            { 50, "Imbues the target with a +1 bonus to Magic Defense" },         // Zircon
+            { 51, "Unattunes certain quest items from your soul" },               // Ivory
+            { 52, "Renders an item Retained" },                                  // Leather
+            { 53, "Increases Armor's Acid Protection by 0.4" },                  // Armoredillo Hide
+            { 54, "Imbues the target with Damage Reduction +dr" }, // Gromnie Hide
+            { 55, "Increases Armor's Lightning Protection by 0.4" },             // Reed Shark Hide
+            { 57, "Increases a weapon's melee defense bonus by 1%" },             // Brass
+            { 58, "Increases Armor's Slashing Protection by 0.2" },              // Bronze
+            { 59, "Changes Missile Defense requirement to Melee Defense requirement" }, // Copper
+            { 60, "Raises a treasure-generated item's value by 25%" },           // Gold
+            { 61, "Increases the weapon's maximum damage by 1" },                // Iron
+            { 62, "Imbues the target with Augmented Understanding" },  // Pyreal
+            { 63, "Changes Melee Defense requirement to Missile Defense requirement" }, // Silver
+            { 64, "Increases Armor's Armor Level by +20" },                     // Steel
+            { 66, "Increases Armor's Piercing Protection by 0.2" },             // Alabaster
+            { 67, "Improves a melee weapon's variance by 20%" },                // Granite
+            { 68, "Increases Armor's Bludgeon Protection by 0.2" },             // Marble
+            { 69, "No Apparent Use" },                                          // Obsidian
+            { 70, "Removes a treasure-generated item's Retained status" },   // Sandstone
+            { 71, "No Apparent Use" },                                          // Serpentine
+            { 73, "Changes heritage requirement to Gharu'ndim" },              // Ebony
+            { 74, "Increases a missile weapon's damage modifier by 4%" },        // Mahogany
+            { 75, "Decreases the weapon's speed by 50" },                       // Oak
+            { 76, "Reduces the item's value by 25%" },                          // Pine
+            { 77, "Changes heritage requirement to Aluvian" },                 // Teak
         };
 
         #endregion

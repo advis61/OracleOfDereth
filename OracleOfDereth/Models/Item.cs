@@ -63,6 +63,7 @@ namespace OracleOfDereth
         private static string GetSummaryCol1(ItemInfo info)
         {
             string type = info.GetItemSlotName();
+
             if (info.IsWeapon)
             {
                 string imbue = info.GetImbueString();
@@ -117,6 +118,7 @@ namespace OracleOfDereth
             else if (info.IsAetheria) col4 = info.GetAetheriaLevel() > 0 ? "Level " + info.GetAetheriaLevel() : "";
             else if (info.IsArmorClothing || info.IsJewelry) col4 = info.GetSpellsString();
             else if (info.IsRare) col4 = info.GetSpellsString();
+            else if (info.IsSalvage) col4 = info.GetSalvageDescriptionString();
             else if (info.wo.ObjectClass == ObjectClass.BaseCooking || info.wo.ObjectClass == ObjectClass.CraftedCooking) col4 = info.GetFullDescription();
 
             // Append the wield requirement (level or skill, e.g. "Wield Lvl 180" /
