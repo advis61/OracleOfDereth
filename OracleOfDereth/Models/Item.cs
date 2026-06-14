@@ -52,7 +52,7 @@ namespace OracleOfDereth
             SummaryCol3 = GetSummaryCol3(info);
             SummaryCol4 = GetSummaryCol4(info);
             SortCol2 = GetSortInt(info.GetODValue());
-            SortCol3 = GetSortInt((int)info.GetAttackBonus()); // Col3 leads with the attack modifier
+            SortCol3 = GetSortInt((int)info.GetTotalAttack()); // Col3 leads with the (total) attack modifier
             SortCol4 = 0; // Col4 (cantrips) is a string; sort falls through to SummaryCol4
             Description = info.ToString();
             IsIdentified = true;

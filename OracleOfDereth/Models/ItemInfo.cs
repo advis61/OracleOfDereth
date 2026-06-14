@@ -472,15 +472,15 @@ namespace OracleOfDereth
             return md + "%";
         }
 
-        // Attack / melee-defense modifiers combined into one segment,
-        // e.g. "18% | 20%". Zero values are dropped.
+        // Attack / melee-defense modifiers combined into one segment, e.g. "18% | 20%".
+        // Uses the totals (base + innate cantrip, e.g. Heart Thirst / Defender). Zeros dropped.
         public string GetWeaponModsString()
         {
             if (!IsWeapon) return "";
 
             var mods = new List<string>();
-            if (GetAttackBonus() != 0) mods.Add(GetAttackBonus() + "%");
-            if (GetMeleeDefenseBonus() != 0) mods.Add(GetMeleeDefenseBonus() + "%");
+            if (GetTotalAttack() != 0) mods.Add(GetTotalAttack() + "%");
+            if (GetTotalMeleeDefense() != 0) mods.Add(GetTotalMeleeDefense() + "%");
             return string.Join(" | ", mods);
         }
 
@@ -549,6 +549,13 @@ namespace OracleOfDereth
         public double GetMagicDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MagicDBonus, 1) - 1) * 100), 1);
         public double GetMissileDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MissileDBonus, 1) - 1) * 100), 1);
         public double GetManaConversionBonus() => Math.Round((wo.Values(DoubleValueKey.ManaCBonus) * 100));
+
+        // Attack / melee-defense modifier including the item's innate cantrip bonus — e.g. a
+        // Legendary Heart Thirst adds +9% to attack, Legendary Defender +9% to melee defense.
+        // GetBuffedDoubleValue folds those innate bonuses in (and normalises active buffs), so
+        // these are the totals you'd see with the item's own cantrips applied.
+        public double GetTotalAttack() => Math.Round((GetBuffedDoubleValue(Key_AttackBonus, 1) - 1) * 100);
+        public double GetTotalMeleeDefense() => Math.Round((GetBuffedDoubleValue(Key_MeleeDefenseBonus, 1) - 1) * 100);
 
         public string GetBonusesString()
         {
