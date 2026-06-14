@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using Decal.Adapter.Wrappers;
 
 namespace OracleOfDereth
@@ -116,11 +118,15 @@ namespace OracleOfDereth
             else if (info.IsArmorClothing || info.IsJewelry) col4 = info.GetSpellsString();
 
             // Append the wield requirement (level or skill, e.g. "Wield Lvl 180" /
-            // "Two Handed Combat 420") to whatever the column already shows.
-            string wield = info.GetWieldReqString();
-            if (wield.Length > 0) col4 = col4.Length > 0 ? col4 + ", " + wield : wield;
+            // "Two Handed Combat 420") and tinks (e.g. "Tinks 5") to whatever the column shows.
+            var parts = new List<string>();
+            if (col4.Length > 0) parts.Add(col4);
+            // Only skill-based wield reqs (e.g. "Two Handed Combat 420"); a plain level
+            // requirement ("Wield Lvl 180") isn't worth a column slot.
+            if (info.GetWieldReqName() != "Wield Lvl" && info.GetWieldReqString().Length > 0) parts.Add(info.GetWieldReqString());
+            if (info.GetTinksString().Length > 0) parts.Add(info.GetTinksString());
 
-            return col4;
+            return string.Join(", ", parts);
         }
 
         private static int GetSortCategory(ItemInfo info)
