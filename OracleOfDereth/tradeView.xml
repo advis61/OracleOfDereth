@@ -1,35 +1,34 @@
 <?xml version="1.0"?>
-<view icon="8894" title="Oracle of Dereth - Trade" width="1280" height="570">
+<view icon="8894" title="Oracle of Dereth - Trade" width="1280" height="539">
 	<control progid="DecalControls.FixedLayout" clipped="">
 		<control progid="DecalControls.StaticText" name="TradeText" left="5" top="5" width="630" height="20" text="Trade: 0"/>
 
 		<control progid="DecalControls.PushButton" name="TradeAddButton" left="5" top="30" width="108" height="24" text="Add to Trade"/>
 		<control progid="DecalControls.StaticText" name="TradeStatusText" left="123" top="33" width="822" height="16" text=""/>
 
-		<control progid="DecalControls.PushButton" name="TradeClipboard" left="5" top="59" width="108" height="24" text="Clipboard"/>
-		<control progid="DecalControls.PushButton" name="TradeExportText" left="118" top="59" width="108" height="24" text="Export Text"/>
-		<control progid="DecalControls.PushButton" name="TradeExportCsv" left="231" top="59" width="108" height="24" text="Export CSV"/>
-		<control progid="DecalControls.PushButton" name="TradeExportJson" left="344" top="59" width="108" height="24" text="Export JSON"/>
+		<control progid="DecalControls.StaticText" name="TradeFilterLabel" left="5" top="59" width="38" height="16" text="Filter:"/>
+		<control progid="DecalControls.Edit" name="TradeFilterText" left="46" top="57" width="180" height="20" text=""/><control progid="DecalControls.PushButton" name="TradeFilterReset" left="230" top="56" width="50" height="22" text="Reset"/>
+		<control progid="DecalControls.CheckBox" name="TradeFilterWeapons" left="285" top="59" width="70" height="16" text="Weapons" checked="false"/>
+		<control progid="DecalControls.CheckBox" name="TradeFilterArmor" left="365" top="59" width="60" height="16" text="Armor" checked="false"/>
+		<control progid="DecalControls.CheckBox" name="TradeFilterClothing" left="435" top="59" width="70" height="16" text="Clothing" checked="false"/>
+		<control progid="DecalControls.CheckBox" name="TradeFilterJewelry" left="515" top="59" width="64" height="16" text="Jewelry" checked="false"/>
+		<control progid="DecalControls.CheckBox" name="TradeFilterCloaks" left="589" top="59" width="58" height="16" text="Cloaks" checked="false"/>
+		<control progid="DecalControls.CheckBox" name="TradeFilterSummons" left="657" top="59" width="75" height="16" text="Summons" checked="false"/>
+		<control progid="DecalControls.CheckBox" name="TradeFilterAetheria" left="742" top="59" width="70" height="16" text="Aetheria" checked="false"/>
+		<control progid="DecalControls.CheckBox" name="TradeFilterSalvage" left="822" top="59" width="64" height="16" text="Salvage" checked="false"/>
+		<control progid="DecalControls.CheckBox" name="TradeFilterOther" left="896" top="59" width="52" height="16" text="Other" checked="false"/>
+		<control progid="DecalControls.PushButton" name="TradeClipboard" left="763" top="3" width="44" height="22" text="Copy"/>
+		<control progid="DecalControls.PushButton" name="TradeExportText" left="810" top="3" width="44" height="22" text="Text"/>
+		<control progid="DecalControls.PushButton" name="TradeExportCsv" left="857" top="3" width="44" height="22" text="CSV"/>
+		<control progid="DecalControls.PushButton" name="TradeExportJson" left="904" top="3" width="44" height="22" text="JSON"/>
 
-		<control progid="DecalControls.StaticText" name="TradeFilterLabel" left="5" top="90" width="38" height="16" text="Filter:"/>
-		<control progid="DecalControls.Edit" name="TradeFilterText" left="46" top="88" width="180" height="20" text=""/><control progid="DecalControls.PushButton" name="TradeFilterReset" left="230" top="87" width="50" height="22" text="Reset"/>
-		<control progid="DecalControls.CheckBox" name="TradeFilterWeapons" left="285" top="90" width="70" height="16" text="Weapons" checked="false"/>
-		<control progid="DecalControls.CheckBox" name="TradeFilterArmor" left="365" top="90" width="60" height="16" text="Armor" checked="false"/>
-		<control progid="DecalControls.CheckBox" name="TradeFilterClothing" left="435" top="90" width="70" height="16" text="Clothing" checked="false"/>
-		<control progid="DecalControls.CheckBox" name="TradeFilterJewelry" left="515" top="90" width="64" height="16" text="Jewelry" checked="false"/>
-		<control progid="DecalControls.CheckBox" name="TradeFilterCloaks" left="589" top="90" width="58" height="16" text="Cloaks" checked="false"/>
-		<control progid="DecalControls.CheckBox" name="TradeFilterSummons" left="657" top="90" width="75" height="16" text="Summons" checked="false"/>
-		<control progid="DecalControls.CheckBox" name="TradeFilterAetheria" left="742" top="90" width="70" height="16" text="Aetheria" checked="false"/>
-		<control progid="DecalControls.CheckBox" name="TradeFilterSalvage" left="822" top="90" width="64" height="16" text="Salvage" checked="false"/>
-		<control progid="DecalControls.CheckBox" name="TradeFilterOther" left="896" top="90" width="52" height="16" text="Other" checked="false"/>
-
-		<control progid="DecalControls.FixedLayout" name="TradeListSortComplete" left="1" top="116" width="16" height="16"/>
-		<control progid="DecalControls.StaticText" name="TradeListSortName" left="34" top="112" width="210" height="17" text="Item Name"/>
-		<control progid="DecalControls.StaticText" name="TradeListSortCol1" left="344" top="112" width="140" height="17" text="Type"/>
-		<control progid="DecalControls.StaticText" name="TradeListSortCol2" left="531" top="112" width="90" height="17" text="Info"/>
-		<control progid="DecalControls.StaticText" name="TradeListSortCol3" left="668" top="112" width="90" height="17" text="Ratings"/>
-		<control progid="DecalControls.StaticText" name="TradeListSortCol4" left="775" top="112" width="360" height="17" text="Details"/>
-		<control progid="DecalControls.List" name="TradeList" left="0" top="132" width="1920" height="2000">
+		<control progid="DecalControls.FixedLayout" name="TradeListSortComplete" left="1" top="85" width="16" height="16"/>
+		<control progid="DecalControls.StaticText" name="TradeListSortName" left="34" top="81" width="210" height="17" text="Item Name"/>
+		<control progid="DecalControls.StaticText" name="TradeListSortCol1" left="344" top="81" width="140" height="17" text="Type"/>
+		<control progid="DecalControls.StaticText" name="TradeListSortCol2" left="531" top="81" width="90" height="17" text="Info"/>
+		<control progid="DecalControls.StaticText" name="TradeListSortCol3" left="668" top="81" width="90" height="17" text="Ratings"/>
+		<control progid="DecalControls.StaticText" name="TradeListSortCol4" left="775" top="81" width="360" height="17" text="Details"/>
+		<control progid="DecalControls.List" name="TradeList" left="0" top="101" width="1920" height="2000">
 			<column progid="DecalControls.IconColumn" name="Remove" fixedwidth="1" />
 			<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
 			<column progid="DecalControls.TextColumn" name="Name" fixedwidth="303" />

@@ -63,6 +63,9 @@ namespace OracleOfDereth
             ItemsClear = (HudButton)view["ItemsClear"];
             ItemsClear.Hit += ItemsClear_Hit;
 
+            ItemsClipboard = (HudButton)view["ItemsClipboard"];
+            ItemsClipboard.Hit += ItemsClipboard_Hit;
+
             ItemsExportText = (HudButton)view["ItemsExportText"];
             ItemsExportText.Hit += ItemsExportText_Hit;
 
@@ -71,9 +74,6 @@ namespace OracleOfDereth
 
             ItemsExportJson = (HudButton)view["ItemsExportJson"];
             ItemsExportJson.Hit += ItemsExportJson_Hit;
-
-            ItemsClipboard = (HudButton)view["ItemsClipboard"];
-            ItemsClipboard.Hit += ItemsClipboard_Hit;
 
             ItemsAddSelected = (HudCheckBox)view["ItemsAddSelected"];
             ItemsAddSelected.Change += ItemsAddSelected_Change;
@@ -137,10 +137,10 @@ namespace OracleOfDereth
             ItemsAdd.Hit -= ItemsAdd_Hit;
             ItemsAddAll.Hit -= ItemsAddAll_Hit;
             ItemsClear.Hit -= ItemsClear_Hit;
+            ItemsClipboard.Hit -= ItemsClipboard_Hit;
             ItemsExportText.Hit -= ItemsExportText_Hit;
             ItemsExportCsv.Hit -= ItemsExportCsv_Hit;
             ItemsExportJson.Hit -= ItemsExportJson_Hit;
-            ItemsClipboard.Hit -= ItemsClipboard_Hit;
             ItemsFilterText.Change -= ItemsFilter_Change;
             ItemsFilterReset.Hit -= ItemsFilterReset_Hit;
             ItemsFilterWeapons.Change -= ItemsFilter_Change;
