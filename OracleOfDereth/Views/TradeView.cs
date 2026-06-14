@@ -25,6 +25,7 @@ namespace OracleOfDereth
 
         public HudStaticText TradeText { get; private set; }
         public HudButton TradeAddButton { get; private set; }
+        public HudButton TradeWithdrawBank { get; private set; }
         public HudStaticText TradeStatusText { get; private set; }
         public HudButton TradeClipboard { get; private set; }
         public HudButton TradeExportText { get; private set; }
@@ -84,6 +85,9 @@ namespace OracleOfDereth
 
                 TradeAddButton = (HudButton)view["TradeAddButton"];
                 TradeAddButton.Hit += AddButton_Hit;
+
+                TradeWithdrawBank = (HudButton)view["TradeWithdrawBank"];
+                TradeWithdrawBank.Hit += WithdrawBankButton_Hit;
 
                 TradeStatusText = (HudStaticText)view["TradeStatusText"];
                 TradeStatusText.FontHeight = 8;
@@ -212,6 +216,13 @@ namespace OracleOfDereth
             // once a check shows we can afford the selected item.
             TradeAddButton.Visible = Trade.IsCyTrader;
             TradeAddButton.Text = Trade.CanCheckout ? "Checkout" : "Add to Trade";
+
+            // Offer a one-click bank withdrawal when this server has bank and the last price check
+            // left us short on notes. Withdraws exactly the shortfall in MMDs.
+            Bank.ResolveKnownServer();
+            TradeWithdrawBank.Visible = Bank.Supported == true && Trade.MmdShortfall > 0;
+            if (TradeWithdrawBank.Visible)
+                TradeWithdrawBank.Text = $"Withdraw {Trade.MmdShortfall}mmds from Bank";
         }
 
         private void Filter_Change(object sender, EventArgs e)
@@ -269,6 +280,20 @@ namespace OracleOfDereth
                 if (item == null) return;
                 Trade.Add(item.Id);
                 Util.Chat($"Adding {item.Name} from {Trade.PartnerName}", Util.ColorOrange, "[Oracle of Dereth] ");
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        // Withdraw exactly the MMDs we're short by from the server bank, so the player can then
+        // afford the checked item. The next price check (or re-select) will see the new notes.
+        private void WithdrawBankButton_Hit(object sender, EventArgs e)
+        {
+            try
+            {
+                int mmds = Trade.MmdShortfall;
+                if (mmds <= 0) return;
+                Bank.Withdraw(mmds);
+                Util.Chat($"Withdrawing {mmds} MMD from bank", Util.ColorOrange, "[Oracle of Dereth] ");
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -365,6 +390,7 @@ namespace OracleOfDereth
             if (TradeList != null) TradeList.Click -= List_Click;
 
             if (TradeAddButton != null) TradeAddButton.Hit -= AddButton_Hit;
+            if (TradeWithdrawBank != null) TradeWithdrawBank.Hit -= WithdrawBankButton_Hit;
             if (TradeClipboard != null) TradeClipboard.Hit -= ClipboardButton_Hit;
             if (TradeExportText != null) TradeExportText.Hit -= ExportTextButton_Hit;
             if (TradeExportCsv != null) TradeExportCsv.Hit -= ExportCsvButton_Hit;

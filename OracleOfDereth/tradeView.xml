@@ -5,6 +5,7 @@
 
 		<control progid="DecalControls.PushButton" name="TradeAddButton" left="5" top="30" width="108" height="24" text="Add to Trade"/>
 		<control progid="DecalControls.StaticText" name="TradeStatusText" left="123" top="33" width="822" height="16" text=""/>
+		<control progid="DecalControls.PushButton" name="TradeWithdrawBank" left="1060" top="30" width="200" height="24" text="Withdraw from Bank"/>
 
 		<control progid="DecalControls.StaticText" name="TradeFilterLabel" left="5" top="59" width="38" height="16" text="Filter:"/>
 		<control progid="DecalControls.Edit" name="TradeFilterText" left="46" top="57" width="180" height="20" text=""/><control progid="DecalControls.PushButton" name="TradeFilterReset" left="230" top="56" width="50" height="22" text="Reset"/>

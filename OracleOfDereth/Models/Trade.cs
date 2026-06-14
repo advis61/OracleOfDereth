@@ -70,6 +70,10 @@ namespace OracleOfDereth
         // label ("Checkout" vs "Add to Trade"). The button works either way.
         public static bool CanCheckout = false;
 
+        // MMDs (trade notes) we're short by on the last price check; 0 when we can afford it or
+        // haven't checked. Drives the trade view's "Withdraw from Bank" shortcut.
+        public static int MmdShortfall = 0;
+
         // Ids of items we owned when the trade opened. An item we drag into the trade pane
         // can leave our inventory chain, so a live check can't always tell our own offers from
         // the partner's — this snapshot does.
@@ -208,6 +212,7 @@ namespace OracleOfDereth
             {
                 LastCheckNotes = 0;
                 CanCheckout = false;
+                MmdShortfall = 0;
                 TradeStatus = $"{PriceLabel()} -- MMD rate unknown, can't price";
                 OnChanged?.Invoke();
                 return;
@@ -218,10 +223,11 @@ namespace OracleOfDereth
             GatherNotes(out int have);
             LastCheckNotes = mmdsNeeded;
             CanCheckout = have >= mmdsNeeded;
+            MmdShortfall = CanCheckout ? 0 : mmdsNeeded - have;
 
             TradeStatus = CanCheckout
                 ? $"{PriceLabel()} -- You have enough ({mmdsNeeded} MMD)"
-                : $"{PriceLabel()} -- Insufficient funds. Need {mmdsNeeded - have} more MMD";
+                : $"{PriceLabel()} -- Insufficient funds. Need {MmdShortfall} more MMD";
             OnChanged?.Invoke();
         }
 
@@ -369,6 +375,7 @@ namespace OracleOfDereth
             PointsList = "";
             TradeStatus = "";
             CanCheckout = false;
+            MmdShortfall = 0;
             AskedPoints = false;
             LastCheckId = 0;
             LastCheckNotes = 0;

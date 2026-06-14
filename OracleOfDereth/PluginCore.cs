@@ -236,6 +236,7 @@ namespace OracleOfDereth
                 else if (cmd == "/od fellow create") { Fellowship.Create(); }
                 else if (cmd == "/od fellow quit") { Fellowship.Quit(); }
                 else if (cmd.StartsWith("/od fellow recruit ")) { Fellowship.Recruit(cmd.Substring(19, cmd.Length - 19)); }
+                else if (cmd == "/od checkbank") { Bank.Check(); }
                 else if (cmd == "/od questflag") { QuestFlagLookup.Execute(); }
                 else if (cmd == "/od update") { UpdateChecker.Check(true); }
                 else { return; }
@@ -262,6 +263,10 @@ namespace OracleOfDereth
                 else if (QuestFlag.MyQuestRegex.IsMatch(e.Text))
                 {
                     QuestFlag.Add(e.Text);
+                }
+                else if (Bank.Matches(e.Text))
+                {
+                    Bank.NoteChat(e.Text);
                 }
                 else if (Trade.CheckPriceRegex.IsMatch(e.Text))
                 {
