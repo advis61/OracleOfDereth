@@ -107,6 +107,10 @@ namespace OracleOfDereth
         // re-requested every tick since it never gets HasIdData).
         public static bool NeedsNoAppraisal(WorldObject wo)
         {
+            // Aetheria has ObjectClass.Gem but carries appraisal-only detail (level, surge,
+            // set), so it must be identified despite its class being in the list below.
+            if (wo.Name == "Aetheria") return false;
+
             switch (wo.ObjectClass)
             {
                 case ObjectClass.Salvage:
@@ -224,6 +228,11 @@ namespace OracleOfDereth
                     if (Items.Any(t => t.Id == wo.Id && t.IsIdentified)) continue;                 // already done
                     if (PendingIds.ContainsKey(wo.Id) || IdentifyQueue.Contains(wo.Id)) continue;  // already in flight
                     // (an unidentified stub that gave up falls through here and gets re-queued)
+
+                    // Don't list our own packs/containers on the items screen. (NeedsNoAppraisal
+                    // returns true for containers, so without this they'd be added as finished
+                    // rows below before the IsTradeable container check is ever reached.)
+                    if (wo.ObjectClass == ObjectClass.Container) continue;
 
                     // Salvage, food, gems, healing kits, etc. carry no appraisal info — add now.
                     if (NeedsNoAppraisal(wo))

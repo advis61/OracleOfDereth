@@ -32,7 +32,7 @@ namespace OracleOfDereth
 
             Name = wo.Name;
             Icon = wo.Icon;
-            SummaryCol1 = info.GetItemSlotName();
+            SummaryCol1 = GetSummaryCol1(info);
             SortCategory = GetSortCategory(info);
             IsIdentified = false;
         }
@@ -50,15 +50,36 @@ namespace OracleOfDereth
             SummaryCol3 = GetSummaryCol3(info);
             SummaryCol4 = GetSummaryCol4(info);
             SortCol2 = GetSortInt(info.GetODValue());
-            SortCol3 = GetSortInt(info.GetOMValue());
-            SortCol4 = GetSortInt(info.GetOAValue());
+            SortCol3 = GetSortInt((int)info.GetAttackBonus()); // Col3 leads with the attack modifier
+            SortCol4 = 0; // Col4 (cantrips) is a string; sort falls through to SummaryCol4
             Description = info.ToString();
             IsIdentified = true;
         }
 
+        // Col1 — item type / slot. Weapons append their damage element (e.g. "Heavy Acid",
+        // "Two Hand Bludgeon").
         private static string GetSummaryCol1(ItemInfo info)
         {
-            return info.GetItemSlotName();
+            string type = info.GetItemSlotName();
+            if (info.IsWeapon)
+            {
+                string imbue = info.GetImbueString();
+                string element = info.GetElementName();
+
+                if (imbue != "")
+                {
+                    // A Rend imbue (e.g. "BludgeRend") already names the element, so drop the
+                    // element name in that case; other imbues (e.g. "AR") keep it. Either way
+                    // the imbue is shown in parentheses.
+                    string inner = (imbue.Contains("Rend") || element == "") ? imbue : element + " " + imbue;
+                    type += " (" + inner + ")";
+                }
+                else if (element != "")
+                {
+                    type += " " + element;
+                }
+            }
+            return type;
         }
 
         private static string GetSummaryCol2(ItemInfo info)
@@ -68,12 +89,13 @@ namespace OracleOfDereth
             if (info.IsSummon) return "DMG " + info.GetSummonDamageString();
             if (info.IsAetheria) return info.GetSetName();
             if (info.IsArmorClothing) return info.GetSetName();
+            if (info.IsJewelry) return info.GetSetName();
             return "";
         }
 
         private static string GetSummaryCol3(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetOMString();
+            if (info.IsWeapon) return info.GetWeaponModsString();
             if (info.IsCloak) return info.GetRatingsString();
             if (info.IsSummon) return "DEF " + info.GetSummonDefenseString();
             if (info.IsAetheria) return info.GetAetheriaSurge();
@@ -84,10 +106,10 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol4(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetOAString();
+            if (info.IsWeapon) return info.GetCantripsString();
             if (info.IsCloak) return $"Level {info.GetCloakLevel()}, {info.GetFullSetName()}";
             if (info.IsAetheria) return info.GetAetheriaLevel() > 0 ? "Level " + info.GetAetheriaLevel() : "";
-            if (info.IsArmorClothing || info.IsJewelry) return info.GetCantripsString();
+            if (info.IsArmorClothing || info.IsJewelry) return info.GetSpellsString();
             return "";
         }
 
