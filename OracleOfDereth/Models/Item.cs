@@ -66,6 +66,9 @@ namespace OracleOfDereth
                 string imbue = info.GetImbueString();
                 string element = info.GetElementName();
 
+                // A Nether caster's element is also "Nether"; don't repeat it after the type.
+                if (element == type) element = "";
+
                 if (imbue != "")
                 {
                     // A Rend imbue (e.g. "BludgeRend") already names the element, so drop the
@@ -106,11 +109,18 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol4(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetCantripsString();
-            if (info.IsCloak) return $"Level {info.GetCloakLevel()}, {info.GetFullSetName()}";
-            if (info.IsAetheria) return info.GetAetheriaLevel() > 0 ? "Level " + info.GetAetheriaLevel() : "";
-            if (info.IsArmorClothing || info.IsJewelry) return info.GetSpellsString();
-            return "";
+            string col4 = "";
+            if (info.IsWeapon) col4 = info.GetCantripsString();
+            else if (info.IsCloak) col4 = $"Level {info.GetCloakLevel()}, {info.GetFullSetName()}";
+            else if (info.IsAetheria) col4 = info.GetAetheriaLevel() > 0 ? "Level " + info.GetAetheriaLevel() : "";
+            else if (info.IsArmorClothing || info.IsJewelry) col4 = info.GetSpellsString();
+
+            // Append the wield requirement (level or skill, e.g. "Wield Lvl 180" /
+            // "Two Handed Combat 420") to whatever the column already shows.
+            string wield = info.GetWieldReqString();
+            if (wield.Length > 0) col4 = col4.Length > 0 ? col4 + ", " + wield : wield;
+
+            return col4;
         }
 
         private static int GetSortCategory(ItemInfo info)

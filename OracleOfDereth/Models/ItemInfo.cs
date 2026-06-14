@@ -102,6 +102,10 @@ namespace OracleOfDereth
 
         public string GetWeaponTypeName()
         {
+            // Casters don't map cleanly onto the weapon-skill switch (GetWeaponSkill forces
+            // unknown casters to War), so classify them from their wield req / element instead.
+            if (wo.ObjectClass == ObjectClass.WandStaffOrb) return GetCasterSchoolName();
+
             int skill = GetWeaponSkill();
             switch (skill)
             {
@@ -109,12 +113,36 @@ namespace OracleOfDereth
                 case 45: return "Light";
                 case 46: return "Finesse";
                 case 41: return "Two Hand";
-                case 34: return "War";
-                case 43: return "Void";
             }
 
             // Not appraised yet (and missile sub-types aren't in the skill anyway) —
             // guess the type from the item name.
+            return GuessWeaponTypeFromName();
+        }
+
+        // War / Life / Nether / No Wield for casters. War and Life are skill-gated (the
+        // WieldReqAttribute names the magic skill); void/nether casters can be wieldable with
+        // no skill (e.g. attuned quest items), so the Nether bit on the element catches those.
+        // A non-skill wield requirement (e.g. level only) with no element is a "No Wield" caster.
+        private string GetCasterSchoolName()
+        {
+            if (wo.Values(LongValueKey.WieldReqType, 0) == 2)
+            {
+                switch (wo.Values(LongValueKey.WieldReqAttribute, 0))
+                {
+                    case 34: return "War";    // War Magic
+                    case 33: return "Life";   // Life Magic
+                    case 43: return "Nether"; // Void Magic
+                }
+            }
+
+            if ((wo.Values(LongValueKey.WandElemDmgType, 0) & 1024) != 0) return "Nether";
+
+            // Appraised, but no magic-skill wield req and no element — a plain no-wield caster
+            // (e.g. focusing stones, level-gated sceptres).
+            if (wo.HasIdData) return "No Wield";
+
+            // Not appraised yet — fall back to a name-based guess.
             return GuessWeaponTypeFromName();
         }
 
@@ -130,7 +158,7 @@ namespace OracleOfDereth
             string name = wo.Name ?? "";
 
             if (wo.ObjectClass == ObjectClass.WandStaffOrb)
-                return NetherCasterRegex.IsMatch(name) ? "Void" : "War";
+                return NetherCasterRegex.IsMatch(name) ? "Nether" : "War";
 
             if (wo.ObjectClass == ObjectClass.MeleeWeapon)
             {
