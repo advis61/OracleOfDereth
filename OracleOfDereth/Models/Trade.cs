@@ -46,7 +46,8 @@ namespace OracleOfDereth
         public static string PricePoints = "";
 
         // Points one trade note (MMD) is worth, learned from the bot's "points" reply. 0 = unknown
-        // (we then treat a note as one point, matching the original behaviour).
+        // (the bot didn't list our note, or we haven't asked yet) — we then refuse to price
+        // rather than guess, since a wrong rate could badly over/under-pay.
         public static int PointsPerMmd = 0;
 
         // The bot's raw "points" reply (the list of payment items + values), shown verbatim in
@@ -73,6 +74,11 @@ namespace OracleOfDereth
         private static int LastCheckNotes = 0;
         private static int PayNotes = 0;
         private static int PendingSplitCount = 0;
+
+        // When the last check was sent, to debounce repeat clicks on the same item (re-selecting
+        // a row shouldn't fire a fresh "check" tell at the bot every time).
+        private static DateTime LastCheckTime = DateTime.MinValue;
+        private static readonly TimeSpan CheckDebounce = TimeSpan.FromMilliseconds(1500);
 
         // Ask the bot for its point values once per trade (on first bot detection).
         private static bool AskedPoints = false;
@@ -137,10 +143,15 @@ namespace OracleOfDereth
         }
 
         // Price-check an item (e.g. when it's selected). The reply (NotePriceTell) updates the
-        // status, the affordability flag, and the note count Add will use.
+        // status, the affordability flag, and the note count Add will use. Debounced so re-
+        // clicking the same item doesn't spam the bot — a different item, or the same one after
+        // the debounce window, goes through.
         public static void CheckPrice(int itemId)
         {
+            if (itemId == LastCheckId && (DateTime.UtcNow - LastCheckTime) < CheckDebounce) return;
+
             LastCheckId = itemId;
+            LastCheckTime = DateTime.UtcNow;
             SendCommand("check " + itemId);
         }
 
@@ -182,6 +193,18 @@ namespace OracleOfDereth
             PricePoints = m.Groups[3].Value;
 
             ParsePoints(PricePoints, out double price);
+
+            // Without a known MMD rate we can't say how many notes the price is — don't guess.
+            // (CanCheckout false also hides the Add button, so the player can't buy blind.)
+            if (PointsPerMmd <= 0)
+            {
+                LastCheckNotes = 0;
+                CanCheckout = false;
+                TradeStatus = $"{PricedItem}: {price:0.##} points -- MMD rate unknown, can't price";
+                OnChanged?.Invoke();
+                return;
+            }
+
             int mmdsNeeded = MmdsFor(price);
 
             GatherNotes(out int have);
@@ -348,6 +371,7 @@ namespace OracleOfDereth
             AskedPoints = false;
             LastCheckId = 0;
             LastCheckNotes = 0;
+            LastCheckTime = DateTime.MinValue;
             PayNotes = 0;
             PendingSplitCount = 0;
             OnChanged?.Invoke();

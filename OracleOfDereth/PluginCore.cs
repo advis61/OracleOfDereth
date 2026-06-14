@@ -328,11 +328,15 @@ namespace OracleOfDereth
         }
 
         // Opening a trade window with another player. The Trade model snapshots our inventory,
-        // works out the partner, and resets the item list; we just show the window.
+        // works out the partner, and resets the item list; we just show the window. The whole
+        // feature is off when "Show Trade Window" is No — we don't begin or show anything, so the
+        // other trade handlers stay idle (Trade.IsOpen never becomes true).
         private void WorldFilter_EnterTrade(object sender, EnterTradeEventArgs e)
         {
             try
             {
+                if (Setting.ShowTradeWindow.IsNo) return;
+
                 Trade.Begin(e);
                 tradeView.Show();
             }

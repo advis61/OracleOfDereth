@@ -33,6 +33,7 @@ namespace OracleOfDereth
         public static Setting BuffsRemaining;
         public static Setting CheckForUpdates;
         public static Setting ShowNearbyWcid;
+        public static Setting ShowTradeWindow;
         public static Setting SummonScore;
         public static Setting WeaponScore;
         public static Setting WikiSource;
@@ -48,6 +49,7 @@ namespace OracleOfDereth
             BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "ShowNearbyWcid", YesNo, "No");
+            ShowTradeWindow = Register("Show Trade Window", "ShowTradeWindow", YesNo, "Yes");
             WeaponScore = Register("Show Weapons Score", "WeaponScore", YesNo, "Yes");
             WikiSource = Register("Wiki Source", "WikiSource", new List<string> { "Levistras", "ACPedia", "Fandom" }, "Levistras");
         }
