@@ -274,12 +274,22 @@ namespace OracleOfDereth
         // A new object appeared — if it's the stack our payment split off, trade it.
         public static void OnObjectCreated(WorldObject wo)
         {
-            if (PendingSplitCount <= 0 || wo == null) return;
-            if (wo.Name != PaymentItemName || StackCount(wo) != PendingSplitCount) return;
+            if (wo == null || !IsOpen) return;
 
-            PendingSplitCount = 0;
-            MyItems.Add(wo.Id);   // it's ours — keep it out of the partner's item list
-            CoreManager.Current.Actions.TradeAdd(wo.Id);
+            // The split-stack we were waiting on for an auto-payment -> trade it in.
+            if (PendingSplitCount > 0 && wo.Name == PaymentItemName && StackCount(wo) == PendingSplitCount)
+            {
+                PendingSplitCount = 0;
+                MyItems.Add(wo.Id);   // it's ours — keep it out of the partner's item list
+                CoreManager.Current.Actions.TradeAdd(wo.Id);
+                return;
+            }
+
+            // Trade notes arriving in inventory (e.g. from a bank withdrawal) change our funds, so
+            // re-evaluate whether we can now afford the last-checked item. Unlike the bank's
+            // "Withdrew" chat line, this fires when the notes are actually present, so the count is
+            // up to date.
+            if (wo.Name == PaymentItemName) RecheckFunds();
         }
 
         // MMDs (trade notes) needed to cover `points` at the current rate; rate unknown → 1:1.
