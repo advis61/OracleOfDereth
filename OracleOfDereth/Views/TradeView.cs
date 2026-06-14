@@ -17,8 +17,7 @@ namespace OracleOfDereth
         readonly VirindiViewService.ControlGroup controls;
         readonly VirindiViewService.HudView view;
 
-        // Icons (mirrors MainView's constants — these views don't share a base class).
-        readonly int IconNotComplete = 0x60011F8;   // Red Circle
+        // Icon for the sortable column header (mirrors MainView's constant).
         readonly int IconSort = 0x60011F7;           // Sort Icon
 
         // Per-view image tracking so repeated repaints skip identical image assignments.
@@ -193,7 +192,8 @@ namespace OracleOfDereth
             // Track the in-game selection so its row is highlighted (the buttons act on it).
             int selectedId = Target.CurrentTargetId;
 
-            ItemListRenderer.Render(TradeList, items, AssignedImages, IconNotComplete, selectedId);
+            // Pass 0 for the column-0 icon: the trade view has no row-delete, so no red circle.
+            ItemListRenderer.Render(TradeList, items, AssignedImages, 0, selectedId);
 
             // Window title carries who we're trading with and whether it's a CyTrader bot.
             string title = "Trade";

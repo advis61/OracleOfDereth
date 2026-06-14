@@ -47,7 +47,7 @@ namespace OracleOfDereth
             { 1_01, 460 }, // Buffs
             { 1_02, 290 }, // Nearby
             { 1_03, 250 }, // Fellowship
-            { 1_04, 950 }, // Items
+            { 1_04, 1280 }, // Items
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
@@ -79,7 +79,7 @@ namespace OracleOfDereth
             { 1_01, 545 }, // Buffs
             { 1_02, 320 }, // Nearbys
             { 1_03, 380 }, // Fellowship
-            { 1_04, 450 }, // Items
+            { 1_04, 570 }, // Items
 
             // Character Tab
             { 2_00, 550 }, // Augmentations

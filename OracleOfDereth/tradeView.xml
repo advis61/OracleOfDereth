@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<view icon="8894" title="Oracle of Dereth - Trade" width="950" height="564">
+<view icon="8894" title="Oracle of Dereth - Trade" width="1280" height="570">
 	<control progid="DecalControls.FixedLayout" clipped="">
 		<control progid="DecalControls.StaticText" name="TradeText" left="5" top="5" width="630" height="20" text="Trade: 0"/>
 
@@ -24,19 +24,19 @@
 		<control progid="DecalControls.CheckBox" name="TradeFilterOther" left="896" top="90" width="52" height="16" text="Other" checked="false"/>
 
 		<control progid="DecalControls.FixedLayout" name="TradeListSortComplete" left="1" top="116" width="16" height="16"/>
-		<control progid="DecalControls.StaticText" name="TradeListSortName" left="49" top="112" width="210" height="17" text="Item Name"/>
-		<control progid="DecalControls.StaticText" name="TradeListSortCol1" left="266" top="112" width="140" height="17" text="Type"/>
-		<control progid="DecalControls.StaticText" name="TradeListSortCol2" left="413" top="112" width="90" height="17" text="Effect"/>
-		<control progid="DecalControls.StaticText" name="TradeListSortCol3" left="510" top="112" width="90" height="17" text="Info"/>
-		<control progid="DecalControls.StaticText" name="TradeListSortCol4" left="607" top="112" width="360" height="17" text="Details"/>
+		<control progid="DecalControls.StaticText" name="TradeListSortName" left="34" top="112" width="210" height="17" text="Item Name"/>
+		<control progid="DecalControls.StaticText" name="TradeListSortCol1" left="344" top="112" width="140" height="17" text="Type"/>
+		<control progid="DecalControls.StaticText" name="TradeListSortCol2" left="531" top="112" width="90" height="17" text="Effect"/>
+		<control progid="DecalControls.StaticText" name="TradeListSortCol3" left="668" top="112" width="90" height="17" text="Info"/>
+		<control progid="DecalControls.StaticText" name="TradeListSortCol4" left="775" top="112" width="360" height="17" text="Details"/>
 		<control progid="DecalControls.List" name="TradeList" left="0" top="132" width="1920" height="2000">
-			<column progid="DecalControls.IconColumn" name="Remove" fixedwidth="16" />
+			<column progid="DecalControls.IconColumn" name="Remove" fixedwidth="1" />
 			<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
-			<column progid="DecalControls.TextColumn" name="Name" fixedwidth="210" />
-			<column progid="DecalControls.TextColumn" name="Col1" fixedwidth="140" />
-			<column progid="DecalControls.TextColumn" name="Col2" fixedwidth="90" />
-			<column progid="DecalControls.TextColumn" name="Col3" fixedwidth="90" />
-			<column progid="DecalControls.TextColumn" name="Col4" fixedwidth="360" />
+			<column progid="DecalControls.TextColumn" name="Name" fixedwidth="303" />
+			<column progid="DecalControls.TextColumn" name="Col1" fixedwidth="180" />
+			<column progid="DecalControls.TextColumn" name="Col2" fixedwidth="130" />
+			<column progid="DecalControls.TextColumn" name="Col3" fixedwidth="100" />
+			<column progid="DecalControls.TextColumn" name="Col4" fixedwidth="1500" />
 			<column progid="DecalControls.TextColumn" name="Id" fixedwidth="1" />
 		</control>
 	</control>
