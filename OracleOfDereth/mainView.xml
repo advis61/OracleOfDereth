@@ -90,7 +90,7 @@
 				</page>
 				<page label="Items">
 					<control progid="DecalControls.FixedLayout" clipped="">
-						<control progid="DecalControls.StaticText" name="ItemsText" left="5" top="5" width="300" height="20" text="Items: 0 selected"/>
+						<control progid="DecalControls.StaticText" name="ItemsText" left="5" top="5" width="600" height="20" text="Inventory Items: 0"/>
 						<control progid="DecalControls.PushButton" name="ItemsAddAll" left="5" top="30" width="108" height="24" text="Add All"/>
 						<control progid="DecalControls.PushButton" name="ItemsAdd" left="118" top="30" width="108" height="24" text="Add Selected"/>
 						<control progid="DecalControls.PushButton" name="ItemsClear" left="231" top="30" width="108" height="24" text="Clear"/>
