@@ -39,11 +39,14 @@ namespace OracleOfDereth
             return Fellows.Where(f => !string.IsNullOrEmpty(f.FellowshipName)).GroupBy(f => f.FellowshipName).OrderBy(g => g.Key).ToList();
         }
 
-        public static void Update()
+        // suppressIdentify pauses player identify requests (e.g. while the Items tab or a
+        // trade window is open) so they don't compete with the item/trade appraisal queue
+        // for the server's shared identify channel. Bookkeeping still runs every tick.
+        public static void Update(bool suppressIdentify = false)
         {
             RemoveGonePlayers();
             UpdateKnownFellows();
-            RequestIdentifications();
+            if (!suppressIdentify) RequestIdentifications();
         }
 
         public static Fellow Add(WorldObject item)

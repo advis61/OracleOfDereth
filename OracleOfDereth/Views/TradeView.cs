@@ -218,16 +218,9 @@ namespace OracleOfDereth
         {
             if (suppressFilter) return;
 
+            // UpdateList feeds the now-visible ids to PrioritizeIdentify, so the identify
+            // pump appraises the filtered rows before the rest as in-flight slots free up.
             UpdateList();
-
-            // Re-request the now-visible items so a filter (e.g. just Weapons) appraises
-            // those first, even though the whole queue has already been sent.
-            ItemFilter filter = Filter();
-            if (filter.IsActive)
-            {
-                TradeItems.RequestIdentifyNow(
-                    TradeItems.Items.Where(filter.Matches).Where(t => !t.IsIdentified).Select(t => t.Id).ToList());
-            }
         }
 
         // Clear the filter text box and uncheck every category, then refresh once.

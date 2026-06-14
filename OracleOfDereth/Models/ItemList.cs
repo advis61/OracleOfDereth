@@ -66,11 +66,16 @@ namespace OracleOfDereth
         private List<int> IdentifyQueue = new List<int>();
         public bool IsProcessingQueue = false;
 
-        // Up to this many identify requests in flight at once. Deliberately a modest batch,
-        // not the whole list: anything over the cap waits in IdentifyQueue, where a filter
-        // can reorder it (PrioritizeIdentify) so the rows you're looking at — e.g. just
-        // Weapons — get appraised before the rest. Tick() retries/drops any the server drops.
-        private const int MaxConcurrentRequests = 10;
+        // Ids currently on screen (set by the view each refresh via PrioritizeIdentify). The
+        // pump appraises these before the rest, so filtering to a category jumps those rows to
+        // the front without flooding the server. Empty / whole-list when no filter is active.
+        private HashSet<int> PriorityIds = new HashSet<int>();
+
+        // Up to this many identify requests in flight at once. Kept small so the in-flight set
+        // turns over fast and the pump can switch to newly-prioritized rows within a request or
+        // two — a larger batch just floods the server's shared appraise channel and everything
+        // trickles back slower. Tick() retries/drops any the server drops.
+        private const int MaxConcurrentRequests = 5;
         private static readonly TimeSpan IdTimeout = TimeSpan.FromSeconds(5);
 
         // Throttle list rebuilds during bulk identify (sort + repaint is O(n)).
@@ -283,61 +288,34 @@ namespace OracleOfDereth
             PumpQueue();
         }
 
-        // Bump the given item ids to the front of the identify queue so they're appraised
-        // next, without disturbing in-flight requests. The view calls this with whatever's
-        // currently visible (e.g. when a filter narrows to Weapons), so the rows you're
-        // actually looking at fill in first. Order within each group is preserved.
+        // Tell the list which ids are currently on screen (the view passes whatever's visible,
+        // e.g. just Weapons when filtered). The pump appraises these before anything else, so
+        // filtered rows jump the line as in-flight slots free up — no separate immediate-send
+        // path needed. Passing the whole list (no filter) imposes no ordering.
         public void PrioritizeIdentify(IEnumerable<int> priorityIds)
         {
-            if (IdentifyQueue.Count < 2 || priorityIds == null) return;
-
-            var priority = new HashSet<int>(priorityIds);
-            if (priority.Count == 0) return;
-
-            var front = new List<int>();
-            var back = new List<int>();
-            foreach (int id in IdentifyQueue) { (priority.Contains(id) ? front : back).Add(id); }
-
-            // Nothing visible is waiting, or everything waiting is visible — order unchanged.
-            if (front.Count == 0 || back.Count == 0) return;
-
-            front.AddRange(back);
-            IdentifyQueue = front;
+            PriorityIds = priorityIds == null ? new HashSet<int>() : new HashSet<int>(priorityIds);
+            PumpQueue();    // a free slot should go to a now-prioritized row immediately
         }
 
-        // Appraise these ids right now, ahead of everything else — used when a filter
-        // narrows the view so the rows you're looking at jump the line even though the
-        // queue's already been blasted out. Re-requests them (bypassing the concurrency
-        // cap); the server answers a fresh request promptly. Already-available data fills
-        // in place. Ignores ids that aren't unidentified rows in this list.
-        public void RequestIdentifyNow(IEnumerable<int> ids)
+        // Pop the next id to appraise: a still-queued on-screen (priority) one if any, else the
+        // head of the queue. Lets filtered rows go first even as new items keep being added.
+        private int DequeueNext()
         {
-            if (ids == null) return;
-
-            bool changed = false;
-            foreach (int id in ids)
+            if (PriorityIds.Count > 0)
             {
-                Item item = Items.FirstOrDefault(t => t.Id == id);
-                if (item == null || item.IsIdentified) continue;
-
-                WorldObject wo = CoreManager.Current.WorldFilter[id];
-                if (wo == null) continue;
-
-                if (wo.HasIdData)
+                for (int i = 0; i < IdentifyQueue.Count; i++)
                 {
-                    Fill(item, wo);
-                    PendingIds.Remove(id);
-                    IdentifyQueue.Remove(id);
-                    changed = true;
-                    continue;
+                    if (!PriorityIds.Contains(IdentifyQueue[i])) continue;
+                    int pid = IdentifyQueue[i];
+                    IdentifyQueue.RemoveAt(i);
+                    return pid;
                 }
-
-                IdentifyQueue.Remove(id);
-                SendId(id);     // (re)request immediately
             }
 
-            UpdateProcessingState();
-            if (changed) RefreshList();
+            int id0 = IdentifyQueue[0];
+            IdentifyQueue.RemoveAt(0);
+            return id0;
         }
 
         // Issue identify requests until we hit the concurrency cap. Items already
@@ -348,8 +326,7 @@ namespace OracleOfDereth
 
             while (IdentifyQueue.Count > 0 && PendingIds.Count < MaxConcurrentRequests)
             {
-                int id = IdentifyQueue[0];
-                IdentifyQueue.RemoveAt(0);
+                int id = DequeueNext();
 
                 WorldObject wo = CoreManager.Current.WorldFilter[id];
                 if (wo == null) continue;                                            // can't appraise it right now; leave its row as-is
@@ -636,6 +613,7 @@ namespace OracleOfDereth
             Items.Clear();
             IdentifyQueue.Clear();
             PendingIds.Clear();
+            PriorityIds.Clear();
 
             if (IsProcessingQueue)
             {

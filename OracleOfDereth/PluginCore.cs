@@ -162,7 +162,10 @@ namespace OracleOfDereth
             try
             {
                 Target.RemoveAllExpired();
-                FellowshipTracker.Update();
+                // Pause player identify requests while the Items tab or a trade window is open,
+                // so they don't compete with the item/trade appraisal queue for the server's
+                // shared identify channel.
+                FellowshipTracker.Update(suppressIdentify: mainView.IsItemsTabActive() || Trade.IsOpen);
                 Fellowship.AutoOpenFellow();
                 UpdateChecker.Tick();
                 ItemList.TickAll();
