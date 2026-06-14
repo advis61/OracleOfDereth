@@ -200,7 +200,7 @@ namespace OracleOfDereth
             {
                 LastCheckNotes = 0;
                 CanCheckout = false;
-                TradeStatus = $"{PricedItem}: {price:0.##} points -- MMD rate unknown, can't price";
+                TradeStatus = $"{PriceLabel()} -- MMD rate unknown, can't price";
                 OnChanged?.Invoke();
                 return;
             }
