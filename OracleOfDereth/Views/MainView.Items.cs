@@ -193,7 +193,7 @@ namespace OracleOfDereth
             InventoryList.PrioritizeIdentify(items.Select(t => t.Id));
 
             ItemListRenderer.Render(ItemsList, items, AssignedImages, IconNotComplete, Target.CurrentTargetId);
-            ItemsText.Text = ItemListRenderer.StatusText("Items", InventoryList.Items.Count, items.Count, InventoryList.UnidentifiedCount);
+            ItemsText.Text = ItemListRenderer.StatusText("Inventory Items", InventoryList.Items.Count, items.Count, InventoryList.UnidentifiedCount);
         }
 
         private void ItemsAddSelected_Change(object sender, EventArgs e)
@@ -264,32 +264,41 @@ namespace OracleOfDereth
             UpdateItemsList();
         }
 
+        // The rows currently on screen: the underlying list narrowed by the active
+        // category checkboxes + search box. Export/clipboard act on this, not the full
+        // list, so what you save matches what you see.
+        private List<Item> DisplayedItems() => InventoryList.Items.Where(ItemsFilter().Matches).ToList();
+
         private void ItemsExportText_Hit(object sender, EventArgs e)
         {
-            string path = ItemExport.ToText(InventoryList.Items);
+            List<Item> items = DisplayedItems();
+            string path = ItemExport.ToText(items);
             Util.ClipboardCopy(path);
-            Util.Chat($"Exported {InventoryList.Items.Count} items to {path}");
+            Util.Chat($"Exported {items.Count} items to {path}");
         }
 
         private void ItemsExportCsv_Hit(object sender, EventArgs e)
         {
-            string path = ItemExport.ToCsv(InventoryList.Items);
+            List<Item> items = DisplayedItems();
+            string path = ItemExport.ToCsv(items);
             Util.ClipboardCopy(path);
-            Util.Chat($"Exported {InventoryList.Items.Count} items to {path}");
+            Util.Chat($"Exported {items.Count} items to {path}");
         }
 
         private void ItemsExportJson_Hit(object sender, EventArgs e)
         {
-            string path = ItemExport.ToJson(InventoryList.Items);
+            List<Item> items = DisplayedItems();
+            string path = ItemExport.ToJson(items);
             Util.ClipboardCopy(path);
-            Util.Chat($"Exported {InventoryList.Items.Count} items to {path}");
+            Util.Chat($"Exported {items.Count} items to {path}");
         }
 
         private void ItemsClipboard_Hit(object sender, EventArgs e)
         {
-            string text = string.Join("\n", InventoryList.Items.Select(t => t.Description));
+            List<Item> items = DisplayedItems();
+            string text = string.Join("\n", items.Select(t => t.Description));
             Util.ClipboardCopy(text);
-            Util.Chat($"Copied {InventoryList.Items.Count} items to clipboard");
+            Util.Chat($"Copied {items.Count} items to clipboard");
         }
 
         private void ItemsList_Click(object sender, int row, int col)

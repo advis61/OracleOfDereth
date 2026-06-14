@@ -292,13 +292,19 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
+        // The rows currently on screen: the partner's offered items narrowed by the active
+        // category checkboxes + search box. Export acts on this, not the full list, so what
+        // you save matches what you see.
+        private List<Item> DisplayedItems() => TradeItems.Items.Where(Filter().Matches).ToList();
+
         private void ExportTextButton_Hit(object sender, EventArgs e)
         {
             try
             {
-                string path = ItemExport.ToText(TradeItems.Items, Trade.PartnerName);
+                List<Item> items = DisplayedItems();
+                string path = ItemExport.ToText(items, Trade.PartnerName);
                 Util.ClipboardCopy(path);
-                Util.Chat($"Exported {TradeItems.Items.Count} items to {path}");
+                Util.Chat($"Exported {items.Count} items to {path}");
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -307,9 +313,10 @@ namespace OracleOfDereth
         {
             try
             {
-                string path = ItemExport.ToCsv(TradeItems.Items, Trade.PartnerName);
+                List<Item> items = DisplayedItems();
+                string path = ItemExport.ToCsv(items, Trade.PartnerName);
                 Util.ClipboardCopy(path);
-                Util.Chat($"Exported {TradeItems.Items.Count} items to {path}");
+                Util.Chat($"Exported {items.Count} items to {path}");
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -318,9 +325,10 @@ namespace OracleOfDereth
         {
             try
             {
-                string path = ItemExport.ToJson(TradeItems.Items, Trade.PartnerName);
+                List<Item> items = DisplayedItems();
+                string path = ItemExport.ToJson(items, Trade.PartnerName);
                 Util.ClipboardCopy(path);
-                Util.Chat($"Exported {TradeItems.Items.Count} items to {path}");
+                Util.Chat($"Exported {items.Count} items to {path}");
             }
             catch (Exception ex) { Util.Log(ex); }
         }

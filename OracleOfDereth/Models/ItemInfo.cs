@@ -469,9 +469,8 @@ namespace OracleOfDereth
         {
             if (!IsWeapon) return "";
 
-            int dt = wo.ObjectClass == ObjectClass.WandStaffOrb
-                ? wo.Values(LongValueKey.WandElemDmgType, 0)
-                : wo.Values(LongValueKey.DamageType, 0);
+            int dt = wo.ObjectClass == ObjectClass.WandStaffOrb ? wo.Values(LongValueKey.WandElemDmgType, 0) : wo.Values(LongValueKey.DamageType, 0);
+
             if ((dt & 1) != 0) return "Slash";
             if ((dt & 2) != 0) return "Pierce";
             if ((dt & 4) != 0) return "Bludgeon";
@@ -838,12 +837,9 @@ namespace OracleOfDereth
             return "Generic";
         }
 
-        private static readonly Regex SummonNaturalistRegex =
-            new Regex(@"Moar|Grievver|Phyntos", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex SummonNecromancerRegex =
-            new Regex(@"Zombie|Spectre|Skeleton|Maiden", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private static readonly Regex SummonPrimalistRegex =
-            new Regex(@"Elemental|Child|Wisp|Knight|K'nath", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex SummonNaturalistRegex = new Regex(@"Moar|Grievver|Phyntos", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex SummonNecromancerRegex = new Regex(@"Zombie|Spectre|Skeleton|Maiden", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex SummonPrimalistRegex = new Regex(@"Elemental|Child|Wisp|Knight|K'nath", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         // ============================================================
         // Cloak
