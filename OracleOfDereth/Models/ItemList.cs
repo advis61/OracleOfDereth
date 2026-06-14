@@ -111,6 +111,9 @@ namespace OracleOfDereth
             // set), so it must be identified despite its class being in the list below.
             if (wo.Name == "Aetheria") return false;
 
+            // Rares (often Gems/Salvage) carry spells we want to show, so they need an ID too.
+            if (new ItemInfo(wo).IsRare) return false;
+
             switch (wo.ObjectClass)
             {
                 case ObjectClass.Salvage:

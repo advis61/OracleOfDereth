@@ -69,6 +69,8 @@ namespace OracleOfDereth
 
         public string GetObjectClassName() => wo.ObjectClass.ToString();
 
+        public string GetFullDescription() => wo.Values(StringValueKey.FullDescription, "");
+
         public string GetMaterial()
         {
             if (wo.Values(LongValueKey.Material) <= 0) return "";

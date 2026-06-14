@@ -116,6 +116,8 @@ namespace OracleOfDereth
             else if (info.IsCloak) col4 = $"Level {info.GetCloakLevel()}, {info.GetFullSetName()}";
             else if (info.IsAetheria) col4 = info.GetAetheriaLevel() > 0 ? "Level " + info.GetAetheriaLevel() : "";
             else if (info.IsArmorClothing || info.IsJewelry) col4 = info.GetSpellsString();
+            else if (info.IsRare) col4 = info.GetSpellsString();
+            else if (info.wo.ObjectClass == ObjectClass.BaseCooking || info.wo.ObjectClass == ObjectClass.CraftedCooking) col4 = info.GetFullDescription();
 
             // Append the wield requirement (level or skill, e.g. "Wield Lvl 180" /
             // "Two Handed Combat 420") and tinks (e.g. "Tinks 5") to whatever the column shows.
