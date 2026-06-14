@@ -24,7 +24,7 @@
 		<control progid="DecalControls.StaticText" name="TradeListSortCol2" left="413" top="78" width="90" height="17" text="Effect"/>
 		<control progid="DecalControls.StaticText" name="TradeListSortCol3" left="510" top="78" width="90" height="17" text="Info"/>
 		<control progid="DecalControls.StaticText" name="TradeListSortCol4" left="607" top="78" width="360" height="17" text="Details"/>
-		<control progid="DecalControls.List" name="TradeList" left="0" top="98" width="950" height="2000">
+		<control progid="DecalControls.List" name="TradeList" left="0" top="98" width="1920" height="2000">
 			<column progid="DecalControls.IconColumn" name="Remove" fixedwidth="16" />
 			<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
 			<column progid="DecalControls.TextColumn" name="Name" fixedwidth="210" />

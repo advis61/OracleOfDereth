@@ -67,6 +67,11 @@ namespace OracleOfDereth
                 view.ShowInBar = false;
                 view.Visible = false;
 
+                // Let the user resize the window (horizontally and vertically). The default max
+                // client area is the XML size, which caps how far it can be dragged — raise it.
+                view.UserResizeable = true;
+                view.MaximumClientArea = new Size(1920, 1080);
+
                 // Repaint whenever the item list or the trade session changes.
                 TradeItems.OnItemsListChanged = () => UpdateList();
                 Trade.OnChanged = () => UpdateList();

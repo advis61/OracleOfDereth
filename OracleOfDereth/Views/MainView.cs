@@ -119,8 +119,11 @@ namespace OracleOfDereth
                 view = new VirindiViewService.HudView(properties, controls);
                 if (view == null) { return; }
 
-                // Make the view resizable
+                // Make the view resizable. Default max client area is the XML size, which caps
+                // how wide the Items tab can be dragged — raise it (other tabs stay width-locked
+                // in MainView_Resized).
                 view.UserResizeable = true;
+                view.MaximumClientArea = new Size(1920, 1080);
                 view.Resize += MainView_Resized;
                 AssignedImages.Clear();
 
@@ -231,11 +234,21 @@ namespace OracleOfDereth
 
         private void MainView_Resized(object sender, EventArgs e)
         {
-            // Save the new view height
-            MainViewHeights[CurrentTab()] = view.Height;
+            int tab = CurrentTab();
 
-            // Prevent width updates
-            view.Width = MainViewWidths[CurrentTab()];
+            // Save the new view height
+            MainViewHeights[tab] = view.Height;
+
+            if (tab == 1_04)
+            {
+                // Items tab is freely widenable — remember its width instead of locking it.
+                MainViewWidths[tab] = view.Width;
+            }
+            else
+            {
+                // Every other tab keeps its fixed width.
+                view.Width = MainViewWidths[tab];
+            }
         }
 
         private void QuestFlagsRefresh_Hit(object sender, EventArgs e)
