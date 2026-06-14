@@ -25,10 +25,8 @@ namespace OracleOfDereth
         private readonly Dictionary<HudPictureBox, int> AssignedImages = new Dictionary<HudPictureBox, int>();
 
         public HudStaticText TradeText { get; private set; }
-        public HudStaticText TradeSelectedText { get; private set; }
         public HudButton TradeAddButton { get; private set; }
-        public HudButton TradeCheckButton { get; private set; }
-        public HudStaticText TradePriceText { get; private set; }
+        public HudStaticText TradeStatusText { get; private set; }
         public HudTextBox TradeFilterText { get; private set; }
         public HudButton TradeFilterReset { get; private set; }
         public HudCheckBox TradeFilterWeapons { get; private set; }
@@ -76,18 +74,11 @@ namespace OracleOfDereth
                 TradeText = (HudStaticText)view["TradeText"];
                 TradeText.FontHeight = 10;
 
-                TradeSelectedText = (HudStaticText)view["TradeSelectedText"];
-                TradeSelectedText.FontHeight = 10;
-
                 TradeAddButton = (HudButton)view["TradeAddButton"];
                 TradeAddButton.Hit += AddButton_Hit;
 
-                TradeCheckButton = (HudButton)view["TradeCheckButton"];
-                TradeCheckButton.Hit += CheckButton_Hit;
-
-                TradePriceText = (HudStaticText)view["TradePriceText"];
-                TradePriceText.FontHeight = 10;
-                TradePriceText.TextColor = Color.FromArgb(255, 255, 215, 0); // gold
+                TradeStatusText = (HudStaticText)view["TradeStatusText"];
+                TradeStatusText.FontHeight = 8;
 
                 TradeFilterText = (HudTextBox)view["TradeFilterText"];
                 TradeFilterText.Change += Filter_Change;
@@ -178,10 +169,8 @@ namespace OracleOfDereth
             // Appraise what's on screen first (e.g. when filtered down to one category).
             TradeItems.PrioritizeIdentify(items.Select(t => t.Id));
 
-            // Track the in-game selection: highlight that row and name it as the picked item.
+            // Track the in-game selection so its row is highlighted (the buttons act on it).
             int selectedId = Target.CurrentTargetId;
-            Item selected = TradeItems.Items.FirstOrDefault(t => t.Id == selectedId);
-            TradeSelectedText.Text = selected != null ? selected.Name : "(none)";
 
             ItemListRenderer.Render(TradeList, items, AssignedImages, IconNotComplete, selectedId);
 
@@ -194,8 +183,14 @@ namespace OracleOfDereth
             // The status line is just the item counts.
             TradeText.Text = ItemListRenderer.StatusText("Total Items", TradeItems.Items.Count, items.Count, TradeItems.UnidentifiedCount);
 
-            // Show the last price the bot quoted (it names the item, so a stale quote is clear).
-            TradePriceText.Text = Trade.PricePoints.Length > 0 ? $"{Trade.PricedItem}: {Trade.PricePoints} points" : "";
+            // One status line: the bot's points list, and (after a check/buy) the quoted price
+            // with its MMD equivalent and whether we can afford it.
+            TradeStatusText.Text = Trade.TradeStatus;
+
+            // The Add button only applies to a bot trade; hide it otherwise. It reads "Checkout"
+            // once a check shows we can afford the selected item.
+            TradeAddButton.Visible = Trade.IsCyTrader;
+            TradeAddButton.Text = Trade.CanCheckout ? "Checkout" : "Add to Trade";
         }
 
         private void Filter_Change(object sender, EventArgs e)
@@ -242,32 +237,24 @@ namespace OracleOfDereth
                 int id = int.Parse(((HudStaticText)TradeList[row][7]).Text);
                 CoreManager.Current.Actions.SelectItem(id);
                 CoreManager.Current.Actions.RequestId(id);
+
+                // Price-check the clicked item right away when trading with a bot.
+                if (Trade.IsCyTrader) Trade.CheckPrice(id);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        // Tell the bot to add the selected item for purchase (price-checked first, paid once it
-        // lands). Acts on the in-game-selected trade item; the add is by id (exact).
+        // Tell the bot to add the selected item to the trade window. No re-check — selecting the
+        // item already priced it; we pay the notes only if that check showed we can afford it.
+        // Acts on the in-game-selected trade item; the add is by id (exact).
         private void AddButton_Hit(object sender, EventArgs e)
         {
             try
             {
                 Item item = RequireSelectedTradeItem();
                 if (item == null) return;
-                Trade.Buy(item.Id);
-                Util.Chat($"Buying {item.Name} from {Trade.PartnerName}", Util.ColorOrange, "[Oracle of Dereth] ");
-            }
-            catch (Exception ex) { Util.Log(ex); }
-        }
-
-        // Ask the bot what the selected item is worth; the reply repaints the price here.
-        private void CheckButton_Hit(object sender, EventArgs e)
-        {
-            try
-            {
-                Item item = RequireSelectedTradeItem();
-                if (item == null) return;
-                Trade.CheckPrice(item.Id);
+                Trade.Add(item.Id);
+                Util.Chat($"Adding {item.Name} from {Trade.PartnerName}", Util.ColorOrange, "[Oracle of Dereth] ");
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -311,7 +298,6 @@ namespace OracleOfDereth
             if (TradeList != null) TradeList.Click -= List_Click;
 
             if (TradeAddButton != null) TradeAddButton.Hit -= AddButton_Hit;
-            if (TradeCheckButton != null) TradeCheckButton.Hit -= CheckButton_Hit;
 
             if (TradeFilterText != null) TradeFilterText.Change -= Filter_Change;
             if (TradeFilterReset != null) TradeFilterReset.Hit -= FilterReset_Hit;

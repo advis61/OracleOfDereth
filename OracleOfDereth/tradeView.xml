@@ -3,11 +3,8 @@
 	<control progid="DecalControls.FixedLayout" clipped="">
 		<control progid="DecalControls.StaticText" name="TradeText" left="5" top="5" width="630" height="20" text="Trade: 0"/>
 
-		<control progid="DecalControls.StaticText" name="TradeSelectedLabel" left="5" top="30" width="60" height="16" text="Selected:"/>
-		<control progid="DecalControls.StaticText" name="TradeSelectedText" left="72" top="30" width="360" height="16" text="(none)"/>
-		<control progid="DecalControls.PushButton" name="TradeAddButton" left="440" top="27" width="60" height="22" text="Add"/>
-		<control progid="DecalControls.PushButton" name="TradeCheckButton" left="505" top="27" width="90" height="22" text="Check Price"/>
-		<control progid="DecalControls.StaticText" name="TradePriceText" left="605" top="30" width="340" height="16" text=""/>
+		<control progid="DecalControls.PushButton" name="TradeAddButton" left="5" top="27" width="100" height="22" text="Add to Trade"/>
+		<control progid="DecalControls.StaticText" name="TradeStatusText" left="115" top="29" width="830" height="16" text=""/>
 
 		<control progid="DecalControls.StaticText" name="TradeFilterLabel" left="5" top="56" width="38" height="16" text="Filter:"/>
 		<control progid="DecalControls.Edit" name="TradeFilterText" left="46" top="54" width="180" height="20" text=""/><control progid="DecalControls.PushButton" name="TradeFilterReset" left="230" top="53" width="50" height="22" text="Reset"/>

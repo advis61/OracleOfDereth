@@ -264,6 +264,10 @@ namespace OracleOfDereth
                 {
                     Trade.NotePriceTell(e.Text);
                 }
+                else if (Trade.PointsReplyRegex.IsMatch(e.Text))
+                {
+                    Trade.NotePointsTell(e.Text);
+                }
                 else if (Trade.TradeStartedRegex.IsMatch(e.Text))
                 {
                     Trade.NoteBotTell(e.Text);

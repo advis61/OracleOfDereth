@@ -13,7 +13,8 @@ namespace OracleOfDereth
     // (The partner's offered *items* live in ItemList.Trade — this is the surrounding session.)
     public static class Trade
     {
-        // The bot prices items in "points"; we pay with these trade notes, one point each.
+        // The bot prices items in "points"; we pay with these trade notes ("MMDs"). One note is
+        // worth PointsPerMmd points — the bot tells us the rate when we ask it for "points".
         private const string PaymentItemName = "Trade Note (250,000)";
 
         // Current stack size of a WorldObject (LongValueKey.StackCount; raw key to match the
@@ -24,6 +25,11 @@ namespace OracleOfDereth
         // Target/QuestFlag). Group 1 is the sender; CheckPriceRegex also captures item + points.
         public static readonly Regex TradeStartedRegex = new Regex("^(.+?) tells you, \"//");
         public static readonly Regex CheckPriceRegex = new Regex("^(.+?) tells you, \"// (.+?) is worth ([\\d.,]+) points");
+
+        // "// My points: <name> [<value>], ..." — the items the bot accepts as payment and what
+        // each is worth. We pull our note's value out of the (comma-joined) list by name.
+        public static readonly Regex PointsReplyRegex = new Regex("^(.+?) tells you, \"// My points: (.*)\"");
+        private static readonly Regex NoteValueRegex = new Regex(Regex.Escape(PaymentItemName) + @"\s*\[(\d+(?:\.\d+)?)\]");
 
         // True between EnterTrade and EndTrade. Lets handlers ignore stray events that arrive
         // while no trade is open, so one trade's leftovers can't bleed into the next.
@@ -39,16 +45,37 @@ namespace OracleOfDereth
         public static string PricedItem = "";
         public static string PricePoints = "";
 
+        // Points one trade note (MMD) is worth, learned from the bot's "points" reply. 0 = unknown
+        // (we then treat a note as one point, matching the original behaviour).
+        public static int PointsPerMmd = 0;
+
+        // The bot's raw "points" reply (the list of payment items + values), shown verbatim in
+        // the status line so the player sees exactly what the bot accepts and at what value.
+        public static string PointsList = "";
+
+        // The single status line the view renders. Blank until a bot trade opens (then set once
+        // to the bot's points list), and overwritten by each check/buy result.
+        public static string TradeStatus = "";
+
+        // True when the last price check found we can afford the item — drives the Add button's
+        // label ("Checkout" vs "Add to Trade"). The button works either way.
+        public static bool CanCheckout = false;
+
         // Ids of items we owned when the trade opened. An item we drag into the trade pane
         // can leave our inventory chain, so a live check can't always tell our own offers from
         // the partner's — this snapshot does.
         private static readonly HashSet<int> MyItems = new HashSet<int>();
 
-        // Buy bookkeeping: the item awaiting its price check, how many points to pay once the
-        // bought item lands, and the count we're waiting on a stack split to produce.
-        private static int PendingBuyId = 0;
-        private static int PayPoints = 0;
+        // The last item we price-checked and how many notes (MMDs) its price needs. Add uses
+        // these to decide payment without re-checking. PayNotes is the amount to drag in once the
+        // added item lands; PendingSplitCount is the stack split we're waiting on.
+        private static int LastCheckId = 0;
+        private static int LastCheckNotes = 0;
+        private static int PayNotes = 0;
         private static int PendingSplitCount = 0;
+
+        // Ask the bot for its point values once per trade (on first bot detection).
+        private static bool AskedPoints = false;
 
         // Fired whenever the visible state changes so the view can repaint.
         public static Action OnChanged;
@@ -91,30 +118,29 @@ namespace OracleOfDereth
 
             ItemList.Trade.AddTradeItem(itemId);
 
-            if (PayPoints > 0)
+            if (PayNotes > 0)
             {
-                int points = PayPoints;
-                PayPoints = 0;
-                PayWithNotes(points);
+                int notes = PayNotes;
+                PayNotes = 0;
+                PayWithNotes(notes);
             }
         }
 
-        // Start a purchase: price-check the item first. We only commit the "add" once the price
-        // comes back and we've confirmed we can pay (NotePriceTell), so an item we can't afford
-        // never gets sent — the bot doesn't reset/re-add and we stay in the trade. We check/add
-        // by item id (exact, unlike a name which can match several items).
-        public static void Buy(int itemId)
+        // Add the item to the trade window. No price check here — selecting the item already did
+        // one. If that check showed we can afford it, pay the notes when it lands; otherwise add
+        // it without dragging any notes in and let the player sort out the funds. Add by item id
+        // (exact, unlike a name which can match several items).
+        public static void Add(int itemId)
         {
-            SendCommand("check " + itemId);
-            PendingBuyId = itemId;
-            PayPoints = 0;
+            SendCommand("add " + itemId);
+            PayNotes = (CanCheckout && LastCheckId == itemId) ? LastCheckNotes : 0;
         }
 
-        // Price-check an item without buying. Cancels any half-finished Buy first so the
-        // reply to this check can't be mistaken for a buy confirmation and trigger a purchase.
+        // Price-check an item (e.g. when it's selected). The reply (NotePriceTell) updates the
+        // status, the affordability flag, and the note count Add will use.
         public static void CheckPrice(int itemId)
         {
-            PendingBuyId = 0;
+            LastCheckId = itemId;
             SendCommand("check " + itemId);
         }
 
@@ -125,34 +151,47 @@ namespace OracleOfDereth
             if (m.Success && IsPartner(m.Groups[1].Value)) MarkCyTrader();
         }
 
-        // A price-check reply ("// <item> is worth <N> points."). Records the quote, and if a
-        // Buy is waiting on this price, only commits the "add" when we can pay for it.
+        // The bot's "points" reply. Pull our note's value out of the list to learn the MMD rate.
+        public static void NotePointsTell(string chatText)
+        {
+            Match m = PointsReplyRegex.Match(chatText);
+            if (!m.Success || !IsPartner(m.Groups[1].Value)) return;
+
+            MarkCyTrader();
+
+            PointsList = m.Groups[2].Value.Trim();
+
+            Match v = NoteValueRegex.Match(PointsList);
+            PointsPerMmd = (v.Success && double.TryParse(v.Groups[1].Value, NumberStyles.Any, CultureInfo.InvariantCulture, out double d))
+                ? (int)Math.Round(d)
+                : 0;
+
+            // The one-time line shown on opening a bot trade: what the bot takes as payment.
+            TradeStatus = PointsList.Length > 0 ? $"Points: {PointsList}" : "";
+            OnChanged?.Invoke();
+        }
+
+        // A price-check reply ("// <item> is worth <N> points."). Shows the price in points and
+        // MMDs with whether we can afford it, and records what Add would need to pay.
         public static void NotePriceTell(string chatText)
         {
             Match m = CheckPriceRegex.Match(chatText);
             if (!m.Success || !IsPartner(m.Groups[1].Value)) return;
 
-            MarkCyTrader();
             PricedItem = m.Groups[2].Value;
             PricePoints = m.Groups[3].Value;
-            OnChanged?.Invoke();
 
-            if (PendingBuyId == 0) return; // just a price check, not a Buy
+            ParsePoints(PricePoints, out double price);
+            int mmdsNeeded = MmdsFor(price);
 
-            int itemId = PendingBuyId;
-            PendingBuyId = 0;
-
-            int points = PointsFromPrice(PricePoints);
             GatherNotes(out int have);
-            if (have < points)
-            {
-                Util.Chat($"Not enough {PaymentItemName}: need {points}, have {have}. {PricedItem} not added.", Util.ColorOrange, "[Oracle of Dereth] ");
-                return;
-            }
+            LastCheckNotes = mmdsNeeded;
+            CanCheckout = have >= mmdsNeeded;
 
-            // Affordable — now add it, and pay when it lands (after the bot's reset).
-            SendCommand("add " + itemId);
-            PayPoints = points;
+            TradeStatus = CanCheckout
+                ? $"{PriceLabel()} -- You have enough ({mmdsNeeded} MMD)"
+                : $"{PriceLabel()} -- Insufficient funds. Need {mmdsNeeded - have} more MMD";
+            OnChanged?.Invoke();
         }
 
         // Send a command tell to the partner, the same way CyTrader bots talk to each other.
@@ -173,7 +212,31 @@ namespace OracleOfDereth
             CoreManager.Current.Actions.TradeAdd(wo.Id);
         }
 
-        // Our trade notes in inventory; `total` is their combined count.
+        // MMDs (trade notes) needed to cover `points` at the current rate; rate unknown → 1:1.
+        public static int MmdsFor(double points)
+        {
+            if (points <= 0) return 0;
+            int rate = PointsPerMmd > 0 ? PointsPerMmd : 1;
+            return (int)Math.Ceiling(points / rate);
+        }
+
+        // "<points> points (<n> MMD)" — the MMD part is dropped when the rate is unknown.
+        public static string PointsLabel(double points)
+        {
+            string s = $"{points:0.##} points";
+            if (PointsPerMmd > 0) s += $" ({MmdsFor(points)} MMD)";
+            return s;
+        }
+
+        // The bot's last price quote, formatted for the view (item + points + MMD equivalent).
+        public static string PriceLabel()
+        {
+            if (PricePoints.Length == 0) return "";
+            ParsePoints(PricePoints, out double p);
+            return $"{PricedItem}: {PointsLabel(p)}";
+        }
+
+        // Our trade notes in inventory; `total` is their combined count (i.e. MMDs on hand).
         private static List<WorldObject> GatherNotes(out int total)
         {
             var notes = new List<WorldObject>();
@@ -190,22 +253,29 @@ namespace OracleOfDereth
             return notes;
         }
 
-        // Add exactly `points` trade notes to our side of the trade, or chat if we can't.
-        private static void PayWithNotes(int points)
+        // Add exactly `notes` trade notes to our side of the trade, or chat if we can't. A count
+        // of zero means our balance alone covers the item — nothing to add.
+        private static void PayWithNotes(int notes)
         {
-            List<WorldObject> notes = GatherNotes(out int total);
-
-            if (total < points)
+            if (notes <= 0)
             {
-                Util.Chat($"Not enough {PaymentItemName}: need {points}, have {total}.", Util.ColorOrange, "[Oracle of Dereth] ");
+                Util.Chat($"Balance covers {PricedItem}; no {PaymentItemName} needed.", Util.ColorOrange, "[Oracle of Dereth] ");
+                return;
+            }
+
+            List<WorldObject> have = GatherNotes(out int total);
+
+            if (total < notes)
+            {
+                Util.Chat($"Not enough {PaymentItemName}: need {notes}, have {total}.", Util.ColorOrange, "[Oracle of Dereth] ");
                 return;
             }
 
             // Add whole stacks (smallest first), splitting the last one for the remainder.
-            notes.Sort((a, b) => StackCount(a).CompareTo(StackCount(b)));
+            have.Sort((a, b) => StackCount(a).CompareTo(StackCount(b)));
 
-            int remaining = points;
-            foreach (WorldObject note in notes)
+            int remaining = notes;
+            foreach (WorldObject note in have)
             {
                 if (remaining <= 0) break;
 
@@ -223,7 +293,7 @@ namespace OracleOfDereth
                 }
             }
 
-            Util.Chat($"Paying {points} {PaymentItemName} for {PricedItem}.", Util.ColorOrange, "[Oracle of Dereth] ");
+            Util.Chat($"Paying {notes} {PaymentItemName} for {PricedItem}.", Util.ColorOrange, "[Oracle of Dereth] ");
         }
 
         // Split `count` off a stack; OnObjectCreated trades the new stack once it appears.
@@ -258,12 +328,10 @@ namespace OracleOfDereth
             return c <= 0 ? 1 : c;
         }
 
-        // Whole notes needed to cover a quoted price (round up so we never underpay).
-        private static int PointsFromPrice(string price)
+        // Parse a points value that may carry thousands separators ("1,250" -> 1250).
+        private static bool ParsePoints(string text, out double value)
         {
-            if (double.TryParse((price ?? "").Replace(",", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out double d))
-                return (int)Math.Ceiling(d);
-            return 0;
+            return double.TryParse((text ?? "").Replace(",", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out value);
         }
 
         private static void Set(string partnerName, bool open)
@@ -273,16 +341,29 @@ namespace OracleOfDereth
             IsCyTrader = false;
             PricedItem = "";
             PricePoints = "";
-            PendingBuyId = 0;
-            PayPoints = 0;
+            PointsPerMmd = 0;
+            PointsList = "";
+            TradeStatus = "";
+            CanCheckout = false;
+            AskedPoints = false;
+            LastCheckId = 0;
+            LastCheckNotes = 0;
+            PayNotes = 0;
             PendingSplitCount = 0;
             OnChanged?.Invoke();
         }
 
         private static void MarkCyTrader()
         {
-            if (IsCyTrader) return;
             IsCyTrader = true;
+
+            // Learn the MMD rate once per trade. The reply (NotePointsTell) sets the status line
+            // to balance + the bot's points list.
+            if (!AskedPoints && !string.IsNullOrEmpty(PartnerName))
+            {
+                AskedPoints = true;
+                SendCommand("points");
+            }
             OnChanged?.Invoke();
         }
 

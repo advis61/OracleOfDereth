@@ -1845,7 +1845,7 @@ namespace OracleOfDereth
             { 29, "Imbues the target with Minor Mana Gain" },                    // Lavender Jade
             { 30, "Imbues the target with Warrior's Vigor" },                    // Malachite
             { 31, "Increases the item's Maximum Mana by 500" },                  // Moonstone
-            { 32, "No Apparent Use" },                                           // Onyx
+            { 32, "Imbues the target with Nether Rending" },                                           // Onyx
             { 33, "Increases the item's Mana Conversion bonus by 1%" },           // Opal
             { 34, "Imbues the target with a +1 bonus to Melee Defense" },         // Peridot
             { 35, "Imbues the target with Fire Rending" },                       // Red Garnet
@@ -1859,7 +1859,7 @@ namespace OracleOfDereth
             { 43, "No Apparent Use" },                                           // Tourmaline
             { 44, "No Apparent Use" },                                           // Turquoise
             { 45, "No Apparent Use" },                                           // White Jade
-            { 46, "No Apparent Use" },                                           // White Quartz
+            { 46, "Imbues the target with Melee Cleaving/Split Arrow" },                                           // White Quartz
             { 47, "Imbues the target with Bludgeon Rending" },                   // White Sapphire
             { 48, "No Apparent Use" },                                           // Yellow Garnet
             { 49, "Imbues the target with a +1 bonus to Missile Defense" },       // Yellow Topaz
