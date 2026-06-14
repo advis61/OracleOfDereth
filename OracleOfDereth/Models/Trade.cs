@@ -108,7 +108,7 @@ namespace OracleOfDereth
         }
 
         // Both sides cleared their offered items; the window stays open. Drop the list.
-        // (Does NOT clear the auto-pay state — the bot resets mid-Buy, then adds the item.)
+        // (Does NOT clear the auto-pay state — the bot resets mid-purchase, then adds the item.)
         public static void Reset()
         {
             ItemList.Trade.Clear();
@@ -116,7 +116,7 @@ namespace OracleOfDereth
         }
 
         // An item was dropped into the trade window. Show only the partner's side — skip our
-        // own offers. When this is the item from a Buy, pay for it now (after the bot's reset).
+        // own offers. When this is the item we're adding, pay for it now (after the bot's reset).
         public static void AddItem(int itemId)
         {
             if (!IsOpen) return;
@@ -276,16 +276,9 @@ namespace OracleOfDereth
             return notes;
         }
 
-        // Add exactly `notes` trade notes to our side of the trade, or chat if we can't. A count
-        // of zero means our balance alone covers the item — nothing to add.
+        // Add exactly `notes` trade notes to our side of the trade, or chat if we can't.
         private static void PayWithNotes(int notes)
         {
-            if (notes <= 0)
-            {
-                Util.Chat($"Balance covers {PricedItem}; no {PaymentItemName} needed.", Util.ColorOrange, "[Oracle of Dereth] ");
-                return;
-            }
-
             List<WorldObject> have = GatherNotes(out int total);
 
             if (total < notes)
