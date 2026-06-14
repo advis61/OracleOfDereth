@@ -13,16 +13,16 @@ namespace OracleOfDereth
     // path written. Kept separate from ItemList, which is just the identify/sort pipeline.
     public static class ItemExport
     {
-        public static string ToText(List<Item> items)
+        public static string ToText(List<Item> items, string tag = null)
         {
-            string path = ExportPath("txt");
+            string path = ExportPath("txt", tag);
             File.WriteAllLines(path, items.Select(t => t.Description));
             return path;
         }
 
-        public static string ToCsv(List<Item> items)
+        public static string ToCsv(List<Item> items, string tag = null)
         {
-            string path = ExportPath("csv");
+            string path = ExportPath("csv", tag);
 
             var lines = new List<string> { string.Join(",", Headers.Select(CsvEscape)) };
             foreach (Item item in items)
@@ -32,9 +32,9 @@ namespace OracleOfDereth
             return path;
         }
 
-        public static string ToJson(List<Item> items)
+        public static string ToJson(List<Item> items, string tag = null)
         {
-            string path = ExportPath("json");
+            string path = ExportPath("json", tag);
 
             var sb = new StringBuilder();
             sb.AppendLine("[");
@@ -58,10 +58,16 @@ namespace OracleOfDereth
             return path;
         }
 
-        private static string ExportPath(string extension)
+        private static string ExportPath(string extension, string tag = null)
         {
             string name = Regex.Replace(CoreManager.Current.CharacterFilter.Name.ToLower(), "[^a-z]", "-");
-            string filename = $"{name}-{DateTime.Now:yyyyMMdd-HHmmss}-items.{extension}";
+
+            // Optional tag (e.g. the trade partner) folded into the filename: "<me>-<tag>-...".
+            string part = "";
+            if (!string.IsNullOrEmpty(tag))
+                part = "-" + Regex.Replace(tag.ToLower(), "[^a-z0-9]", "-");
+
+            string filename = $"{DateTime.Now:yyyyMMdd-HHmmss}-{name}{part}-items.{extension}";
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), filename);
         }
 

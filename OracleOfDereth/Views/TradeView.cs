@@ -27,6 +27,10 @@ namespace OracleOfDereth
         public HudStaticText TradeText { get; private set; }
         public HudButton TradeAddButton { get; private set; }
         public HudStaticText TradeStatusText { get; private set; }
+        public HudButton TradeClipboard { get; private set; }
+        public HudButton TradeExportText { get; private set; }
+        public HudButton TradeExportCsv { get; private set; }
+        public HudButton TradeExportJson { get; private set; }
         public HudTextBox TradeFilterText { get; private set; }
         public HudButton TradeFilterReset { get; private set; }
         public HudCheckBox TradeFilterWeapons { get; private set; }
@@ -84,6 +88,18 @@ namespace OracleOfDereth
 
                 TradeStatusText = (HudStaticText)view["TradeStatusText"];
                 TradeStatusText.FontHeight = 8;
+
+                TradeClipboard = (HudButton)view["TradeClipboard"];
+                TradeClipboard.Hit += ClipboardButton_Hit;
+
+                TradeExportText = (HudButton)view["TradeExportText"];
+                TradeExportText.Hit += ExportTextButton_Hit;
+
+                TradeExportCsv = (HudButton)view["TradeExportCsv"];
+                TradeExportCsv.Hit += ExportCsvButton_Hit;
+
+                TradeExportJson = (HudButton)view["TradeExportJson"];
+                TradeExportJson.Hit += ExportJsonButton_Hit;
 
                 TradeFilterText = (HudTextBox)view["TradeFilterText"];
                 TradeFilterText.Change += Filter_Change;
@@ -264,6 +280,51 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
+        // Export the partner's offered items, same as the Items tab does for the inventory.
+        private void ClipboardButton_Hit(object sender, EventArgs e)
+        {
+            try
+            {
+                string text = string.Join("\n", TradeItems.Items.Select(t => t.Description));
+                Util.ClipboardCopy(text);
+                Util.Chat($"Copied {TradeItems.Items.Count} items to clipboard");
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        private void ExportTextButton_Hit(object sender, EventArgs e)
+        {
+            try
+            {
+                string path = ItemExport.ToText(TradeItems.Items, Trade.PartnerName);
+                Util.ClipboardCopy(path);
+                Util.Chat($"Exported {TradeItems.Items.Count} items to {path}");
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        private void ExportCsvButton_Hit(object sender, EventArgs e)
+        {
+            try
+            {
+                string path = ItemExport.ToCsv(TradeItems.Items, Trade.PartnerName);
+                Util.ClipboardCopy(path);
+                Util.Chat($"Exported {TradeItems.Items.Count} items to {path}");
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        private void ExportJsonButton_Hit(object sender, EventArgs e)
+        {
+            try
+            {
+                string path = ItemExport.ToJson(TradeItems.Items, Trade.PartnerName);
+                Util.ClipboardCopy(path);
+                Util.Chat($"Exported {TradeItems.Items.Count} items to {path}");
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
         // The in-game-selected trade item if we can act on it, else null (with a chat note).
         private Item RequireSelectedTradeItem()
         {
@@ -303,6 +364,10 @@ namespace OracleOfDereth
             if (TradeList != null) TradeList.Click -= List_Click;
 
             if (TradeAddButton != null) TradeAddButton.Hit -= AddButton_Hit;
+            if (TradeClipboard != null) TradeClipboard.Hit -= ClipboardButton_Hit;
+            if (TradeExportText != null) TradeExportText.Hit -= ExportTextButton_Hit;
+            if (TradeExportCsv != null) TradeExportCsv.Hit -= ExportCsvButton_Hit;
+            if (TradeExportJson != null) TradeExportJson.Hit -= ExportJsonButton_Hit;
 
             if (TradeFilterText != null) TradeFilterText.Change -= Filter_Change;
             if (TradeFilterReset != null) TradeFilterReset.Hit -= FilterReset_Hit;
