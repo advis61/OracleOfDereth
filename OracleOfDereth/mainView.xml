@@ -113,8 +113,8 @@
 						<control progid="DecalControls.FixedLayout" name="ItemsListSortComplete" left="1" top="116" width="16" height="16"/>
 						<control progid="DecalControls.StaticText" name="ItemsListSortName" left="49" top="112" width="210" height="17" text="Item Name"/>
 						<control progid="DecalControls.StaticText" name="ItemsListSortCol1" left="344" top="112" width="140" height="17" text="Type"/>
-						<control progid="DecalControls.StaticText" name="ItemsListSortCol2" left="531" top="112" width="90" height="17" text="Effect"/>
-						<control progid="DecalControls.StaticText" name="ItemsListSortCol3" left="668" top="112" width="90" height="17" text="Info"/>
+						<control progid="DecalControls.StaticText" name="ItemsListSortCol2" left="531" top="112" width="90" height="17" text="Info"/>
+						<control progid="DecalControls.StaticText" name="ItemsListSortCol3" left="668" top="112" width="90" height="17" text="Ratings"/>
 						<control progid="DecalControls.StaticText" name="ItemsListSortCol4" left="775" top="112" width="360" height="17" text="Details"/>
 						<control progid="DecalControls.List" name="ItemsList" left="0" top="132" width="1920" height="2000">
 							<column progid="DecalControls.IconColumn" name="Remove" fixedwidth="16" />
