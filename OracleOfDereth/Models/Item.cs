@@ -17,7 +17,8 @@ namespace OracleOfDereth
         public string SummaryCol3 = "";
         public string SummaryCol4 = "";
         public int SortCol2 = 0;
-        public int SortCol3 = 0;
+        public int SortCol3 = 0;       // total attack modifier (Col3 default sort)
+        public int SortCol3Melee = 0;  // total melee-defense modifier (Col3 secondary sort)
         public int SortCol4 = 0;
         public string Description = "";
 
@@ -53,6 +54,7 @@ namespace OracleOfDereth
             SummaryCol4 = GetSummaryCol4(info);
             SortCol2 = GetSortInt(info.GetODValue());
             SortCol3 = GetSortInt((int)info.GetTotalAttack()); // Col3 leads with the (total) attack modifier
+            SortCol3Melee = GetSortInt((int)info.GetTotalMeleeDefense());
             SortCol4 = 0; // Col4 (cantrips) is a string; sort falls through to SummaryCol4
             Description = info.ToString();
             IsIdentified = true;

@@ -671,7 +671,15 @@ namespace OracleOfDereth
                 if (CantripSortOrder(name) < 5) cantrips.Add(name);
                 else others.Add(name);
             }
-            cantrips.Sort((a, b) => CantripSortOrder(a).CompareTo(CantripSortOrder(b)));
+            // Sort cantrips by tier (Legendary, Epic, Major, Moderate, Minor), then within each
+            // tier alphabetically by base name (prefix dropped) — e.g. "Epic Blood Thirst"
+            // before "Epic Invulnerability". Non-cantrip spells follow.
+            cantrips.Sort((a, b) =>
+            {
+                int tier = CantripSortOrder(a).CompareTo(CantripSortOrder(b));
+                if (tier != 0) return tier;
+                return string.Compare(StripCantripPrefix(a), StripCantripPrefix(b), StringComparison.OrdinalIgnoreCase);
+            });
             cantrips.AddRange(others);
 
             return string.Join(", ", cantrips);
@@ -704,6 +712,15 @@ namespace OracleOfDereth
             if (name.StartsWith("Moderate ")) return 3;
             if (name.StartsWith("Minor ")) return 4;
             return 5;
+        }
+
+        // Drops the cantrip level prefix so cantrips can be sorted by their base name
+        // (e.g. "Epic Blood Thirst" -> "Blood Thirst").
+        private static string StripCantripPrefix(string name)
+        {
+            foreach (string prefix in new[] { "Legendary ", "Epic ", "Major ", "Moderate ", "Minor " })
+                if (name.StartsWith(prefix)) return name.Substring(prefix.Length);
+            return name;
         }
 
         // ============================================================

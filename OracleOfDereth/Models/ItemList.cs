@@ -49,8 +49,11 @@ namespace OracleOfDereth
             Col1Descending,
             Col2Ascending,
             Col2Descending,
-            Col3Ascending,
-            Col3Descending,
+            // Col3 cycles through four states: attack asc/desc, then melee-defense asc/desc.
+            Col3AttackAscending,
+            Col3AttackDescending,
+            Col3MeleeAscending,
+            Col3MeleeDescending,
             Col4Ascending,
             Col4Descending,
         }
@@ -560,6 +563,19 @@ namespace OracleOfDereth
             Sort(CurrentSortType == ascending ? descending : ascending);
         }
 
+        // Col3 packs both attack and melee-defense mods, so its header cycles through four
+        // states: attack asc -> attack desc -> melee asc -> melee desc -> (back to attack asc).
+        public void CycleCol3Sort()
+        {
+            switch (CurrentSortType)
+            {
+                case SortType.Col3AttackAscending: Sort(SortType.Col3AttackDescending); break;
+                case SortType.Col3AttackDescending: Sort(SortType.Col3MeleeAscending); break;
+                case SortType.Col3MeleeAscending: Sort(SortType.Col3MeleeDescending); break;
+                default: Sort(SortType.Col3AttackAscending); break;
+            }
+        }
+
         public void Sort(SortType sortType)
         {
             CurrentSortType = sortType;
@@ -583,11 +599,17 @@ namespace OracleOfDereth
                 case SortType.Col2Descending:
                     Items = Items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol2).ThenByDescending(t => t.SummaryCol2).ThenBy(t => t.Name).ToList();
                     break;
-                case SortType.Col3Ascending:
+                case SortType.Col3AttackAscending:
                     Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol3).ThenBy(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
                     break;
-                case SortType.Col3Descending:
+                case SortType.Col3AttackDescending:
                     Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.Col3MeleeAscending:
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol3Melee).ThenBy(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.Col3MeleeDescending:
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3Melee).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
                     break;
                 case SortType.Col4Ascending:
                     Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol4).ThenBy(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();

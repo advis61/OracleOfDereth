@@ -292,7 +292,7 @@ namespace OracleOfDereth
         private void SortName_Click(object sender, EventArgs e) { TradeItems.ToggleSort(ItemList.SortType.NameAscending, ItemList.SortType.NameDescending); UpdateList(); }
         private void SortCol1_Click(object sender, EventArgs e) { TradeItems.ToggleSort(ItemList.SortType.Col1Ascending, ItemList.SortType.Col1Descending); UpdateList(); }
         private void SortCol2_Click(object sender, EventArgs e) { TradeItems.ToggleSort(ItemList.SortType.Col2Ascending, ItemList.SortType.Col2Descending); UpdateList(); }
-        private void SortCol3_Click(object sender, EventArgs e) { TradeItems.ToggleSort(ItemList.SortType.Col3Ascending, ItemList.SortType.Col3Descending); UpdateList(); }
+        private void SortCol3_Click(object sender, EventArgs e) { TradeItems.CycleCol3Sort(); UpdateList(); }
         private void SortCol4_Click(object sender, EventArgs e) { TradeItems.ToggleSort(ItemList.SortType.Col4Ascending, ItemList.SortType.Col4Descending); UpdateList(); }
 
         public void Dispose()
