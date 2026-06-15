@@ -13,16 +13,16 @@ namespace OracleOfDereth
     // path written. Kept separate from ItemList, which is just the identify/sort pipeline.
     public static class ItemExport
     {
-        public static string ToText(List<Item> items, string tag = null)
+        public static string ToText(List<Item> items, string nameOverride = null)
         {
-            string path = ExportPath("txt", tag);
+            string path = ExportPath("txt", nameOverride);
             File.WriteAllLines(path, items.Select(t => t.Description));
             return path;
         }
 
-        public static string ToCsv(List<Item> items, string tag = null)
+        public static string ToCsv(List<Item> items, string nameOverride = null)
         {
-            string path = ExportPath("csv", tag);
+            string path = ExportPath("csv", nameOverride);
 
             var lines = new List<string> { string.Join(",", Headers.Select(CsvEscape)) };
             foreach (Item item in items)
@@ -32,9 +32,9 @@ namespace OracleOfDereth
             return path;
         }
 
-        public static string ToJson(List<Item> items, string tag = null)
+        public static string ToJson(List<Item> items, string nameOverride = null)
         {
-            string path = ExportPath("json", tag);
+            string path = ExportPath("json", nameOverride);
 
             var sb = new StringBuilder();
             sb.AppendLine("[");
@@ -58,16 +58,14 @@ namespace OracleOfDereth
             return path;
         }
 
-        private static string ExportPath(string extension, string tag = null)
+        private static string ExportPath(string extension, string nameOverride = null)
         {
-            string name = Regex.Replace(CoreManager.Current.CharacterFilter.Name.ToLower(), "[^a-z]", "-");
+            // The Items view exports under the player's own name; the Trade view passes the trade
+            // partner's name to use instead (so a partner's wares aren't filed under our name).
+            string raw = string.IsNullOrEmpty(nameOverride) ? CoreManager.Current.CharacterFilter.Name : nameOverride;
+            string name = Regex.Replace((raw ?? "").ToLower(), "[^a-z0-9]", "-");
 
-            // Optional tag (e.g. the trade partner) folded into the filename: "<me>-<tag>-...".
-            string part = "";
-            if (!string.IsNullOrEmpty(tag))
-                part = "-" + Regex.Replace(tag.ToLower(), "[^a-z0-9]", "-");
-
-            string filename = $"{DateTime.Now:yyyyMMdd-HHmmss}-{name}{part}-items.{extension}";
+            string filename = $"{DateTime.Now:yyyyMMdd-HHmmss}-{name}-items.{extension}";
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), filename);
         }
 
