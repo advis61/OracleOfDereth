@@ -246,7 +246,7 @@ namespace OracleOfDereth
             if (mmds <= 0) return;
 
             Bank.Withdraw(mmds);
-            Util.Chat($"Withdrawing {mmds} MMD from bank", Util.ColorOrange, "[Oracle of Dereth] ");
+            Util.Chat($"Withdrawing {mmds} MMD from bank", Util.ColorPink, "[Oracle of Dereth] ");
         }
 
         // Re-run affordability for the last-checked item against the notes we now hold — same as a
@@ -340,7 +340,7 @@ namespace OracleOfDereth
 
             if (total < notes)
             {
-                Util.Chat($"Not enough {PaymentItemName}: need {notes}, have {total}.", Util.ColorOrange, "[Oracle of Dereth] ");
+                Util.Chat($"Not enough {PaymentItemName}: need {notes}, have {total}.", Util.ColorPink, "[Oracle of Dereth] ");
                 return;
             }
 
@@ -366,7 +366,7 @@ namespace OracleOfDereth
                 }
             }
 
-            Util.Chat($"Paying {notes} {PaymentItemName} for {PricedItem}.", Util.ColorOrange, "[Oracle of Dereth] ");
+            Util.Chat($"Paying {notes} {PaymentItemName} for {PricedItem}.", Util.ColorPink, "[Oracle of Dereth] ");
         }
 
         // Split `count` off a stack; OnObjectCreated trades the new stack once it appears.

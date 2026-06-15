@@ -73,7 +73,7 @@ namespace OracleOfDereth
             if (mmds <= 0) return;
             if (mmds > MaxWithdrawMmds)
             {
-                Util.Chat($"Refusing to withdraw {mmds} MMD — over the {MaxWithdrawMmds} MMD safety cap.", Util.ColorOrange, ChatPrefix);
+                Util.Chat($"Refusing to withdraw {mmds} MMD — over the {MaxWithdrawMmds} MMD safety cap.", Util.ColorPink, ChatPrefix);
                 return;
             }
             Util.Command($"/b w n mmd {mmds}");
