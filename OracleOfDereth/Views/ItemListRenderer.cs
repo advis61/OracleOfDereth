@@ -32,6 +32,11 @@ namespace OracleOfDereth
             return MatchesText(t);
         }
 
+        // Category-only match, ignoring the search text. Used for second-tier identify priority:
+        // appraise everything in the selected categories once the exact (text + category) matches
+        // are done, so clearing the search term finds the broader set already identified.
+        public bool MatchesCategory(Item t) => IsCategoryVisible(t.SortCategory);
+
         // Category checkboxes act as a whitelist: with none ticked there's no category
         // filtering at all (everything shows); tick one or more to show only those.
         private bool AnyCategorySelected()

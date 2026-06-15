@@ -189,8 +189,12 @@ namespace OracleOfDereth
             ItemFilter filter = ItemsFilter();
             List<Item> items = InventoryList.Items.Where(filter.Matches).ToList();
 
-            // Appraise what's on screen first (e.g. when filtered down to one category).
-            InventoryList.PrioritizeIdentify(items.Select(t => t.Id));
+            // Appraise the exact on-screen rows (text + category) first, then fall back to the
+            // category-only matches — so a search term doesn't leave the rest of the selected
+            // categories un-appraised if you clear the text.
+            InventoryList.PrioritizeIdentify(
+                items.Select(t => t.Id),
+                InventoryList.Items.Where(filter.MatchesCategory).Select(t => t.Id));
 
             ItemListRenderer.Render(ItemsList, items, AssignedImages, IconNotComplete, Target.CurrentTargetId);
             ItemsText.Text = ItemListRenderer.StatusText("Inventory Items", InventoryList.Items.Count, items.Count, InventoryList.UnidentifiedCount);

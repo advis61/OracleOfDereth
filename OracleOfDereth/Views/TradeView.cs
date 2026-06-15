@@ -190,8 +190,12 @@ namespace OracleOfDereth
             ItemFilter filter = Filter();
             List<Item> items = TradeItems.Items.Where(filter.Matches).ToList();
 
-            // Appraise what's on screen first (e.g. when filtered down to one category).
-            TradeItems.PrioritizeIdentify(items.Select(t => t.Id));
+            // Appraise the exact on-screen rows (text + category) first, then fall back to the
+            // category-only matches — so a narrow search term like "defender armor" doesn't leave
+            // the rest of the selected categories un-appraised if you clear the text.
+            TradeItems.PrioritizeIdentify(
+                items.Select(t => t.Id),
+                TradeItems.Items.Where(filter.MatchesCategory).Select(t => t.Id));
 
             // Track the in-game selection so its row is highlighted (the buttons act on it).
             int selectedId = Target.CurrentTargetId;

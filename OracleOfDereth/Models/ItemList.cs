@@ -66,10 +66,13 @@ namespace OracleOfDereth
         private List<int> IdentifyQueue = new List<int>();
         public bool IsProcessingQueue = false;
 
-        // Ids currently on screen (set by the view each refresh via PrioritizeIdentify). The
-        // pump appraises these before the rest, so filtering to a category jumps those rows to
-        // the front without flooding the server. Empty / whole-list when no filter is active.
-        private HashSet<int> PriorityIds = new HashSet<int>();
+        // Two tiers of "appraise these first", in display order, set by the view each refresh via
+        // PrioritizeIdentify. The pump sends queued ids from PriorityOrder first (walking it in
+        // order), then from SecondaryOrder, then the rest. Views pass the exact filtered rows (text
+        // + category) as tier 1 and the category-only matches as tier 2 — so narrowing by a search
+        // term still appraises the wider category, and rows fill in the same order they're shown.
+        private List<int> PriorityOrder = new List<int>();
+        private List<int> SecondaryOrder = new List<int>();
 
         // Up to this many identify requests in flight at once. Kept small so the in-flight set
         // turns over fast and the pump can switch to newly-prioritized rows within a request or
@@ -288,34 +291,43 @@ namespace OracleOfDereth
             PumpQueue();
         }
 
-        // Tell the list which ids are currently on screen (the view passes whatever's visible,
-        // e.g. just Weapons when filtered). The pump appraises these before anything else, so
-        // filtered rows jump the line as in-flight slots free up — no separate immediate-send
-        // path needed. Passing the whole list (no filter) imposes no ordering.
-        public void PrioritizeIdentify(IEnumerable<int> priorityIds)
+        // Tell the list which ids to appraise first. `primaryIds` is the exact on-screen set (e.g.
+        // text + category matches); `secondaryIds` is an optional broader fallback (e.g. the same
+        // categories ignoring the search text) appraised once the primary set is exhausted. The
+        // pump honors these as slots free up — no separate immediate-send path needed. Passing the
+        // whole list (no filter) imposes no ordering.
+        public void PrioritizeIdentify(IEnumerable<int> primaryIds, IEnumerable<int> secondaryIds = null)
         {
-            PriorityIds = priorityIds == null ? new HashSet<int>() : new HashSet<int>(priorityIds);
+            PriorityOrder = primaryIds == null ? new List<int>() : primaryIds.ToList();
+            SecondaryOrder = secondaryIds == null ? new List<int>() : secondaryIds.ToList();
             PumpQueue();    // a free slot should go to a now-prioritized row immediately
         }
 
-        // Pop the next id to appraise: a still-queued on-screen (priority) one if any, else the
-        // head of the queue. Lets filtered rows go first even as new items keep being added.
+        // Pop the next id to appraise: a still-queued primary (on-screen) one if any, else a
+        // secondary (broader fallback) one, else the head of the queue. Lets filtered rows go
+        // first — then the rest of the selected category — even as new items keep being added.
         private int DequeueNext()
         {
-            if (PriorityIds.Count > 0)
-            {
-                for (int i = 0; i < IdentifyQueue.Count; i++)
-                {
-                    if (!PriorityIds.Contains(IdentifyQueue[i])) continue;
-                    int pid = IdentifyQueue[i];
-                    IdentifyQueue.RemoveAt(i);
-                    return pid;
-                }
-            }
+            int idx = FirstQueuedFrom(PriorityOrder);
+            if (idx < 0) idx = FirstQueuedFrom(SecondaryOrder);
+            if (idx < 0) idx = 0;
 
-            int id0 = IdentifyQueue[0];
-            IdentifyQueue.RemoveAt(0);
-            return id0;
+            int id = IdentifyQueue[idx];
+            IdentifyQueue.RemoveAt(idx);
+            return id;
+        }
+
+        // Index in IdentifyQueue of the first priority id that's still queued, scanning the priority
+        // list in its (display) order — so each tier fills top-to-bottom as shown, not in queue
+        // order. Returns -1 if the list is empty or none of its ids are still queued.
+        private int FirstQueuedFrom(List<int> order)
+        {
+            if (order.Count == 0) return -1;
+
+            var queued = new HashSet<int>(IdentifyQueue);
+            foreach (int id in order)
+                if (queued.Contains(id)) return IdentifyQueue.IndexOf(id);
+            return -1;
         }
 
         // Issue identify requests until we hit the concurrency cap. Items already
@@ -613,7 +625,8 @@ namespace OracleOfDereth
             Items.Clear();
             IdentifyQueue.Clear();
             PendingIds.Clear();
-            PriorityIds.Clear();
+            PriorityOrder.Clear();
+            SecondaryOrder.Clear();
 
             if (IsProcessingQueue)
             {
