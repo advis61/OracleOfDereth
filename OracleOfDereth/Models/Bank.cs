@@ -62,7 +62,7 @@ namespace OracleOfDereth
 
         // Hard safety cap: never withdraw more than this many MMDs in a single request, no matter
         // what a caller asks for. Guards against a runaway/buggy amount draining the bank.
-        public const int MaxWithdrawMmds = 2500;
+        public const int MaxWithdrawMmds = 5000;
 
         // Withdraw `mmds` MMD trade notes (250k each) from the server bank. The base "trade notes"
         // denomination is MMD, so the command is "/b w n mmd <count>". First of the (eventual) bank
