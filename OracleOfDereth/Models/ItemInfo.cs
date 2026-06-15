@@ -60,7 +60,14 @@ namespace OracleOfDereth
         public bool IsRare => wo.Values((LongValueKey)218103850, 0) == 23308;
         public bool IsSalvage => wo.ObjectClass == ObjectClass.Salvage;
         public bool IsFoolproof => wo.Name.EndsWith(" Foolproof");
-        public bool IsClothing => wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.ArmorLevel, 0) == 0 && !IsCloak;
+        // Only underwear shirts/pants count as "clothing" — the no-armor-level pieces in the
+        // ChestWear (0x02) / UpperLegWear (0x40) slots, i.e. the ones that carry damage ratings
+        // (matches the Underclothing block in GetSlotName). Every other ObjectClass.Clothing item
+        // (different equip slots, or any armor level) classifies as Armor instead.
+        public bool IsClothing => wo.ObjectClass == ObjectClass.Clothing
+            && !IsCloak
+            && wo.Values(LongValueKey.ArmorLevel, 0) == 0
+            && (wo.Values(LongValueKey.EquipableSlots, 0) & (0x02 | 0x40)) != 0;
         public bool IsAmmo => (wo.ObjectClass == ObjectClass.MissileWeapon) && (wo.Values(LongValueKey.StackMax, 0) > 0);
 
         // ============================================================
