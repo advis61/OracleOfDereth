@@ -467,6 +467,20 @@ namespace OracleOfDereth
             return string.Join(" | ", mods);
         }
 
+        // The OD value alongside the attack / melee-defense mods, e.g. "OD +5 | 18% | 20%".
+        // Either segment is dropped when empty. GetWeaponOveragesString wraps this in brackets
+        // for the full description; the item columns show it bare.
+        public string GetWeaponODModsString()
+        {
+            string od = GetODString();
+            string mods = GetWeaponModsString();
+
+            var parts = new List<string>();
+            if (od.Length > 0) parts.Add(od);
+            if (mods.Length > 0) parts.Add(mods);
+            return string.Join(" | ", parts);
+        }
+
         // The weapon's damage type / element (Acid, Fire, Cold, Slash, …) for melee, missile
         // and casters alike. Casters store their element under WandElemDmgType (45) rather than
         // the DamageType key the physical weapons use, so pick the right key by class. The value
@@ -566,17 +580,17 @@ namespace OracleOfDereth
             if ((imbued & 1) == 1) parts.Add("CS");
             if ((imbued & 2) == 2) parts.Add("CB");
             if ((imbued & 4) == 4) parts.Add("AR");
-            if ((imbued & 8) == 8) parts.Add("Slash Rend");
-            if ((imbued & 16) == 16) parts.Add("Pierce Rend");
-            if ((imbued & 32) == 32) parts.Add("Bludgeon Rend");
-            if ((imbued & 64) == 64) parts.Add("Acid Rend");
-            if ((imbued & 128) == 128) parts.Add("Cold Rend");
-            if ((imbued & 256) == 256) parts.Add("Lightning Rend");
-            if ((imbued & 512) == 512) parts.Add("Fire Rend");
+            if ((imbued & 8) == 8) parts.Add("SlashRend");
+            if ((imbued & 16) == 16) parts.Add("PierceRend");
+            if ((imbued & 32) == 32) parts.Add("BludgeRend");
+            if ((imbued & 64) == 64) parts.Add("AcidRend");
+            if ((imbued & 128) == 128) parts.Add("ColdRend");
+            if ((imbued & 256) == 256) parts.Add("LightRend");
+            if ((imbued & 512) == 512) parts.Add("FireRend");
             if ((imbued & 1024) == 1024) parts.Add("MeleeImbue");
             if ((imbued & 4096) == 4096) parts.Add("MagicImbue");
             if ((imbued & 8192) == 8192) parts.Add("Hematited");
-            if ((imbued & 536870912) == 536870912) parts.Add("Magic Absorb");
+            if ((imbued & 536870912) == 536870912) parts.Add("MagicAbsorb");
 
             return string.Join(" ", parts);
         }
@@ -1020,16 +1034,8 @@ namespace OracleOfDereth
 
         private string GetWeaponOveragesString()
         {
-            string od = GetODString();
-            string mods = GetWeaponModsString();
-
-            if (od.Length == 0 && mods.Length == 0) return "";
-
-            var parts = new List<string>();
-            if (od.Length > 0) parts.Add(od);
-            if (mods.Length > 0) parts.Add(mods);
-
-            return "[" + string.Join(" | ", parts) + "]";
+            string overages = GetWeaponODModsString();
+            return overages.Length == 0 ? "" : "[" + overages + "]";
         }
 
         // ============================================================

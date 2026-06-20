@@ -17,8 +17,9 @@ namespace OracleOfDereth
         public string SummaryCol3 = "";
         public string SummaryCol4 = "";
         public int SortCol2 = 0;
-        public int SortCol3 = 0;       // total attack modifier (Col3 default sort)
-        public int SortCol3Melee = 0;  // total melee-defense modifier (Col3 secondary sort)
+        public int SortCol3OD = 0;     // OD value (Col3 cycle leads with this for weapons)
+        public int SortCol3 = 0;       // total attack modifier (Col3 secondary sort)
+        public int SortCol3Melee = 0;  // total melee-defense modifier (Col3 tertiary sort)
         public int SortCol4 = 0;
         public string Description = "";
 
@@ -52,8 +53,9 @@ namespace OracleOfDereth
             SummaryCol2 = GetSummaryCol2(info);
             SummaryCol3 = GetSummaryCol3(info);
             SummaryCol4 = GetSummaryCol4(info);
-            SortCol2 = GetSortInt(info.GetODValue());
-            SortCol3 = GetSortInt((int)info.GetTotalAttack()); // Col3 leads with the (total) attack modifier
+            SortCol2 = 0; // Col2 now shows the imbue string; its sort falls through to SummaryCol2
+            SortCol3OD = GetSortInt(info.GetODValue()); // Col3 cycle leads with OD, then the attack/melee mods
+            SortCol3 = GetSortInt((int)info.GetTotalAttack());
             SortCol3Melee = GetSortInt((int)info.GetTotalMeleeDefense());
             SortCol4 = 0; // Col4 (cantrips) is a string; sort falls through to SummaryCol4
             Description = info.ToString();
@@ -61,31 +63,17 @@ namespace OracleOfDereth
         }
 
         // Col1 — item type / slot. Weapons append their damage element (e.g. "Heavy Acid",
-        // "Two Hand Bludgeon").
+        // "Two Hand Bludgeon"). The imbue moved to Col2 and the OD value to Col3.
         private static string GetSummaryCol1(ItemInfo info)
         {
             string type = info.GetItemSlotName();
 
             if (info.IsWeapon)
             {
-                string imbue = info.GetImbueString();
                 string element = info.GetElementName();
 
                 // A Nether caster's element is also "Nether"; don't repeat it after the type.
-                if (element == type) element = "";
-
-                if (imbue != "")
-                {
-                    // A Rend imbue (e.g. "BludgeRend") already names the element, so drop the
-                    // element name in that case; other imbues (e.g. "AR") keep it. Either way
-                    // the imbue is shown in parentheses.
-                    string inner = (imbue.Contains("Rend") || element == "") ? imbue : element + " " + imbue;
-                    type += " (" + inner + ")";
-                }
-                else if (element != "")
-                {
-                    type += " " + element;
-                }
+                if (element == type) return type;
             }
             else if (info.IsSummon)
             {
@@ -96,7 +84,7 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol2(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetODString();
+            if (info.IsWeapon) return info.GetImbueString(); // full imbue list (may carry more than one)
             if (info.IsCloak) return info.GetCloakProc();
             if (info.IsSummon) return "DMG " + info.GetSummonDamageString();
             if (info.IsAetheria) return info.GetSetName();
@@ -107,7 +95,7 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol3(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetWeaponModsString();
+            if (info.IsWeapon) return info.GetWeaponODModsString(); // OD + attack/melee mods, e.g. "OD +5 | 18% | 20%"
             if (info.IsCloak) return info.GetRatingsString();
             if (info.IsSummon) return "DEF " + info.GetSummonDefenseString();
             if (info.IsAetheria) return info.GetAetheriaSurge();
