@@ -23,12 +23,16 @@ namespace OracleOfDereth
         public bool Salvage = false;
         public bool Other = false;
 
-        // True when the filter actually narrows the list (some category ticked or text typed).
-        public bool IsActive => AnyCategorySelected() || !string.IsNullOrWhiteSpace(Text);
+        // Not a category — an extra AND condition: items carrying two or more legendary spells.
+        public bool Doubles = false;
+
+        // True when the filter actually narrows the list (some category ticked, text typed, or Doubles set).
+        public bool IsActive => AnyCategorySelected() || !string.IsNullOrWhiteSpace(Text) || Doubles;
 
         public bool Matches(Item t)
         {
             if (!IsCategoryVisible(t.SortCategory)) return false;
+            if (!MatchesDoubles(t)) return false;
             return MatchesText(t);
         }
 
@@ -62,6 +66,30 @@ namespace OracleOfDereth
             }
         }
 
+        // The item's searchable text: name plus every summary column, as one string.
+        private static string Combined(Item t) => $"{t.Name} {t.SummaryCol1} {t.SummaryCol2} {t.SummaryCol3} {t.SummaryCol4}";
+
+        // "Doubles": items doubled up on their highest cantrip tier — two or more legendary, OR
+        // two or more epic with no legendary, OR two or more major with no epic/legendary. Counts
+        // the tier words in the row text (case-insensitive); a single higher-tier cantrip outranks
+        // (disqualifies) a lower-tier double.
+        private bool MatchesDoubles(Item t)
+        {
+            if (!Doubles) return true;
+
+            string combined = Combined(t);
+
+            int legendary = CountOccurrences(combined, "legendary");
+            if (legendary >= 2) return true;
+            if (legendary > 0) return false;   // a single legendary outranks any epic/major double
+
+            int epic = CountOccurrences(combined, "epic");
+            if (epic >= 2) return true;
+            if (epic > 0) return false;        // a single epic outranks any major double
+
+            return CountOccurrences(combined, "major") >= 2;
+        }
+
         private bool MatchesText(Item t)
         {
             string trimmed = (Text ?? "").Trim();
@@ -70,7 +98,7 @@ namespace OracleOfDereth
                 : new string[0];
 
             if (terms.Length == 0) return true;
-            string combined = $"{t.Name} {t.SummaryCol1} {t.SummaryCol2} {t.SummaryCol3} {t.SummaryCol4}";
+            string combined = Combined(t);
             foreach (string term in terms)
             {
                 int requiredCount = 1;

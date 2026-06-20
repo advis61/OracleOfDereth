@@ -42,6 +42,7 @@ namespace OracleOfDereth
         public HudCheckBox TradeFilterAetheria { get; private set; }
         public HudCheckBox TradeFilterSalvage { get; private set; }
         public HudCheckBox TradeFilterOther { get; private set; }
+        public HudCheckBox TradeFilterDoubles { get; private set; }
         public HudFixedLayout TradeListSortComplete { get; private set; }
         public HudPictureBox TradeListSortCompleteIcon { get; private set; }
         public HudStaticText TradeListSortName { get; private set; }
@@ -128,6 +129,8 @@ namespace OracleOfDereth
                 TradeFilterSalvage.Change += Filter_Change;
                 TradeFilterOther = (HudCheckBox)view["TradeFilterOther"];
                 TradeFilterOther.Change += Filter_Change;
+                TradeFilterDoubles = (HudCheckBox)view["TradeFilterDoubles"];
+                TradeFilterDoubles.Change += Filter_Change;
 
                 TradeListSortCompleteIcon = new HudPictureBox();
                 TradeListSortCompleteIcon.Image = IconSort;
@@ -180,6 +183,7 @@ namespace OracleOfDereth
                 Aetheria = TradeFilterAetheria.Checked,
                 Salvage = TradeFilterSalvage.Checked,
                 Other = TradeFilterOther.Checked,
+                Doubles = TradeFilterDoubles.Checked,
             };
         }
 
@@ -252,6 +256,7 @@ namespace OracleOfDereth
             TradeFilterAetheria.Checked = false;
             TradeFilterSalvage.Checked = false;
             TradeFilterOther.Checked = false;
+            TradeFilterDoubles.Checked = false;
             suppressFilter = false;
 
             UpdateList();
@@ -405,6 +410,7 @@ namespace OracleOfDereth
             if (TradeFilterAetheria != null) TradeFilterAetheria.Change -= Filter_Change;
             if (TradeFilterSalvage != null) TradeFilterSalvage.Change -= Filter_Change;
             if (TradeFilterOther != null) TradeFilterOther.Change -= Filter_Change;
+            if (TradeFilterDoubles != null) TradeFilterDoubles.Change -= Filter_Change;
 
             if (TradeListSortCompleteIcon != null) TradeListSortCompleteIcon.Hit -= SortName_Click;
             if (TradeListSortName != null) TradeListSortName.Hit -= SortName_Click;

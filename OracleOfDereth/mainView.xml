@@ -106,10 +106,11 @@
 						<control progid="DecalControls.CheckBox" name="ItemsFilterAetheria" left="853" top="59" width="70" height="16" text="Aetheria" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="ItemsFilterSalvage" left="933" top="59" width="64" height="16" text="Salvage" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="ItemsFilterOther" left="1007" top="59" width="52" height="16" text="Other" checked="false"/>
-						<control progid="DecalControls.PushButton" name="ItemsClipboard" left="839" top="3" width="52" height="22" text="Copy"/>
-						<control progid="DecalControls.PushButton" name="ItemsExportText" left="895" top="3" width="52" height="22" text="Text"/>
-						<control progid="DecalControls.PushButton" name="ItemsExportCsv" left="951" top="3" width="52" height="22" text="CSV"/>
-						<control progid="DecalControls.PushButton" name="ItemsExportJson" left="1007" top="3" width="52" height="22" text="JSON"/>
+							<control progid="DecalControls.CheckBox" name="ItemsFilterDoubles" left="1063" top="59" width="70" height="16" text="Doubles" checked="false"/>
+						<control progid="DecalControls.PushButton" name="ItemsClipboard" left="910" top="3" width="52" height="22" text="Copy"/>
+						<control progid="DecalControls.PushButton" name="ItemsExportText" left="966" top="3" width="52" height="22" text="Text"/>
+						<control progid="DecalControls.PushButton" name="ItemsExportCsv" left="1022" top="3" width="52" height="22" text="CSV"/>
+						<control progid="DecalControls.PushButton" name="ItemsExportJson" left="1078" top="3" width="52" height="22" text="JSON"/>
 						<control progid="DecalControls.FixedLayout" name="ItemsListSortComplete" left="1" top="85" width="16" height="16"/>
 						<control progid="DecalControls.StaticText" name="ItemsListSortName" left="49" top="81" width="210" height="17" text="Item Name"/>
 						<control progid="DecalControls.StaticText" name="ItemsListSortCol1" left="344" top="81" width="140" height="17" text="Type"/>

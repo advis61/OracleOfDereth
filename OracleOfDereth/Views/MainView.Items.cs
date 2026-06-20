@@ -37,6 +37,7 @@ namespace OracleOfDereth
         public HudCheckBox ItemsFilterAetheria { get; private set; }
         public HudCheckBox ItemsFilterSalvage { get; private set; }
         public HudCheckBox ItemsFilterOther { get; private set; }
+        public HudCheckBox ItemsFilterDoubles { get; private set; }
         public HudFixedLayout ItemsListSortComplete { get; private set; }
         public HudPictureBox ItemsListSortCompleteIcon { get; private set; }
         public HudStaticText ItemsListSortName { get; private set; }
@@ -102,6 +103,8 @@ namespace OracleOfDereth
             ItemsFilterSalvage.Change += ItemsFilter_Change;
             ItemsFilterOther = (HudCheckBox)view["ItemsFilterOther"];
             ItemsFilterOther.Change += ItemsFilter_Change;
+            ItemsFilterDoubles = (HudCheckBox)view["ItemsFilterDoubles"];
+            ItemsFilterDoubles.Change += ItemsFilter_Change;
 
             ItemsListSortCompleteIcon = new HudPictureBox();
             ItemsListSortCompleteIcon.Image = IconSort;
@@ -152,6 +155,7 @@ namespace OracleOfDereth
             ItemsFilterAetheria.Change -= ItemsFilter_Change;
             ItemsFilterSalvage.Change -= ItemsFilter_Change;
             ItemsFilterOther.Change -= ItemsFilter_Change;
+            ItemsFilterDoubles.Change -= ItemsFilter_Change;
             ItemsList.Click -= ItemsList_Click;
             ItemsListSortCompleteIcon.Hit -= ItemsListSortComplete_Click;
             ItemsListSortName.Hit -= ItemsListSortName_Click;
@@ -181,6 +185,7 @@ namespace OracleOfDereth
                 Aetheria = ItemsFilterAetheria.Checked,
                 Salvage = ItemsFilterSalvage.Checked,
                 Other = ItemsFilterOther.Checked,
+                Doubles = ItemsFilterDoubles.Checked,
             };
         }
 
@@ -228,6 +233,7 @@ namespace OracleOfDereth
             ItemsFilterAetheria.Checked = false;
             ItemsFilterSalvage.Checked = false;
             ItemsFilterOther.Checked = false;
+            ItemsFilterDoubles.Checked = false;
             suppressItemsFilter = false;
 
             UpdateItemsList();
