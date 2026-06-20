@@ -85,6 +85,7 @@ namespace OracleOfDereth
                 else if (term.Contains(".*"))
                 {
                     string[] parts = term.Split(new[] { ".*" }, StringSplitOptions.RemoveEmptyEntries);
+                    if (parts.Length == 0) continue;   // bare ".*" — no real term, impose no constraint
                     requiredCount = parts.Length;
                     word = parts[0];
                     bool allSame = true;

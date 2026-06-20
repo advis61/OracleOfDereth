@@ -300,20 +300,24 @@ namespace OracleOfDereth
 
         private void ItemsList_Click(object sender, int row, int col)
         {
-            int id = int.Parse(((HudStaticText)ItemsList[row][7]).Text);
+            try
+            {
+                int id = int.Parse(((HudStaticText)ItemsList[row][7]).Text);
 
-            if (col == 0)
-            {
-                InventoryList.Remove(id);
-                UpdateItemsList();
+                if (col == 0)
+                {
+                    InventoryList.Remove(id);
+                    UpdateItemsList();
+                }
+                else
+                {
+                    // Select it in the world (highlights the row via the ItemSelected event) and
+                    // (re)request its appraisal — fills any stub whose identify gave up.
+                    CoreManager.Current.Actions.SelectItem(id);
+                    CoreManager.Current.Actions.RequestId(id);
+                }
             }
-            else
-            {
-                // Select it in the world (highlights the row via the ItemSelected event) and
-                // (re)request its appraisal — fills any stub whose identify gave up.
-                CoreManager.Current.Actions.SelectItem(id);
-                CoreManager.Current.Actions.RequestId(id);
-            }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         private void ItemsListSortComplete_Click(object sender, EventArgs e)
