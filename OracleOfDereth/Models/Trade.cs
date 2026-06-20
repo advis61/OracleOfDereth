@@ -367,6 +367,10 @@ namespace OracleOfDereth
             }
 
             Util.Chat($"Paying {notes} {PaymentItemName} for {PricedItem}.", Util.ColorPink, "[Oracle of Dereth] ");
+
+            // Notes are now in the trade window — guide the player through the final in-game step.
+            TradeStatus = "All done! Please click the in-game Trade button to complete your transaction.";
+            OnChanged?.Invoke();
         }
 
         // Split `count` off a stack; OnObjectCreated trades the new stack once it appears.
