@@ -121,6 +121,14 @@ namespace OracleOfDereth
             string tinks = info.GetTinksString();
 
             var parts = new List<string>();
+
+            // Weapons lead Col4 with their slayer bonus (e.g. "Virindi Slayer"), if any.
+            if (info.IsWeapon)
+            {
+                string slayer = info.GetSlayerString();
+                if (slayer.Length > 0) parts.Add(slayer);
+            }
+
             if (col4.Length > 0) parts.Add(col4);
             if (wield.Length > 0 && (info.IsSummon || info.GetWieldReqName() != "Wield Lvl")) parts.Add(wield);
             if (tinks.Length > 0) parts.Add(tinks);

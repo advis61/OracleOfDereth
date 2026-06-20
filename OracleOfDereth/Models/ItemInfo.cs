@@ -673,7 +673,38 @@ namespace OracleOfDereth
                 case 64: parts.Add("LightCleave"); break;
             }
 
+            // Quest/aug crit enhancements, separate from the CS/CB imbue bits. (The slayer bonus
+            // is shown in Col4, not here.)
+            if (HasCrushingBlow()) parts.Add("CB");
+            if (HasBitingStrike()) parts.Add("BS");
+
             return string.Join(" ", parts);
+        }
+
+        // "Biting Strike" raises the weapon's critical chance via CriticalFrequency (key 147);
+        // "Crushing Blow" raises its critical-damage via CriticalMultiplier (key 136, base 1.0).
+        // These are the named quest/aug versions of the CS/CB imbues, stored as floats not bits.
+        public bool HasBitingStrike() => wo.Values((DoubleValueKey)147, 0) > 0;
+        public bool HasCrushingBlow() => wo.Values((DoubleValueKey)136, 0) > 1;
+
+        // The creature type a slayer weapon does bonus damage to (SlayerSpecies, key 166).
+        // 0 when the weapon isn't a slayer.
+        public int GetSlayerSpecies() => wo.Values((LongValueKey)166, 0);
+
+        // The slayer's target species name (e.g. "Virindi"), "Unknown" for an unmapped id, or
+        // "" when the weapon isn't a slayer at all.
+        public string GetSlayerName()
+        {
+            int species = GetSlayerSpecies();
+            if (species <= 0) return "";
+            return SlayerSpeciesInfo.TryGetValue(species, out string name) ? name : "Unknown";
+        }
+
+        // "<Species> Slayer" (e.g. "Virindi Slayer"), or "" when the weapon isn't a slayer.
+        public string GetSlayerString()
+        {
+            string name = GetSlayerName();
+            return name.Length > 0 ? name + " Slayer" : "";
         }
 
         public int GetTinksValue() => wo.Values(LongValueKey.NumberTimesTinkered, 0);
@@ -1684,6 +1715,33 @@ namespace OracleOfDereth
             { 9, "Crossbow" },
             { 10, "Thrown" },
             { 11, "Two Handed Combat" },
+        };
+
+        // Slayer target species (SlayerSpecies / CreatureType, key 166). Mirrors AC's CreatureType
+        // enum so GetSlayerName can turn the id into a label (e.g. 19 -> "Virindi").
+        private static readonly Dictionary<int, string> SlayerSpeciesInfo = new Dictionary<int, string>
+        {
+            { 1, "Olthoi" }, { 2, "Banderling" }, { 3, "Drudge" }, { 4, "Mosswart" }, { 5, "Lugian" },
+            { 6, "Tumerok" }, { 7, "Mite" }, { 8, "Tusker" }, { 9, "Phyntos Wasp" }, { 10, "Rat" },
+            { 11, "Auroch" }, { 12, "Cow" }, { 13, "Golem" }, { 14, "Undead" }, { 15, "Gromnie" },
+            { 16, "Reedshark" }, { 17, "Armoredillo" }, { 18, "Fae" }, { 19, "Virindi" }, { 20, "Wisp" },
+            { 21, "Knathtead" }, { 22, "Shadow" }, { 23, "Mattekar" }, { 24, "Mumiyah" }, { 25, "Rabbit" },
+            { 26, "Sclavus" }, { 27, "Shallows Shark" }, { 28, "Monouga" }, { 29, "Zefir" }, { 30, "Skeleton" },
+            { 31, "Human" }, { 32, "Shreth" }, { 33, "Chittick" }, { 34, "Moarsman" }, { 35, "Olthoi Larvae" },
+            { 36, "Slithis" }, { 37, "Deru" }, { 38, "Fire Elemental" }, { 39, "Snowman" }, { 40, "Unknown" },
+            { 41, "Bunny" }, { 42, "Lightning Elemental" }, { 43, "Rockslide" }, { 44, "Grievver" }, { 45, "Niffis" },
+            { 46, "Ursuin" }, { 47, "Crystal" }, { 48, "Hollow Minion" }, { 49, "Scarecrow" }, { 50, "Idol" },
+            { 51, "Empyrean" }, { 52, "Hopeslayer" }, { 53, "Doll" }, { 54, "Marionette" }, { 55, "Carenzi" },
+            { 56, "Siraluun" }, { 57, "Aun Tumerok" }, { 58, "Hea Tumerok" }, { 59, "Simulacrum" }, { 60, "Acid Elemental" },
+            { 61, "Frost Elemental" }, { 62, "Elemental" }, { 63, "Statue" }, { 64, "Wall" }, { 65, "Altered Human" },
+            { 66, "Device" }, { 67, "Harbinger" }, { 68, "Dark Sarcophagus" }, { 69, "Chicken" }, { 70, "Gotrok Lugian" },
+            { 71, "Margul" }, { 72, "Bleached Rabbit" }, { 73, "Nasty Rabbit" }, { 74, "Grimacing Rabbit" }, { 75, "Burun" },
+            { 76, "Target" }, { 77, "Ghost" }, { 78, "Fiun" }, { 79, "Eater" }, { 80, "Penguin" },
+            { 81, "Ruschk" }, { 82, "Thrungus" }, { 83, "Viamontian Knight" }, { 84, "Remoran" }, { 85, "Swarm" },
+            { 86, "Moar" }, { 87, "Enchanted Arms" }, { 88, "Sleech" }, { 89, "Mukkir" }, { 90, "Merwart" },
+            { 91, "Food" }, { 92, "Paradox Olthoi" }, { 93, "Harvest" }, { 94, "Energy" }, { 95, "Apparition" },
+            { 96, "Aerbax" }, { 97, "Touched" }, { 98, "Blighted Moarsman" }, { 99, "Gear Knight" }, { 100, "Gurog" },
+            { 101, "Anekshay" },
         };
 
         public static readonly Dictionary<int, string> AttributeSetInfo = new Dictionary<int, string>
