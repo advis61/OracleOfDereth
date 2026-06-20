@@ -363,7 +363,7 @@ namespace OracleOfDereth
             if (set != 0 && AttributeSetInfo.TryGetValue(set, out string setName))
             {
                 if (setName.Contains("Perfect Light")) return "Perfect Light";
-                return setName.Replace("Sigil of ", "").Replace("'s", "").Replace(" Proof Set", "").Replace(" Set", "").Trim();
+                return setName.Replace("Sigil of ", "").Replace("'s", "").Replace(" Set", "").Trim();
             }
             return "";
         }
