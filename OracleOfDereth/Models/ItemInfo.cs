@@ -529,13 +529,16 @@ namespace OracleOfDereth
             return string.Join(" | ", parts);
         }
 
-        // Extra weapon attributes not shown in the other columns: missile/magic defense bonuses
-        // and the Multi-Strike flag. Comma-joined; empty when none apply.
+        // Extra weapon attributes not shown in the other columns: the damage line (range, elemental
+        // bonus, and "+X% vs Monsters" slayer), missile/magic defense bonuses, and the Multi-Strike
+        // flag. Comma-joined; empty when none apply.
         public string GetWeaponExtrasString()
         {
             if (!IsWeapon) return "";
 
             var parts = new List<string>();
+            string damage = GetDamageString();
+            if (damage.Length > 0) parts.Add(damage);
             double msl = GetMissileDefenseBonus();
             double mgc = GetMagicDefenseBonus();
             if (msl != 0) parts.Add(msl + "%msl.d");
@@ -635,25 +638,40 @@ namespace OracleOfDereth
 
         public string GetImbueString()
         {
-            int imbued = wo.Values(LongValueKey.Imbued);
-            if (imbued <= 0) return "";
-
             var parts = new List<string>();
 
-            if ((imbued & 1) == 1) parts.Add("CS");
-            if ((imbued & 2) == 2) parts.Add("CB");
-            if ((imbued & 4) == 4) parts.Add("AR");
-            if ((imbued & 8) == 8) parts.Add("SlashRend");
-            if ((imbued & 16) == 16) parts.Add("PierceRend");
-            if ((imbued & 32) == 32) parts.Add("BludgeRend");
-            if ((imbued & 64) == 64) parts.Add("AcidRend");
-            if ((imbued & 128) == 128) parts.Add("ColdRend");
-            if ((imbued & 256) == 256) parts.Add("LightRend");
-            if ((imbued & 512) == 512) parts.Add("FireRend");
-            if ((imbued & 1024) == 1024) parts.Add("MeleeImbue");
-            if ((imbued & 4096) == 4096) parts.Add("MagicImbue");
-            if ((imbued & 8192) == 8192) parts.Add("Hematited");
-            if ((imbued & 536870912) == 536870912) parts.Add("MagicAbsorb");
+            int imbued = wo.Values(LongValueKey.Imbued);
+            if (imbued > 0)
+            {
+                if ((imbued & 1) == 1) parts.Add("CS");
+                if ((imbued & 2) == 2) parts.Add("CB");
+                if ((imbued & 4) == 4) parts.Add("AR");
+                if ((imbued & 8) == 8) parts.Add("SlashRend");
+                if ((imbued & 16) == 16) parts.Add("PierceRend");
+                if ((imbued & 32) == 32) parts.Add("BludgeRend");
+                if ((imbued & 64) == 64) parts.Add("AcidRend");
+                if ((imbued & 128) == 128) parts.Add("ColdRend");
+                if ((imbued & 256) == 256) parts.Add("LightRend");
+                if ((imbued & 512) == 512) parts.Add("FireRend");
+                if ((imbued & 1024) == 1024) parts.Add("MeleeImbue");
+                if ((imbued & 4096) == 4096) parts.Add("MagicImbue");
+                if ((imbued & 8192) == 8192) parts.Add("Hematited");
+                if ((imbued & 536870912) == 536870912) parts.Add("MagicAbsorb");
+            }
+
+            // Resistance cleaving lives in the same imbue-like slot as the rends, using the same
+            // element abbreviations (e.g. "AcidCleave", "FireCleave"). CleaveType (key 263) stores
+            // the cleaved element as a single value, not a bitmask.
+            switch (wo.Values((LongValueKey)263, 0))
+            {
+                case 1: parts.Add("SlashCleave"); break;
+                case 2: parts.Add("PierceCleave"); break;
+                case 4: parts.Add("BludgeCleave"); break;
+                case 8: parts.Add("ColdCleave"); break;
+                case 16: parts.Add("FireCleave"); break;
+                case 32: parts.Add("AcidCleave"); break;
+                case 64: parts.Add("LightCleave"); break;
+            }
 
             return string.Join(" ", parts);
         }
@@ -664,24 +682,6 @@ namespace OracleOfDereth
         {
             if (GetTinksValue() <= 0) return "";
             return "Tinks " + GetTinksValue();
-        }
-
-        public string GetResistanceCleavingString()
-        {
-            int cleavingType = wo.Values((LongValueKey)152, 0);
-            if (cleavingType <= 0) return "";
-
-            switch (cleavingType)
-            {
-                case 1: return "Slash";
-                case 2: return "Pierce";
-                case 4: return "Bludgeon";
-                case 8: return "Cold";
-                case 16: return "Fire";
-                case 32: return "Acid";
-                case 64: return "Lightning";
-                default: return "Unknown(" + cleavingType + ")";
-            }
         }
 
         // ============================================================
