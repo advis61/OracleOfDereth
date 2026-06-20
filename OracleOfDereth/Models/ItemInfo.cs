@@ -255,36 +255,84 @@ namespace OracleOfDereth
             // Shield
             if ((slots & 0x200000) != 0) return "Shield";        // Shield
 
-            // Armor slots (EquipMask values)
-            if ((slots & 0x200) != 0) return "Chest";            // ChestArmor
-            if ((slots & 0x400) != 0) return "Abdomen";          // AbdomenArmor
-            if ((slots & 0x800) != 0) return "Upper Arms";       // UpperArmArmor
-            if ((slots & 0x1000) != 0) return "Lower Arms";      // LowerArmArmor
-            if ((slots & 0x2000) != 0) return "Upper Legs";      // UpperLegArmor
-            if ((slots & 0x4000) != 0) return "Lower Legs";      // LowerLegArmor
+            // Armor / clothing can cover several locations at once (sleeves = upper+lower arms,
+            // a hauberk = chest/abdomen/arms). Collect every covered slot and compress the
+            // arm/leg pairs, e.g. "Upper Lower Arms", "Chest Abdomen Upper Lower Arms".
+            return BuildSlotCoverage(slots, coverage);
+        }
 
-            // Underwear / clothing wear slots
-            if ((slots & 0x01) != 0) return "Head";              // HeadWear
-            if ((slots & 0x02) != 0) return "Chest";             // ChestWear
-            if ((slots & 0x04) != 0) return "Abdomen";           // AbdomenWear
-            if ((slots & 0x08) != 0) return "Upper Arms";        // UpperArmWear
-            if ((slots & 0x10) != 0) return "Lower Arms";        // LowerArmWear
-            if ((slots & 0x20) != 0) return "Hands";             // HandWear
-            if ((slots & 0x40) != 0) return "Legs";              // UpperLegWear
-            if ((slots & 0x80) != 0) return "Lower Legs";        // LowerLegWear
-            if ((slots & 0x100) != 0) return "Feet";             // FootWear
+        // Label the covered slot(s). Each location is matched against its armor bit, its
+        // clothing-"wear" bit, or the Coverage fallback. A single slot shows its full name
+        // ("Chest", "Upper Arms", ...). Two slots list both, collapsing an Upper+Lower pair
+        // ("Upper Lower Arms", "Chest Abdomen"). Three+ slots show the standard garment name
+        // suffixed with the slot count ("Coat 3-slot", "Leggings 3-slot"), falling back to the
+        // collapsed list for any unrecognised combo.
+        private static string BuildSlotCoverage(int slots, int coverage)
+        {
+            bool head      = (slots & 0x01) != 0 || (coverage & 0x4000) != 0;
+            bool chest     = (slots & 0x200) != 0 || (slots & 0x02) != 0 || (coverage & 0x08) != 0 || (coverage & 0x400) != 0;
+            bool abdomen   = (slots & 0x400) != 0 || (slots & 0x04) != 0 || (coverage & 0x10) != 0 || (coverage & 0x800) != 0;
+            bool upperArms = (slots & 0x800) != 0 || (slots & 0x08) != 0 || (coverage & 0x20) != 0 || (coverage & 0x1000) != 0;
+            bool lowerArms = (slots & 0x1000) != 0 || (slots & 0x10) != 0 || (coverage & 0x40) != 0 || (coverage & 0x2000) != 0;
+            bool hands     = (slots & 0x20) != 0 || (coverage & 0x8000) != 0;
+            bool upperLegs = (slots & 0x2000) != 0 || (slots & 0x40) != 0 || (coverage & 0x02) != 0 || (coverage & 0x100) != 0;
+            bool lowerLegs = (slots & 0x4000) != 0 || (slots & 0x80) != 0 || (coverage & 0x04) != 0 || (coverage & 0x200) != 0;
+            bool feet      = (slots & 0x100) != 0 || (coverage & 0x10000) != 0;
 
-            // Fallback to Coverage (CoverageMask values)
-            if ((coverage & 0x08) != 0 || (coverage & 0x400) != 0) return "Chest";       // UnderwearChest | OuterwearChest
-            if ((coverage & 0x10) != 0 || (coverage & 0x800) != 0) return "Abdomen";      // UnderwearAbdomen | OuterwearAbdomen
-            if ((coverage & 0x20) != 0 || (coverage & 0x1000) != 0) return "Upper Arms";  // UnderwearUpperArms | OuterwearUpperArms
-            if ((coverage & 0x40) != 0 || (coverage & 0x2000) != 0) return "Lower Arms";  // UnderwearLowerArms | OuterwearLowerArms
-            if ((coverage & 0x02) != 0 || (coverage & 0x100) != 0) return "Upper Legs";   // UnderwearUpperLegs | OuterwearUpperLegs
-            if ((coverage & 0x04) != 0 || (coverage & 0x200) != 0) return "Lower Legs";   // UnderwearLowerLegs | OuterwearLowerLegs
-            if ((coverage & 0x4000) != 0) return "Head";                                   // Head
-            if ((coverage & 0x8000) != 0) return "Hands";                                  // Hands
-            if ((coverage & 0x10000) != 0) return "Feet";                                  // Feet
+            // Covered slots (full names, head-to-toe) — used for the count and the single/fallback labels.
+            var covered = new List<string>();
+            if (head) covered.Add("Head");
+            if (chest) covered.Add("Chest");
+            if (abdomen) covered.Add("Abdomen");
+            if (upperArms) covered.Add("Upper Arms");
+            if (lowerArms) covered.Add("Lower Arms");
+            if (hands) covered.Add("Hands");
+            if (upperLegs) covered.Add("Upper Legs");
+            if (lowerLegs) covered.Add("Lower Legs");
+            if (feet) covered.Add("Feet");
 
+            if (covered.Count == 0) return "";
+            if (covered.Count == 1) return covered[0];
+
+            // Some boots/sollerets cover the lower legs as well as the feet; show just "Feet".
+            if (feet && lowerLegs && covered.Count == 2) return "Feet";
+
+            // Three or more slots read as their standard garment name plus the slot count
+            // (e.g. "Coat 3-slot"); unrecognised combos fall through to the collapsed list below.
+            if (covered.Count >= 3)
+            {
+                string garment = GarmentName(chest, abdomen, upperArms, lowerArms, upperLegs, lowerLegs);
+                if (garment != "") return $"{garment} {covered.Count}-slot";
+            }
+
+            var parts = new List<string>();
+            if (head) parts.Add("Head");
+            if (chest) parts.Add("Chest");
+            if (abdomen) parts.Add("Abdomen");
+            if (upperArms && lowerArms) parts.Add("Upper Lower Arms");
+            else if (upperArms) parts.Add("Upper Arms");
+            else if (lowerArms) parts.Add("Lower Arms");
+            if (hands) parts.Add("Hands");
+            if (upperLegs && lowerLegs) parts.Add("Upper Lower Legs");
+            else if (upperLegs) parts.Add("Upper Legs");
+            else if (lowerLegs) parts.Add("Lower Legs");
+            if (feet) parts.Add("Feet");
+
+            return string.Join(" ", parts);
+        }
+
+        // The label for a known 3- or 4-slot body combination, else "". The chest-based torso
+        // garments (coats, shirts, hauberks) all read as "Chest" — the slot count appended by the
+        // caller distinguishes them ("Chest 3-slot" vs "Chest 4-slot"); the abdomen+legs piece
+        // reads as "Leggings".
+        private static string GarmentName(bool chest, bool abdomen, bool upperArms, bool lowerArms, bool upperLegs, bool lowerLegs)
+        {
+            // Three-slot
+            if (chest && upperArms && lowerArms && !abdomen && !upperLegs && !lowerLegs) return "Chest";
+            if (chest && abdomen && upperArms && !lowerArms && !upperLegs && !lowerLegs) return "Chest";
+            if (abdomen && upperLegs && lowerLegs && !chest && !upperArms && !lowerArms) return "Leggings";
+            // Four-slot
+            if (chest && abdomen && upperArms && lowerArms && !upperLegs && !lowerLegs) return "Chest";
             return "";
         }
 
