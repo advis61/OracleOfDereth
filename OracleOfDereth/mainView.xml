@@ -113,15 +113,15 @@
 						<control progid="DecalControls.FixedLayout" name="ItemsListSortComplete" left="1" top="85" width="16" height="16"/>
 						<control progid="DecalControls.StaticText" name="ItemsListSortName" left="49" top="81" width="210" height="17" text="Item Name"/>
 						<control progid="DecalControls.StaticText" name="ItemsListSortCol1" left="344" top="81" width="140" height="17" text="Type"/>
-						<control progid="DecalControls.StaticText" name="ItemsListSortCol2" left="461" top="81" width="90" height="17" text="Effect"/>
-						<control progid="DecalControls.StaticText" name="ItemsListSortCol3" left="603" top="81" width="90" height="17" text="Info"/>
-						<control progid="DecalControls.StaticText" name="ItemsListSortCol4" left="755" top="81" width="360" height="17" text="Details"/>
+						<control progid="DecalControls.StaticText" name="ItemsListSortCol2" left="541" top="81" width="60" height="17" text="Effect"/>
+						<control progid="DecalControls.StaticText" name="ItemsListSortCol3" left="696" top="81" width="50" height="17" text="Info"/>
+						<control progid="DecalControls.StaticText" name="ItemsListSortCol4" left="790" top="81" width="360" height="17" text="Details"/>
 						<control progid="DecalControls.List" name="ItemsList" left="0" top="101" width="1920" height="2000">
 							<column progid="DecalControls.IconColumn" name="Remove" fixedwidth="16" />
 							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="288" />
-							<column progid="DecalControls.TextColumn" name="Col1" fixedwidth="110" />
-							<column progid="DecalControls.TextColumn" name="Col2" fixedwidth="135" />
+							<column progid="DecalControls.TextColumn" name="Col1" fixedwidth="140" />
+							<column progid="DecalControls.TextColumn" name="Col2" fixedwidth="140" />
 							<column progid="DecalControls.TextColumn" name="Col3" fixedwidth="145" />
 							<column progid="DecalControls.TextColumn" name="Col4" fixedwidth="2000" />
 							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="1" />

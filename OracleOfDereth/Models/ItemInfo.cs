@@ -105,7 +105,7 @@ namespace OracleOfDereth
         {
             if (IsWeapon) return GetWeaponTypeName();
             if (IsArmorClothing || IsJewelry) return GetSlotName();
-            if (IsAetheria) return GetAetheriaColor();
+            if (IsAetheria) return $"Aetheria {GetAetheriaColor()}".TrimEnd();
             if (IsCloak) return "Cloak";
             if (IsSummon) return "Summon";
             if (IsRare) return "Rare";
@@ -911,12 +911,16 @@ namespace OracleOfDereth
         // Aetheria
         // ============================================================
 
+        // Aetheria colour comes from which sigil slot it fits, not the name (every aetheria is
+        // just named "Aetheria"). EquipMask: SigilOne=Blue (75+), SigilTwo=Yellow (150+),
+        // SigilThree=Red (225+). Returns "" when the slot isn't known (e.g. pre-ID).
         public string GetAetheriaColor()
         {
-            if (wo.Name.Contains("Blue")) return "Blue";
-            if (wo.Name.Contains("Yellow")) return "Yellow";
-            if (wo.Name.Contains("Red")) return "Red";
-            return "Aetheria";
+            int slots = wo.Values(LongValueKey.EquipableSlots, 0);
+            if ((slots & 0x10000000) != 0) return "Blue";
+            if ((slots & 0x20000000) != 0) return "Yellow";
+            if ((slots & 0x40000000) != 0) return "Red";
+            return "";
         }
 
         public int GetAetheriaLevel()
@@ -942,6 +946,19 @@ namespace OracleOfDereth
                 if (name.Contains("Mana")) return "Mana";
             }
             return "";
+        }
+
+        // Level, set and surge together for the details column, e.g. "Level 5, Defense,
+        // Destruction". Empty parts are dropped so there are no stray commas.
+        public string GetAetheriaSummaryString()
+        {
+            if (!IsAetheria) return "";
+
+            var parts = new List<string>();
+            if (GetAetheriaLevel() > 0) parts.Add("Level " + GetAetheriaLevel());
+            if (GetSetName().Length > 0) parts.Add(GetSetName());
+            if (GetAetheriaSurge().Length > 0) parts.Add(GetAetheriaSurge());
+            return string.Join(", ", parts);
         }
 
         // ============================================================

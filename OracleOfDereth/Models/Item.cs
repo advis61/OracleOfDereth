@@ -72,8 +72,9 @@ namespace OracleOfDereth
             {
                 string element = info.GetElementName();
 
-                // A Nether caster's element is also "Nether"; don't repeat it after the type.
-                if (element == type) return type;
+                // Append the element (e.g. "Two Hand Fire"), unless it just repeats the type —
+                // a Nether caster's type is also "Nether", so don't print "Nether Nether".
+                if (element != "" && element != type) type += " " + element;
             }
             else if (info.IsSummon)
             {
@@ -86,8 +87,6 @@ namespace OracleOfDereth
         {
             if (info.IsWeapon) return info.GetImbueString(); // full imbue list (may carry more than one)
             if (info.IsCloak) return info.GetCloakProc();
-            if (info.IsSummon) return "DMG " + info.GetSummonDamageString();
-            if (info.IsAetheria) return info.GetSetName();
             if (info.IsArmorClothing) return info.GetSetName();
             if (info.IsJewelry) return info.GetSetName();
             return "";
@@ -97,8 +96,7 @@ namespace OracleOfDereth
         {
             if (info.IsWeapon) return info.GetWeaponODModsString(); // OD + attack/melee mods, e.g. "OD +5 | 18% | 20%"
             if (info.IsCloak) return info.GetRatingsString();
-            if (info.IsSummon) return "DEF " + info.GetSummonDefenseString();
-            if (info.IsAetheria) return info.GetAetheriaSurge();
+            if (info.IsSummon) return info.GetSummonString(); // "DMG x% | DEF y%"
             if (info.IsArmorClothing) return info.GetRatingsString();
             if (info.IsJewelry) return info.GetRatingsString();
             return "";
@@ -109,7 +107,7 @@ namespace OracleOfDereth
             string col4 = "";
             if (info.IsWeapon) col4 = info.GetCantripsString();
             else if (info.IsCloak) col4 = $"Level {info.GetCloakLevel()}, {info.GetFullSetName()}";
-            else if (info.IsAetheria) col4 = info.GetAetheriaLevel() > 0 ? "Level " + info.GetAetheriaLevel() : "";
+            else if (info.IsAetheria) col4 = info.GetAetheriaSummaryString(); // "Level 5, Defense, Destruction"
             else if (info.IsArmorClothing || info.IsJewelry) col4 = info.GetSpellsString();
             else if (info.IsRare) col4 = info.GetSpellsString();
             else if (info.IsSalvage) col4 = info.GetSalvageDescriptionString();

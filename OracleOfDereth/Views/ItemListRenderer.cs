@@ -145,6 +145,10 @@ namespace OracleOfDereth
                 ((HudStaticText)row[6]).Text = item.SummaryCol4;
                 ((HudStaticText)row[7]).Text = item.Id.ToString();
 
+                // Center the Effect and Info columns; the rest keep their default left alignment.
+                ((HudStaticText)row[4]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
+                ((HudStaticText)row[5]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
+
                 SetRowColor(row, selected: item.Id == selectedId && selectedId != 0, loading: !item.IsIdentified);
             }
 
