@@ -125,6 +125,13 @@ namespace OracleOfDereth
             if (wield.Length > 0 && (info.IsSummon || info.GetWieldReqName() != "Wield Lvl")) parts.Add(wield);
             if (tinks.Length > 0) parts.Add(tinks);
 
+            // Weapons: tack any missile/magic defense bonus and the Multi-Strike flag on the end.
+            if (info.IsWeapon)
+            {
+                string extras = info.GetWeaponExtrasString();
+                if (extras.Length > 0) parts.Add(extras);
+            }
+
             return string.Join(", ", parts);
         }
 

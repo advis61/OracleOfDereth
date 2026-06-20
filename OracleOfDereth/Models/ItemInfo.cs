@@ -529,6 +529,21 @@ namespace OracleOfDereth
             return string.Join(" | ", parts);
         }
 
+        // Extra weapon attributes not shown in the other columns: missile/magic defense bonuses
+        // and the Multi-Strike flag. Comma-joined; empty when none apply.
+        public string GetWeaponExtrasString()
+        {
+            if (!IsWeapon) return "";
+
+            var parts = new List<string>();
+            double msl = GetMissileDefenseBonus();
+            double mgc = GetMagicDefenseBonus();
+            if (msl != 0) parts.Add(msl + "%msl.d");
+            if (mgc != 0) parts.Add(mgc + "%mgc.d");
+            if (IsMultiStrike()) parts.Add("Multi-Strike");
+            return string.Join(", ", parts);
+        }
+
         // The weapon's damage type / element (Acid, Fire, Cold, Slash, …) for melee, missile
         // and casters alike. Casters store their element under WandElemDmgType (45) rather than
         // the DamageType key the physical weapons use, so pick the right key by class. The value
