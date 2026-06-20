@@ -2,14 +2,14 @@
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.13.0/OracleOfDerethInstaller-1.13.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.14.0/OracleOfDerethInstaller-1.14.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
 ## Getting Started
 - This plugin requires the latest [Decal](https://www.decaldev.com/), v2.9.8.3
 
-- Download the latest .exe from above. Or check out all [Oracle of Dereth Releases](https://github.com/advis61/OracleOfDereth/releases).
+- Download the latest .exe from above.
 
 - Run the .exe program.
 
@@ -22,6 +22,16 @@ To upgrade from a previous version, just download and re-run the .exe file.
 - If the game crashes at the login screen, make sure to upgrade to latest Decal v2.9.8.3
 
 ## Features
+
+Void Target View
+
+![Void Target View](./docs/Void.png)
+
+
+Trade Browser
+
+![Trade Browser](./docs/Trade.png)
+
 
 Status HUD
 
@@ -86,10 +96,6 @@ Flagging quests
 Titles
 
 ![Titles Tracker](./docs/Titles.png)
-
-Void Target View
-
-![Void Target View](./docs/Void.png)
 
 Summon Score
 
@@ -195,6 +201,18 @@ Displays your society, number of ribbons to next rank, number of ribbons today, 
 ### Titles Tracker
 
 Displays the titles you've completed.
+
+### Trade Browser
+
+Automatically displays whenever you open a trade window with another player or bot.
+
+- Smart Search & Sort: Displays a searchable, sortable list of items currently in the trade window.
+
+- Persistent ID Queue: Identifies items using a background priority queue and saves the item identification data between trades to minimize lag.
+
+- Trade Bot Automation: Intended to work alongside the [CyTrader](https://gitlab.com/Cyprias/cytrader) bot (no affiliation). When browsing a compatible bot, the plugin will automatically calculate points per item, add items to the trade window, and balance the transaction with the correct number of MMDs (Trade Notes).
+
+Important: Oracle of Dereth cannot automatically complete transactions. For safety, the player must always manually click the "Trade" button to finalize any deal.
 
 ### Void Target View
 
