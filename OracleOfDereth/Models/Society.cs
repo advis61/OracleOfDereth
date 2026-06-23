@@ -75,52 +75,57 @@ namespace OracleOfDereth
         public static string GetRankName()
         {
             int value = GetRankValue();
-            if (value >= 995) return "Master";
-            if (value >= 601) return "Lord";
-            if (value >= 301) return "Knight";
-            if (value >= 101) return "Adept";
-            if (value >= 1) return "Initiate";
+            if (value > 1000) return "Master";
+            if (value > 600) return "Lord";
+            if (value > 300) return "Knight";
+            if (value > 100) return "Adept";
+            if (value > 0) return "Initiate";
             return "None";
         }
 
+        // Per-rank cap on ribbons turned in per day. NOTE: only valid up to Lord
+        // (value <= 1000). Master (1001+) has no daily limit — it exchanges ribbons
+        // for trade tokens without touching the daily counter — so callers must
+        // special-case 1001+ rather than relying on the 200 returned here.
         public static int GetDailyLimit()
         {
             int value = GetRankValue();
-            if (value >= 601) return 200;
-            if (value >= 301) return 150;
-            if (value >= 101) return 100;
-            if (value >= 1) return 50;
+            if (value > 600) return 200;
+            if (value > 300) return 150;
+            if (value > 100) return 100;
+            if (value > 0) return 50;
             return 0;
         }
 
         public static int GetNextRankThreshold()
         {
             int value = GetRankValue();
-            if (value >= 995) return 0;
-            if (value >= 601) return 995;
-            if (value >= 301) return 595;
-            if (value >= 101) return 295;
-            if (value >= 1) return 95;
+            if (value > 994) return 0;
+            if (value > 600) return 995;
+            if (value > 300) return 595;
+            if (value > 100) return 295;
+            if (value > 0) return 95;
             return 0;
         }
 
         public static string GetNextRankName()
         {
             int value = GetRankValue();
-            if (value >= 995) return "";
-            if (value >= 601) return "Master";
-            if (value >= 301) return "Lord";
-            if (value >= 101) return "Knight";
-            if (value >= 1) return "Adept";
+            if (value > 994) return "";
+            if (value > 600) return "Master";
+            if (value > 300) return "Lord";
+            if (value > 100) return "Knight";
+            if (value > 0) return "Adept";
             return "";
         }
 
-        // True at the floor of a rank — initiation (1) or just-promoted (101, 301, 601).
-        // The +1 came from the promotion itself; no ribbons turned in this tier yet.
+        // True at the floor of a rank — initiation (1) or just-promoted (101, 301,
+        // 601, 1001). The +1 came from the promotion itself; no ribbons turned in
+        // this tier yet.
         public static bool IsFreshlyPromoted()
         {
             int value = GetRankValue();
-            return value == 1 || value == 101 || value == 301 || value == 601;
+            return value == 1 || value == 101 || value == 301 || value == 601 || value == 1001;
         }
 
         // Rank value minus the +1 grant when IsFreshlyPromoted, so the displayed
@@ -160,11 +165,11 @@ namespace OracleOfDereth
             int value = GetRankValue();
             switch (rankName)
             {
-                case "Initiate": return value >= 1;
-                case "Adept": return value >= 101;
-                case "Knight": return value >= 301;
-                case "Lord": return value >= 601;
-                case "Master": return value >= 995;
+                case "Initiate": return value > 0;
+                case "Adept": return value > 100;
+                case "Knight": return value > 300;
+                case "Lord": return value > 600;
+                case "Master": return value > 1000;
                 default: return false;
             }
         }
@@ -175,11 +180,11 @@ namespace OracleOfDereth
         public static int GetRankMax()
         {
             int value = GetRankValue();
-            if (value >= 995) return 1000;
-            if (value >= 601) return 995;
-            if (value >= 301) return 595;
-            if (value >= 101) return 295;
-            if (value >= 1) return 95;
+            if (value > 1000) return 1000;
+            if (value > 600) return 995;
+            if (value > 300) return 595;
+            if (value > 100) return 295;
+            if (value > 0) return 95;
             return 0;
         }
     }
