@@ -92,9 +92,6 @@ namespace OracleOfDereth
         private static DateTime LastCheckTime = DateTime.MinValue;
         private static readonly TimeSpan CheckDebounce = TimeSpan.FromMilliseconds(1500);
 
-        // Ask the bot for its point values once per trade (on first bot detection).
-        private static bool AskedPoints = false;
-
         // Fired whenever the visible state changes so the view can repaint.
         public static Action OnChanged;
 
@@ -168,19 +165,23 @@ namespace OracleOfDereth
         }
 
         // A CyWorks-style "// ..." tell from the partner — flag it as a CyTrader bot.
+        // This is a generic bot tell (not the points list), so we still need to ask
+        // the bot for its point values.
         public static void NoteBotTell(string chatText)
         {
-            Match m = TradeStartedRegex.Match(chatText);
-            if (m.Success && IsPartner(m.Groups[1].Value)) MarkCyTrader();
+            if (PartnerMatch(TradeStartedRegex, chatText) != null) MarkCyTrader(askPoints: true);
         }
 
         // The bot's "points" reply. Pull our note's value out of the list to learn the MMD rate.
         public static void NotePointsTell(string chatText)
         {
-            Match m = PointsReplyRegex.Match(chatText);
-            if (!m.Success || !IsPartner(m.Groups[1].Value)) return;
+            Match m = PartnerMatch(PointsReplyRegex, chatText);
+            if (m == null) return;
 
-            MarkCyTrader();
+            // This tell IS the points list, so we already have what "points" would
+            // fetch — mark the bot but don't ask again (some bots send the list
+            // unprompted on trade open; re-asking just makes them repeat it).
+            MarkCyTrader(askPoints: false);
 
             PointsList = m.Groups[2].Value.Trim();
 
@@ -198,8 +199,8 @@ namespace OracleOfDereth
         // MMDs with whether we can afford it, and records what Add would need to pay.
         public static void NotePriceTell(string chatText)
         {
-            Match m = CheckPriceRegex.Match(chatText);
-            if (!m.Success || !IsPartner(m.Groups[1].Value)) return;
+            Match m = PartnerMatch(CheckPriceRegex, chatText);
+            if (m == null) return;
 
             PricedItem = m.Groups[2].Value;
             PricePoints = m.Groups[3].Value;
@@ -246,7 +247,7 @@ namespace OracleOfDereth
             if (mmds <= 0) return;
 
             Bank.Withdraw(mmds);
-            Util.Chat($"Withdrawing {mmds} MMD from bank", Util.ColorPink, "[Oracle of Dereth] ");
+            Util.Chat($"Withdrawing {mmds} MMD from bank", Util.ColorPink);
         }
 
         // Re-run affordability for the last-checked item against the notes we now hold — same as a
@@ -340,7 +341,7 @@ namespace OracleOfDereth
 
             if (total < notes)
             {
-                Util.Chat($"Not enough {PaymentItemName}: need {notes}, have {total}.", Util.ColorPink, "[Oracle of Dereth] ");
+                Util.Chat($"Not enough {PaymentItemName}: need {notes}, have {total}.", Util.ColorPink);
                 return;
             }
 
@@ -366,7 +367,7 @@ namespace OracleOfDereth
                 }
             }
 
-            Util.Chat($"Paying {notes} {PaymentItemName} for {PricedItem}.", Util.ColorPink, "[Oracle of Dereth] ");
+            Util.Chat($"Paying {notes} {PaymentItemName} for {PricedItem}.", Util.ColorPink);
 
             // Notes are now in the trade window — guide the player through the final in-game step.
             TradeStatus = "All done! Please click the in-game Trade button to complete your transaction.";
@@ -423,7 +424,6 @@ namespace OracleOfDereth
             TradeStatus = "";
             CanCheckout = false;
             MmdShortfall = 0;
-            AskedPoints = false;
             LastCheckId = 0;
             LastCheckNotes = 0;
             LastCheckTime = DateTime.MinValue;
@@ -432,17 +432,18 @@ namespace OracleOfDereth
             OnChanged?.Invoke();
         }
 
-        private static void MarkCyTrader()
+        // Flag the partner as a CyTrader/SkunkTrader bot — once per trade. The first
+        // bot signal wins and every later one is a no-op, so the bot is marked (and
+        // "points" asked) at most once. askPoints is true when the signal was a
+        // generic "// " tell and we still need the bot's point values, so we request
+        // them; it's false when the signal was the points reply itself, which already
+        // carries them (asking again would just make the bot repeat its list).
+        private static void MarkCyTrader(bool askPoints)
         {
-            IsCyTrader = true;
+            if (IsCyTrader) return;
 
-            // Learn the MMD rate once per trade. The reply (NotePointsTell) sets the status line
-            // to balance + the bot's points list.
-            if (!AskedPoints && !string.IsNullOrEmpty(PartnerName))
-            {
-                AskedPoints = true;
-                SendCommand("points");
-            }
+            IsCyTrader = true;
+            if (askPoints) SendCommand("points");
             OnChanged?.Invoke();
         }
 
@@ -450,6 +451,15 @@ namespace OracleOfDereth
         private static bool IsPartner(string sender)
         {
             return !string.IsNullOrEmpty(PartnerName) && sender.IndexOf(PartnerName, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        // Match a bot chat pattern, returning the Match only when group 1 (the sender)
+        // is our trade partner — null otherwise. Centralizes the "match + is-it-really-
+        // the-partner?" gate that every Note*Tell handler shares.
+        private static Match PartnerMatch(Regex regex, string chatText)
+        {
+            Match m = regex.Match(chatText);
+            return m.Success && IsPartner(m.Groups[1].Value) ? m : null;
         }
     }
 }

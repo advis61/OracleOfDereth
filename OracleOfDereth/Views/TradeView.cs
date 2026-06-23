@@ -288,7 +288,7 @@ namespace OracleOfDereth
                 Item item = RequireSelectedTradeItem();
                 if (item == null) return;
                 Trade.Add(item.Id);
-                Util.Chat($"Adding {item.Name} from {Trade.PartnerName}", Util.ColorPink, "[Oracle of Dereth] ");
+                Util.Chat($"Adding {item.Name} from {Trade.PartnerName}", Util.ColorPink);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -359,13 +359,13 @@ namespace OracleOfDereth
         {
             if (string.IsNullOrEmpty(Trade.PartnerName))
             {
-                Util.Chat("No trade partner.", Util.ColorPink, "[Oracle of Dereth] ");
+                Util.Chat("No trade partner.", Util.ColorPink);
                 return null;
             }
             Item item = TradeItems.Items.FirstOrDefault(t => t.Id == Target.CurrentTargetId);
             if (item == null)
             {
-                Util.Chat("Select one of the trade items first.", Util.ColorPink, "[Oracle of Dereth] ");
+                Util.Chat("Select one of the trade items first.", Util.ColorPink);
                 return null;
             }
             return item;
