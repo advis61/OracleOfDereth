@@ -24,7 +24,12 @@ namespace OracleOfDereth
         // Chat patterns for the bot, matched in PluginCore's chat handler (same style as
         // Target/QuestFlag). Group 1 is the sender; CheckPriceRegex also captures item + points.
         // Both CyTrader and SkunkTrader (same author) prefix bot tells with "// ".
-        public static readonly Regex TradeStartedRegex = new Regex("^(.+?) tells you, \"//");
+
+        // The bot's opening trade tell. The CyTrader bots we support announce themselves
+        // with "// Adding ..." as they drop items into the trade window — we key detection
+        // on that exact greeting so a different bot that opens with e.g. "// Showing ..."
+        // (which we don't support) isn't mistaken for one we can drive.
+        public static readonly Regex TradeStartedRegex = new Regex("^(.+?) tells you, \"// Adding");
 
         // Price-check reply. CyTrader says "<item> is worth <N> points"; SkunkTrader says
         // "<item> is <N> points[, I have <amount> available]". "worth" is optional to match both.
@@ -164,24 +169,22 @@ namespace OracleOfDereth
             SendCommand("check " + itemId);
         }
 
-        // A CyWorks-style "// ..." tell from the partner — flag it as a CyTrader bot.
-        // This is a generic bot tell (not the points list), so we still need to ask
-        // the bot for its point values.
+        // The bot's "// Adding ..." opening tell — flag it as a CyTrader bot. This isn't
+        // the points list, so we still need to ask the bot for its point values.
         public static void NoteBotTell(string chatText)
         {
-            if (PartnerMatch(TradeStartedRegex, chatText) != null) MarkCyTrader(askPoints: true);
+            if (PartnerMatch(TradeStartedRegex, chatText) != null) MarkCyTrader();
         }
 
         // The bot's "points" reply. Pull our note's value out of the list to learn the MMD rate.
+        // Only meaningful once a "// Adding" tell has confirmed a CyTrader bot — ignore it
+        // otherwise, so an unsupported bot's payment list can't drive us.
         public static void NotePointsTell(string chatText)
         {
+            if (!IsCyTrader) return;
+
             Match m = PartnerMatch(PointsReplyRegex, chatText);
             if (m == null) return;
-
-            // This tell IS the points list, so we already have what "points" would
-            // fetch — mark the bot but don't ask again (some bots send the list
-            // unprompted on trade open; re-asking just makes them repeat it).
-            MarkCyTrader(askPoints: false);
 
             PointsList = m.Groups[2].Value.Trim();
 
@@ -199,6 +202,8 @@ namespace OracleOfDereth
         // MMDs with whether we can afford it, and records what Add would need to pay.
         public static void NotePriceTell(string chatText)
         {
+            if (!IsCyTrader) return;
+
             Match m = PartnerMatch(CheckPriceRegex, chatText);
             if (m == null) return;
 
@@ -432,18 +437,15 @@ namespace OracleOfDereth
             OnChanged?.Invoke();
         }
 
-        // Flag the partner as a CyTrader/SkunkTrader bot — once per trade. The first
-        // bot signal wins and every later one is a no-op, so the bot is marked (and
-        // "points" asked) at most once. askPoints is true when the signal was a
-        // generic "// " tell and we still need the bot's point values, so we request
-        // them; it's false when the signal was the points reply itself, which already
-        // carries them (asking again would just make the bot repeat its list).
-        private static void MarkCyTrader(bool askPoints)
+        // Flag the partner as a CyTrader bot — once per trade. The first "// Adding"
+        // tell wins and every later one is a no-op, so we mark the bot and ask it for
+        // its point values exactly once.
+        private static void MarkCyTrader()
         {
             if (IsCyTrader) return;
 
             IsCyTrader = true;
-            if (askPoints) SendCommand("points");
+            SendCommand("points");
             OnChanged?.Invoke();
         }
 
