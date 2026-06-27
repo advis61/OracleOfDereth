@@ -213,13 +213,12 @@ namespace OracleOfDereth
 
             // Quest URL
             if (col == 0 && societyQuest.Url.Length > 0) {
-                Util.Think($"{societyQuest.Name}: {societyQuest.Url}");
-                Util.ClipboardCopy(societyQuest.Url);
+                Util.ThinkQuestUrl($"{societyQuest.Name}: {societyQuest.Url}", societyQuest.Url);
             }
 
             // Quest Hint
             if ((col == 1 || col == 2) && societyQuest.Hint.Length > 0) {
-                Util.Think($"{societyQuest.Name}: {societyQuest.Hint}");
+                Util.ThinkQuestDirections($"{societyQuest.Name}: {societyQuest.Hint}", societyQuest.Hint);
             }
 
             // Quest Flag

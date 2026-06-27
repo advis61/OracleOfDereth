@@ -78,13 +78,12 @@ namespace OracleOfDereth
 
             // Quest URL
             if (col == 0 && creditQuest.Url.Length > 0) {
-                Util.Think($"{creditQuest.Name}: {creditQuest.Url}");
-                Util.ClipboardCopy(creditQuest.Url);
+                Util.ThinkQuestUrl($"{creditQuest.Name}: {creditQuest.Url}", creditQuest.Url);
             }
 
             // Quest Hint
             if (col == 1 && creditQuest.Hint.Length > 0) {
-                Util.Think($"{creditQuest.Name}: {creditQuest.Hint}");
+                Util.ThinkQuestDirections($"{creditQuest.Name}: {creditQuest.Hint}", creditQuest.Hint);
             }
 
             // Quest Flag

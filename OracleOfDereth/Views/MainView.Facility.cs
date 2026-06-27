@@ -85,14 +85,13 @@ namespace OracleOfDereth
             // Quest URL
             if (col == 0 && facilityQuest.Url.Length > 0)
             {
-                Util.Think($"{facilityQuest.Name}: {facilityQuest.Url}");
-                Util.ClipboardCopy(facilityQuest.Url);
+                Util.ThinkQuestUrl($"{facilityQuest.Name}: {facilityQuest.Url}", facilityQuest.Url);
             }
 
             // Quest Hint
             if (col == 1 && facilityQuest.Hint.Length > 0)
             {
-                Util.Think($"{facilityQuest.Name}: {facilityQuest.Hint}");
+                Util.ThinkQuestDirections($"{facilityQuest.Name}: {facilityQuest.Hint}", facilityQuest.Hint);
             }
 
             // Quest Facility

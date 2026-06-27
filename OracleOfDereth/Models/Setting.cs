@@ -32,6 +32,8 @@ namespace OracleOfDereth
         public static Setting AnnouncePlayers;
         public static Setting BuffsRemaining;
         public static Setting CheckForUpdates;
+        public static Setting CopyQuestDirections;
+        public static Setting CopyQuestUrl;
         public static Setting ShowNearbyWcid;
         public static Setting ShowTradeWindow;
         public static Setting SummonScore;
@@ -47,6 +49,8 @@ namespace OracleOfDereth
             AnnouncePlayers = Register("Announce Nearby Players", "AnnouncePlayers", YesNo, "Yes");
             CheckForUpdates = Register("Check For Updates On Login", "CheckForUpdates", YesNo, "Yes");
             BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
+            CopyQuestUrl = Register("Copy Quest URL to Clipboard", "CopyQuestUrl", YesNo, "Yes");
+            CopyQuestDirections = Register("Copy Quest Directions to Clipboard", "CopyQuestDirections", YesNo, "Yes");
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "NearbyWcid", YesNo, "No");
             WeaponScore = Register("Show Weapons Score", "WeaponScore", YesNo, "Yes");

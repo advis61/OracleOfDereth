@@ -79,13 +79,12 @@ namespace OracleOfDereth
 
             // Quest URL
             if (col == 0 && augmentation.Url.Length > 0) {
-                Util.Think($"{augmentation.Name}: {augmentation.Url}");
-                Util.ClipboardCopy(augmentation.Url);
+                Util.ThinkQuestUrl($"{augmentation.Name}: {augmentation.Url}", augmentation.Url);
             }
 
             // Quest Hint
             if (col > 0 && augmentation.Hint.Length > 0) {
-                Util.Think($"{augmentation.Name}: {augmentation.Hint}");
+                Util.ThinkQuestDirections($"{augmentation.Name}: {augmentation.Hint}", augmentation.Hint);
             }
         }
 

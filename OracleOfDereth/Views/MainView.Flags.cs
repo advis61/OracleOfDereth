@@ -80,14 +80,13 @@ namespace OracleOfDereth
             // Quest URL
             if (col == 0 && flagQuest.Url.Length > 0)
             {
-                Util.Think($"{flagQuest.Name}: {flagQuest.Url}");
-                Util.ClipboardCopy(flagQuest.Url);
+                Util.ThinkQuestUrl($"{flagQuest.Name}: {flagQuest.Url}", flagQuest.Url);
             }
 
             // Quest Hint
             if (col == 1 && flagQuest.Hint.Length > 0)
             {
-                Util.Think($"{flagQuest.Name}: {flagQuest.Hint}");
+                Util.ThinkQuestDirections($"{flagQuest.Name}: {flagQuest.Hint}", flagQuest.Hint);
             }
 
             // Quest Flag

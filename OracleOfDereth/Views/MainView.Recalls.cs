@@ -74,14 +74,13 @@ namespace OracleOfDereth
             // Quest URL
             if (col == 0 && recall.Url.Length > 0)
             {
-                Util.Think($"{recall.Name}: {recall.Url}");
-                Util.ClipboardCopy(recall.Url);
+                Util.ThinkQuestUrl($"{recall.Name}: {recall.Url}", recall.Url);
             }
 
             // Quest Hint
             if (col == 1 && recall.Hint.Length > 0)
             {
-                Util.Think($"{recall.Name} Recall: {recall.Hint}");
+                Util.ThinkQuestDirections($"{recall.Name} Recall: {recall.Hint}", recall.Hint);
             }
 
             // Debug

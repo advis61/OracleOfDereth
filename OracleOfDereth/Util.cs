@@ -74,9 +74,26 @@ namespace OracleOfDereth
             CoreManager.Current.Actions.InvokeChatParser(message);
         }
 
+        // Outputs a message, normally as a /tell to self ("think"). Holding a
+        // modifier key reroutes it to a channel instead:
+        //   ALT   -> /a  (allegiance)
+        //   SHIFT -> /f  (fellowship)
+        //   CTRL  -> /cg (chat group)
         public static void Think(string message)
         {
-            CoreManager.Current.Actions.InvokeChatParser(string.Format("/tell {0}, {1}", CoreManager.Current.CharacterFilter.Name, message));
+            var mods = System.Windows.Forms.Control.ModifierKeys;
+            string command;
+
+            if ((mods & System.Windows.Forms.Keys.Alt) != 0)
+                command = $"/a {message}";
+            else if ((mods & System.Windows.Forms.Keys.Shift) != 0)
+                command = $"/f {message}";
+            else if ((mods & System.Windows.Forms.Keys.Control) != 0)
+                command = $"/cg {message}";
+            else
+                command = $"/tell {CoreManager.Current.CharacterFilter.Name}, {message}";
+
+            CoreManager.Current.Actions.InvokeChatParser(command);
         }
 
         public static void ClipboardCopy(string message)
@@ -84,12 +101,25 @@ namespace OracleOfDereth
             try
             {
                 System.Windows.Forms.Clipboard.SetText(message);
-                Chat("Copied URL to clipboard.", Util.ColorPink);
+                Chat("Copied to clipboard", Util.ColorPink);
             }
-            catch (Exception ex)
-            {
-                Chat("Failed to copy URL to clipboard: " + ex.Message, Util.ColorPink);
-            }
+            catch { }
+        }
+
+        // Think a quest URL line, and copy the URL to the clipboard if the
+        // "Copy Quest URL to Clipboard" setting is enabled.
+        public static void ThinkQuestUrl(string message, string url)
+        {
+            Think(message);
+            if (Setting.CopyQuestUrl.IsYes) { ClipboardCopy(url); }
+        }
+
+        // Think a quest directions/hint line, and copy the directions to the
+        // clipboard if the "Copy Quest Directions to Clipboard" setting is enabled.
+        public static void ThinkQuestDirections(string message, string directions)
+        {
+            Think(message);
+            if (Setting.CopyQuestDirections.IsYes) { ClipboardCopy(directions); }
         }
 
         // Rewrites any /wiki/X URL to use the currently selected wiki host

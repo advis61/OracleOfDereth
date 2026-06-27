@@ -82,13 +82,12 @@ namespace OracleOfDereth
 
             // Quest URL
             if (col == 0 && augmentation.Url.Length > 0) {
-                Util.Think($"{augmentation.Name}: {augmentation.Url}");
-                Util.ClipboardCopy(augmentation.Url);
+                Util.ThinkQuestUrl($"{augmentation.Name}: {augmentation.Url}", augmentation.Url);
             }
 
             // Quest Hint
             if (col > 0 && augmentation.Hint.Length > 0) {
-                Util.Think($"{augmentation.Name}: {augmentation.Hint}");
+                Util.ThinkQuestDirections($"{augmentation.Name}: {augmentation.Hint}", augmentation.Hint);
             }
         }
 
@@ -138,13 +137,12 @@ namespace OracleOfDereth
 
             // Quest URL
             if (col == 0 && augQuest.Url.Length > 0) {
-                Util.Think($"{augQuest.Name}: {augQuest.Url}");
-                Util.ClipboardCopy(augQuest.Url);
+                Util.ThinkQuestUrl($"{augQuest.Name}: {augQuest.Url}", augQuest.Url);
             }
 
             // Quest Hint
             if (col == 1 && augQuest.Hint.Length > 0) {
-                Util.Think($"{augQuest.Name}: {augQuest.Hint}");
+                Util.ThinkQuestDirections($"{augQuest.Name}: {augQuest.Hint}", augQuest.Hint);
             }
 
             // Quest Flag

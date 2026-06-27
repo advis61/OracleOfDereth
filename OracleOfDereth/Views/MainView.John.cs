@@ -119,13 +119,12 @@ namespace OracleOfDereth
 
             // Quest URL
             if (col == 0 && johnQuest.Url.Length > 0) {
-                Util.Think($"{johnQuest.Name}: {johnQuest.Url}");
-                Util.ClipboardCopy(johnQuest.Url);
+                Util.ThinkQuestUrl($"{johnQuest.Name}: {johnQuest.Url}", johnQuest.Url);
             }
 
             // Quest Hint
             if (col == 1 && johnQuest.Hint.Length > 0) {
-                Util.Think($"{johnQuest.Name}: {johnQuest.Hint}");
+                Util.ThinkQuestDirections($"{johnQuest.Name}: {johnQuest.Hint}", johnQuest.Hint);
             }
 
             // Quest Flag

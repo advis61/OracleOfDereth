@@ -78,14 +78,13 @@ namespace OracleOfDereth
 
             if(col == 0)
             {
-                Util.Think($"#{marker.Number} {marker.Name}: {marker.Url()}");
-                Util.ClipboardCopy(marker.Url());
+                Util.ThinkQuestUrl($"#{marker.Number} {marker.Name}: {marker.Url()}", marker.Url());
             }
 
             // Quest Hint
             if (col > 0 && col < 3 && marker.Hint.Length > 0)
             {
-                Util.Think($"#{marker.Number} {marker.Name}: {marker.Hint}");
+                Util.ThinkQuestDirections($"#{marker.Number} {marker.Name}: {marker.Hint}", marker.Hint);
             }
 
             if(col == 3)

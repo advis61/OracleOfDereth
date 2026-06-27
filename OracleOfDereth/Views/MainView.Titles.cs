@@ -112,12 +112,11 @@ namespace OracleOfDereth
 
             // Quest URL
             if (col == 0 && title.Url.Length > 0) {
-                Util.Think($"{title.Name}: {title.Url}");
-                Util.ClipboardCopy(title.Url);
+                Util.ThinkQuestUrl($"{title.Name}: {title.Url}", title.Url);
             }
 
             if((col == 1 || col == 2 || col == 3) && title.Hint.Length > 0) {
-                Util.Think($"{title.Name}: {title.Hint}");
+                Util.ThinkQuestDirections($"{title.Name}: {title.Hint}", title.Hint);
             }
 
             // Debug
@@ -227,8 +226,7 @@ namespace OracleOfDereth
             // Quest URL
             if (col == 0 && title.Url.Length > 0)
             {
-                Util.Think($"{title.Name}: {title.Url}");
-                Util.ClipboardCopy(title.Url);
+                Util.ThinkQuestUrl($"{title.Name}: {title.Url}", title.Url);
             }
 
             // Debug
