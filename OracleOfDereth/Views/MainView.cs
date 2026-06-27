@@ -43,7 +43,7 @@ namespace OracleOfDereth
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
         {
             // Status Tab
-            { 1_00, 210 }, // HUD
+            { 1_00, 240 }, // HUD
             { 1_01, 460 }, // Buffs
             { 1_02, 290 }, // Nearby
             { 1_03, 250 }, // Fellowship
@@ -51,10 +51,10 @@ namespace OracleOfDereth
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
-            { 2_01, 350 }, // Cantrips
-            { 2_02, 350 }, // Credits
+            { 2_01, 365 }, // Cantrips
+            { 2_02, 365 }, // Credits
             { 2_03, 650 }, // Luminance
-            { 2_04, 350 }, // Recalls
+            { 2_04, 365 }, // Recalls
             { 2_05, 530 }, // Society
 
             // Quests Tab

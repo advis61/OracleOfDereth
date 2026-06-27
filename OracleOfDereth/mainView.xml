@@ -162,8 +162,7 @@
 				<page label="Cantrips">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="CantripName" left="1" top="5" width="200" height="17" text="Cantrip Name"/>
-						<control progid="DecalControls.StaticText" name="CantripLevel" left="233" top="5" width="0" height="17" text="Level"/>
-						<control progid="DecalControls.List" name="CantripsList" left="0" top="23" width="640" height="2000">
+						<control progid="DecalControls.List" name="CantripsList" left="0" top="23" width="365" height="2000">
 							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="200" />
 							<column progid="DecalControls.TextColumn" name="Level" fixedwidth="100" />
