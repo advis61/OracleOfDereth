@@ -107,13 +107,6 @@ namespace OracleOfDereth
             4208, // Spectral Flame
             4221, // Spectral Life Magic Mastery
             5023, // Spectral Two Handed Combat Mastery
-            5032, // Spectral Item Expertise
-            5168, // a spectacular view of the Mhoire lands
-            5169, // a descent into the Mhoire catacombs
-            5170, // a descent into the Mhoire catacombs
-            5171, // Spectral Fountain Sip (Feeling good)
-            5172, // Spectral Fountain Sip (Blood poisoned)
-            5173, // Spectral Fountain Sip (Wounds poisoned)
             5435, // Spectral Void Magic Mastery
             5904, // Spectral Dual Wield Mastery
             5906, // Spectral Recklessness Mastery
