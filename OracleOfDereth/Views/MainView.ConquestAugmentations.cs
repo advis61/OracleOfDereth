@@ -1,4 +1,3 @@
-using Decal.Adapter;
 using System;
 using System.Collections.Generic;
 using VirindiViewService.Controls;
@@ -34,7 +33,7 @@ namespace OracleOfDereth
         {
             // The advanced augs only exist on Conquest. Off-server, show "None" and hide the
             // list, refresh button, and column headers.
-            bool available = CoreManager.Current.CharacterFilter.Server == "Conquest";
+            bool available = Server.IsConquest;
 
             ConquestAugsName.Visible = available;
             ConquestAugsLevel.Visible = available;

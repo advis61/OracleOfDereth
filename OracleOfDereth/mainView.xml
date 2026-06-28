@@ -61,7 +61,7 @@
 						</control>
 					</control>
 				</page>
-				<page label="Fellowship">
+				<page label="Fellow">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="FellowshipName" left="1" top="5" width="150" height="17" text="No Fellowship"/>
 						<control progid="DecalControls.List" name="FellowshipList" left="0" top="23" width="640" height="75">

@@ -399,11 +399,7 @@ namespace OracleOfDereth
 
         public static int MaxFellowCount()
         {
-            switch (CoreManager.Current.CharacterFilter.Server)
-            {
-                case "Conquest": return 14;
-                default: return 9;            
-            }
+            return Server.IsConquest ? 14 : 9;
         }
 
         public unsafe static bool IsFull()

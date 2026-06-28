@@ -66,7 +66,7 @@ namespace OracleOfDereth
                     };
 
                     // Uber BSD is Levistras-only
-                    if (quest.Name == "Uber BSD" && CoreManager.Current.CharacterFilter.Server != "Levistras") continue;
+                    if (quest.Name == "Uber BSD" && !Server.IsLevistras) continue;
 
                     quests.Add(quest);
                 }

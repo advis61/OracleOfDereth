@@ -90,7 +90,7 @@ namespace OracleOfDereth
 
             return new[] {
                 CoreManager.Current.CharacterFilter.Name,
-                CoreManager.Current.CharacterFilter.Server,
+                Server.Name,
                 info.GetName(),
                 info.GetObjectClassName(),
                 info.GetItemSlotName(),

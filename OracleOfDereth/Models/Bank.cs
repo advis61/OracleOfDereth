@@ -34,15 +34,15 @@ namespace OracleOfDereth
         // Servers whose bank support we already know — skip the live "/bank" probe for these.
         private static readonly Dictionary<string, bool> KnownServers = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase)
         {
-            { "Levistras", false },
-            { "Conquest", true },
+            { Server.Levistras, false },
+            { Server.Conquest, true },
         };
 
         // "/od checkbank" — resolve from the known-server list if possible, else send "/bank" and
         // wait for the server's reply.
         public static void Check()
         {
-            string server = CoreManager.Current.CharacterFilter.Server ?? "";
+            string server = Server.Name;
             if (KnownServers.TryGetValue(server, out bool known)) { Resolve(known); return; }
 
             pending = true;
@@ -56,7 +56,7 @@ namespace OracleOfDereth
         public static void ResolveKnownServer()
         {
             if (Supported != null) return;
-            string server = CoreManager.Current.CharacterFilter.Server ?? "";
+            string server = Server.Name;
             if (KnownServers.TryGetValue(server, out bool known)) Supported = known;
         }
 

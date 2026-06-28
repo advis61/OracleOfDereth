@@ -1,4 +1,3 @@
-using Decal.Adapter;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -50,7 +49,7 @@ namespace OracleOfDereth
         // Conquest — the only server with these augs.
         public static void Refresh()
         {
-            if (CoreManager.Current.CharacterFilter.Server != "Conquest") return;
+            if (!Server.IsConquest) return;
             Util.Command("/augs");
         }
 
@@ -59,7 +58,7 @@ namespace OracleOfDereth
         public static bool Matches(string text)
         {
             return text != null
-                && CoreManager.Current.CharacterFilter.Server == "Conquest"
+                && Server.IsConquest
                 && LineRegex.IsMatch(text);
         }
 

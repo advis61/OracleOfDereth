@@ -81,7 +81,7 @@ namespace OracleOfDereth
                     };
 
                     // Apostate Finale is Levistras-only
-                    if (quest.Name == "Apostate Finale" && CoreManager.Current.CharacterFilter.Server != "Levistras") continue;
+                    if (quest.Name == "Apostate Finale" && !Server.IsLevistras) continue;
 
                     quests.Add(quest);
                 }
