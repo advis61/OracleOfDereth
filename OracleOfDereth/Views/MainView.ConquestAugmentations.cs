@@ -1,0 +1,57 @@
+using System;
+using System.Collections.Generic;
+using VirindiViewService.Controls;
+
+namespace OracleOfDereth
+{
+    partial class MainView
+    {
+        public HudList ConquestAugsList { get; private set; }
+        public HudButton ConquestAugsRefresh { get; private set; }
+
+        private void InitConquestAugmentations()
+        {
+            ConquestAugsList = (HudList)view["ConquestAugsList"];
+            ConquestAugsRefresh = (HudButton)view["ConquestAugsRefresh"];
+            ConquestAugsRefresh.Hit += ConquestAugsRefresh_Hit;
+            ConquestAugsList.ClearRows();
+        }
+
+        private void DisposeConquestAugmentations()
+        {
+            ConquestAugsRefresh.Hit -= ConquestAugsRefresh_Hit;
+        }
+
+        public void UpdateConquestAugmentations()
+        {
+            UpdateConquestAugsList();
+        }
+
+        private void UpdateConquestAugsList()
+        {
+            List<ConquestAugmentation> augs = ConquestAugmentation.All;
+
+            for (int x = 0; x < augs.Count; x++)
+            {
+                HudList.HudListRowAccessor row = (x >= ConquestAugsList.RowCount)
+                    ? ConquestAugsList.AddRow()
+                    : ConquestAugsList[x];
+
+                ((HudStaticText)row[0]).Text = augs[x].Name;
+                ((HudStaticText)row[1]).Text = augs[x].Count.ToString();
+            }
+
+            while (ConquestAugsList.RowCount > augs.Count)
+            {
+                ConquestAugsList.RemoveRow(ConquestAugsList.RowCount - 1);
+            }
+        }
+
+        // Reissues "/augs" so the server reprints the levels, which the chat handler reparses
+        // into ConquestAugmentation. The list refreshes on the next tick.
+        private void ConquestAugsRefresh_Hit(object sender, EventArgs e)
+        {
+            ConquestAugmentation.Refresh();
+        }
+    }
+}

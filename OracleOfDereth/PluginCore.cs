@@ -112,6 +112,7 @@ namespace OracleOfDereth
             {
                 if(Setting.BuffsRemaining.IsYes) Util.Chat($"{Hud.BuffNowText()}", Util.ColorOrange, "[Oracle of Dereth] ");
                 if(Setting.CheckForUpdates.IsYes) UpdateChecker.Arm();
+                ConquestAugmentation.Refresh();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -271,6 +272,10 @@ namespace OracleOfDereth
                 else if (Bank.Matches(e.Text))
                 {
                     Bank.NoteChat(e.Text);
+                }
+                else if (ConquestAugmentation.Matches(e.Text))
+                {
+                    ConquestAugmentation.NoteChat(e.Text);
                 }
                 else if (Trade.CheckPriceRegex.IsMatch(e.Text))
                 {

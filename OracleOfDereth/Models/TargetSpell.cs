@@ -1,4 +1,5 @@
-﻿using Decal.Filters;
+﻿using Decal.Adapter;
+using Decal.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,13 +80,33 @@ namespace OracleOfDereth
             return (int)(DateTime.Now - CastOn).TotalSeconds;
         }
 
+        // Client property id for the "Archmage's Endurance" augmentation (+20% spell
+        // duration each, max 5). Matches AugmentationIncreasedSpellDuration server-side
+        // (PropertyInt 238, [SendOnLogin] so the client receives it).
+        private const int ArchmagesEndurancePropId = 238;
+
         public int Duration()
         {
-            if(Spell.CorrosionSpellIds.Contains(SpellId)) { return 15; }
-            if(Spell.CorruptionSpellIds.Contains(SpellId)) { return 30; }
-            if(Spell.CurseSpellIds.Contains(SpellId)) { return 30; }
+            double duration;
 
-            return (int)Spell.GetSpell(SpellId).Duration;
+            if (Spell.CorrosionSpellIds.Contains(SpellId)) { duration = 15; }
+            else if (Spell.CorruptionSpellIds.Contains(SpellId)) { duration = 30; }
+            else if (Spell.CurseSpellIds.Contains(SpellId)) { duration = 30; }
+            else { duration = Spell.GetSpell(SpellId).Duration; }
+
+            // Conquest scales void DoT duration by the caster's spell-duration augments:
+            //   duration *= 1 + (Archmage's Endurance * 0.2) + (Lum spell duration * 0.05)
+            // Archmage's Endurance is a normal client property; the luminance count isn't
+            // networked to the client, so it's scraped from "/augs" (see SpellDurationAug).
+            if (CoreManager.Current.CharacterFilter.Server == "Conquest")
+            {
+                int arch = CoreManager.Current.CharacterFilter.GetCharProperty(ArchmagesEndurancePropId);
+                int lum = ConquestAugmentation.DurationCount;
+
+                duration *= 1.0 + (arch * 0.2) + (lum * 0.05);
+            }
+
+            return (int)duration;
         }
     }
 }

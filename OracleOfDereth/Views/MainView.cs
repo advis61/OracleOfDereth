@@ -38,6 +38,7 @@ namespace OracleOfDereth
         public HudTabView StatusViewNotebook { get; private set; }
         public HudTabView CharacterViewNotebook { get; private set; }
         public HudTabView QuestsViewNotebook { get; private set; }
+        public HudTabView ConquestViewNotebook { get; private set; }
         public HudTabView AboutViewNotebook { get; private set; }
 
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
@@ -66,10 +67,13 @@ namespace OracleOfDereth
             // Titles
             { 4_00, 560 }, // Available and Unavailable
 
+            // Conquest
+            { 5_00, 365 }, // Conquest Augs
+
             // About / Settings / Help
-            { 5_00, 350 }, // About
-            { 5_01, 350 }, // Settings
-            { 5_02, 540 }, // Help
+            { 6_00, 350 }, // About
+            { 6_01, 350 }, // Settings
+            { 6_02, 540 }, // Help
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
@@ -98,10 +102,13 @@ namespace OracleOfDereth
             // Titles
             { 4_00, 545 }, // Available
 
+            // Conquest
+            { 5_00, 300 }, // Conquest Augs
+
             // About / Settings / Help
-            { 5_00, 270 }, // About
-            { 5_01, 400 }, // Settings
-            { 5_02, 340 }, // Help
+            { 6_00, 270 }, // About
+            { 6_01, 400 }, // Settings
+            { 6_02, 340 }, // Help
         };
 
         // Assign Images Tracking
@@ -143,6 +150,10 @@ namespace OracleOfDereth
                 QuestsViewNotebook = (HudTabView)view["QuestsViewNotebook"];
                 QuestsViewNotebook.OpenTabChange += Notebook_OpenTabChange;
 
+                // Conquest Notebook
+                ConquestViewNotebook = (HudTabView)view["ConquestViewNotebook"];
+                ConquestViewNotebook.OpenTabChange += Notebook_OpenTabChange;
+
                 // About Notebook
                 AboutViewNotebook = (HudTabView)view["AboutViewNotebook"];
                 AboutViewNotebook.OpenTabChange += Notebook_OpenTabChange;
@@ -157,6 +168,7 @@ namespace OracleOfDereth
                 InitFlags();
                 InitFacility();
                 InitTitles();
+                InitConquestAugmentations();
                 InitAugmentations();
                 InitCantrips();
                 InitCredits();
@@ -187,6 +199,7 @@ namespace OracleOfDereth
                 CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 StatusViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                ConquestViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 AboutViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
                 DisposeItems();
@@ -197,6 +210,7 @@ namespace OracleOfDereth
                 DisposeFlags();
                 DisposeFacility();
                 DisposeTitles();
+                DisposeConquestAugmentations();
                 DisposeAugmentations();
                 DisposeCredits();
                 DisposeRecalls();
@@ -219,7 +233,8 @@ namespace OracleOfDereth
             if (mainTab == 1) { return (mainTab * 100) + StatusViewNotebook.CurrentTab; }
             if (mainTab == 2) { return (mainTab * 100) + CharacterViewNotebook.CurrentTab; }
             if (mainTab == 3) { return (mainTab * 100) + QuestsViewNotebook.CurrentTab; }
-            if (mainTab == 5) { return (mainTab * 100) + AboutViewNotebook.CurrentTab; }
+            if (mainTab == 5) { return (mainTab * 100) + ConquestViewNotebook.CurrentTab; }
+            if (mainTab == 6) { return (mainTab * 100) + AboutViewNotebook.CurrentTab; }
 
             // Main Tab
             return mainTab * 100;
@@ -323,10 +338,13 @@ namespace OracleOfDereth
             if (currentTab == 4_00) { UpdateTitles(); }
             if (currentTab == 4_01) { UpdateTitles(); }
 
+            // Conquest Tab
+            if (currentTab == 5_00) { UpdateConquestAugmentations(); }
+
             // About / Settings / Help
-            if (currentTab == 5_00) {; }
-            if (currentTab == 5_01) { UpdateSettings(); }
-            if (currentTab == 5_02) { UpdateHelp(); }
+            if (currentTab == 6_00) {; }
+            if (currentTab == 6_01) { UpdateSettings(); }
+            if (currentTab == 6_02) { UpdateHelp(); }
         }
 
         // Selected target changed
