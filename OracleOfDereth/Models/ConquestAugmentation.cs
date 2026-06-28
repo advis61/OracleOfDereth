@@ -37,6 +37,10 @@ namespace OracleOfDereth
         private static readonly Regex LineRegex = new Regex(
             @"\b(Creature|Item|Life|War|Void|Duration|Specialization|Melee|Missile):\s*([\d,]+)\b");
 
+        // Whether "/augs" has been issued yet. Lets the Custom Augs tab lazy-refresh the first
+        // time it's shown instead of running on login (mirrors QuestFlag.MyQuestsRan / ConquestBank).
+        public static bool Ran = false;
+
         public static ConquestAugmentation Get(string name) => All.FirstOrDefault(a => a.Name == name);
 
         // Spell-duration luminance aug count; each adds +5% to void DoT duration.
@@ -50,6 +54,7 @@ namespace OracleOfDereth
         public static void Refresh()
         {
             if (!Server.IsConquest) return;
+            Ran = true;
             Util.Command("/augs");
         }
 

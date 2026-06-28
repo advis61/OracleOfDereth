@@ -354,7 +354,7 @@
 			<control progid="DecalControls.Notebook" name="ServerViewNotebook">
 				<page label="Custom Augs">
 					<control progid="DecalControls.FixedLayout" clipped="">
-						<control progid="DecalControls.StaticText" name="ConquestAugsText" left="5" top="5" width="300" height="20" text="Total Conquest Augs: 0"/>
+						<control progid="DecalControls.StaticText" name="ConquestAugsText" left="5" top="5" width="300" height="20" text="Total Custom Augs: 0"/>
 						<control progid="DecalControls.PushButton" name="ConquestAugsRefresh" left="263" top="3" width="100" height="24" text="Refresh"/>
 						<control progid="DecalControls.StaticText" name="ConquestAugsName" left="1" top="33" width="200" height="17" text="Augmentation"/>
 						<control progid="DecalControls.StaticText" name="ConquestAugsLevel" left="210" top="33" width="80" height="17" text="Level"/>

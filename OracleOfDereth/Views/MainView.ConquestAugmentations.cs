@@ -46,6 +46,9 @@ namespace OracleOfDereth
                 return;
             }
 
+            // Lazy-load the first time the tab is shown instead of refreshing on login.
+            if (!ConquestAugmentation.Ran) { ConquestAugmentation.Refresh(); }
+
             UpdateConquestAugsList();
         }
 
@@ -53,7 +56,7 @@ namespace OracleOfDereth
         {
             List<ConquestAugmentation> augs = ConquestAugmentation.All;
 
-            ConquestAugsText.Text = $"Total Conquest Augs: {ConquestAugmentation.Total}";
+            ConquestAugsText.Text = $"Total Custom Augs: {ConquestAugmentation.Total}";
 
             for (int x = 0; x < augs.Count; x++)
             {
