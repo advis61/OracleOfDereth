@@ -57,6 +57,7 @@ namespace OracleOfDereth
             { 2_03, 650 }, // Luminance
             { 2_04, 365 }, // Recalls
             { 2_05, 530 }, // Society
+            { 2_06, 365 }, // Conquest (Custom Augs)
 
             // Quests Tab
             { 3_00, 430 }, // John
@@ -66,8 +67,7 @@ namespace OracleOfDereth
             { 3_04, 560 }, // Titles (Available and Unavailable)
 
             // Server
-            { 4_00, 365 }, // Custom Augs
-            { 4_01, 555 }, // Bank
+            { 4_00, 555 }, // Bank
 
             // About / Settings / Help
             { 5_00, 350 }, // About
@@ -91,6 +91,7 @@ namespace OracleOfDereth
             { 2_03, 550 }, // Luminance
             { 2_04, 435 }, // Recalls
             { 2_05, 570 }, // Society
+            { 2_06, 300 }, // Conquest (Custom Augs)
 
             // Quests Tab
             { 3_00, 545}, // John
@@ -100,8 +101,7 @@ namespace OracleOfDereth
             { 3_04, 545 }, // Titles (Available and Unavailable)
 
             // Server
-            { 4_00, 300 }, // Custom Augs
-            { 4_01, 300 }, // Bank
+            { 4_00, 300 }, // Bank
 
             // About / Settings / Help
             { 5_00, 270 }, // About
@@ -327,6 +327,7 @@ namespace OracleOfDereth
             if (currentTab == 2_03) { UpdateLuminance(); }
             if (currentTab == 2_04) { UpdateRecalls(); }
             if (currentTab == 2_05) { UpdateSociety(); }
+            if (currentTab == 2_06) { UpdateConquestAugmentations(); }
 
             // Quests Tab
             if (currentTab == 3_00) { UpdateJohn(); }
@@ -336,8 +337,7 @@ namespace OracleOfDereth
             if (currentTab == 3_04) { UpdateTitles(); }
 
             // Server Tab
-            if (currentTab == 4_00) { UpdateConquestAugmentations(); }
-            if (currentTab == 4_01) { UpdateConquestBank(); }
+            if (currentTab == 4_00) { UpdateConquestBank(); }
 
             // About / Settings / Help
             if (currentTab == 5_00) {; }

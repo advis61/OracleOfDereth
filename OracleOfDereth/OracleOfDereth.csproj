@@ -23,6 +23,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="mainView.xml" />
+    <None Remove="Resources\customquests.csv" />
     <None Remove="tradeView.xml" />
     <None Remove="Resources\augquests.csv" />
     <None Remove="Resources\cantrips.csv" />
@@ -48,6 +49,7 @@
     <EmbeddedResource Include="Resources\augmentations.csv" />
     <EmbeddedResource Include="Resources\cantrips.csv" />
     <EmbeddedResource Include="Resources\creditquests.csv" />
+    <EmbeddedResource Include="Resources\customquests.csv" />
     <EmbeddedResource Include="Resources\facilityquests.csv" />
     <EmbeddedResource Include="Resources\flagquests.csv" />
     <EmbeddedResource Include="Resources\markers.csv" />
