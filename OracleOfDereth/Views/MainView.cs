@@ -65,6 +65,7 @@ namespace OracleOfDereth
             { 3_02, 350 }, // Flags
             { 3_03, 450 }, // Facility Hub
             { 3_04, 560 }, // Titles (Available and Unavailable)
+            { 3_05, 430 }, // Custom Quests
 
             // Server
             { 4_00, 555 }, // Bank
@@ -99,6 +100,7 @@ namespace OracleOfDereth
             { 3_02, 540 }, // Flags
             { 3_03, 485 }, // Facility Hub
             { 3_04, 545 }, // Titles (Available and Unavailable)
+            { 3_05, 545 }, // Custom Quests
 
             // Server
             { 4_00, 300 }, // Bank
@@ -166,6 +168,7 @@ namespace OracleOfDereth
                 InitFlags();
                 InitFacility();
                 InitTitles();
+                InitCustomQuests();
                 InitConquestAugmentations();
                 InitConquestBank();
                 InitAugmentations();
@@ -209,6 +212,7 @@ namespace OracleOfDereth
                 DisposeFlags();
                 DisposeFacility();
                 DisposeTitles();
+                DisposeCustomQuests();
                 DisposeConquestAugmentations();
                 DisposeConquestBank();
                 DisposeAugmentations();
@@ -335,6 +339,7 @@ namespace OracleOfDereth
             if (currentTab == 3_02) { UpdateFlags(); }
             if (currentTab == 3_03) { UpdateFacility(); }
             if (currentTab == 3_04) { UpdateTitles(); }
+            if (currentTab == 3_05) { UpdateCustomQuests(); }
 
             // Server Tab
             if (currentTab == 4_00) { UpdateConquestBank(); }
