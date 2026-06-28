@@ -43,6 +43,9 @@ namespace OracleOfDereth
         // Spell-duration luminance aug count; each adds +5% to void DoT duration.
         public static int DurationCount => Get("Duration")?.Count ?? 0;
 
+        // Sum of every advanced aug level.
+        public static int Total => All.Sum(a => a.Count);
+
         // Ask the server to reprint the aug block so we can reparse it. Only meaningful on
         // Conquest — the only server with these augs.
         public static void Refresh()

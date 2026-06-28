@@ -6,11 +6,14 @@ namespace OracleOfDereth
 {
     partial class MainView
     {
+        public HudStaticText ConquestAugsText { get; private set; }
         public HudList ConquestAugsList { get; private set; }
         public HudButton ConquestAugsRefresh { get; private set; }
 
         private void InitConquestAugmentations()
         {
+            ConquestAugsText = (HudStaticText)view["ConquestAugsText"];
+            ConquestAugsText.FontHeight = 10;
             ConquestAugsList = (HudList)view["ConquestAugsList"];
             ConquestAugsRefresh = (HudButton)view["ConquestAugsRefresh"];
             ConquestAugsRefresh.Hit += ConquestAugsRefresh_Hit;
@@ -30,6 +33,8 @@ namespace OracleOfDereth
         private void UpdateConquestAugsList()
         {
             List<ConquestAugmentation> augs = ConquestAugmentation.All;
+
+            ConquestAugsText.Text = $"Total Conquest Augs: {ConquestAugmentation.Total}";
 
             for (int x = 0; x < augs.Count; x++)
             {
