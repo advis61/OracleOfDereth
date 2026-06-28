@@ -10,6 +10,7 @@ namespace OracleOfDereth
     {
         public HudList TitlesList { get; private set; }
         public HudStaticText TitlesText { get; private set; }
+        public HudCheckBox TitlesDisplayUnavailable { get; private set; }
 
         public HudFixedLayout TitlesListSortComplete { get; private set; }
         public HudPictureBox TitlesListSortCompleteIcon { get; private set; }
@@ -18,13 +19,13 @@ namespace OracleOfDereth
         public HudStaticText TitlesListSortLevel { get; private set; }
         public HudStaticText TitlesListSortCategory { get; private set; }
 
-        public HudList UnavailableTitlesList { get; private set; }
-        public HudStaticText UnavailableTitlesText { get; private set; }
-
         private void InitTitles()
         {
             TitlesText = (HudStaticText)view["TitlesText"];
             TitlesText.FontHeight = 10;
+
+            TitlesDisplayUnavailable = (HudCheckBox)view["TitlesDisplayUnavailable"];
+            TitlesDisplayUnavailable.Change += TitlesDisplayUnavailable_Change;
 
             TitlesList = (HudList)view["TitlesList"];
             TitlesList.Click += TitlesList_Click;
@@ -44,36 +45,36 @@ namespace OracleOfDereth
 
             TitlesListSortCategory = (HudStaticText)view["TitlesListSortCategory"];
             TitlesListSortCategory.Hit += TitlesListSortCategory_Click;
-
-            // Unavailable Titles
-            UnavailableTitlesText = (HudStaticText)view["UnavailableTitlesText"];
-            UnavailableTitlesText.FontHeight = 10;
-
-            UnavailableTitlesList = (HudList)view["UnavailableTitlesList"];
-            UnavailableTitlesList.Click += UnavailableTitlesList_Click;
-            UnavailableTitlesList.ClearRows();
         }
 
         private void DisposeTitles()
         {
             TitlesList.Click -= TitlesList_Click;
+            TitlesDisplayUnavailable.Change -= TitlesDisplayUnavailable_Change;
             TitlesListSortCompleteIcon.Hit -= TitlesListSortComplete_Click;
             TitlesListSortName.Hit -= TitlesListSortName_Click;
             TitlesListSortLevel.Hit -= TitlesListSortLevel_Click;
             TitlesListSortCategory.Hit -= TitlesListSortCategory_Click;
-            UnavailableTitlesList.Click -= UnavailableTitlesList_Click;
         }
 
         public void UpdateTitles()
         {
             UpdateTitlesList();
-            UpdateUnavailableTitlesList();
             UpdateTitlesTexts();
+        }
+
+        // Titles to show: always the available ones, plus the unavailable ones when the
+        // "Display Unavailable" checkbox is ticked. Drawn from the sorted Title.Titles list
+        // so the current sort order is preserved across the merge.
+        private List<Title> DisplayedTitles()
+        {
+            bool showUnavailable = TitlesDisplayUnavailable.Checked;
+            return Title.Titles.Where(t => showUnavailable || t.Category != "Unavailable").ToList();
         }
 
         private void UpdateTitlesList()
         {
-            List<Title> titles = Title.Available().ToList();
+            List<Title> titles = DisplayedTitles();
 
             for (int x = 0; x < titles.Count; x++) {
                 HudList.HudListRowAccessor row;
@@ -98,6 +99,9 @@ namespace OracleOfDereth
                 ((HudStaticText)row[3]).Text = title.Category;
                 ((HudStaticText)row[4]).Text = title.TitleId.ToString();
             }
+
+            // Trim stale rows left behind after unchecking "Display Unavailable".
+            while (TitlesList.RowCount > titles.Count) { TitlesList.RemoveRow(TitlesList.RowCount - 1); }
         }
 
         private void TitlesList_Click(object sender, int row, int col)
@@ -107,7 +111,7 @@ namespace OracleOfDereth
 
             int titleId = int.Parse(text);
 
-            Title title = Title.Available().FirstOrDefault(x => x.TitleId == titleId);
+            Title title = Title.Titles.FirstOrDefault(x => x.TitleId == titleId);
             if (title == null) { return; }
 
             // Quest URL
@@ -123,6 +127,11 @@ namespace OracleOfDereth
             if (col > 3) {
                 Util.Chat($"Name:{title.Name} TitleId:{title.TitleId}", Util.ColorPink);
             }
+        }
+
+        void TitlesDisplayUnavailable_Change(object sender, EventArgs e)
+        {
+            UpdateTitlesList();
         }
 
         void TitlesListSortName_Click(object sender, EventArgs e)
@@ -179,67 +188,9 @@ namespace OracleOfDereth
             UpdateTitlesList();
         }
 
-        private void UpdateUnavailableTitlesList()
-        {
-            List<Title> titles = Title.Unavailable().ToList();
-
-            for (int x = 0; x < titles.Count; x++)
-            {
-                HudList.HudListRowAccessor row;
-
-                if (x >= UnavailableTitlesList.RowCount)
-                {
-                    row = UnavailableTitlesList.AddRow();
-
-                    ((HudStaticText)row[2]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
-                    ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
-                }
-                else
-                {
-                    row = UnavailableTitlesList[x];
-                }
-
-                // Update
-                Title title = titles[x];
-                if (title.Name == "Blank") { continue; }
-
-                ((HudStaticText)row[1]).Text = title.Name;
-                if (title.TitleId == 0) { continue; }
-
-                AssignImage((HudPictureBox)row[0], title.IsComplete());
-                ((HudStaticText)row[2]).Text = title.Category;
-                ((HudStaticText)row[3]).Text = title.TitleId.ToString();
-            }
-
-        }
-
-        private void UnavailableTitlesList_Click(object sender, int row, int col)
-        {
-            string text = ((HudStaticText)UnavailableTitlesList[row][3]).Text;
-            if (text == null || text == "" || text.IndexOf('-') > 0) { return; }
-
-            int titleId = int.Parse(text);
-
-            Title title = Title.Unavailable().FirstOrDefault(x => x.TitleId == titleId);
-            if (title == null) { return; }
-
-            // Quest URL
-            if (col == 0 && title.Url.Length > 0)
-            {
-                Util.ThinkQuestUrl($"{title.Name}: {title.Url}", title.Url);
-            }
-
-            // Debug
-            if (col >= 2)
-            {
-                Util.Chat($"Name:{title.Name} TitleId:{title.TitleId}", Util.ColorPink);
-            }
-        }
-
         private void UpdateTitlesTexts()
         {
             TitlesText.Text = $"Titles: {Title.KnownTitleIds.Count} completed";
-            UnavailableTitlesText.Text = $"Titles: {Title.KnownTitleIds.Count} completed";
         }
     }
 }
