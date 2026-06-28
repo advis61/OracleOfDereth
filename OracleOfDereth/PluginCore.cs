@@ -269,6 +269,10 @@ namespace OracleOfDereth
                 {
                     Trade.RecheckFunds();
                 }
+                else if (ConquestBank.Matches(e.Text))
+                {
+                    ConquestBank.NoteChat(e.Text);
+                }
                 else if (Bank.Matches(e.Text))
                 {
                     Bank.NoteChat(e.Text);

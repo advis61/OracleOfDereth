@@ -66,7 +66,8 @@ namespace OracleOfDereth
             { 3_04, 560 }, // Titles (Available and Unavailable)
 
             // Server
-            { 4_00, 365 }, // Conquest Augs
+            { 4_00, 365 }, // Custom Augs
+            { 4_01, 555 }, // Bank
 
             // About / Settings / Help
             { 5_00, 350 }, // About
@@ -99,7 +100,8 @@ namespace OracleOfDereth
             { 3_04, 545 }, // Titles (Available and Unavailable)
 
             // Server
-            { 4_00, 300 }, // Conquest Augs
+            { 4_00, 300 }, // Custom Augs
+            { 4_01, 300 }, // Bank
 
             // About / Settings / Help
             { 5_00, 270 }, // About
@@ -165,6 +167,7 @@ namespace OracleOfDereth
                 InitFacility();
                 InitTitles();
                 InitConquestAugmentations();
+                InitConquestBank();
                 InitAugmentations();
                 InitCantrips();
                 InitCredits();
@@ -207,6 +210,7 @@ namespace OracleOfDereth
                 DisposeFacility();
                 DisposeTitles();
                 DisposeConquestAugmentations();
+                DisposeConquestBank();
                 DisposeAugmentations();
                 DisposeCredits();
                 DisposeRecalls();
@@ -333,6 +337,7 @@ namespace OracleOfDereth
 
             // Server Tab
             if (currentTab == 4_00) { UpdateConquestAugmentations(); }
+            if (currentTab == 4_01) { UpdateConquestBank(); }
 
             // About / Settings / Help
             if (currentTab == 5_00) {; }
