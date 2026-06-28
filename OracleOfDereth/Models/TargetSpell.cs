@@ -97,7 +97,7 @@ namespace OracleOfDereth
             // Conquest scales void DoT duration by the caster's spell-duration augments:
             //   duration *= 1 + (Archmage's Endurance * 0.2) + (Lum spell duration * 0.05)
             // Archmage's Endurance is a normal client property; the luminance count isn't
-            // networked to the client, so it's scraped from "/augs" (see SpellDurationAug).
+            // networked to the client, so it's scraped from "/augs" (see ConquestAugmentation).
             if (Server.IsConquest)
             {
                 int arch = CoreManager.Current.CharacterFilter.GetCharProperty(ArchmagesEndurancePropId);
