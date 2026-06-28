@@ -1,3 +1,4 @@
+using Decal.Adapter;
 using System;
 using System.Collections.Generic;
 using VirindiViewService.Controls;
@@ -7,6 +8,8 @@ namespace OracleOfDereth
     partial class MainView
     {
         public HudStaticText ConquestAugsText { get; private set; }
+        public HudStaticText ConquestAugsName { get; private set; }
+        public HudStaticText ConquestAugsLevel { get; private set; }
         public HudList ConquestAugsList { get; private set; }
         public HudButton ConquestAugsRefresh { get; private set; }
 
@@ -14,6 +17,8 @@ namespace OracleOfDereth
         {
             ConquestAugsText = (HudStaticText)view["ConquestAugsText"];
             ConquestAugsText.FontHeight = 10;
+            ConquestAugsName = (HudStaticText)view["ConquestAugsName"];
+            ConquestAugsLevel = (HudStaticText)view["ConquestAugsLevel"];
             ConquestAugsList = (HudList)view["ConquestAugsList"];
             ConquestAugsRefresh = (HudButton)view["ConquestAugsRefresh"];
             ConquestAugsRefresh.Hit += ConquestAugsRefresh_Hit;
@@ -27,6 +32,21 @@ namespace OracleOfDereth
 
         public void UpdateConquestAugmentations()
         {
+            // The advanced augs only exist on Conquest. Off-server, show "None" and hide the
+            // list, refresh button, and column headers.
+            bool available = CoreManager.Current.CharacterFilter.Server == "Conquest";
+
+            ConquestAugsName.Visible = available;
+            ConquestAugsLevel.Visible = available;
+            ConquestAugsList.Visible = available;
+            ConquestAugsRefresh.Visible = available;
+
+            if (!available)
+            {
+                ConquestAugsText.Text = "None";
+                return;
+            }
+
             UpdateConquestAugsList();
         }
 
