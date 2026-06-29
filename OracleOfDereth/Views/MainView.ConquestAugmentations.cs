@@ -12,6 +12,12 @@ namespace OracleOfDereth
         public HudList ConquestAugsList { get; private set; }
         public HudButton ConquestAugsRefresh { get; private set; }
 
+        // XP Bonuses ("/bonus"), shown in a second list below the augs list on the same tab.
+        public HudStaticText ConquestBonusText { get; private set; }
+        public HudStaticText ConquestBonusName { get; private set; }
+        public HudStaticText ConquestBonusValue { get; private set; }
+        public HudList ConquestBonusList { get; private set; }
+
         private void InitConquestAugmentations()
         {
             ConquestAugsText = (HudStaticText)view["ConquestAugsText"];
@@ -22,6 +28,13 @@ namespace OracleOfDereth
             ConquestAugsRefresh = (HudButton)view["ConquestAugsRefresh"];
             ConquestAugsRefresh.Hit += ConquestAugsRefresh_Hit;
             ConquestAugsList.ClearRows();
+
+            ConquestBonusText = (HudStaticText)view["ConquestBonusText"];
+            ConquestBonusText.FontHeight = 10;
+            ConquestBonusName = (HudStaticText)view["ConquestBonusName"];
+            ConquestBonusValue = (HudStaticText)view["ConquestBonusValue"];
+            ConquestBonusList = (HudList)view["ConquestBonusList"];
+            ConquestBonusList.ClearRows();
         }
 
         private void DisposeConquestAugmentations()
@@ -31,14 +44,18 @@ namespace OracleOfDereth
 
         public void UpdateConquestAugmentations()
         {
-            // The advanced augs only exist on Conquest. Off-server, show "None" and hide the
-            // list, refresh button, and column headers.
+            // The advanced augs/bonuses only exist on Conquest. Off-server, show "None" and hide
+            // both lists, the refresh button, and the column headers.
             bool available = Server.IsConquest;
 
             ConquestAugsName.Visible = available;
             ConquestAugsLevel.Visible = available;
             ConquestAugsList.Visible = available;
             ConquestAugsRefresh.Visible = available;
+            ConquestBonusText.Visible = available;
+            ConquestBonusName.Visible = available;
+            ConquestBonusValue.Visible = available;
+            ConquestBonusList.Visible = available;
 
             if (!available)
             {
@@ -48,8 +65,12 @@ namespace OracleOfDereth
 
             // Lazy-load the first time the tab is shown instead of refreshing on login.
             if (!ConquestAugmentation.Ran) { ConquestAugmentation.Refresh(); }
+            if (!ConquestBonus.Ran) { ConquestBonus.Refresh(); }
+
+            ConquestBonusText.Text = "XP Bonuses";
 
             UpdateConquestAugsList();
+            UpdateConquestBonusList();
         }
 
         private void UpdateConquestAugsList()
@@ -74,11 +95,32 @@ namespace OracleOfDereth
             }
         }
 
-        // Reissues "/augs" so the server reprints the levels, which the chat handler reparses
-        // into ConquestAugmentation. The list refreshes on the next tick.
+        private void UpdateConquestBonusList()
+        {
+            List<ConquestBonus> bonuses = ConquestBonus.All;
+
+            for (int x = 0; x < bonuses.Count; x++)
+            {
+                HudList.HudListRowAccessor row = (x >= ConquestBonusList.RowCount)
+                    ? ConquestBonusList.AddRow()
+                    : ConquestBonusList[x];
+
+                ((HudStaticText)row[0]).Text = bonuses[x].Name;
+                ((HudStaticText)row[1]).Text = bonuses[x].Value;
+            }
+
+            while (ConquestBonusList.RowCount > bonuses.Count)
+            {
+                ConquestBonusList.RemoveRow(ConquestBonusList.RowCount - 1);
+            }
+        }
+
+        // Reissues "/augs" and "/bonus" so the server reprints both, which the chat handler
+        // reparses into ConquestAugmentation / ConquestBonus. The lists refresh on the next tick.
         private void ConquestAugsRefresh_Hit(object sender, EventArgs e)
         {
             ConquestAugmentation.Refresh();
+            ConquestBonus.Refresh();
         }
     }
 }

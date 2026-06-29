@@ -92,7 +92,7 @@ namespace OracleOfDereth
             { 2_03, 550 }, // Luminance
             { 2_04, 435 }, // Recalls
             { 2_05, 570 }, // Society
-            { 2_06, 300 }, // Conquest (Custom Augs)
+            { 2_06, 410 }, // Conquest (Custom Augs)
 
             // Quests Tab
             { 3_00, 545}, // John

@@ -282,6 +282,10 @@ namespace OracleOfDereth
                 {
                     ConquestAugmentation.NoteChat(e.Text);
                 }
+                else if (ConquestBonus.Matches(e.Text))
+                {
+                    ConquestBonus.NoteChat(e.Text);
+                }
                 else if (Trade.CheckPriceRegex.IsMatch(e.Text))
                 {
                     Trade.NotePriceTell(e.Text);
