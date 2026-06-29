@@ -6,7 +6,8 @@ namespace OracleOfDereth
 {
     partial class MainView
     {
-        // Character Level + XP-to-next-level summary (single row), shown above the augs list.
+        // Character Level + XP-to-next-level summary (single row), shown below the augs list.
+        public HudStaticText ConquestCharacterText { get; private set; } // big "Character" section label
         public HudList ConquestSummaryList { get; private set; }
 
         public HudStaticText ConquestAugsText { get; private set; } // off-server "None" indicator only
@@ -25,6 +26,9 @@ namespace OracleOfDereth
         {
             ConquestSummaryList = (HudList)view["ConquestSummaryList"];
             ConquestSummaryList.ClearRows();
+
+            ConquestCharacterText = (HudStaticText)view["ConquestCharacterText"];
+            ConquestCharacterText.FontHeight = 10;
 
             ConquestAugsText = (HudStaticText)view["ConquestAugsText"];
             ConquestAugsText.FontHeight = 10;
@@ -56,6 +60,7 @@ namespace OracleOfDereth
 
             ConquestAugsText.Visible = true; // big title on-server ("Total Custom Augs"), "None" off-server
             ConquestSummaryList.Visible = available;
+            ConquestCharacterText.Visible = available;
             ConquestAugsName.Visible = available;
             ConquestAugsLevel.Visible = available;
             ConquestAugsList.Visible = available;
@@ -88,7 +93,7 @@ namespace OracleOfDereth
                 ? ConquestSummaryList.AddRow()
                 : ConquestSummaryList[0];
 
-            ((HudStaticText)row[0]).Text = "Character Level";
+            ((HudStaticText)row[0]).Text = "Level";
             ((HudStaticText)row[1]).Text = CharacterXp.LevelSummary();
 
             while (ConquestSummaryList.RowCount > 1)
@@ -102,7 +107,7 @@ namespace OracleOfDereth
             List<ConquestAugmentation> augs = ConquestAugmentation.All;
 
             // The total lives in the big title at the top of the tab.
-            ConquestAugsText.Text = $"Total Custom Augs: {ConquestAugmentation.Total}";
+            ConquestAugsText.Text = $"Custom Augs: {ConquestAugmentation.Total}";
 
             for (int x = 0; x < augs.Count; x++)
             {
