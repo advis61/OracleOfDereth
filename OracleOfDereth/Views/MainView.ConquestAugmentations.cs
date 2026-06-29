@@ -96,8 +96,8 @@ namespace OracleOfDereth
                 ? ConquestSummaryList.AddRow()
                 : ConquestSummaryList[0];
 
-            ((HudStaticText)row[0]).Text = "Level";
-            ((HudStaticText)row[1]).Text = CharacterXp.LevelSummary();
+            ((HudStaticText)row[0]).Text = CharacterXp.LevelLabel();
+            ((HudStaticText)row[1]).Text = CharacterXp.ProgressText();
 
             while (ConquestSummaryList.RowCount > 1)
             {

@@ -3,39 +3,64 @@ using Decal.Adapter;
 
 namespace OracleOfDereth
 {
-    // Character level + "XP to next level" for the Conquest (Custom) tab. The stock client only
-    // knows the retail XP table (levels <= 275), so CharacterFilter.XPToNextLevel is correct up to
-    // 275 but reads wrong for Conquest's custom 276-300 range. Past 275 we reproduce Conquest-ACE's
-    // dynamic XP curve (Player_Xp.GenerateDynamicLevelPostMax): each level past 275 costs the prior
-    // delta grown by LevelRatio, accumulated onto the level-275 total. Level/TotalXP come straight
-    // from Decal — TotalXP is Int64, so it holds the full past-275 value the client still tracks.
+    // Character level, "% complete", and "XP to next level" for the Conquest (Custom) tab.
+    // LevelTotalXp holds the exact cumulative XP required to REACH each level (index == level),
+    // 1-300: the standard retail table through 275 and Conquest's custom values for 276-300.
+    // Level/TotalXP come from Decal — TotalXP is Int64, so it holds the full past-275 value.
     public static class CharacterXp
     {
-        public const int MaxLevel = 300;                  // Conquest max level
-        private const long Xp275 = 191226310247L;         // total XP to reach level 275
-        private const long Xp274To275Delta = 3390451400L; // XP from 274 -> 275
-        private const double LevelRatio = 0.014234603;    // ~1.42% delta growth per level past 275
+        public const int MaxLevel = 300; // Conquest max level (= last table index)
+
+        // Cumulative total XP required to REACH each level (index == level).
+        private static readonly long[] LevelTotalXp =
+        {
+            0,            // index 0 (unused)
+            0, 1000, 2777, 5697, 10248, 17031, 26784, 40391, 58895, 83511,                                       // 1-10
+            115645, 156898, 209088, 274259, 354692, 452925, 571762, 714286, 883872, 1084206,                     // 11-20
+            1319289, 1593459, 1911400, 2278153, 2699136, 3180153, 3727407, 4347513, 5047517, 5834900,            // 21-30
+            6717600, 7704021, 8803044, 10024047, 11376914, 12872048, 14520384, 16333408, 18323161, 20502261,     // 31-40
+            22883912, 25481915, 28310688, 31385275, 34721359, 38335275, 42244029, 46465302, 51017472, 55919623,  // 41-50
+            61191556, 66853809, 72927666, 79435170, 86399136, 93843170, 101791673, 110269863, 119303784, 128920317,       // 51-60
+            139147200, 150013037, 161547311, 173780397, 186743581, 200469064, 214989984, 230340425, 246555428, 263671011, // 61-70
+            281724178, 300752932, 320796288, 341894292, 364088025, 387419625, 411932296, 437670319, 464679072, 493005039, // 71-80
+            522695823, 553800159, 586367933, 620450186, 656099136, 693368187, 732311940, 772986213, 815448050, 859755734, // 81-90
+            905968800, 954148054, 1004355577, 1056654747, 1111110248, 1167788081, 1226755584, 1288081441, 1351835695, 1418089761, // 91-100
+            1486916445, 1558389948, 1632585888, 1709581309, 1789454692, 1872285975, 1958156562, 2047149336, 2139348672, 2234840456, // 101-110
+            2333712089, 2436052509, 2541952200, 2651503203, 2764799136, 2881935203, 3003008207, 3128116563, 3257360317, 3390841150, // 111-120
+            3528662400, 3670929071, 3817747844, 3969227097, 4125476914, 4286609098, 4452737184, 4623976457, 4800443961, 4982258511, // 121-130
+            5169540711, 5362412965, 5560999488, 5765426325, 5975821358, 6192314325, 6415036828, 6644122352, 6879706272, 7121925872, // 131-140
+            7370920356, 7626830859, 7889800466, 8159974219, 8437499136, 8722524219, 9015200473, 9315680913, 9624120583, 9940676567, // 141-150
+            10265508000, 10598776087, 10940644110, 11291277447, 11650843580, 12019512114, 12397454784, 12784845474, 13181860228, 13588677261, // 151-160
+            14005476978, 14432441981, 14869757088, 15317609341, 15776188025, 16245684675, 16726293095, 17218209369, 17721631872, 18236761289, // 161-170
+            18763800622, 19302955209, 19854432732, 20418443236, 20995199136, 21584915236, 22187808740, 22804099263, 23434008850, 24077761983, // 171-180
+            24735585600, 25407709103, 26094364377, 26795785797, 27512210247, 28243877131, 28991028384, 29753908491, 30532764494, 31327846011, // 181-190
+            32139405244, 32967696998, 33812978688, 34675510358, 35555554692, 36453377025, 37369245362, 38303430385, 39256205472, 40227846705, // 191-200
+            41218632889, 42228845559, 43258768999, 44308690253, 45378899136, 46469688253, 47581353006, 48714191613, 49868505116, 51044597400, // 201-210
+            52242775200, 53463348120, 54706628644, 55972932147, 57262576914, 58575884147, 59913177984, 61274785507, 62661036761, 64072264761, // 211-220
+            65508805511, 66970998015, 68459184288, 69973709375, 71514921358, 73083171375, 74678813628, 76302205402, 77953707072, 79633682122, // 221-230
+            81342497156, 83080521909, 84848129266, 86645695269, 88473599136, 90332223269, 92221953273, 94143177963, 96096289383, 98081682817, // 231-240
+            100099756800, 102150913137, 104235556910, 106354096497, 108506943580, 110694513164, 112917223584, 115175496524, 117469757028, 119800433511, // 241-250
+            122167957778, 124572765031, 127015293888, 129495986391, 132015288025, 134573647725, 137171517895, 139809354419, 142487616672, 145206767539, // 251-260
+            147967273422, 150769604259, 153614233532, 156501638286, 159432299136, 162406700286, 165425329540, 168488678313, 171597241650, 174751518233, // 261-270
+            177952010400, 181199224153, 184493669177, 187835858847, 191226310247,                                // 271-275
+            194665023377, 198152685223, 201689992550, 205277652043, 208916380445,                                // 276-280
+            212606904701, 216349962105, 220146300445, 223996678153, 227901864460,                                // 281-285
+            231862639544, 235879794689, 239954132442, 244086466776, 248277623248,                                // 286-290
+            252528439169, 256839763767, 261212458359, 265647396522, 270145464270,                                // 291-295
+            274707560226, 279334595807, 284027495403, 288787196561, 293614650176,                                // 296-300
+        };
 
         public static int Level => CoreManager.Current.CharacterFilter.Level;
 
-        // Cumulative total XP required to reach targetLevel past 275 (mirrors Conquest-ACE).
-        public static double TotalXpForLevel(int targetLevel)
+        // Cumulative total XP required to reach a level (exact table, 1-300).
+        public static double TotalXpForLevel(int level)
         {
-            if (targetLevel <= 275) return Xp275;
-
-            double prevDelta = Xp274To275Delta;
-            double total = Xp275;
-            for (int i = 275; i < targetLevel; i++)
-            {
-                double delta = prevDelta + (prevDelta * LevelRatio);
-                total += delta;
-                prevDelta = delta;
-            }
-            return total;
+            if (level <= 1) return 0;
+            if (level >= LevelTotalXp.Length) level = LevelTotalXp.Length - 1; // clamp at 300
+            return LevelTotalXp[level];
         }
 
-        // XP remaining to the next level. Uses the client's own value up to 275 (it matches the
-        // retail table Conquest also uses there); computes it past 275 where the client can't.
+        // XP remaining to the next level: threshold(level+1) - current total XP.
         public static long XpToNextLevel
         {
             get
@@ -43,22 +68,47 @@ namespace OracleOfDereth
                 var cf = CoreManager.Current.CharacterFilter;
                 int level = cf.Level;
                 if (level >= MaxLevel) return 0;
-                if (level < 275) return cf.XPToNextLevel;
 
                 long remaining = (long)(TotalXpForLevel(level + 1) - cf.TotalXP);
                 return remaining < 0 ? 0 : remaining;
             }
         }
 
-        // e.g. "275 (1,344,555 xp to level)" or "300 (max level)". Never throws — if a Decal
-        // member is unavailable at runtime it falls back to whatever level it can read.
-        public static string LevelSummary()
+        // Percent progress through the current level (0-100), floored.
+        public static int PercentComplete
+        {
+            get
+            {
+                var cf = CoreManager.Current.CharacterFilter;
+                int level = cf.Level;
+                if (level >= MaxLevel) return 100;
+
+                double start = TotalXpForLevel(level);
+                double span = TotalXpForLevel(level + 1) - start;
+                if (span <= 0) return 0;
+
+                double pct = ((double)cf.TotalXP - start) / span * 100.0;
+                if (pct < 0) pct = 0;
+                if (pct > 100) pct = 100;
+                return (int)pct;
+            }
+        }
+
+        // Left column label, e.g. "Level 255". Never throws.
+        public static string LevelLabel()
+        {
+            try { return $"Level {Level}"; }
+            catch (Exception ex) { Util.Log(ex); return "Level"; }
+        }
+
+        // Right column, e.g. "80% complete, 124,545,333 to level" (or "max level" at 300). Never throws.
+        public static string ProgressText()
         {
             try
             {
                 int level = Level;
-                if (level >= MaxLevel) return $"{level} (max level)";
-                return $"{level} ({XpToNextLevel:N0} xp to level)";
+                if (level >= MaxLevel) return "max level";
+                return $"{PercentComplete}% complete, {XpToNextLevel:N0}xp to level";
             }
             catch (Exception ex)
             {
