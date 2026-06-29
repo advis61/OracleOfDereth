@@ -65,7 +65,7 @@ namespace OracleOfDereth
             { 3_02, 350 }, // Flags
             { 3_03, 450 }, // Facility Hub
             { 3_04, 560 }, // Titles (Available and Unavailable)
-            { 3_05, 420 }, // Custom Quests
+            { 3_05, 430 }, // Custom Quests
 
             // Server
             { 4_00, 555 }, // Bank
