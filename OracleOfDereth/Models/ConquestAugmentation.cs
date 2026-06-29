@@ -78,5 +78,30 @@ namespace OracleOfDereth
             ConquestAugmentation aug = Get(m.Groups[1].Value);
             if (aug != null && int.TryParse(m.Groups[2].Value.Replace(",", ""), out int count)) { aug.Count = count; }
         }
+
+        // Human-readable per-aug effect for the current Count (the aug's level; character level is
+        // not a factor). Derived from the Conquest-ACE server source:
+        //  - Creature/Item/Life add +Count to that school's spell effectiveness.
+        //  - War/Void raise stacking priority for that school (shown simply as "+Count ... spells").
+        //  - Duration is +5% spell duration per level (duration *= 1 + Count*0.05).
+        //  - Melee/Missile add +Count flat weapon damage.
+        //  - Specialization has no implemented gameplay effect in the server source yet.
+        public string Effect()
+        {
+            if (Count <= 0) return "";
+
+            switch (Name)
+            {
+                case "Creature": return $"+{Count} to your creature spells";
+                case "Item":     return $"+{Count} to your item spells";
+                case "Life":     return $"+{Count} to your life spells";
+                case "War":      return $"+{Count} to your war spells";
+                case "Void":     return $"+{Count} to your void spells";
+                case "Duration": return $"+{Count * 5}% spell duration";
+                case "Melee":    return $"+{Count} melee damage";
+                case "Missile":  return $"+{Count} missile damage";
+                default:         return ""; // Specialization: no implemented effect
+            }
+        }
     }
 }

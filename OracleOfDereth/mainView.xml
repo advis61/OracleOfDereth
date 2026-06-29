@@ -245,10 +245,12 @@
 						<control progid="DecalControls.PushButton" name="ConquestAugsRefresh" left="317" top="3" width="100" height="24" text="Refresh"/>
 
 						<control progid="DecalControls.StaticText" name="ConquestAugsName" left="1" top="30" width="160" height="17" text="Augmentation"/>
-						<control progid="DecalControls.StaticText" name="ConquestAugsLevel" left="120" top="30" width="80" height="17" text="Level"/>
+						<control progid="DecalControls.StaticText" name="ConquestAugsLevel" left="120" top="30" width="40" height="17" text="Level"/>
+						<control progid="DecalControls.StaticText" name="ConquestAugsEffect" left="165" top="30" width="300" height="17" text="Effect"/>
 						<control progid="DecalControls.List" name="ConquestAugsList" left="0" top="50" width="640" height="160">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="110" />
-							<column progid="DecalControls.TextColumn" name="Count" fixedwidth="480" />
+							<column progid="DecalControls.TextColumn" name="Count" fixedwidth="50" />
+							<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="480" />
 						</control>
 
 						<control progid="DecalControls.StaticText" name="ConquestCharacterText" left="5" top="216" width="300" height="20" text="Character"/>
@@ -388,9 +390,9 @@
 						<control progid="DecalControls.PushButton" name="ConquestBankRefresh" left="413" top="3" width="100" height="24" text="Refresh"/>
 						<control progid="DecalControls.StaticText" name="ConquestBankName" left="1" top="33" width="300" height="17" text="Currency"/>
 						<control progid="DecalControls.StaticText" name="ConquestBankValue" left="310" top="33" width="200" height="17" text="Balance"/>
-						<control progid="DecalControls.List" name="ConquestBankList" left="0" top="53" width="540" height="2000">
-							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="300" />
-							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="220" />
+						<control progid="DecalControls.List" name="ConquestBankList" left="0" top="53" width="640" height="2000">
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="230" />
+							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="500" />
 						</control>
 					</control>
 				</page>

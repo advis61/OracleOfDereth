@@ -68,7 +68,7 @@ namespace OracleOfDereth
             { 3_05, 430 }, // Custom Quests
 
             // Server
-            { 4_00, 555 }, // Bank
+            { 4_00, 580 }, // Bank
 
             // About / Settings / Help
             { 5_00, 350 }, // About
