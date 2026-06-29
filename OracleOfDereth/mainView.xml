@@ -247,22 +247,22 @@
 						<control progid="DecalControls.StaticText" name="ConquestAugsName" left="1" top="30" width="160" height="17" text="Augmentation"/>
 						<control progid="DecalControls.StaticText" name="ConquestAugsLevel" left="120" top="30" width="40" height="17" text="Level"/>
 						<control progid="DecalControls.StaticText" name="ConquestAugsEffect" left="165" top="30" width="300" height="17" text="Effect"/>
-						<control progid="DecalControls.List" name="ConquestAugsList" left="0" top="50" width="640" height="160">
+						<control progid="DecalControls.List" name="ConquestAugsList" left="0" top="50" width="640" height="170">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="110" />
-							<column progid="DecalControls.TextColumn" name="Count" fixedwidth="50" />
+							<column progid="DecalControls.TextColumn" name="Count" fixedwidth="40" />
 							<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="480" />
 						</control>
 
-						<control progid="DecalControls.StaticText" name="ConquestCharacterText" left="5" top="216" width="300" height="20" text="Character"/>
-						<control progid="DecalControls.List" name="ConquestSummaryList" left="0" top="240" width="640" height="34">
+						<control progid="DecalControls.StaticText" name="ConquestCharacterText" left="5" top="226" width="300" height="20" text="Character"/>
+						<control progid="DecalControls.List" name="ConquestSummaryList" left="0" top="250" width="640" height="34">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="110" />
 							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="480" />
 						</control>
 
-						<control progid="DecalControls.StaticText" name="ConquestBonusText" left="5" top="280" width="300" height="20" text="XP Bonuses"/>
-						<control progid="DecalControls.StaticText" name="ConquestBonusName" left="1" top="303" width="160" height="17" text="Bonus"/>
-						<control progid="DecalControls.StaticText" name="ConquestBonusValue" left="120" top="303" width="270" height="17" text="Amount"/>
-						<control progid="DecalControls.List" name="ConquestBonusList" left="0" top="323" width="640" height="130">
+						<control progid="DecalControls.StaticText" name="ConquestBonusText" left="5" top="290" width="300" height="20" text="XP Bonuses"/>
+						<control progid="DecalControls.StaticText" name="ConquestBonusName" left="1" top="313" width="160" height="17" text="Bonus"/>
+						<control progid="DecalControls.StaticText" name="ConquestBonusValue" left="120" top="313" width="270" height="17" text="Amount"/>
+						<control progid="DecalControls.List" name="ConquestBonusList" left="0" top="333" width="640" height="130">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="110" />
 							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="480" />
 						</control>
@@ -387,9 +387,9 @@
 				<page label="Bank">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="ConquestBankText" left="5" top="5" width="300" height="20" text="Bank Balances"/>
-						<control progid="DecalControls.PushButton" name="ConquestBankRefresh" left="413" top="3" width="100" height="24" text="Refresh"/>
+						<control progid="DecalControls.PushButton" name="ConquestBankRefresh" left="477" top="3" width="100" height="24" text="Refresh"/>
 						<control progid="DecalControls.StaticText" name="ConquestBankName" left="1" top="33" width="300" height="17" text="Currency"/>
-						<control progid="DecalControls.StaticText" name="ConquestBankValue" left="310" top="33" width="200" height="17" text="Balance"/>
+						<control progid="DecalControls.StaticText" name="ConquestBankValue" left="238" top="33" width="200" height="17" text="Balance"/>
 						<control progid="DecalControls.List" name="ConquestBankList" left="0" top="53" width="640" height="2000">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="230" />
 							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="500" />

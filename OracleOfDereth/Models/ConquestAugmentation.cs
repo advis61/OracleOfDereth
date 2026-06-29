@@ -85,22 +85,24 @@ namespace OracleOfDereth
         //  - War/Void raise stacking priority for that school (shown simply as "+Count ... spells").
         //  - Duration is +5% spell duration per level (duration *= 1 + Count*0.05).
         //  - Melee/Missile add +Count flat weapon damage.
-        //  - Specialization has no implemented gameplay effect in the server source yet.
+        //  - Specialization raises the 70 specialization-credit cap by +Count
+        //    (Conquest-ACE SkillAlterationDevice: specializationCap = 70 + count).
         public string Effect()
         {
             if (Count <= 0) return "";
 
             switch (Name)
             {
-                case "Creature": return $"+{Count} to your creature spells";
-                case "Item":     return $"+{Count} to your item spells";
-                case "Life":     return $"+{Count} to your life spells";
-                case "War":      return $"+{Count} to your war spells";
-                case "Void":     return $"+{Count} to your void spells";
-                case "Duration": return $"+{Count * 5}% spell duration";
-                case "Melee":    return $"+{Count} melee damage";
-                case "Missile":  return $"+{Count} missile damage";
-                default:         return ""; // Specialization: no implemented effect
+                case "Creature":       return $"+{Count} to your creature spells";
+                case "Item":           return $"+{Count} to your item spells";
+                case "Life":           return $"+{Count} to your life spells";
+                case "War":            return $"+{Count} to your war spells";
+                case "Void":           return $"+{Count} to your void spells";
+                case "Duration":       return $"+{Count * 5}% spell duration";
+                case "Specialization": return $"+{Count} specialization cap (now {70 + Count})";
+                case "Melee":          return $"+{Count} melee damage";
+                case "Missile":        return $"+{Count} missile damage";
+                default:               return "";
             }
         }
     }
