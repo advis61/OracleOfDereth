@@ -52,12 +52,12 @@ namespace OracleOfDereth
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
-            { 2_01, 365 }, // Cantrips
-            { 2_02, 365 }, // Credits
+            { 2_01, 420 }, // Cantrips
+            { 2_02, 420 }, // Credits
             { 2_03, 650 }, // Luminance
-            { 2_04, 365 }, // Recalls
+            { 2_04, 420 }, // Recalls
             { 2_05, 530 }, // Society
-            { 2_06, 450 }, // Conquest (Custom Augs)
+            { 2_06, 420 }, // Conquest (Custom Augs)
 
             // Quests Tab
             { 3_00, 430 }, // John
@@ -65,7 +65,7 @@ namespace OracleOfDereth
             { 3_02, 350 }, // Flags
             { 3_03, 450 }, // Facility Hub
             { 3_04, 560 }, // Titles (Available and Unavailable)
-            { 3_05, 430 }, // Custom Quests
+            { 3_05, 420 }, // Custom Quests
 
             // Server
             { 4_00, 555 }, // Bank
