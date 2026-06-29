@@ -6,13 +6,16 @@ namespace OracleOfDereth
 {
     partial class MainView
     {
-        public HudStaticText ConquestAugsText { get; private set; }
-        public HudStaticText ConquestAugsName { get; private set; }
+        // Character Level + XP-to-next-level summary (single row), shown above the augs list.
+        public HudList ConquestSummaryList { get; private set; }
+
+        public HudStaticText ConquestAugsText { get; private set; } // off-server "None" indicator only
+        public HudStaticText ConquestAugsName { get; private set; } // "Augmentation: N" header (carries the total)
         public HudStaticText ConquestAugsLevel { get; private set; }
         public HudList ConquestAugsList { get; private set; }
         public HudButton ConquestAugsRefresh { get; private set; }
 
-        // XP Bonuses ("/bonus"), shown in a second list below the augs list on the same tab.
+        // XP Bonuses ("/bonus"), shown in a list below the augs list on the same tab.
         public HudStaticText ConquestBonusText { get; private set; }
         public HudStaticText ConquestBonusName { get; private set; }
         public HudStaticText ConquestBonusValue { get; private set; }
@@ -20,6 +23,9 @@ namespace OracleOfDereth
 
         private void InitConquestAugmentations()
         {
+            ConquestSummaryList = (HudList)view["ConquestSummaryList"];
+            ConquestSummaryList.ClearRows();
+
             ConquestAugsText = (HudStaticText)view["ConquestAugsText"];
             ConquestAugsText.FontHeight = 10;
             ConquestAugsName = (HudStaticText)view["ConquestAugsName"];
@@ -45,9 +51,11 @@ namespace OracleOfDereth
         public void UpdateConquestAugmentations()
         {
             // The advanced augs/bonuses only exist on Conquest. Off-server, show "None" and hide
-            // both lists, the refresh button, and the column headers.
+            // the summary, both lists, the refresh button, and the column headers.
             bool available = Server.IsConquest;
 
+            ConquestAugsText.Visible = true; // big title on-server ("Total Custom Augs"), "None" off-server
+            ConquestSummaryList.Visible = available;
             ConquestAugsName.Visible = available;
             ConquestAugsLevel.Visible = available;
             ConquestAugsList.Visible = available;
@@ -69,14 +77,31 @@ namespace OracleOfDereth
 
             ConquestBonusText.Text = "XP Bonuses";
 
+            UpdateConquestSummaryList();
             UpdateConquestAugsList();
             UpdateConquestBonusList();
+        }
+
+        private void UpdateConquestSummaryList()
+        {
+            HudList.HudListRowAccessor row = (ConquestSummaryList.RowCount == 0)
+                ? ConquestSummaryList.AddRow()
+                : ConquestSummaryList[0];
+
+            ((HudStaticText)row[0]).Text = "Character Level";
+            ((HudStaticText)row[1]).Text = CharacterXp.LevelSummary();
+
+            while (ConquestSummaryList.RowCount > 1)
+            {
+                ConquestSummaryList.RemoveRow(ConquestSummaryList.RowCount - 1);
+            }
         }
 
         private void UpdateConquestAugsList()
         {
             List<ConquestAugmentation> augs = ConquestAugmentation.All;
 
+            // The total lives in the big title at the top of the tab.
             ConquestAugsText.Text = $"Total Custom Augs: {ConquestAugmentation.Total}";
 
             for (int x = 0; x < augs.Count; x++)

@@ -243,17 +243,23 @@
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="ConquestAugsText" left="5" top="5" width="300" height="20" text="Total Custom Augs: 0"/>
 						<control progid="DecalControls.PushButton" name="ConquestAugsRefresh" left="263" top="3" width="100" height="24" text="Refresh"/>
-						<control progid="DecalControls.StaticText" name="ConquestAugsName" left="1" top="33" width="200" height="17" text="Augmentation"/>
-						<control progid="DecalControls.StaticText" name="ConquestAugsLevel" left="210" top="33" width="80" height="17" text="Level"/>
-						<control progid="DecalControls.List" name="ConquestAugsList" left="0" top="53" width="400" height="160">
+
+						<control progid="DecalControls.StaticText" name="ConquestAugsName" left="1" top="30" width="200" height="17" text="Augmentation"/>
+						<control progid="DecalControls.StaticText" name="ConquestAugsLevel" left="210" top="30" width="80" height="17" text="Level"/>
+						<control progid="DecalControls.List" name="ConquestAugsList" left="0" top="50" width="400" height="160">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="200" />
 							<column progid="DecalControls.TextColumn" name="Count" fixedwidth="80" />
 						</control>
 
-						<control progid="DecalControls.StaticText" name="ConquestBonusText" left="5" top="220" width="300" height="20" text="XP Bonuses"/>
-						<control progid="DecalControls.StaticText" name="ConquestBonusName" left="1" top="243" width="130" height="17" text="Bonus"/>
-						<control progid="DecalControls.StaticText" name="ConquestBonusValue" left="140" top="243" width="270" height="17" text="Amount"/>
-						<control progid="DecalControls.List" name="ConquestBonusList" left="0" top="263" width="400" height="130">
+						<control progid="DecalControls.List" name="ConquestSummaryList" left="0" top="216" width="400" height="34">
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="150" />
+							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="250" />
+						</control>
+
+						<control progid="DecalControls.StaticText" name="ConquestBonusText" left="5" top="252" width="300" height="20" text="XP Bonuses"/>
+						<control progid="DecalControls.StaticText" name="ConquestBonusName" left="1" top="275" width="130" height="17" text="Bonus"/>
+						<control progid="DecalControls.StaticText" name="ConquestBonusValue" left="140" top="275" width="270" height="17" text="Amount"/>
+						<control progid="DecalControls.List" name="ConquestBonusList" left="0" top="295" width="400" height="130">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="130" />
 							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="270" />
 						</control>
@@ -316,7 +322,7 @@
 					</control>
 				</page>
 
-				<page label="Fac Hub">
+				<page label="Facility">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="FacilityText" left="5" top="5" width="300" height="20" text=""/>
 						<control progid="DecalControls.PushButton" name="FacilityRefresh" left="347" top="3" width="100" height="24" text="Refresh"/>
