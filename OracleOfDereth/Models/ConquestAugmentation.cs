@@ -49,6 +49,14 @@ namespace OracleOfDereth
         // Sum of every advanced aug level.
         public static int Total => All.Sum(a => a.Count);
 
+        // Clipboard summary, e.g. "Creature: 10, Item: 5, Missile: 34, Total: 233". Omits zero augs.
+        public static string Summary()
+        {
+            var parts = All.Where(a => a.Count > 0).Select(a => $"{a.Name}: {a.Count}").ToList();
+            parts.Add($"Total: {Total}");
+            return string.Join(", ", parts);
+        }
+
         // Ask the server to reprint the aug block so we can reparse it. Only meaningful on
         // Conquest — the only server with these augs.
         public static void Refresh()

@@ -16,6 +16,7 @@ namespace OracleOfDereth
         public HudStaticText ConquestAugsEffect { get; private set; }
         public HudList ConquestAugsList { get; private set; }
         public HudButton ConquestAugsRefresh { get; private set; }
+        public HudButton ConquestAugsCopy { get; private set; }
 
         // XP Bonuses ("/bonus"), shown in a list below the augs list on the same tab.
         public HudStaticText ConquestBonusText { get; private set; }
@@ -39,6 +40,8 @@ namespace OracleOfDereth
             ConquestAugsList = (HudList)view["ConquestAugsList"];
             ConquestAugsRefresh = (HudButton)view["ConquestAugsRefresh"];
             ConquestAugsRefresh.Hit += ConquestAugsRefresh_Hit;
+            ConquestAugsCopy = (HudButton)view["ConquestAugsCopy"];
+            ConquestAugsCopy.Hit += ConquestAugsCopy_Hit;
             ConquestAugsList.ClearRows();
 
             ConquestBonusText = (HudStaticText)view["ConquestBonusText"];
@@ -52,6 +55,7 @@ namespace OracleOfDereth
         private void DisposeConquestAugmentations()
         {
             ConquestAugsRefresh.Hit -= ConquestAugsRefresh_Hit;
+            ConquestAugsCopy.Hit -= ConquestAugsCopy_Hit;
         }
 
         public void UpdateConquestAugmentations()
@@ -68,6 +72,7 @@ namespace OracleOfDereth
             ConquestAugsEffect.Visible = available;
             ConquestAugsList.Visible = available;
             ConquestAugsRefresh.Visible = available;
+            ConquestAugsCopy.Visible = available;
             ConquestBonusText.Visible = available;
             ConquestBonusName.Visible = available;
             ConquestBonusValue.Visible = available;
@@ -155,6 +160,14 @@ namespace OracleOfDereth
         {
             ConquestAugmentation.Refresh();
             ConquestBonus.Refresh();
+        }
+
+        // Thinks the aug summary (to self, or fellowship/alliance with Shift/Alt) and copies it.
+        private void ConquestAugsCopy_Hit(object sender, EventArgs e)
+        {
+            string summary = ConquestAugmentation.Summary();
+            Util.Think(summary);
+            Util.ClipboardCopy(summary);
         }
     }
 }
