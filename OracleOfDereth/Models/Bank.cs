@@ -153,6 +153,34 @@ namespace OracleOfDereth
             Util.Command($"/bank transfer {currency.Token} {amount} \"{target}\"");
         }
 
+        // ---- Auto-deposit ------------------------------------------------------------------------
+        // Enabled state persists in settings.xml (key "BankAutoDeposit"); the Bank tab's checkbox is
+        // just a view onto it. AutoDepositTick, driven from the main 1s tick, fires "/bank deposit"
+        // once at each 10-minute wall-clock mark (:00/:10/.../:50) while enabled.
+        private const string AutoDepositKey = "BankAutoDeposit";
+        private static long lastAutoDepositBlock = -1;
+
+        public static bool AutoDepositEnabled
+        {
+            get => SettingsFile.GetSetting(AutoDepositKey, "No") == "Yes";
+            set => SettingsFile.PutSetting(AutoDepositKey, value ? "Yes" : "No");
+        }
+
+        public static void AutoDepositTick()
+        {
+            if (!Server.IsConquest || !AutoDepositEnabled) return;
+
+            DateTime now = DateTime.Now;
+            if (now.Minute % 10 != 0) return;
+
+            long block = now.Ticks / TimeSpan.TicksPerMinute / 10;
+            if (block == lastAutoDepositBlock) return;
+
+            lastAutoDepositBlock = block;
+            DepositAll();
+            Util.Chat("Auto-deposited to bank.", Util.ColorPink);
+        }
+
         // True when this chat line is one of the replies we're waiting on — lets PluginCore route
         // only the relevant lines here.
         public static bool Matches(string text)

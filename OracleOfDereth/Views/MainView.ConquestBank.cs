@@ -14,6 +14,7 @@ namespace OracleOfDereth
         public HudList ConquestBankList { get; private set; }
         public HudButton ConquestBankRefresh { get; private set; }
         public HudButton ConquestBankDeposit { get; private set; }
+        public HudCheckBox ConquestBankAutoDeposit { get; private set; }
 
         // Withdraw / Transfer live on their own tabs of this notebook, below the balances list.
         public HudTabView ConquestBankActionsNotebook { get; private set; }
@@ -57,6 +58,9 @@ namespace OracleOfDereth
             ConquestBankRefresh.Hit += ConquestBankRefresh_Hit;
             ConquestBankDeposit = (HudButton)view["ConquestBankDeposit"];
             ConquestBankDeposit.Hit += ConquestBankDeposit_Hit;
+            ConquestBankAutoDeposit = (HudCheckBox)view["ConquestBankAutoDeposit"];
+            ConquestBankAutoDeposit.Checked = Bank.AutoDepositEnabled; // set before wiring Change so it doesn't re-save
+            ConquestBankAutoDeposit.Change += ConquestBankAutoDeposit_Change;
 
             ConquestBankActionsNotebook = (HudTabView)view["ConquestBankActionsNotebook"];
             ConquestBankActionsNotebook.OpenTabChange += ConquestBankActionsTab_Change;
@@ -98,6 +102,7 @@ namespace OracleOfDereth
         {
             ConquestBankRefresh.Hit -= ConquestBankRefresh_Hit;
             ConquestBankDeposit.Hit -= ConquestBankDeposit_Hit;
+            ConquestBankAutoDeposit.Change -= ConquestBankAutoDeposit_Change;
             ConquestBankActionsNotebook.OpenTabChange -= ConquestBankActionsTab_Change;
             ConquestBankWithdraw.Hit -= ConquestBankWithdraw_Hit;
             ConquestBankTransfer.Hit -= ConquestBankTransfer_Hit;
@@ -120,6 +125,7 @@ namespace OracleOfDereth
             ConquestBankList.Visible = available;
             ConquestBankRefresh.Visible = available;
             ConquestBankDeposit.Visible = available;
+            ConquestBankAutoDeposit.Visible = available;
 
             // Hiding the notebook hides its Withdraw/Transfer tab contents (incl. status lines) too.
             ConquestBankActionsNotebook.Visible = available;
@@ -171,6 +177,12 @@ namespace OracleOfDereth
         {
             if (!Server.IsConquest) { return; }
             Bank.DepositAll();
+        }
+
+        // Persist the auto-deposit toggle (Bank.AutoDepositEnabled writes it to settings.xml).
+        private void ConquestBankAutoDeposit_Change(object sender, EventArgs e)
+        {
+            Bank.AutoDepositEnabled = ConquestBankAutoDeposit.Checked;
         }
 
         private void ConquestBankWithdraw_Hit(object sender, EventArgs e)

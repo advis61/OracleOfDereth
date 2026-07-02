@@ -103,7 +103,7 @@ namespace OracleOfDereth
 
             // Server
             { 4_00, 485 }, // Augs (Conquest)
-            { 4_01, 320 }, // Bank
+            { 4_01, 340 }, // Bank
             { 4_02, 545 }, // Fship (recruiting fellowships)
             { 4_03, 545 }, // Quests (Custom Quests)
 
@@ -318,6 +318,10 @@ namespace OracleOfDereth
         public void Update()
         {
             if (QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
+
+            // Runs every tick regardless of the active tab, so auto-deposit still fires while you're
+            // on another tab (or the window is closed).
+            Bank.AutoDepositTick();
 
             int currentTab = CurrentTab();
 
