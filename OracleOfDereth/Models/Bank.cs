@@ -92,12 +92,24 @@ namespace OracleOfDereth
         // are alphabetical.
         public static readonly IReadOnlyList<Currency> Withdrawable = new List<Currency>
         {
-            new Currency("MMD Notes", "n"),
             new Currency("Conquest Coins", "c"),
             new Currency("Event Tokens", "e"),
             new Currency("Legendary Keys", "k"),
             new Currency("Pyreals", "p"),
             new Currency("Soul Fragments", "s"),
+
+            // Note denominations, largest to smallest. The token is "n <denom>", so the amount field
+            // is the COUNT of notes (e.g. "n D" + 10 -> "/bank withdraw n D 10" = ten 50k notes).
+            // MMD (250k) is the plain "n" default.
+            new Currency("MMD Notes", "n"),
+            new Currency("MM Notes (200k)", "n MM"),
+            new Currency("M Notes (100k)", "n M"),
+            new Currency("D Notes (50k)", "n D"),
+            new Currency("C Notes (10k)", "n C"),
+            new Currency("L Notes (5k)", "n L"),
+            new Currency("X Notes (1k)", "n X"),
+            new Currency("V Notes (500)", "n V"),
+            new Currency("I Notes (100)", "n I"),
         };
 
         // What the player can transfer to another character. Only these three are handled by the
