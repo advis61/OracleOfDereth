@@ -241,8 +241,8 @@ namespace OracleOfDereth
             ClearBankForms();
         }
 
-        // Amount fields are capped at 7 digits (max 9,999,999).
-        private const int BankAmountMaxLength = 7;
+        // Amount fields are capped at 8 digits (max 99,999,999).
+        private const int BankAmountMaxLength = 8;
 
         private void ConquestBankWithdrawAmount_Change(object sender, EventArgs e)
         {
