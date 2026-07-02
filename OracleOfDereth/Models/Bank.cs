@@ -100,12 +100,15 @@ namespace OracleOfDereth
             new Currency("Soul Fragments", "s"),
         };
 
-        // What the player can transfer to another character. MMD Notes first (the UI default).
+        // What the player can transfer to another character. Only these three are handled by the
+        // server's transfer switch (Conquest-ACE PlayerCommands.cs cases 1/2/7); every other
+        // currency — Notes included — silently no-ops, so they're deliberately not offered here.
+        // Alphabetical.
         public static readonly IReadOnlyList<Currency> Transferable = new List<Currency>
         {
-            new Currency("MMD Notes", "n"),
             new Currency("Legendary Keys", "k"),
             new Currency("Luminance", "l"),
+            new Currency("Pyreals", "p"),
         };
 
         // Deposit all bankable items ("/bank deposit").

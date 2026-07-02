@@ -40,7 +40,8 @@ namespace OracleOfDereth
         // (Bank.Withdrawable / Bank.Transferable and Bank.DepositAll/Withdraw/Transfer). The combos
         // are populated from those lists, so the selected index maps straight back to them.
 
-        // A transfer is armed (Do It shown) after a valid Transfer click; Do It sends it.
+        // Whether the transfer confirmation (Do It / Cancel + prompt) is showing. Purely UI state:
+        // Do It reads and validates the live form values itself, so it never gates on this flag.
         private bool bankTransferArmed = false;
 
         private void InitConquestBank()
@@ -215,10 +216,10 @@ namespace OracleOfDereth
             SetBankStatus(ConquestBankTransferStatus, $"Really transfer {amountDisplay} {label} to {target}?", Color.Orange);
         }
 
-        // Do It: send the armed transfer, then clear every form.
+        // Do It: send the transfer using the current form values, then clear every form.
         private void ConquestBankTransferConfirm_Hit(object sender, EventArgs e)
         {
-            if (!Server.IsConquest || !bankTransferArmed) { return; }
+            if (!Server.IsConquest) { return; }
 
             string amount = (ConquestBankTransferAmount.Text ?? "").Trim();
             string target = (ConquestBankTransferTarget.Text ?? "").Trim();
@@ -236,7 +237,7 @@ namespace OracleOfDereth
             SanitizeAmount(ConquestBankWithdrawAmount, BankAmountMaxLength);
         }
 
-        // Transfer amount also disarms a pending confirmation on edit.
+        // Transfer amount also cancels a pending confirmation on edit.
         private void ConquestBankTransferAmount_Change(object sender, EventArgs e)
         {
             SanitizeAmount(ConquestBankTransferAmount, BankAmountMaxLength);
