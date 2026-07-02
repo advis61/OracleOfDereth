@@ -51,7 +51,7 @@ namespace OracleOfDereth
 
         // Column sort, applied as a display-time view (see Sorted) rather than reordering All,
         // so it survives the full rebuild that happens on every "/fship list" refresh.
-        public enum SortType { NameAsc, NameDesc, MembersAsc, MembersDesc, LocationAsc, LocationDesc }
+        public enum SortType { NameAsc, NameDesc, LeaderAsc, LeaderDesc, MembersAsc, MembersDesc, LocationAsc, LocationDesc }
         public static SortType CurrentSort = SortType.NameAsc;
 
         // All fellowships ordered by the current column sort (Name is the tiebreaker throughout).
@@ -61,6 +61,8 @@ namespace OracleOfDereth
             switch (CurrentSort)
             {
                 case SortType.NameDesc:     return All.OrderByDescending(f => f.Name, c).ToList();
+                case SortType.LeaderAsc:    return All.OrderBy(f => f.Leader, c).ThenBy(f => f.Name, c).ToList();
+                case SortType.LeaderDesc:   return All.OrderByDescending(f => f.Leader, c).ThenBy(f => f.Name, c).ToList();
                 case SortType.MembersAsc:   return All.OrderBy(f => f.MemberCount).ThenBy(f => f.Name, c).ToList();
                 case SortType.MembersDesc:  return All.OrderByDescending(f => f.MemberCount).ThenBy(f => f.Name, c).ToList();
                 case SortType.LocationAsc:  return All.OrderBy(f => f.Location, c).ThenBy(f => f.Name, c).ToList();

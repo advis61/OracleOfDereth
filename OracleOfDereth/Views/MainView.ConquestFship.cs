@@ -12,6 +12,7 @@ namespace OracleOfDereth
         public HudFixedLayout ConquestFshipSort { get; private set; } // sortable-list indicator slot
         private HudPictureBox ConquestFshipSortIcon;
         public HudStaticText ConquestFshipName { get; private set; }
+        public HudStaticText ConquestFshipLeader { get; private set; }
         public HudStaticText ConquestFshipMembers { get; private set; }
         public HudStaticText ConquestFshipLocation { get; private set; }
         public HudList ConquestFshipList { get; private set; }
@@ -22,9 +23,9 @@ namespace OracleOfDereth
         // Column indices for ConquestFshipList (see mainView.xml). Columns start at the left edge;
         // the sort-indicator glyph floats in the header row (ConquestFshipSort), not in a column.
         private const int FshipColName = 0;
-        private const int FshipColMembers = 1;
-        private const int FshipColLocation = 2;
-        private const int FshipColLeader = 3; // hidden; holds the leader name for Join
+        private const int FshipColLeader = 1;
+        private const int FshipColMembers = 2;
+        private const int FshipColLocation = 3;
 
         // The leader of the currently selected (highlighted) fellowship, "" when none.
         private string fshipSelectedLeader = "";
@@ -43,6 +44,8 @@ namespace OracleOfDereth
 
             ConquestFshipName = (HudStaticText)view["ConquestFshipName"];
             ConquestFshipName.Hit += ConquestFshipName_Click;
+            ConquestFshipLeader = (HudStaticText)view["ConquestFshipLeader"];
+            ConquestFshipLeader.Hit += ConquestFshipLeader_Click;
             ConquestFshipMembers = (HudStaticText)view["ConquestFshipMembers"];
             ConquestFshipMembers.Hit += ConquestFshipMembers_Click;
             ConquestFshipLocation = (HudStaticText)view["ConquestFshipLocation"];
@@ -66,6 +69,7 @@ namespace OracleOfDereth
         {
             ConquestFshipSortIcon.Hit -= ConquestFshipName_Click;
             ConquestFshipName.Hit -= ConquestFshipName_Click;
+            ConquestFshipLeader.Hit -= ConquestFshipLeader_Click;
             ConquestFshipMembers.Hit -= ConquestFshipMembers_Click;
             ConquestFshipLocation.Hit -= ConquestFshipLocation_Click;
             ConquestFshipRefresh.Hit -= ConquestFshipRefresh_Hit;
@@ -82,6 +86,7 @@ namespace OracleOfDereth
 
             ConquestFshipSort.Visible = available;
             ConquestFshipName.Visible = available;
+            ConquestFshipLeader.Visible = available;
             ConquestFshipMembers.Visible = available;
             ConquestFshipLocation.Visible = available;
             ConquestFshipList.Visible = available;
@@ -109,7 +114,7 @@ namespace OracleOfDereth
         private void UpdateConquestFshipList()
         {
             List<ConquestFship> fships = ConquestFship.Sorted();
-            List<int> columns = new List<int> { FshipColName, FshipColMembers, FshipColLocation };
+            List<int> columns = new List<int> { FshipColName, FshipColLeader, FshipColMembers, FshipColLocation };
 
             for (int x = 0; x < fships.Count; x++)
             {
@@ -185,6 +190,14 @@ namespace OracleOfDereth
             ConquestFship.CurrentSort = (ConquestFship.CurrentSort == ConquestFship.SortType.NameAsc)
                 ? ConquestFship.SortType.NameDesc
                 : ConquestFship.SortType.NameAsc;
+            UpdateConquestFshipList();
+        }
+
+        private void ConquestFshipLeader_Click(object sender, EventArgs e)
+        {
+            ConquestFship.CurrentSort = (ConquestFship.CurrentSort == ConquestFship.SortType.LeaderAsc)
+                ? ConquestFship.SortType.LeaderDesc
+                : ConquestFship.SortType.LeaderAsc;
             UpdateConquestFshipList();
         }
 
