@@ -383,6 +383,28 @@
 					</control>
 				</page>
 
+				<page label="Fship">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="ConquestFshipText" left="5" top="7" width="298" height="20" text="No Fellowship"/>
+						<control progid="DecalControls.PushButton" name="ConquestFshipJoin" left="350" top="3" width="60" height="24" text="Join"/>
+						<control progid="DecalControls.PushButton" name="ConquestFshipQuit" left="350" top="3" width="60" height="24" text="Quit"/>
+						<control progid="DecalControls.PushButton" name="ConquestFshipRefresh" left="414" top="3" width="100" height="24" text="Refresh"/>
+
+						<control progid="DecalControls.FixedLayout" name="ConquestFshipSort" left="1" top="36" width="16" height="16"/>
+						<control progid="DecalControls.StaticText" name="ConquestFshipName" left="19" top="33" width="150" height="17" text="Fellowship"/>
+						<control progid="DecalControls.StaticText" name="ConquestFshipMembers" left="160" top="33" width="45" height="17" text="Size"/>
+						<control progid="DecalControls.StaticText" name="ConquestFshipLocation" left="211" top="33" width="230" height="17" text="Location"/>
+
+						<control progid="DecalControls.List" name="ConquestFshipList" left="0" top="53" width="520" height="480">
+
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="150" />
+							<column progid="DecalControls.TextColumn" name="Members" fixedwidth="45" />
+							<column progid="DecalControls.TextColumn" name="Location" fixedwidth="230" />
+							<column progid="DecalControls.TextColumn" name="Leader" fixedwidth="1" />
+						</control>
+					</control>
+				</page>
+
 				<page label="Quests">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.PushButton" name="CustomQuestsRefresh" left="327" top="3" width="100" height="24" text="Refresh"/>

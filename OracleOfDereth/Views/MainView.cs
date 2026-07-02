@@ -68,7 +68,8 @@ namespace OracleOfDereth
             // Server
             { 4_00, 650 }, // Augs (Conquest)
             { 4_01, 580 }, // Bank
-            { 4_02, 430 }, // Quests (Custom Quests)
+            { 4_02, 520 }, // Fship (recruiting fellowships)
+            { 4_03, 430 }, // Quests (Custom Quests)
 
             // About / Settings / Help
             { 5_00, 350 }, // About
@@ -103,7 +104,8 @@ namespace OracleOfDereth
             // Server
             { 4_00, 485 }, // Augs (Conquest)
             { 4_01, 300 }, // Bank
-            { 4_02, 545 }, // Quests (Custom Quests)
+            { 4_02, 545 }, // Fship (recruiting fellowships)
+            { 4_03, 545 }, // Quests (Custom Quests)
 
             // About / Settings / Help
             { 5_00, 270 }, // About
@@ -171,6 +173,7 @@ namespace OracleOfDereth
                 InitCustomQuests();
                 InitConquestAugmentations();
                 InitConquestBank();
+                InitConquestFship();
                 InitAugmentations();
                 InitCantrips();
                 InitCredits();
@@ -215,6 +218,7 @@ namespace OracleOfDereth
                 DisposeCustomQuests();
                 DisposeConquestAugmentations();
                 DisposeConquestBank();
+                DisposeConquestFship();
                 DisposeAugmentations();
                 DisposeCredits();
                 DisposeRecalls();
@@ -342,7 +346,8 @@ namespace OracleOfDereth
             // Server Tab
             if (currentTab == 4_00) { UpdateConquestAugmentations(); }
             if (currentTab == 4_01) { UpdateConquestBank(); }
-            if (currentTab == 4_02) { UpdateCustomQuests(); }
+            if (currentTab == 4_02) { UpdateConquestFship(); }
+            if (currentTab == 4_03) { UpdateCustomQuests(); }
 
             // About / Settings / Help
             if (currentTab == 5_00) {; }
