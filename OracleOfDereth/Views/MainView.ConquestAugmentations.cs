@@ -163,9 +163,14 @@ namespace OracleOfDereth
         }
 
         // Thinks the aug summary (to self, or fellowship/alliance with Shift/Alt) and copies it.
+        // Appends the Quest Bonus line from "/bonus", e.g. "Quest Bonus: 14.18% (1,418 quests)".
         private void ConquestAugsCopy_Hit(object sender, EventArgs e)
         {
             string summary = ConquestAugmentation.Summary();
+
+            ConquestBonus quest = ConquestBonus.Get("Quest");
+            if (quest != null && quest.Value.Length > 0) { summary += $", Quest Bonus: {quest.Value}"; }
+
             Util.Think(summary);
             Util.ClipboardCopy(summary);
         }

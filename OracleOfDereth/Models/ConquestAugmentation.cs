@@ -53,7 +53,7 @@ namespace OracleOfDereth
         public static string Summary()
         {
             var parts = All.Where(a => a.Count > 0).Select(a => $"{a.Name}: {a.Count}").ToList();
-            parts.Add($"Total: {Total}");
+            parts.Add($"Total Augs: {Total}");
             return string.Join(", ", parts);
         }
 
