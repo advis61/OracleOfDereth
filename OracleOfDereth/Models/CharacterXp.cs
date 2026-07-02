@@ -108,7 +108,7 @@ namespace OracleOfDereth
             {
                 int level = Level;
                 if (level >= MaxLevel) return "max level";
-                return $"{PercentComplete}% complete, {XpToNextLevel:N0}xp to next";
+                return $"{PercentComplete}% complete, {XpToNextLevel:N0}xp to next level";
             }
             catch (Exception ex)
             {

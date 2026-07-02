@@ -23,20 +23,36 @@ namespace OracleOfDereth
         // placeholder until the real vendor values are known.
         public int CoinCost { get; }
 
-        private ConquestAugmentation(string name, int coinCost) { Name = name; CoinCost = coinCost; }
+        // Per-aug luminance pricing inputs, matching Conquest-ACE's aug-gem emote record:
+        //   LumBase    <- emote.Amount        (the tier-1 base luminance cost, i.e. cost at count 0)
+        //   LumPercent <- emote.Percent / 100 (the per-level step within a tier)
+        // These live in the world DB, not the repo, so the values below are best-fit estimates from
+        // observed costs (Melee base 1.75M is exact at count 0; Item/Creature bases are derived at
+        // 5% and rounded; the rest use the 2.5M ACE default). Replace with the real emote.Amount /
+        // emote.Percent per gem once the server dev provides them.
+        public double LumBase { get; }
+        public double LumPercent { get; }
 
-        // Registry, in "/augs" output order.
+        private ConquestAugmentation(string name, int coinCost, double lumBase, double lumPercent)
+        {
+            Name = name;
+            CoinCost = coinCost;
+            LumBase = lumBase;
+            LumPercent = lumPercent;
+        }
+
+        // Registry, in "/augs" output order.  Args: coinCost, lumBase (emote.Amount), lumPercent.
         public static readonly List<ConquestAugmentation> All = new List<ConquestAugmentation>
         {
-            new ConquestAugmentation("Creature", 25),
-            new ConquestAugmentation("Item", 100),
-            new ConquestAugmentation("Life", 250),
-            new ConquestAugmentation("War", 250),
-            new ConquestAugmentation("Void", 250),
-            new ConquestAugmentation("Duration", 250),
-            new ConquestAugmentation("Specialization", 250),
-            new ConquestAugmentation("Melee", 250),
-            new ConquestAugmentation("Missile", 250),
+            new ConquestAugmentation("Creature", 25, 1_730_417, 0.05),        // est: fits count 25 = 6,229,500
+            new ConquestAugmentation("Item", 100, 2_481_900, 0.05),           // est: fits count 5 = 3,102,375
+            new ConquestAugmentation("Life", 75, 2_500_000, 0.05),            // placeholder (ACE default)
+            new ConquestAugmentation("War", 50, 1_750_000, 0.05),             // confirmed base
+            new ConquestAugmentation("Void", 50, 1_800_000, 0.05),            // confirmed base
+            new ConquestAugmentation("Duration", 30, 1_400_000, 0.05),        // confirmed base
+            new ConquestAugmentation("Specialization", 125, 2_700_000, 0.05), // confirmed: fits count 4 = 3,240,000
+            new ConquestAugmentation("Melee", 50, 1_750_000, 0.05),           // confirmed base at count 0
+            new ConquestAugmentation("Missile", 50, 1_750_000, 0.05),         // mirrors Melee base
         };
 
         // A "/augs" output line, e.g. "Duration: 3" (the label set keeps this from matching
@@ -94,25 +110,27 @@ namespace OracleOfDereth
             if (aug != null && int.TryParse(m.Groups[2].Value.Replace(",", ""), out int count)) { aug.Count = count; }
         }
 
-        // Luminance cost of the NEXT purchase of this aug, from Conquest-ACE
-        // EmoteManager_AugGems.CalculateTieredAugmentationCost. Same formula for every aug; the only
-        // variable is this aug's current Count. Base 2.5M, +5% per step within a tier, tier bases
-        // step up at counts 15/30/60 (2.5M -> 6M -> 12M -> 30M). No cap.
-        private const double LumBaseCost = 2_500_000;
-        private const double LumPercentStep = 0.05;
-
+        // Luminance cost of the NEXT purchase of this aug, mirroring the Conquest-ACE `live` branch
+        // EmoteManager_AugGems.CalculateTieredAugmentationCost. The tier structure (boundaries and
+        // multipliers) is hardcoded server-side and shared by all augs; only LumBase (emote.Amount)
+        // and LumPercent (emote.Percent) vary per gem. Cost is linear within a tier:
+        //   tierBase * (1 + positionInTier * LumPercent)
+        // Tier bases (as multiples of LumBase): 1x (0-14), 2.4x (15-29), 4.8x (30-59),
+        // 12x (60-64), 30x (65+). The 65+ tier is the live-branch addition. No cap. Server casts
+        // the total to long, so we truncate too.
         public long NextLuminanceCost()
         {
             long idx = Count;
             double tierBase;
             long pos;
 
-            if (idx >= 60)      { tierBase = LumBaseCost * 12.0; pos = idx - 60; }
-            else if (idx >= 30) { tierBase = LumBaseCost * 4.8;  pos = idx - 30; }
-            else if (idx >= 15) { tierBase = LumBaseCost * 2.4;  pos = idx - 15; }
-            else                { tierBase = LumBaseCost;        pos = idx; }
+            if (idx >= 65)      { tierBase = LumBase * 30.0; pos = idx - 65; }
+            else if (idx >= 60) { tierBase = LumBase * 12.0; pos = idx - 60; }
+            else if (idx >= 30) { tierBase = LumBase * 4.8;  pos = idx - 30; }
+            else if (idx >= 15) { tierBase = LumBase * 2.4;  pos = idx - 15; }
+            else                { tierBase = LumBase;        pos = idx; }
 
-            return (long)(tierBase * (1.0 + pos * LumPercentStep));
+            return (long)(tierBase * (1.0 + pos * LumPercent));
         }
 
         // "25 coins, 2.5M lum" — the price of the next purchase of this aug.
