@@ -112,11 +112,11 @@ namespace OracleOfDereth
 
         // The withdraw option the UI preselects: MMD Notes (the plain "n" default), which isn't the
         // first entry in the list.
-        public static readonly int DefaultWithdrawIndex = FindWithdrawIndex("n");
+        public static readonly int DefaultWithdrawIndex = IndexOfToken(Withdrawable, "n");
 
-        private static int FindWithdrawIndex(string token)
+        private static int IndexOfToken(IReadOnlyList<Currency> list, string token)
         {
-            for (int i = 0; i < Withdrawable.Count; i++) { if (Withdrawable[i].Token == token) { return i; } }
+            for (int i = 0; i < list.Count; i++) { if (list[i].Token == token) { return i; } }
             return 0;
         }
 
@@ -130,6 +130,9 @@ namespace OracleOfDereth
             new Currency("Luminance", "l"),
             new Currency("Pyreals", "p"),
         };
+
+        // The transfer option the UI preselects: Luminance.
+        public static readonly int DefaultTransferIndex = IndexOfToken(Transferable, "l");
 
         // Deposit all bankable items ("/bank deposit").
         public static void DepositAll() { Util.Command("/bank deposit"); }

@@ -89,13 +89,13 @@ namespace OracleOfDereth
             foreach (Bank.Currency c in Bank.Withdrawable) { ConquestBankWithdrawType.AddItem(c.Label, c.Label); }
             foreach (Bank.Currency c in Bank.Transferable) { ConquestBankTransferType.AddItem(c.Label, c.Label); }
             ConquestBankWithdrawType.Current = Bank.DefaultWithdrawIndex; // MMD Notes
-            ConquestBankTransferType.Current = 0;
+            ConquestBankTransferType.Current = Bank.DefaultTransferIndex; // Luminance
 
             // Any change to the transfer inputs cancels a pending confirmation. The amount also
             // gets the 7-digit length cap.
             ConquestBankTransferType.Change += ConquestBankTransferInput_Change;
             ConquestBankTransferAmount.Change += ConquestBankTransferAmount_Change;
-            ConquestBankTransferTarget.Change += ConquestBankTransferInput_Change;
+            ConquestBankTransferTarget.Change += ConquestBankTransferTarget_Change;
         }
 
         private void DisposeConquestBank()
@@ -111,7 +111,7 @@ namespace OracleOfDereth
             ConquestBankWithdrawAmount.Change -= ConquestBankWithdrawAmount_Change;
             ConquestBankTransferType.Change -= ConquestBankTransferInput_Change;
             ConquestBankTransferAmount.Change -= ConquestBankTransferAmount_Change;
-            ConquestBankTransferTarget.Change -= ConquestBankTransferInput_Change;
+            ConquestBankTransferTarget.Change -= ConquestBankTransferTarget_Change;
         }
 
         public void UpdateConquestBank()
@@ -244,6 +244,9 @@ namespace OracleOfDereth
         // Amount fields are capped at 8 digits (max 99,999,999).
         private const int BankAmountMaxLength = 8;
 
+        // The digit characters, for sanitizing amount (keep only these) and name (drop these) fields.
+        private static readonly char[] Digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
         private void ConquestBankWithdrawAmount_Change(object sender, EventArgs e)
         {
             SanitizeAmount(ConquestBankWithdrawAmount, BankAmountMaxLength);
@@ -256,10 +259,27 @@ namespace OracleOfDereth
             if (bankTransferArmed) { DisarmBankTransfer(); }
         }
 
-        // Editing the transfer type/target cancels a pending confirmation.
+        // Editing the transfer type cancels a pending confirmation.
         private void ConquestBankTransferInput_Change(object sender, EventArgs e)
         {
             if (bankTransferArmed) { DisarmBankTransfer(); }
+        }
+
+        // Transfer target: strip anything that can't be in a character name (digits) or would break
+        // the quoted command (double quotes); also cancels a pending confirmation on edit.
+        private void ConquestBankTransferTarget_Change(object sender, EventArgs e)
+        {
+            SanitizeName(ConquestBankTransferTarget);
+            if (bankTransferArmed) { DisarmBankTransfer(); }
+        }
+
+        // Drops 0-9 and " (keeps letters, spaces, apostrophes, hyphens, etc.). Re-assigning Text
+        // refires Change, but the cleaned value passes through unchanged the second time.
+        private static void SanitizeName(HudTextBox box)
+        {
+            string text = box.Text ?? "";
+            string cleaned = new string(text.Where(c => !Digits.Contains(c) && c != '"').ToArray());
+            if (cleaned != text) { box.Text = cleaned; }
         }
 
         // Keeps only 0-9 (drops letters, commas, spaces, etc.) and caps at max digits. Re-assigning
@@ -267,7 +287,7 @@ namespace OracleOfDereth
         private static void SanitizeAmount(HudTextBox box, int max)
         {
             string text = box.Text ?? "";
-            string digits = new string(text.Where(c => c >= '0' && c <= '9').ToArray());
+            string digits = new string(text.Where(Digits.Contains).ToArray());
             if (digits.Length > max) { digits = digits.Substring(0, max); }
             if (digits != text) { box.Text = digits; }
         }
@@ -301,7 +321,7 @@ namespace OracleOfDereth
             ConquestBankWithdrawAmount.Text = "";
             ConquestBankWithdrawType.Current = Bank.DefaultWithdrawIndex;
             ConquestBankTransferAmount.Text = "";
-            ConquestBankTransferType.Current = 0;
+            ConquestBankTransferType.Current = Bank.DefaultTransferIndex;
             ConquestBankTransferTarget.Text = "";
             ClearBankStatus(ConquestBankWithdrawStatus);
             DisarmBankTransfer();
