@@ -57,7 +57,6 @@ namespace OracleOfDereth
             { 2_03, 650 }, // Luminance
             { 2_04, 420 }, // Recalls
             { 2_05, 530 }, // Society
-            { 2_06, 420 }, // Conquest (Custom Augs)
 
             // Quests Tab
             { 3_00, 430 }, // John
@@ -65,10 +64,11 @@ namespace OracleOfDereth
             { 3_02, 350 }, // Flags
             { 3_03, 450 }, // Facility Hub
             { 3_04, 560 }, // Titles (Available and Unavailable)
-            { 3_05, 430 }, // Custom Quests
 
             // Server
-            { 4_00, 580 }, // Bank
+            { 4_00, 420 }, // Augs (Conquest)
+            { 4_01, 580 }, // Bank
+            { 4_02, 430 }, // Quests (Custom Quests)
 
             // About / Settings / Help
             { 5_00, 350 }, // About
@@ -92,7 +92,6 @@ namespace OracleOfDereth
             { 2_03, 550 }, // Luminance
             { 2_04, 435 }, // Recalls
             { 2_05, 570 }, // Society
-            { 2_06, 485 }, // Conquest (Custom Augs)
 
             // Quests Tab
             { 3_00, 545}, // John
@@ -100,10 +99,11 @@ namespace OracleOfDereth
             { 3_02, 540 }, // Flags
             { 3_03, 485 }, // Facility Hub
             { 3_04, 545 }, // Titles (Available and Unavailable)
-            { 3_05, 545 }, // Custom Quests
 
             // Server
-            { 4_00, 300 }, // Bank
+            { 4_00, 485 }, // Augs (Conquest)
+            { 4_01, 300 }, // Bank
+            { 4_02, 545 }, // Quests (Custom Quests)
 
             // About / Settings / Help
             { 5_00, 270 }, // About
@@ -331,7 +331,6 @@ namespace OracleOfDereth
             if (currentTab == 2_03) { UpdateLuminance(); }
             if (currentTab == 2_04) { UpdateRecalls(); }
             if (currentTab == 2_05) { UpdateSociety(); }
-            if (currentTab == 2_06) { UpdateConquestAugmentations(); }
 
             // Quests Tab
             if (currentTab == 3_00) { UpdateJohn(); }
@@ -339,10 +338,11 @@ namespace OracleOfDereth
             if (currentTab == 3_02) { UpdateFlags(); }
             if (currentTab == 3_03) { UpdateFacility(); }
             if (currentTab == 3_04) { UpdateTitles(); }
-            if (currentTab == 3_05) { UpdateCustomQuests(); }
 
             // Server Tab
-            if (currentTab == 4_00) { UpdateConquestBank(); }
+            if (currentTab == 4_00) { UpdateConquestAugmentations(); }
+            if (currentTab == 4_01) { UpdateConquestBank(); }
+            if (currentTab == 4_02) { UpdateCustomQuests(); }
 
             // About / Settings / Help
             if (currentTab == 5_00) {; }
