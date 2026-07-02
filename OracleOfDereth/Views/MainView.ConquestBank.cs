@@ -23,10 +23,9 @@ namespace OracleOfDereth
         public HudCombo ConquestBankWithdrawType { get; private set; }
         public HudButton ConquestBankWithdraw { get; private set; }
 
-        // Transfer tab: amount, currency combo, "To", target name, button.
+        // Transfer tab: amount, currency combo, "To" (static label), target name, button.
         public HudTextBox ConquestBankTransferAmount { get; private set; }
         public HudCombo ConquestBankTransferType { get; private set; }
-        public HudStaticText ConquestBankTransferToLabel { get; private set; }
         public HudTextBox ConquestBankTransferTarget { get; private set; }
         public HudButton ConquestBankTransfer { get; private set; }
 
@@ -69,7 +68,6 @@ namespace OracleOfDereth
 
             ConquestBankTransferAmount = (HudTextBox)view["ConquestBankTransferAmount"];
             ConquestBankTransferType = (HudCombo)view["ConquestBankTransferType"];
-            ConquestBankTransferToLabel = (HudStaticText)view["ConquestBankTransferToLabel"];
             ConquestBankTransferTarget = (HudTextBox)view["ConquestBankTransferTarget"];
             ConquestBankTransfer = (HudButton)view["ConquestBankTransfer"];
             ConquestBankTransfer.Hit += ConquestBankTransfer_Hit;

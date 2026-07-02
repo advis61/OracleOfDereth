@@ -70,8 +70,6 @@ namespace OracleOfDereth
             }
 
             CustomQuests.AddRange(quests);
-
-            // Util.Chat($"Loaded {CustomQuests.Count} Custom Quests from embedded CSV.", 1);
         }
 
         public override string ToString()

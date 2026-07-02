@@ -145,18 +145,10 @@ namespace OracleOfDereth
             return (lum / 1_000_000.0).ToString("0.##") + "M";
         }
 
-        // Short, human-readable per-aug effect for the current Count (the aug's level):
-        //  - Creature: +1 effective spell level per point.
-        //  - Item: +1 armor level / attack / melee-D and +0.5 spirit & blood drinker per point.
-        //  - Life: resists scale +0.3%/point up to 10, then +0.1%/point; +1 heal/revitalize and
-        //    +0.1 surge per point.
-        //  - War/Void/Melee/Missile: +1 damage per point.
-        //  - Duration: +5% spell duration per point.
-        //  - Specialization: raises the 70 specialization-credit cap by +Count.
+        // Short, human-readable description of this aug's effect at its current Count, from the
+        // in-game aug descriptions. Shown even at Count 0 so players can preview each aug.
         public string Effect()
         {
-            //if (Count <= 0) return "";
-
             switch (Name)
             {
                 case "Creature":       return $"+{Count} effective level";
