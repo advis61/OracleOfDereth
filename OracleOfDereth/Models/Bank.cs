@@ -1,4 +1,3 @@
-using Decal.Adapter;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -15,11 +14,9 @@ namespace OracleOfDereth
     {
         private const string ChatPrefix = "[OD] ";
 
-        // Whether this server supports the bank feature: null = not checked yet, true/false = known.
-        public static bool? Supported = null;
-
         // The bank is a Conquest feature, so support is just the Conquest check. Used by the UI
-        // (e.g. the trade view's bank button) instead of the async "/od checkbank" probe above.
+        // (e.g. the trade view's bank button). The "/od checkbank" machinery below is a manual
+        // probe/diagnostic that reports its result to chat.
         public static bool IsSupported => Server.IsConquest;
 
         // "/bank" reply on a bank server begins with "[BANK]" (e.g. "[BANK] Bank Commands ...").
@@ -201,7 +198,6 @@ namespace OracleOfDereth
         private static void Resolve(bool supported)
         {
             pending = false;
-            Supported = supported;
             Util.Chat(supported ? "Yes bank" : "No bank", Util.ColorCyan, ChatPrefix);
         }
     }
