@@ -44,8 +44,8 @@ namespace OracleOfDereth
         // Registry, in "/augs" output order.  Args: coinCost, lumBase (emote.Amount), lumPercent.
         public static readonly List<ConquestAugmentation> All = new List<ConquestAugmentation>
         {
-            new ConquestAugmentation("Creature", 25, 1_730_417, 0.05),        // est: fits count 25 = 6,229,500
-            new ConquestAugmentation("Item", 100, 2_481_900, 0.05),           // est: fits count 5 = 3,102,375
+            new ConquestAugmentation("Creature", 25, 1_750_000, 0.04832143),  // even base; % derived from count 25 = 6,229,500
+            new ConquestAugmentation("Item", 100, 2_500_000, 0.04819),        // even base; % derived from count 5 = 3,102,375
             new ConquestAugmentation("Life", 75, 2_500_000, 0.05),            // placeholder (ACE default)
             new ConquestAugmentation("War", 50, 1_750_000, 0.05),             // confirmed base
             new ConquestAugmentation("Void", 50, 1_800_000, 0.05),            // confirmed base
