@@ -116,5 +116,79 @@ namespace OracleOfDereth
                 return "-";
             }
         }
+
+        // ---- Enlightenment -----------------------------------------------------------------------
+
+        // Current enlightenment level (PropertyInt 390, networked to the client). 0 when un-enlightened.
+        public static int Enlightenment => CoreManager.Current.CharacterFilter.GetCharProperty(390);
+
+        // Total XP still needed to reach the level cap (300).
+        public static long XpToMaxLevel
+        {
+            get
+            {
+                var cf = CoreManager.Current.CharacterFilter;
+                if (cf.Level >= MaxLevel) return 0;
+                long remaining = (long)(TotalXpForLevel(MaxLevel) - cf.TotalXP);
+                return remaining < 0 ? 0 : remaining;
+            }
+        }
+
+        // Percent of the total XP needed for the level cap (300) earned so far, 0-100, floored.
+        public static int PercentToMaxLevel
+        {
+            get
+            {
+                double max = TotalXpForLevel(MaxLevel);
+                if (max <= 0) return 0;
+                double pct = (double)CoreManager.Current.CharacterFilter.TotalXP / max * 100.0;
+                if (pct < 0) pct = 0;
+                if (pct > 100) pct = 100;
+                return (int)pct;
+            }
+        }
+
+        // Enlightenment cost multiplier by target level (Conquest-ACE Enlightenment.cs):
+        // ENL 1-24 = 1x, 25-49 = 2.5x, 50-74 = 5x, 75+ = 7.5x.
+        private static double EnlightenmentCostMultiplier(int target)
+        {
+            if (target >= 75) return 7.5;
+            if (target >= 50) return 5.0;
+            if (target >= 25) return 2.5;
+            return 1.0;
+        }
+
+        // Conquest Coins to reach `target` enlightenment: target * 100 * multiplier.
+        public static long EnlightenmentCoinCost(int target) => (long)(target * 100 * EnlightenmentCostMultiplier(target));
+
+        // Banked luminance to reach `target` enlightenment: target * 1,000,000 * multiplier.
+        public static long EnlightenmentLuminanceCost(int target) => (long)(target * 1_000_000L * EnlightenmentCostMultiplier(target));
+
+        // Abbreviated millions: 2,000,000 -> "2M", 62,500,000 -> "62.5M".
+        private static string FormatLumMillions(long lum) => (lum / 1_000_000.0).ToString("0.##") + "M";
+
+        // Left column of the enlightenment row, e.g. "Enlightenment 12". Never throws.
+        public static string EnlightenmentLabel()
+        {
+            try { return $"Enlightenment {Enlightenment}"; }
+            catch (Exception ex) { Util.Log(ex); return "Enlightenment"; }
+        }
+
+        // Right column of the enlightenment row: max-level progress plus the cost of the next
+        // enlightenment, e.g. "75% complete, 1,223,444xp to max level. Cost: 2,500 coins, 25M lum".
+        public static string EnlightenmentProgressText()
+        {
+            try
+            {
+                int target = Enlightenment + 1;
+                return $"{PercentToMaxLevel}% complete, {XpToMaxLevel:N0}xp to max level. " +
+                       $"Cost: {EnlightenmentCoinCost(target):N0} coins, {FormatLumMillions(EnlightenmentLuminanceCost(target))} lum";
+            }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
+                return "-";
+            }
+        }
     }
 }

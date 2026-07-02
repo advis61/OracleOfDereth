@@ -100,14 +100,17 @@ namespace OracleOfDereth
 
         private void UpdateConquestSummaryList()
         {
-            HudList.HudListRowAccessor row = (ConquestSummaryList.RowCount == 0)
-                ? ConquestSummaryList.AddRow()
-                : ConquestSummaryList[0];
+            while (ConquestSummaryList.RowCount < 2) { ConquestSummaryList.AddRow(); }
 
-            ((HudStaticText)row[0]).Text = CharacterXp.LevelLabel();
-            ((HudStaticText)row[1]).Text = CharacterXp.ProgressText();
+            HudList.HudListRowAccessor level = ConquestSummaryList[0];
+            ((HudStaticText)level[0]).Text = CharacterXp.LevelLabel();
+            ((HudStaticText)level[1]).Text = CharacterXp.ProgressText();
 
-            while (ConquestSummaryList.RowCount > 1)
+            HudList.HudListRowAccessor enl = ConquestSummaryList[1];
+            ((HudStaticText)enl[0]).Text = CharacterXp.EnlightenmentLabel();
+            ((HudStaticText)enl[1]).Text = CharacterXp.EnlightenmentProgressText();
+
+            while (ConquestSummaryList.RowCount > 2)
             {
                 ConquestSummaryList.RemoveRow(ConquestSummaryList.RowCount - 1);
             }

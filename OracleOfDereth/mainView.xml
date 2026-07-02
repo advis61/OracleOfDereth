@@ -355,15 +355,15 @@
 						</control>
 
 						<control progid="DecalControls.StaticText" name="ConquestCharacterText" left="5" top="226" width="300" height="20" text="Character"/>
-						<control progid="DecalControls.List" name="ConquestSummaryList" left="0" top="250" width="640" height="34">
+						<control progid="DecalControls.List" name="ConquestSummaryList" left="0" top="250" width="1000" height="54">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="110" />
-							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="480" />
+							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="640" />
 						</control>
 
-						<control progid="DecalControls.StaticText" name="ConquestBonusText" left="5" top="290" width="300" height="20" text="XP Bonuses"/>
-						<control progid="DecalControls.StaticText" name="ConquestBonusName" left="1" top="313" width="160" height="17" text="Bonus"/>
-						<control progid="DecalControls.StaticText" name="ConquestBonusValue" left="120" top="313" width="270" height="17" text="Amount"/>
-						<control progid="DecalControls.List" name="ConquestBonusList" left="0" top="333" width="640" height="130">
+						<control progid="DecalControls.StaticText" name="ConquestBonusText" left="5" top="310" width="300" height="20" text="XP Bonuses"/>
+						<control progid="DecalControls.StaticText" name="ConquestBonusName" left="1" top="333" width="160" height="17" text="Bonus"/>
+						<control progid="DecalControls.StaticText" name="ConquestBonusValue" left="120" top="333" width="270" height="17" text="Amount"/>
+						<control progid="DecalControls.List" name="ConquestBonusList" left="0" top="353" width="1000" height="130">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="110" />
 							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="480" />
 						</control>
@@ -373,7 +373,7 @@
 				<page label="Bank">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="ConquestBankText" left="5" top="5" width="200" height="20" text="Bank Balances"/>
-						<control progid="DecalControls.PushButton" name="ConquestBankDeposit" left="372" top="3" width="100" height="24" text="Deposit All"/>
+						<control progid="DecalControls.PushButton" name="ConquestBankDeposit" left="372" top="3" width="100" height="24" text="Deposit Now"/>
 						<control progid="DecalControls.CheckBox" name="ConquestBankAutoDeposit" left="345" top="208" width="255" height="18" text="Auto deposit every 10 minutes" checked="false"/>
 						<control progid="DecalControls.PushButton" name="ConquestBankRefresh" left="477" top="3" width="100" height="24" text="Refresh"/>
 						<control progid="DecalControls.StaticText" name="ConquestBankName" left="1" top="33" width="300" height="17" text="Currency"/>
