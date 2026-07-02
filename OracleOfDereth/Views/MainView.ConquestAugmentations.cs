@@ -13,6 +13,7 @@ namespace OracleOfDereth
         public HudStaticText ConquestAugsText { get; private set; } // off-server "None" indicator only
         public HudStaticText ConquestAugsName { get; private set; }
         public HudStaticText ConquestAugsLevel { get; private set; }
+        public HudStaticText ConquestAugsCost { get; private set; }
         public HudStaticText ConquestAugsEffect { get; private set; }
         public HudList ConquestAugsList { get; private set; }
         public HudButton ConquestAugsRefresh { get; private set; }
@@ -36,6 +37,7 @@ namespace OracleOfDereth
             ConquestAugsText.FontHeight = 10;
             ConquestAugsName = (HudStaticText)view["ConquestAugsName"];
             ConquestAugsLevel = (HudStaticText)view["ConquestAugsLevel"];
+            ConquestAugsCost = (HudStaticText)view["ConquestAugsCost"];
             ConquestAugsEffect = (HudStaticText)view["ConquestAugsEffect"];
             ConquestAugsList = (HudList)view["ConquestAugsList"];
             ConquestAugsRefresh = (HudButton)view["ConquestAugsRefresh"];
@@ -69,6 +71,7 @@ namespace OracleOfDereth
             ConquestCharacterText.Visible = available;
             ConquestAugsName.Visible = available;
             ConquestAugsLevel.Visible = available;
+            ConquestAugsCost.Visible = available;
             ConquestAugsEffect.Visible = available;
             ConquestAugsList.Visible = available;
             ConquestAugsRefresh.Visible = available;
@@ -126,6 +129,7 @@ namespace OracleOfDereth
                 ((HudStaticText)row[0]).Text = augs[x].Name;
                 ((HudStaticText)row[1]).Text = augs[x].Count.ToString();
                 ((HudStaticText)row[2]).Text = augs[x].Effect();
+                ((HudStaticText)row[3]).Text = augs[x].NextCostText();
             }
 
             while (ConquestAugsList.RowCount > augs.Count)

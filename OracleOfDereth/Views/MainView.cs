@@ -66,7 +66,7 @@ namespace OracleOfDereth
             { 3_04, 560 }, // Titles (Available and Unavailable)
 
             // Server
-            { 4_00, 420 }, // Augs (Conquest)
+            { 4_00, 650 }, // Augs (Conquest)
             { 4_01, 580 }, // Bank
             { 4_02, 430 }, // Quests (Custom Quests)
 
