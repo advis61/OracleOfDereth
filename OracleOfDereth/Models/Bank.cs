@@ -18,6 +18,10 @@ namespace OracleOfDereth
         // Whether this server supports the bank feature: null = not checked yet, true/false = known.
         public static bool? Supported = null;
 
+        // The bank is a Conquest feature, so support is just the Conquest check. Used by the UI
+        // (e.g. the trade view's bank button) instead of the async "/od checkbank" probe above.
+        public static bool IsSupported => Server.IsConquest;
+
         // "/bank" reply on a bank server begins with "[BANK]" (e.g. "[BANK] Bank Commands ...").
         public static readonly Regex BankReplyRegex = new Regex(@"\[BANK\]", RegexOptions.IgnoreCase);
 
@@ -50,24 +54,14 @@ namespace OracleOfDereth
             Util.Command("/bank");
         }
 
-        // Silently set Supported from the known-server list if it isn't determined yet. Lets the UI
-        // (e.g. the trade view's bank button) know a server like Conquest has bank without the
-        // player having run "/od checkbank". No-op once Supported is known, and never probes.
-        public static void ResolveKnownServer()
-        {
-            if (Supported != null) return;
-            string server = Server.Name;
-            if (KnownServers.TryGetValue(server, out bool known)) Supported = known;
-        }
-
         // Hard safety cap: never withdraw more than this many MMDs in a single request, no matter
         // what a caller asks for. Guards against a runaway/buggy amount draining the bank.
         public const int MaxWithdrawMmds = 5000;
 
         // Withdraw `mmds` MMD trade notes (250k each) from the server bank. The base "trade notes"
-        // denomination is MMD, so the command is "/b w n mmd <count>". First of the (eventual) bank
-        // command API; the trade view uses it to cover a purchase shortfall. Requests over the
-        // MaxWithdrawMmds cap are refused outright rather than partially filled.
+        // denomination is MMD, so the command is "/b w n mmd <count>". The trade view uses it to
+        // cover a purchase shortfall. Requests over the MaxWithdrawMmds cap are refused outright
+        // rather than partially filled.
         public static void Withdraw(int mmds)
         {
             if (mmds <= 0) return;
@@ -77,6 +71,60 @@ namespace OracleOfDereth
                 return;
             }
             Util.Command($"/b w n mmd {mmds}");
+        }
+
+        // ---- Bank command API (Conquest "/bank ...") ---------------------------------------------
+        // A bank currency: its UI label and the token passed to the "/bank" command. The server's
+        // currency parser (Conquest-ACE PlayerCommands.cs) matches CASE-SENSITIVELY on the exact
+        // CamelCase names OR the single-letter abbreviations. We use the abbreviations (all
+        // lowercase) to sidestep the casing traps (e.g. "Eventtokens", lowercase "notes"):
+        //   p=Pyreals  l=Luminance  e=Eventtokens  c=ConquestCoins  s=SoulFragments
+        //   n=Notes (default MMD 250k denomination)  k=LegendaryKeys
+        public sealed class Currency
+        {
+            public string Label { get; }
+            public string Token { get; }
+            public Currency(string label, string token) { Label = label; Token = token; }
+        }
+
+        // Everything the player can withdraw. Luminance is excluded — the server spends it directly
+        // from the bank and refuses to withdraw it. MMD Notes is first (the UI default); the rest
+        // are alphabetical.
+        public static readonly IReadOnlyList<Currency> Withdrawable = new List<Currency>
+        {
+            new Currency("MMD Notes", "n"),
+            new Currency("Conquest Coins", "c"),
+            new Currency("Event Tokens", "e"),
+            new Currency("Legendary Keys", "k"),
+            new Currency("Pyreals", "p"),
+            new Currency("Soul Fragments", "s"),
+        };
+
+        // What the player can transfer to another character. MMD Notes first (the UI default).
+        public static readonly IReadOnlyList<Currency> Transferable = new List<Currency>
+        {
+            new Currency("MMD Notes", "n"),
+            new Currency("Legendary Keys", "k"),
+            new Currency("Luminance", "l"),
+        };
+
+        // Deposit all bankable items ("/bank deposit").
+        public static void DepositAll() { Util.Command("/bank deposit"); }
+
+        // Withdraw a whole-number amount of a currency ("/bank withdraw <token> <amount>").
+        public static void Withdraw(Currency currency, string amount)
+        {
+            if (currency == null || string.IsNullOrEmpty(amount)) return;
+            Util.Command($"/bank withdraw {currency.Token} {amount}");
+        }
+
+        // Transfer a whole-number amount of a currency to another character
+        // ("/bank transfer <token> <amount> "<target>""). The target is quoted because character
+        // names contain a space (first + last), which the server otherwise reads as extra args.
+        public static void Transfer(Currency currency, string amount, string target)
+        {
+            if (currency == null || string.IsNullOrEmpty(amount) || string.IsNullOrEmpty(target)) return;
+            Util.Command($"/bank transfer {currency.Token} {amount} \"{target}\"");
         }
 
         // True when this chat line is one of the replies we're waiting on — lets PluginCore route

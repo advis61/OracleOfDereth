@@ -372,13 +372,36 @@
 
 				<page label="Bank">
 					<control progid="DecalControls.FixedLayout" clipped="">
-						<control progid="DecalControls.StaticText" name="ConquestBankText" left="5" top="5" width="300" height="20" text="Bank Balances"/>
+						<control progid="DecalControls.StaticText" name="ConquestBankText" left="5" top="5" width="200" height="20" text="Bank Balances"/>
+						<control progid="DecalControls.PushButton" name="ConquestBankDeposit" left="372" top="3" width="100" height="24" text="Deposit All"/>
 						<control progid="DecalControls.PushButton" name="ConquestBankRefresh" left="477" top="3" width="100" height="24" text="Refresh"/>
 						<control progid="DecalControls.StaticText" name="ConquestBankName" left="1" top="33" width="300" height="17" text="Currency"/>
 						<control progid="DecalControls.StaticText" name="ConquestBankValue" left="238" top="33" width="200" height="17" text="Balance"/>
-						<control progid="DecalControls.List" name="ConquestBankList" left="0" top="53" width="640" height="2000">
+						<control progid="DecalControls.List" name="ConquestBankList" left="0" top="53" width="640" height="150">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="230" />
 							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="500" />
+						</control>
+						<control progid="DecalControls.Notebook" name="ConquestBankActionsNotebook" left="0" top="213" width="580" height="80">
+							<page label="Withdraw">
+								<control progid="DecalControls.FixedLayout" clipped="">
+									<control progid="DecalControls.Edit" name="ConquestBankWithdrawAmount" left="5" top="5" width="80" height="20" text=""/>
+									<control progid="DecalControls.Choice" name="ConquestBankWithdrawType" left="95" top="6" width="140" height="18"/>
+									<control progid="DecalControls.PushButton" name="ConquestBankWithdraw" left="244" top="4" width="90" height="24" text="Withdraw"/>
+									<control progid="DecalControls.StaticText" name="ConquestBankWithdrawStatus" left="5" top="36" width="560" height="17" text=""/>
+								</control>
+							</page>
+							<page label="Transfer">
+								<control progid="DecalControls.FixedLayout" clipped="">
+									<control progid="DecalControls.Edit" name="ConquestBankTransferAmount" left="5" top="5" width="80" height="20" text=""/>
+									<control progid="DecalControls.Choice" name="ConquestBankTransferType" left="95" top="6" width="140" height="18"/>
+									<control progid="DecalControls.StaticText" name="ConquestBankTransferToLabel" left="244" top="8" width="18" height="17" text="To"/>
+									<control progid="DecalControls.Edit" name="ConquestBankTransferTarget" left="267" top="5" width="217" height="20" text=""/>
+									<control progid="DecalControls.PushButton" name="ConquestBankTransfer" left="490" top="4" width="80" height="24" text="Transfer"/>
+									<control progid="DecalControls.StaticText" name="ConquestBankTransferStatus" left="5" top="36" width="380" height="17" text=""/>
+									<control progid="DecalControls.PushButton" name="ConquestBankTransferConfirm" left="404" top="34" width="80" height="24" text="Do It"/>
+									<control progid="DecalControls.PushButton" name="ConquestBankTransferCancel" left="490" top="34" width="80" height="24" text="Cancel"/>
+								</control>
+							</page>
 						</control>
 					</control>
 				</page>

@@ -227,8 +227,7 @@ namespace OracleOfDereth
 
             // Offer a one-click bank withdrawal when this server has bank and the last price check
             // left us short on notes. Withdraws exactly the shortfall in MMDs.
-            Bank.ResolveKnownServer();
-            TradeWithdrawBank.Visible = Bank.Supported == true && Trade.MmdShortfall > 0;
+            TradeWithdrawBank.Visible = Bank.IsSupported && Trade.MmdShortfall > 0;
             if (TradeWithdrawBank.Visible)
                 TradeWithdrawBank.Text = $"Withdraw {Trade.MmdShortfall} MMD from Bank";
         }
