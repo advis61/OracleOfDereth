@@ -88,8 +88,9 @@ namespace OracleOfDereth
         }
 
         // Everything the player can withdraw. Luminance is excluded — the server spends it directly
-        // from the bank and refuses to withdraw it. MMD Notes is first (the UI default); the rest
-        // are alphabetical.
+        // from the bank and refuses to withdraw it. Non-note currencies first (alphabetical), then
+        // note denominations largest to smallest. MMD Notes is the preselected default (see
+        // DefaultWithdrawIndex), not the first entry.
         public static readonly IReadOnlyList<Currency> Withdrawable = new List<Currency>
         {
             new Currency("Conquest Coins", "c"),
@@ -101,7 +102,7 @@ namespace OracleOfDereth
             // Note denominations, largest to smallest. The token is "n <denom>", so the amount field
             // is the COUNT of notes (e.g. "n D" + 10 -> "/bank withdraw n D 10" = ten 50k notes).
             // MMD (250k) is the plain "n" default.
-            new Currency("MMD Notes", "n"),
+            new Currency("MMD Notes (250k)", "n"),
             new Currency("MM Notes (200k)", "n MM"),
             new Currency("M Notes (100k)", "n M"),
             new Currency("D Notes (50k)", "n D"),
@@ -111,6 +112,16 @@ namespace OracleOfDereth
             new Currency("V Notes (500)", "n V"),
             new Currency("I Notes (100)", "n I"),
         };
+
+        // The withdraw option the UI preselects: MMD Notes (the plain "n" default), which isn't the
+        // first entry in the list.
+        public static readonly int DefaultWithdrawIndex = FindWithdrawIndex("n");
+
+        private static int FindWithdrawIndex(string token)
+        {
+            for (int i = 0; i < Withdrawable.Count; i++) { if (Withdrawable[i].Token == token) { return i; } }
+            return 0;
+        }
 
         // What the player can transfer to another character. Only these three are handled by the
         // server's transfer switch (Conquest-ACE PlayerCommands.cs cases 1/2/7); every other

@@ -84,7 +84,7 @@ namespace OracleOfDereth
 
             foreach (Bank.Currency c in Bank.Withdrawable) { ConquestBankWithdrawType.AddItem(c.Label, c.Label); }
             foreach (Bank.Currency c in Bank.Transferable) { ConquestBankTransferType.AddItem(c.Label, c.Label); }
-            ConquestBankWithdrawType.Current = 0; // default to MMD Notes
+            ConquestBankWithdrawType.Current = Bank.DefaultWithdrawIndex; // MMD Notes
             ConquestBankTransferType.Current = 0;
 
             // Any change to the transfer inputs cancels a pending confirmation. The amount also
@@ -287,7 +287,7 @@ namespace OracleOfDereth
         private void ClearBankForms()
         {
             ConquestBankWithdrawAmount.Text = "";
-            ConquestBankWithdrawType.Current = 0;
+            ConquestBankWithdrawType.Current = Bank.DefaultWithdrawIndex;
             ConquestBankTransferAmount.Text = "";
             ConquestBankTransferType.Current = 0;
             ConquestBankTransferTarget.Text = "";
