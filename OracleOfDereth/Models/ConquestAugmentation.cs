@@ -47,7 +47,7 @@ namespace OracleOfDereth
         {
             new ConquestAugmentation("Creature", 25, 2_500_000, 0.003825),   // confirmed: count 25 = 6,229,500
             new ConquestAugmentation("Item", 100, 3_000_000, 0.006825),      // confirmed: count 5 = 3,102,375
-            new ConquestAugmentation("Life", 75, 2_500_000, 0.00475),        // confirmed: count 2 = 2,523,750
+            new ConquestAugmentation("Life", 75, 2_500_000, 0.0095),         // dev-confirmed 0.95%
             new ConquestAugmentation("War", 50, 1_750_000, 0.002125),        // confirmed: count 2 = 1,757,438
             new ConquestAugmentation("Void", 50, 1_800_000, 0.002125),       // confirmed: count 2 = 1,807,650
             new ConquestAugmentation("Duration", 30, 1_400_000, 0.003125),   // confirmed: count 2 = 1,408,750
