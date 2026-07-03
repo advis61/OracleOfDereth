@@ -100,6 +100,15 @@ namespace OracleOfDereth
             Objects.Remove(item);
         }
 
+        // Drop tracked objects the client no longer knows about. ReleaseObject isn't guaranteed to
+        // fire on every despawn (zone/portal/recall transitions can miss it), so without this
+        // per-tick sweep Objects would accumulate stale WorldObject wrappers over a long session.
+        // Mirrors FellowshipTracker's RemoveGonePlayers reconciliation.
+        public static void Tick()
+        {
+            Objects.RemoveAll(o => CoreManager.Current.WorldFilter[o.Id] == null);
+        }
+
         public static void Announce(WorldObject item)
         {
             Util.Chat($"Detected: {item.Name}", 5, "[OD] ");
