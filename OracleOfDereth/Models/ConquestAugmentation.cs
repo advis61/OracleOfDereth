@@ -26,10 +26,11 @@ namespace OracleOfDereth
         // Per-aug luminance pricing inputs, matching Conquest-ACE's aug-gem emote record:
         //   LumBase    <- emote.Amount        (the tier-1 base luminance cost, i.e. cost at count 0)
         //   LumPercent <- emote.Percent / 100 (the per-level step within a tier)
-        // These live in the world DB, not the repo, so the values below are best-fit estimates from
-        // observed costs (Melee base 1.75M is exact at count 0; Item/Creature bases are derived at
-        // 5% and rounded; the rest use the 2.5M ACE default). Replace with the real emote.Amount /
-        // emote.Percent per gem once the server dev provides them.
+        // LumBase = emote.Amount and LumPercent = emote.Percent/100, both per-gem (they vary — a
+        // single shared percent never fit all augs). All percents derived from in-game costs and
+        // exact except Missile, which is assumed equal to Melee (same base) pending a data point.
+        //   War/Void 0.2125%  Duration 0.3125%  Creature 0.3825%  Melee/Missile 0.425%
+        //   Life 0.475%  Item 0.6825%  Specialization 1.6%
         public double LumBase { get; }
         public double LumPercent { get; }
 
@@ -44,15 +45,15 @@ namespace OracleOfDereth
         // Registry, in "/augs" output order.  Args: coinCost, lumBase (emote.Amount), lumPercent.
         public static readonly List<ConquestAugmentation> All = new List<ConquestAugmentation>
         {
-            new ConquestAugmentation("Creature", 25, 1_750_000, 0.04832143),  // even base; % derived from count 25 = 6,229,500
-            new ConquestAugmentation("Item", 100, 2_500_000, 0.04819),        // even base; % derived from count 5 = 3,102,375
-            new ConquestAugmentation("Life", 75, 2_500_000, 0.05),            // placeholder (ACE default)
-            new ConquestAugmentation("War", 50, 1_750_000, 0.05),             // confirmed base
-            new ConquestAugmentation("Void", 50, 1_800_000, 0.05),            // confirmed base
-            new ConquestAugmentation("Duration", 30, 1_400_000, 0.05),        // confirmed base
-            new ConquestAugmentation("Specialization", 125, 2_700_000, 0.05), // confirmed: fits count 4 = 3,240,000
-            new ConquestAugmentation("Melee", 50, 1_750_000, 0.05),           // confirmed base at count 0
-            new ConquestAugmentation("Missile", 50, 1_750_000, 0.05),         // mirrors Melee base
+            new ConquestAugmentation("Creature", 25, 2_500_000, 0.003825),   // confirmed: count 25 = 6,229,500
+            new ConquestAugmentation("Item", 100, 3_000_000, 0.006825),      // confirmed: count 5 = 3,102,375
+            new ConquestAugmentation("Life", 75, 2_500_000, 0.00475),        // confirmed: count 2 = 2,523,750
+            new ConquestAugmentation("War", 50, 1_750_000, 0.002125),        // confirmed: count 2 = 1,757,438
+            new ConquestAugmentation("Void", 50, 1_800_000, 0.002125),       // confirmed: count 2 = 1,807,650
+            new ConquestAugmentation("Duration", 30, 1_400_000, 0.003125),   // confirmed: count 2 = 1,408,750
+            new ConquestAugmentation("Specialization", 125, 3_000_000, 0.016),   // confirmed: count 5 = 3,240,000
+            new ConquestAugmentation("Melee", 50, 1_750_000, 0.00425),       // confirmed: count 1 = 1,757,438
+            new ConquestAugmentation("Missile", 50, 1_750_000, 0.00425),     // assumed = Melee (same base), unconfirmed
         };
 
         // A "/augs" output line, e.g. "Duration: 3" (the label set keeps this from matching
@@ -130,7 +131,7 @@ namespace OracleOfDereth
             else if (idx >= 15) { tierBase = LumBase * 2.4;  pos = idx - 15; }
             else                { tierBase = LumBase;        pos = idx; }
 
-            return (long)(tierBase * (1.0 + pos * LumPercent));
+            return (long)(tierBase * (1.0 + (pos * LumPercent)));
         }
 
         // "25 coins, 2.5M lum" — the price of the next purchase of this aug.
