@@ -9,7 +9,7 @@ namespace OracleOfDereth
     // "/fship list" command. That command prints a header line followed by one line per
     // recruiting fellowship, e.g.:
     //   [FSHIP]: Fellowships looking for members (tell any member 'xp' to join):
-    //     - Awoooooo (Leader: Bluchewbarry) [11/14] @ Viamont Staging Area v3
+    //     - Dereth Forever (Leader: Advis Eveldan) [11/14] @ Viamont Staging Area v3
     // This class issues the command, parses the lines, and stores each fellowship for display
     // (Server -> Fship tab). Mirrors ConquestBank / ConquestAugmentation. Conquest-only.
     // Clicking a row's Join cell tells that fellowship's leader "xp" to join (see

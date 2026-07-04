@@ -27,10 +27,9 @@ namespace OracleOfDereth
         //   LumBase    <- emote.Amount        (the tier-1 base luminance cost, i.e. cost at count 0)
         //   LumPercent <- emote.Percent / 100 (the per-level step within a tier)
         // LumBase = emote.Amount and LumPercent = emote.Percent/100, both per-gem (they vary — a
-        // single shared percent never fit all augs). All percents derived from in-game costs and
-        // exact except Missile, which is assumed equal to Melee (same base) pending a data point.
-        //   War/Void 0.2125%  Duration 0.3125%  Creature 0.3825%  Melee/Missile 0.425%
-        //   Life 0.475%  Item 0.6825%  Specialization 1.6%
+        // single shared percent never fit all augs). Percents are dev-provided.
+        //   War/Void/Melee/Missile 0.425%  Duration 0.625%  Creature 0.3825%
+        //   Item 0.6825%  Life 0.95%  Specialization 2%
         public double LumBase { get; }
         public double LumPercent { get; }
 
@@ -48,10 +47,10 @@ namespace OracleOfDereth
             new ConquestAugmentation("Creature", 25, 2_500_000, 0.003825),   // confirmed: count 25 = 6,229,500
             new ConquestAugmentation("Item", 100, 3_000_000, 0.006825),      // confirmed: count 5 = 3,102,375
             new ConquestAugmentation("Life", 75, 2_500_000, 0.0095),         // dev-confirmed 0.95%
-            new ConquestAugmentation("War", 50, 1_750_000, 0.002125),        // confirmed: count 2 = 1,757,438
-            new ConquestAugmentation("Void", 50, 1_800_000, 0.002125),       // confirmed: count 2 = 1,807,650
-            new ConquestAugmentation("Duration", 30, 1_400_000, 0.003125),   // confirmed: count 2 = 1,408,750
-            new ConquestAugmentation("Specialization", 125, 3_000_000, 0.016),   // confirmed: count 5 = 3,240,000
+            new ConquestAugmentation("War", 50, 1_750_000, 0.00425),         // dev-provided 0.425%
+            new ConquestAugmentation("Void", 50, 1_800_000, 0.00425),        // dev-provided 0.425%
+            new ConquestAugmentation("Duration", 30, 1_400_000, 0.00625),    // dev-provided 0.625%
+            new ConquestAugmentation("Specialization", 125, 3_000_000, 0.02),    // dev-provided 2%
             new ConquestAugmentation("Melee", 50, 1_750_000, 0.00425),       // confirmed: count 1 = 1,757,438
             new ConquestAugmentation("Missile", 50, 1_750_000, 0.00425),     // assumed = Melee (same base), unconfirmed
         };
