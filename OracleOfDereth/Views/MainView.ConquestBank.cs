@@ -244,6 +244,10 @@ namespace OracleOfDereth
         // Amount fields are capped at 8 digits (max 99,999,999).
         private const int BankAmountMaxLength = 8;
 
+        // Default amounts prefilled into the withdraw/transfer fields.
+        private const string BankWithdrawDefaultAmount = "100";
+        private const string BankTransferDefaultAmount = "1000000";
+
         // The digit characters, for sanitizing amount (keep only these) and name (drop these) fields.
         private static readonly char[] Digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
@@ -318,9 +322,9 @@ namespace OracleOfDereth
         // fires their Change handlers, which disarm the transfer.
         private void ClearBankForms()
         {
-            ConquestBankWithdrawAmount.Text = "";
+            ConquestBankWithdrawAmount.Text = BankWithdrawDefaultAmount;
             ConquestBankWithdrawType.Current = Bank.DefaultWithdrawIndex;
-            ConquestBankTransferAmount.Text = "";
+            ConquestBankTransferAmount.Text = BankTransferDefaultAmount;
             ConquestBankTransferType.Current = Bank.DefaultTransferIndex;
             ConquestBankTransferTarget.Text = "";
             ClearBankStatus(ConquestBankWithdrawStatus);
