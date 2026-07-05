@@ -119,6 +119,22 @@ Fship List
 ![Fship](./docs/Fship.png)
 
 
+## Quest Directions and Wiki URLs
+
+Click on a row's quest name to think the directions to yourself. Or the completed/uncompleted icon to think the wiki URL.
+
+These actions will copy to windows clipboard by default. This can be disabled on the settings screen.
+
+Hold CTRL + click to output to /cg
+
+Hold ALT + click to output to /a
+
+Hold SHIFT + click to output to /f
+
+## Details
+
+This plugin does a lot.
+
 
 ### Status HUD
 
@@ -272,18 +288,7 @@ Type `/ood` to print the version number.
 
 Type `/myquests` to manually refresh the John tracker.
 
-
-### Quest Directions and URLs
-
-Click on a row's quest name to think the directions to yourself. Or the completed/uncompleted icon to think the wiki URL.
-
-These actions will copy to windows clipboard by default. This can be disabled on the settings screen.
-
-Hold CTRL + click to output to /cg
-
-Hold ALT + click to output to /a
-
-Hold SHIFT + click to output to /f
+Type `/od questflag` when selecting an NPC to lookup their quest flag info.
 
 
 ## Technicals
