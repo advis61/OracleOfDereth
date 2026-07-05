@@ -121,7 +121,7 @@ namespace OracleOfDereth
             List<ConquestAugmentation> augs = ConquestAugmentation.All;
 
             // The total lives in the big title at the top of the tab.
-            ConquestAugsText.Text = $"Custom Augs: {ConquestAugmentation.Total}";
+            ConquestAugsText.Text = $"Conquest Augs: {ConquestAugmentation.Total}";
 
             for (int x = 0; x < augs.Count; x++)
             {

@@ -105,6 +105,21 @@ Weapon Score
 
 ![Weapon Score](./docs/WeaponScore.png)
 
+Conquest Augs
+
+![Conquest Augs](./docs/Augs.png)
+
+Bank
+
+![Bank](./docs/Bank.png)
+
+
+Fship List
+
+![Fship](./docs/Fship.png)
+
+
+
 ### Status HUD
 
 The HUD displays at a glance buff timers and skill level information.
@@ -238,11 +253,38 @@ Displays a damage score and a defense score when you identify a Summons. 0% - 10
 
 Displays an O(Damage), O(Attack), O(Melee) based on the max rolls of the weapon
 
+### Conquest Augs
+
+Displays advanced augmentations, costs, xp calculations and quest bonuses for players on the ConquestAC server.
+
+### Bank
+
+Displays your bank balance.  Auto deposit every 10 minutes. Withdraw and transfer funds.
+
+### Fship list
+
+Works with the `/fship list` command to browse and join server fellowships.
+
+
 ### Commands
 
 Type `/ood` to print the version number.
 
 Type `/myquests` to manually refresh the John tracker.
+
+
+### Quest Directions and URLs
+
+Click on a row's quest name to think the directions to yourself. Or the completed/uncompleted icon to think the wiki URL.
+
+These actions will copy to windows clipboard by default. This can be disabled on the settings screen.
+
+Hold CTRL + click to output to /cg
+
+Hold ALT + click to output to /a
+
+Hold SHIFT + click to output to /f
+
 
 ## Technicals
 
