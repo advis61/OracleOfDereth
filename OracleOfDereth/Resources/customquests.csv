@@ -1,4 +1,7 @@
 Server,Name,QuestFlag,Url,Hint
 Conquest,Darshmaul the Brutal,assaultonaimaru,,Shoushi - Portal to Fort 33.6S 74.9E - Kill Darshmaul the Brutal 34.3S 80.7E - Loot Finger - Shoushi - Give to Vovran 33.4S 72.8E
-Conquest,The Forgotten One,GhostDenCompleted,,Desolution Beach - Helsing 82.5N 43.5W - Den of Ghosts 82.4N 41.3W - Head North and hug left. Don't go downstairs - Defeat The Forgotten One and Loot Head - Back to Helsing
-Conquest,Uber Bobo,uberpawlooted,,No hint
+Conquest,Forgotten One,GhostDenCompleted,,Desolution Beach - Helsing 82.5N 43.5W - Den of Ghosts 82.4N 41.3W - Head North and hug left. Don't go downstairs - Defeat The Forgotten One and Loot Head - Back to Helsing
+Conquest,Ice Giants,icegiantkilltask,,No hint available
+Conquest,Thorsten's Tears,Thorstenslegacycompleted,,No hint available
+Conquest,Uber Bobo,uberpawlooted,,No hint available
+Conquest,Uber Curator,uberrtwreward,,No hint available
