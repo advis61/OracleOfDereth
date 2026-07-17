@@ -100,8 +100,11 @@ namespace OracleOfDereth
                 return;
             }
 
-            // Lazy-load the first time the tab is shown instead of refreshing on login.
-            if (!ConquestFship.Ran) { ConquestFship.Refresh(); }
+            // While the tab is actually on screen, keep the recruiting list current on its own
+            // (throttled inside RefreshIfStale). Coming back to the tab shows fresh data without
+            // hitting Refresh. The view.Visible gate matters because Update() still ticks this
+            // method while the plugin window is closed — we don't want to pull the list then.
+            if (view.Visible) { ConquestFship.RefreshIfStale(); }
 
             ConquestFshipText.Text = Fellowship.IsInFellowship()
                 ? $"Fellowship: {Fellowship.Name()}"

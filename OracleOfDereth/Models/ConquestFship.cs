@@ -45,10 +45,6 @@ namespace OracleOfDereth
         // server's print order. The header line clears it to begin a fresh block.
         public static readonly List<ConquestFship> All = new List<ConquestFship>();
 
-        // Whether "/fship list" has been issued yet. Lets the Fship tab lazy-refresh the first
-        // time it's shown instead of running on login (mirrors ConquestBank.Ran).
-        public static bool Ran = false;
-
         // Column sort, applied as a display-time view (see Sorted) rather than reordering All,
         // so it survives the full rebuild that happens on every "/fship list" refresh.
         public enum SortType { NameAsc, NameDesc, LeaderAsc, LeaderDesc, MembersAsc, MembersDesc, LocationAsc, LocationDesc }
@@ -87,12 +83,32 @@ namespace OracleOfDereth
         private static readonly Regex LineRegex = new Regex(
             @"^\s*(?:\[[^\]]*\]\s*)?-\s+(.+?)\s+\(Leader:\s+(.+?)\)\s+\[(\d+/\d+)\](?:\s+@\s+(.+?))?\s*$");
 
+        // When we last issued "/fship list" (UtcNow). Drives the throttle below.
+        private static DateTime LastRefresh = DateTime.MinValue;
+
+        // Minimum spacing between auto-refreshes. The recruiting set changes constantly, so the
+        // Fship tab pulls a fresh list while it's on screen (see RefreshIfStale, called each tick
+        // from UpdateConquestFship) — but no more often than this, so it never spams "/fship list".
+        // The manual Refresh button ignores it.
+        private static readonly TimeSpan RefreshThrottle = TimeSpan.FromSeconds(15);
+
         // Ask the server to reprint the recruiting list so we can reparse it. Conquest-only.
         public static void Refresh()
         {
             if (!Server.IsConquest) return;
-            Ran = true;
+            LastRefresh = DateTime.UtcNow;
             Util.Command("/fship list");
+        }
+
+        // Refresh only if it's been at least RefreshThrottle since the last pull. The view calls
+        // this every tick while the Fship tab is visible, so coming back to the tab shows a current
+        // list on its own — immediately if it's been a while, and at most once per throttle window
+        // while you sit on it — without a manual Refresh and without hammering the server.
+        public static void RefreshIfStale()
+        {
+            if (!Server.IsConquest) return;
+            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return;
+            Refresh();
         }
 
         // True when this chat line is part of a "/fship list" block (header or a fellowship row) —
