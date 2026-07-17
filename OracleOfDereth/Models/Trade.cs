@@ -449,10 +449,28 @@ namespace OracleOfDereth
             OnChanged?.Invoke();
         }
 
-        // Only react to tells from the player we're actually trading with.
+        // Collapse whitespace runs to single spaces and trim, so a rendering difference between
+        // the WorldFilter partner name and the tell's sender text (double spaces, a stray nbsp)
+        // doesn't defeat the comparison below.
+        private static string NormalizeName(string s) => Regex.Replace((s ?? "").Trim(), @"\s+", " ");
+
+        // Only react to tells from the player we're actually trading with. We look for the partner
+        // name as a WHOLE-WORD span of the captured sender (which may carry a leading chat timestamp
+        // and, for some names, minor rendering differences vs the WorldFilter name). Whole-word,
+        // not a raw substring: a partner named "Al" must not be matched by a different sender
+        // "Alfred" (that misfire flagged non-bots and fired "points" at them), while a real partner
+        // like "Super Mule II" still matches exactly.
         private static bool IsPartner(string sender)
         {
-            return !string.IsNullOrEmpty(PartnerName) && sender.IndexOf(PartnerName, StringComparison.OrdinalIgnoreCase) >= 0;
+            if (string.IsNullOrEmpty(PartnerName) || sender == null) return false;
+
+            string name = NormalizeName(sender);
+            string partner = NormalizeName(PartnerName);
+            if (partner.Length == 0) return false;
+
+            // Boundaries are "not a name character" (letter/digit/apostrophe/hyphen) on each side.
+            string pattern = @"(?<![\p{L}\p{N}'\-])" + Regex.Escape(partner) + @"(?![\p{L}\p{N}'\-])";
+            return Regex.IsMatch(name, pattern, RegexOptions.IgnoreCase);
         }
 
         // Match a bot chat pattern, returning the Match only when group 1 (the sender)
