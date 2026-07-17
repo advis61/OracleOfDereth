@@ -82,7 +82,12 @@ namespace OracleOfDereth
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return false; }
 
-            return questFlag.Solves > 0;
+            // One-time quests are complete once the stamp is present. Repeatable quests (the usual
+            // case here) count as complete only while on cooldown — once the repeat timer has
+            // elapsed they're available again, so they show as not-completed. Mirrors SocietyQuest.
+            if (questFlag.RepeatTime == TimeSpan.Zero) { return questFlag.Solves > 0; }
+
+            return !questFlag.Ready();
         }
     }
 }
