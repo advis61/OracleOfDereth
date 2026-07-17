@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -21,9 +22,13 @@ namespace OracleOfDereth
         // server's "/b" output order can drift between calls.
         public static readonly List<ConquestBank> All = new List<ConquestBank>();
 
-        // Whether "/b" has been issued yet. Lets the Bank tab lazy-refresh the first time it's
-        // shown instead of spamming "/b" on login (mirrors QuestFlag.MyQuestsRan).
-        public static bool Ran = false;
+        // When we last issued "/b" (UtcNow). Drives the throttle below.
+        private static DateTime LastRefresh = DateTime.MinValue;
+
+        // Minimum spacing between auto-refreshes. The Bank tab pulls fresh balances while it's on
+        // screen (see RefreshIfStale, called each tick from UpdateConquestBank) — but no more often
+        // than this, so it never spams "/b". The manual Refresh button ignores it.
+        private static readonly TimeSpan RefreshThrottle = TimeSpan.FromMinutes(5);
 
         // A "/b" output line, e.g. "[BANK] Pyreals: 1,039,678,533" or
         // "[BANK] Daily Transfer: 0 / 8,020,000 (+20,000 enlightenment)". The value is the rest
@@ -48,8 +53,19 @@ namespace OracleOfDereth
         public static void Refresh()
         {
             if (!Server.IsConquest) return;
-            Ran = true;
+            LastRefresh = DateTime.UtcNow;
             Util.Command("/b");
+        }
+
+        // Refresh only if it's been at least RefreshThrottle since the last pull. The view calls
+        // this every tick while the Bank tab is visible, so coming back to the tab shows current
+        // balances on its own — immediately if it's been a while, and at most once per throttle
+        // window while you sit on it — without a manual Refresh and without hammering the server.
+        public static void RefreshIfStale()
+        {
+            if (!Server.IsConquest) return;
+            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return;
+            Refresh();
         }
 
         // True when this chat line is a "/b" balance line — lets PluginCore route only the

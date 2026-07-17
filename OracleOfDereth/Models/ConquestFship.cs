@@ -90,7 +90,7 @@ namespace OracleOfDereth
         // Fship tab pulls a fresh list while it's on screen (see RefreshIfStale, called each tick
         // from UpdateConquestFship) — but no more often than this, so it never spams "/fship list".
         // The manual Refresh button ignores it.
-        private static readonly TimeSpan RefreshThrottle = TimeSpan.FromSeconds(15);
+        private static readonly TimeSpan RefreshThrottle = TimeSpan.FromMinutes(5);
 
         // Ask the server to reprint the recruiting list so we can reparse it. Conquest-only.
         public static void Refresh()

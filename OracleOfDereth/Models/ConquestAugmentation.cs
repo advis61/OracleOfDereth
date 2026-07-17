@@ -64,9 +64,14 @@ namespace OracleOfDereth
         private static readonly Regex LineRegex = new Regex(
             @"^\s*(?:\[[^\]]*\]\s*)?(Creature|Item|Life|War|Void|Duration|Specialization|Melee|Missile):\s*([\d,]+)\b");
 
-        // Whether "/augs" has been issued yet. Lets the Custom Augs tab lazy-refresh the first
-        // time it's shown instead of running on login (mirrors QuestFlag.MyQuestsRan / ConquestBank).
-        public static bool Ran = false;
+        // When we last issued "/augs" (UtcNow). Drives the throttle below. Set on login too (see
+        // PluginCore), so the tab won't immediately re-pull if you open it right after logging in.
+        private static DateTime LastRefresh = DateTime.MinValue;
+
+        // Minimum spacing between auto-refreshes. The Conquest augs tab re-pulls while it's on
+        // screen (see RefreshIfStale, called each tick from UpdateConquestAugmentations) — but no
+        // more often than this, so it never spams "/augs". The manual Refresh button ignores it.
+        private static readonly TimeSpan RefreshThrottle = TimeSpan.FromMinutes(5);
 
         public static ConquestAugmentation Get(string name) => All.FirstOrDefault(a => a.Name == name);
 
@@ -89,8 +94,19 @@ namespace OracleOfDereth
         public static void Refresh()
         {
             if (!Server.IsConquest) return;
-            Ran = true;
+            LastRefresh = DateTime.UtcNow;
             Util.Command("/augs");
+        }
+
+        // Refresh only if it's been at least RefreshThrottle since the last pull. The view calls
+        // this every tick while the augs tab is visible, so coming back to the tab shows current
+        // aug counts on its own — immediately if it's been a while, and at most once per throttle
+        // window while you sit on it — without a manual Refresh and without hammering the server.
+        public static void RefreshIfStale()
+        {
+            if (!Server.IsConquest) return;
+            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return;
+            Refresh();
         }
 
         // True when this chat line is a "/augs" aug line — lets PluginCore route only the

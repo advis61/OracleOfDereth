@@ -87,9 +87,15 @@ namespace OracleOfDereth
                 return;
             }
 
-            // Lazy-load the first time the tab is shown instead of refreshing on login.
-            if (!ConquestAugmentation.Ran) { ConquestAugmentation.Refresh(); }
-            if (!ConquestBonus.Ran) { ConquestBonus.Refresh(); }
+            // While the tab is actually on screen, keep the augs and bonuses current on their own
+            // (throttled inside RefreshIfStale). Coming back to the tab shows fresh data without
+            // hitting Refresh. The view.Visible gate matters because Update() still ticks this
+            // method while the plugin window is closed — we don't want to pull them then.
+            if (view.Visible)
+            {
+                ConquestAugmentation.RefreshIfStale();
+                ConquestBonus.RefreshIfStale();
+            }
 
             ConquestBonusText.Text = "XP Bonuses";
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -37,9 +38,13 @@ namespace OracleOfDereth
         private static readonly Regex LineRegex = new Regex(
             @"^\s*(?:\[[^\]]*\]\s*)?(Quest|Enlightenment|PK Dungeon|Augmentation|Equipment|Total) Bonus:\s*(.+\S)\s*$");
 
-        // Whether "/bonus" has been issued yet. Lets the Conquest tab lazy-refresh the first time
-        // it's shown instead of running on login (mirrors ConquestAugmentation.Ran / ConquestBank).
-        public static bool Ran = false;
+        // When we last issued "/bonus" (UtcNow). Drives the throttle below.
+        private static DateTime LastRefresh = DateTime.MinValue;
+
+        // Minimum spacing between auto-refreshes. The Conquest augs tab re-pulls the bonuses while
+        // it's on screen (see RefreshIfStale, called each tick from UpdateConquestAugmentations) —
+        // but no more often than this, so it never spams "/bonus". The Refresh button ignores it.
+        private static readonly TimeSpan RefreshThrottle = TimeSpan.FromMinutes(5);
 
         public static ConquestBonus Get(string name) => All.FirstOrDefault(b => b.Name == name);
 
@@ -48,8 +53,19 @@ namespace OracleOfDereth
         public static void Refresh()
         {
             if (!Server.IsConquest) return;
-            Ran = true;
+            LastRefresh = DateTime.UtcNow;
             Util.Command("/bonus");
+        }
+
+        // Refresh only if it's been at least RefreshThrottle since the last pull. The view calls
+        // this every tick while the augs tab is visible, so coming back to the tab shows current
+        // bonuses on its own — immediately if it's been a while, and at most once per throttle
+        // window while you sit on it — without a manual Refresh and without hammering the server.
+        public static void RefreshIfStale()
+        {
+            if (!Server.IsConquest) return;
+            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return;
+            Refresh();
         }
 
         // True when this chat line is a "/bonus" bonus line — lets PluginCore route only the
