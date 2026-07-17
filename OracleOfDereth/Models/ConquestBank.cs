@@ -28,7 +28,12 @@ namespace OracleOfDereth
         // A "/b" output line, e.g. "[BANK] Pyreals: 1,039,678,533" or
         // "[BANK] Daily Transfer: 0 / 8,020,000 (+20,000 enlightenment)". The value is the rest
         // of the line; header lines with no value (e.g. "[BANK] Your balances:") don't match.
-        private static readonly Regex LineRegex = new Regex(@"\[BANK\]\s+(.+?):\s*(.*\S)\s*$");
+        // The "[BANK]" tag MUST be at the start of the line (after an optional chat timestamp like
+        // "[12:34:56] "), which is only ever true of our own "/b" output. When another player copies
+        // their balances into a chat channel it arrives wrapped — 'Someone says, "[BANK] Pyreals:
+        // 999"' — so the tag is no longer at the start and is ignored, instead of overwriting our
+        // own balances with theirs.
+        private static readonly Regex LineRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?\[BANK\]\s+(.+?):\s*(.*\S)\s*$");
 
         // The server labels event-token currencies as "Event Tokens [Dragon Coins] (...)";
         // show just the token name, e.g. "Dragon Coins (...)".

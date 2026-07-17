@@ -55,10 +55,14 @@ namespace OracleOfDereth
             new ConquestAugmentation("Missile", 50, 1_750_000, 0.00425),     // assumed = Melee (same base), unconfirmed
         };
 
-        // A "/augs" output line, e.g. "Duration: 3" (the label set keeps this from matching
-        // unrelated chat; it tolerates a leading chat timestamp).
+        // A "/augs" output line, e.g. "Duration: 3". The label MUST be at the very start of the
+        // line (after an optional chat timestamp like "[12:34:56] "), which is only ever true of
+        // our own "/augs" output. When another player copies their augs into a chat channel it
+        // arrives wrapped — 'Someone says, "Creature: 10, ..."' / '[General] Someone says, "..."'
+        // / 'Someone tells you, "..."' — so the label is no longer at the start and is ignored.
+        // Without this anchor the old \b match scraped those pasted counts as our own.
         private static readonly Regex LineRegex = new Regex(
-            @"\b(Creature|Item|Life|War|Void|Duration|Specialization|Melee|Missile):\s*([\d,]+)\b");
+            @"^\s*(?:\[[^\]]*\]\s*)?(Creature|Item|Life|War|Void|Duration|Specialization|Melee|Missile):\s*([\d,]+)\b");
 
         // Whether "/augs" has been issued yet. Lets the Custom Augs tab lazy-refresh the first
         // time it's shown instead of running on login (mirrors QuestFlag.MyQuestsRan / ConquestBank).

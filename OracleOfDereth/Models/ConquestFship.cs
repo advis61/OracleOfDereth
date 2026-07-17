@@ -73,13 +73,19 @@ namespace OracleOfDereth
         }
 
         // The header line that begins a "/fship list" block; seeing it clears the previous set.
-        private static readonly Regex HeaderRegex = new Regex(@"Fellowships looking for members");
+        // Anchored so the phrase must lead the line (after optional chat-timestamp / "[FSHIP]:"
+        // tags), so a pasted 'Someone says, "Fellowships looking for members..."' can't wipe our
+        // list. Bare (untagged) headers still match, preserving the original loose behavior.
+        private static readonly Regex HeaderRegex = new Regex(@"^\s*(?:\[[^\]]*\][\s:]*)*Fellowships looking for members");
 
         // One fellowship line, e.g. "  - Olthoi (Leader: Tank) [13/14] @ Pheraion's Sanctum v3".
-        // The trailing " @ <location>" is optional. Not anchored at the start, so a leading chat
-        // timestamp is tolerated. Groups: 1=name, 2=leader, 3=members "n/n", 4=location.
+        // The trailing " @ <location>" is optional. Anchored so the leading "- " must start the
+        // line (after an optional chat timestamp like "[12:34:56] "), which is only true of our own
+        // "/fship list" output. A pasted 'Someone says, "- Olthoi (Leader: Tank) [13/14]..."' is
+        // ignored instead of injecting a bogus fellowship. Groups: 1=name, 2=leader, 3=members
+        // "n/n", 4=location.
         private static readonly Regex LineRegex = new Regex(
-            @"-\s+(.+?)\s+\(Leader:\s+(.+?)\)\s+\[(\d+/\d+)\](?:\s+@\s+(.+?))?\s*$");
+            @"^\s*(?:\[[^\]]*\]\s*)?-\s+(.+?)\s+\(Leader:\s+(.+?)\)\s+\[(\d+/\d+)\](?:\s+@\s+(.+?))?\s*$");
 
         // Ask the server to reprint the recruiting list so we can reparse it. Conquest-only.
         public static void Refresh()

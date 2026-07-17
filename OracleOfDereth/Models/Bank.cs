@@ -20,14 +20,19 @@ namespace OracleOfDereth
         public static bool IsSupported => Server.IsConquest;
 
         // "/bank" reply on a bank server begins with "[BANK]" (e.g. "[BANK] Bank Commands ...").
-        public static readonly Regex BankReplyRegex = new Regex(@"\[BANK\]", RegexOptions.IgnoreCase);
+        // Anchored to the start of the line (after an optional chat timestamp) so a pasted
+        // 'Someone says, "[BANK] ..."' can't spoof our own server reply.
+        public static readonly Regex BankReplyRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?\[BANK\]", RegexOptions.IgnoreCase);
 
-        // The client's reply on a server without bank: "Unknown command: bank".
-        public static readonly Regex NoBankReplyRegex = new Regex(@"unknown command.*bank", RegexOptions.IgnoreCase);
+        // The client's own reply on a server without bank: "Unknown command: bank". Anchored so a
+        // pasted copy of the phrase can't falsely resolve an in-flight bank check.
+        public static readonly Regex NoBankReplyRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?unknown command.*bank", RegexOptions.IgnoreCase);
 
         // Confirmation of a successful withdrawal, e.g.
         // "[BANK] Withdrew 1 250,000 pyreal trade notes (250,000 pyreals). Balance: 349,274,916".
-        public static readonly Regex WithdrawConfirmRegex = new Regex(@"\[BANK\]\s*Withdrew", RegexOptions.IgnoreCase);
+        // Anchored so a pasted 'Someone says, "[BANK] Withdrew ..."' can't trigger a spurious
+        // Trade.RecheckFunds() (PluginCore matches this outside the Bank.Matches gate).
+        public static readonly Regex WithdrawConfirmRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?\[BANK\]\s*Withdrew", RegexOptions.IgnoreCase);
 
         // A check is in flight, waiting on a reply.
         private static bool pending = false;

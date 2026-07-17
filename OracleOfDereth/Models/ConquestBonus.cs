@@ -29,10 +29,13 @@ namespace OracleOfDereth
         };
 
         // A "/bonus" output line, e.g. "Quest Bonus: 14.18% (1,418 quests)" or
-        // "PK Dungeon Bonus: 0.00%". The label set keeps this from matching unrelated chat; it
-        // tolerates a leading chat timestamp. Group 1 = type, group 2 = the rest of the line.
+        // "PK Dungeon Bonus: 0.00%". The label MUST be at the start of the line (after an optional
+        // chat timestamp like "[12:34:56] "), which is only ever true of our own "/bonus" output.
+        // When another player copies their bonuses into chat it arrives wrapped — 'Someone says,
+        // "Quest Bonus: 99.99%"' — so the label is no longer at the start and is ignored, instead
+        // of overwriting our own bonuses. Group 1 = type, group 2 = the rest of the line.
         private static readonly Regex LineRegex = new Regex(
-            @"\b(Quest|Enlightenment|PK Dungeon|Augmentation|Equipment|Total) Bonus:\s*(.+\S)\s*$");
+            @"^\s*(?:\[[^\]]*\]\s*)?(Quest|Enlightenment|PK Dungeon|Augmentation|Equipment|Total) Bonus:\s*(.+\S)\s*$");
 
         // Whether "/bonus" has been issued yet. Lets the Conquest tab lazy-refresh the first time
         // it's shown instead of running on login (mirrors ConquestAugmentation.Ran / ConquestBank).
