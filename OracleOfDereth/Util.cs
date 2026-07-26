@@ -217,7 +217,15 @@ namespace OracleOfDereth
 
         public unsafe static int CurrentLandblockId()
         {
-            var p = CoreManager.Current.Actions.Underlying.GetPhysicsObjectPtr(CoreManager.Current.CharacterFilter.Id);
+            // Called every tick via ItemCache.Tick. When logged out / at character select the
+            // managed chain is null (Actions.Underlying), which is where the old NullReferenceException
+            // came from — before the pointer deref, so a p==0 check alone can't catch it. Bail early.
+            var underlying = CoreManager.Current?.Actions?.Underlying;
+            if (underlying == null) return 0;
+
+            // GetPhysicsObjectPtr returns 0 when there's no physics object for the id (e.g. Id is 0
+            // when logged out); dereferencing (0 + 0x4C) would then read near address 0.
+            var p = underlying.GetPhysicsObjectPtr(CoreManager.Current.CharacterFilter.Id);
             if (p == 0) return 0;
             return *(int*)(p + 0x4C);
         }
