@@ -83,7 +83,6 @@ namespace OracleOfDereth
                 // fresh zone-in and pause for the grace window.
                 if (value && !_autoRecruitEnabled)
                 {
-                    _lastLandblock = -1;
                     _lastPauseAt = DateTime.MinValue;
                     _lastPauseReason = "";
                 }
@@ -100,7 +99,6 @@ namespace OracleOfDereth
         {
             _autoRecruitEnabled = false;
             CurrentFellowId = 0;
-            _lastLandblock = -1;
             _lastPauseAt = DateTime.MinValue;
             _lastPauseReason = "";
         }
@@ -196,7 +194,6 @@ namespace OracleOfDereth
         public static string AutoRecruitPauseReason()
         {
             string reason =
-                RecentlyZoned() ? "Zoning In" :
                 NearbyLifestone() ? "Life Stone" :
                 NearbyBindstone() ? "Bind Stone" :
                 NearbyTownNetworkPortal() ? "Town Portal" : "";
@@ -213,42 +210,13 @@ namespace OracleOfDereth
             return "";
         }
 
-        private static int _lastLandblock = -1;
-
-        // A landblock jump of this many cells or more counts as a zone (portal/recall/dungeon).
-        // Smaller steps are ordinary outdoor movement into an adjacent landblock and are ignored.
-        private static readonly int ZoneJumpThreshold = 2;
-
-        private static bool RecentlyZoned()
+        // Called from PluginCore on the ChangePortalMode event (recall/portal/dungeon). Primes the
+        // existing pause-grace window so auto-recruit waits PauseGraceSeconds after zoning in, instead
+        // of recruiting into a fellowship the moment we land.
+        public static void NoteZoned()
         {
-            // Edge detector: true only on the first poll after a zone-sized landblock jump. The shared
-            // PauseGraceSeconds hold in AutoRecruitPauseReason supplies the actual pause window, so this
-            // just needs to flag the moment we arrive somewhere new.
-            //
-            // Compares the landblock (high 16 bits) only -- the low 16 bits are the cell within the
-            // landblock and flip as you walk around. The landblock's X (high byte) and Y (low byte) are
-            // world-grid coordinates; adjacent landblocks differ by 1. We re-baseline on every change,
-            // so running across outdoor boundaries is a series of distance-1 steps that never trip,
-            // while a teleport is a single large-distance jump that does.
-            int current = Util.CurrentLandblock();
-
-            // 0 means we couldn't read the landblock (logged-out sentinel, or a transient physics-object
-            // gap while in-world). Treat it as "no change" rather than a real block, so it can't register
-            // a false zone-in that pauses auto-recruit. _lastLandblock is left intact.
-            if (current == 0) return false;
-
-            // The very first poll only establishes a baseline. RecentlyZoned() isn't called until
-            // auto-recruit is enabled, so without this the act of turning it on would look like a zone-in.
-            if (_lastLandblock == -1) { _lastLandblock = current; return false; }
-            if (current == _lastLandblock) return false;
-
-            int dx = Math.Abs(((current >> 8) & 0xFF) - ((_lastLandblock >> 8) & 0xFF));
-            int dy = Math.Abs((current & 0xFF) - (_lastLandblock & 0xFF));
-            int distance = Math.Max(dx, dy);
-
-            _lastLandblock = current;
-
-            return distance >= ZoneJumpThreshold;
+            _lastPauseAt = DateTime.Now;
+            _lastPauseReason = "Zoning In";
         }
 
         public unsafe static void Create(string name = "")

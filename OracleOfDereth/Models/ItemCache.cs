@@ -4,19 +4,13 @@ using System.Collections.Generic;
 namespace OracleOfDereth
 {
     // Cache of identified item rows, keyed by world id. Lets a trade window closed and reopened
-    // in the same spot reuse appraisals instead of re-identifying everything. Kept until we zone
-    // somewhere significantly different (portal/recall/dungeon) — the same landblock-jump test
-    // the auto-recruit pause uses — so it doesn't follow us across the world or live forever.
+    // in the same spot reuse appraisals instead of re-identifying everything. Cleared when we zone
+    // (portal/recall/dungeon) so it doesn't follow us across the world — PluginCore calls Clear()
+    // on the ChangePortalMode event.
     public static class ItemCache
     {
         private struct Entry { public Item Item; public string BaseName; }
         private static readonly Dictionary<int, Entry> Cache = new Dictionary<int, Entry>();
-
-        private static int _lastLandblock = -1;
-
-        // A landblock jump of this many cells or more counts as a zone (portal/recall/dungeon);
-        // smaller steps are ordinary walking into an adjacent landblock and keep the cache.
-        private const int ZoneJumpThreshold = 2;
 
         // Remember an identified item. baseName is the WorldObject's plain name, checked on
         // lookup so a recycled id can't hand back another item's appraisal.
@@ -37,35 +31,11 @@ namespace OracleOfDereth
         public static void Clear() => Cache.Clear();
 
         // Reset for a fresh character on login (called from PluginCore.Init). Drops any appraisals
-        // cached under the previous character and re-baselines the zone detector, so nothing carries
-        // across a character switch. Mirrors the other models' Init()-clears-its-collection pattern.
+        // cached under the previous character, so nothing carries across a character switch.
+        // Mirrors the other models' Init()-clears-its-collection pattern.
         public static void Init()
         {
             Cache.Clear();
-            _lastLandblock = -1;
-        }
-
-        // Called each tick: drop the whole cache when we zone somewhere far (teleport/recall),
-        // but keep it while walking around or standing still. Mirrors Fellowship's zone detector
-        // — compares the landblock (high 16 bits); X/Y are world-grid coords, adjacent blocks
-        // differ by 1, so a teleport is a single large jump while walking is distance-1 steps.
-        public static void Tick()
-        {
-            int current = Util.CurrentLandblock();
-            // 0 means we couldn't read the landblock (logged-out sentinel, or a transient physics-object
-            // gap while in-world). Skip the tick rather than treat 0 as a real block and detect a false
-            // zone jump that would wipe the whole appraisal cache. _lastLandblock is left intact.
-            if (current == 0) return;
-            if (_lastLandblock == -1) { _lastLandblock = current; return; }
-            if (current == _lastLandblock) return;
-
-            int dx = Math.Abs(((current >> 8) & 0xFF) - ((_lastLandblock >> 8) & 0xFF));
-            int dy = Math.Abs((current & 0xFF) - (_lastLandblock & 0xFF));
-            int distance = Math.Max(dx, dy);
-
-            _lastLandblock = current;
-
-            if (distance >= ZoneJumpThreshold) Clear();
         }
     }
 }

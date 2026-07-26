@@ -73,6 +73,7 @@ namespace OracleOfDereth
                 CoreManager.Current.ItemSelected += Current_ItemSelected;
                 CoreManager.Current.CharacterFilter.LoginComplete += CharacterFilter_LoginComplete; // Not run on hot reload
                 CoreManager.Current.CharacterFilter.SpellCast += CharacterFilter_SpellCast;
+                CoreManager.Current.CharacterFilter.ChangePortalMode += CharacterFilter_ChangePortalMode;
                 CoreManager.Current.EchoFilter.ServerDispatch += EchoFilter_ServerDispatch;
                 CoreManager.Current.WorldFilter.CreateObject += WorldFilter_CreateObject;
                 CoreManager.Current.WorldFilter.ReleaseObject += WorldFilter_ReleaseObject;
@@ -213,6 +214,7 @@ namespace OracleOfDereth
                 CoreManager.Current.CharacterFilter.Login -= CharacterFilter_Login;
                 CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
                 CoreManager.Current.CharacterFilter.SpellCast -= CharacterFilter_SpellCast;
+                CoreManager.Current.CharacterFilter.ChangePortalMode -= CharacterFilter_ChangePortalMode;
                 CoreManager.Current.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch;
                 CoreManager.Current.WorldFilter.CreateObject -= WorldFilter_CreateObject;
                 CoreManager.Current.WorldFilter.ReleaseObject -= WorldFilter_ReleaseObject;
@@ -352,6 +354,20 @@ namespace OracleOfDereth
             try
             {
                 Target.SpellCast(e.TargetId, e.SpellId);
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        // Fires on entering and exiting portal space (recall / portal / dungeon transition). We don't
+        // distinguish the two — either way we're zoning, so drop the now-stale appraisal cache and prime
+        // the auto-recruit pause. Clearing twice per zone is harmless, and the pause window ends up
+        // anchored to the arrival (the later event), which is what we want.
+        private void CharacterFilter_ChangePortalMode(object sender, ChangePortalModeEventArgs e)
+        {
+            try
+            {
+                ItemCache.Clear();
+                Fellowship.NoteZoned();
             }
             catch (Exception ex) { Util.Log(ex); }
         }

@@ -24,7 +24,6 @@ namespace OracleOfDereth
 
         public static void TickAll()
         {
-            ItemCache.Tick();
             Inventory?.Tick();
             Trade?.Tick();
         }
