@@ -78,10 +78,10 @@ namespace OracleOfDereth
             switch (sortType)
             {
                 case SortType.CompleteAscending:
-                    Titles = Titles.OrderBy(q => q.IsComplete()).ThenBy(q => q.CategorySortKey()).ThenBy(q => q.Level).ThenBy(q => q.Number).ToList();
+                    Titles = Titles.OrderBy(q => q.IsComplete()).ThenBy(q => q.Name).ToList();
                     break;
                 case SortType.CompleteDescending:
-                    Titles = Titles.OrderByDescending(q => q.IsComplete()).ThenBy(q => q.CategorySortKey()).ThenBy(q => q.Level).ThenBy(q => q.Number).ToList();
+                    Titles = Titles.OrderByDescending(q => q.IsComplete()).ThenBy(q => q.Name).ToList();
                     break;
                 case SortType.NameAscending:
                     Titles = Titles.OrderBy(q => q.Name).ToList();
