@@ -19,6 +19,12 @@ namespace OracleOfDereth
         private static DateTime? armedAt;
         private static bool ran;
 
+        // Results produced on the background fetch thread, drained on the main thread in Tick().
+        // The client (chat/log) must only ever be touched on the game's main thread — calling it
+        // from the worker thread is unsafe COM access that can silently no-op or crash.
+        private static volatile string pendingMessage;
+        private static volatile Exception pendingException;
+
         public static void Arm()
         {
             if (ran) return;
@@ -28,6 +34,10 @@ namespace OracleOfDereth
 
         public static void Tick()
         {
+            // Emit anything the background fetch produced — on the main thread.
+            if (pendingException != null) { Util.Log(pendingException); pendingException = null; }
+            if (pendingMessage != null) { Util.Chat(pendingMessage, Util.ColorPink, ""); pendingMessage = null; }
+
             if (ran || armedAt == null) return;
             if (DateTime.UtcNow - armedAt.Value < Delay) return;
 
@@ -43,6 +53,9 @@ namespace OracleOfDereth
             }).Start();
         }
 
+        // Runs on a background thread: does network I/O and file I/O only, and hands any
+        // user-facing result to the main thread via pendingMessage/pendingException (drained in
+        // Tick). Never touches the client (chat) directly — see the field comment above.
         private static void Run(bool verbose)
         {
             Version local = Assembly.GetExecutingAssembly().GetName().Version;
@@ -59,11 +72,11 @@ namespace OracleOfDereth
                 Match a = AssetUrlRegex.Match(json);
                 if (a.Success) downloadUrl = a.Groups[1].Value;
             }
-            catch (Exception ex) { Util.Log(ex); }
+            catch (Exception ex) { pendingException = ex; }
 
             if (remote == null)
             {
-                if (verbose) Util.Chat("Update check failed. See log.txt for details.", Util.ColorPink);
+                if (verbose) pendingMessage = "Oracle of Dereth update check failed. See errors.txt for details.";
                 return;
             }
 
@@ -71,11 +84,11 @@ namespace OracleOfDereth
 
             if (remote > local)
             {
-                Util.Chat($"Oracle of Dereth v{remote} update available (you have v{local}): {downloadUrl}", Util.ColorPink, "");
+                pendingMessage = $"Oracle of Dereth v{remote} update available (you have v{local}): {downloadUrl}";
                 return;
             }
 
-            if (verbose) Util.Chat($"Oracle of Dereth is up to date (v{local})", Util.ColorPink, "");
+            if (verbose) pendingMessage = $"Oracle of Dereth is up to date (v{local})";
         }
 
         private static string Fetch(string url)

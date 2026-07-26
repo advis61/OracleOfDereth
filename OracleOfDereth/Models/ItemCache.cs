@@ -36,6 +36,15 @@ namespace OracleOfDereth
 
         public static void Clear() => Cache.Clear();
 
+        // Reset for a fresh character on login (called from PluginCore.Init). Drops any appraisals
+        // cached under the previous character and re-baselines the zone detector, so nothing carries
+        // across a character switch. Mirrors the other models' Init()-clears-its-collection pattern.
+        public static void Init()
+        {
+            Cache.Clear();
+            _lastLandblock = -1;
+        }
+
         // Called each tick: drop the whole cache when we zone somewhere far (teleport/recall),
         // but keep it while walking around or standing still. Mirrors Fellowship's zone detector
         // — compares the landblock (high 16 bits); X/Y are world-grid coords, adjacent blocks

@@ -100,6 +100,19 @@ namespace OracleOfDereth
         // Fired whenever the visible state changes so the view can repaint.
         public static Action OnChanged;
 
+        // Reset all trade session state for a fresh character on login (called from PluginCore.Init).
+        // Trade is static and otherwise only reset by trade events (Begin/End/Reset), so without this
+        // a previous character's session — in particular the IsCyTrader / PartnerName bot flags —
+        // survives a character switch and can make us fire bot "points"/"check" tells at a partner
+        // who isn't a bot. Mirrors End()'s full wipe. (OnChanged is null here — the old view was
+        // disposed on the previous character's shutdown, and the new one is created after Init.)
+        public static void Init()
+        {
+            MyItems.Clear();
+            ItemList.Trade?.Clear();
+            Set("", false);
+        }
+
         // A trade window opened. Snapshot our inventory, work out the partner, and reset the
         // item list + session for a clean start.
         public static void Begin(EnterTradeEventArgs e)
