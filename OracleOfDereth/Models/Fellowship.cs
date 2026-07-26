@@ -189,6 +189,18 @@ namespace OracleOfDereth
             return false;
         }
 
+        public static bool NearbyFacilityHubPortal()
+        {
+            WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByName("Portal to Facility Hub");
+
+            foreach (WorldObject item in items)
+            {
+                if (Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
+            }
+
+            return false;
+        }
+
 
         // Returns the active pause reason ("Zoning In", "Life Stone", "Bind Stone", "Town Portal"), or "" if auto-recruit is clear to fire.
         public static string AutoRecruitPauseReason()
@@ -196,7 +208,8 @@ namespace OracleOfDereth
             string reason =
                 NearbyLifestone() ? "Life Stone" :
                 NearbyBindstone() ? "Bind Stone" :
-                NearbyTownNetworkPortal() ? "Town Portal" : "";
+                NearbyTownNetworkPortal() ? "Town Portal" :
+                NearbyFacilityHubPortal() ? "Facility Hub Portal" : "";
 
             if (reason != "")
             {
