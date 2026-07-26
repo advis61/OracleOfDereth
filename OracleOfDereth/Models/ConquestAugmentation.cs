@@ -89,6 +89,16 @@ namespace OracleOfDereth
             return string.Join(", ", parts);
         }
 
+        // Zero the previous character's aug counts on login (called from PluginCore.Init). Refresh()
+        // also runs on login and repopulates from "/augs", but it updates counts in place without
+        // zeroing first — so an aug the new character has at 0 (and which "/augs" may omit) would
+        // otherwise keep the prior character's count.
+        public static void Init()
+        {
+            foreach (var a in All) a.Count = 0;
+            LastRefresh = DateTime.MinValue;
+        }
+
         // Ask the server to reprint the aug block so we can reparse it. Only meaningful on
         // Conquest — the only server with these augs.
         public static void Refresh()

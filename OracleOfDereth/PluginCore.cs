@@ -145,6 +145,7 @@ namespace OracleOfDereth
             CreditQuest.Init();
             FacilityQuest.Init();
             FellowshipTracker.Init();
+            Fellowship.Init();
             FlagQuest.Init();
             JohnQuest.Init();
             SocietyQuest.Init();
@@ -158,6 +159,9 @@ namespace OracleOfDereth
             ItemList.Init();
             ItemCache.Init();
             Trade.Init();
+            ConquestAugmentation.Init();
+            ConquestBank.Init();
+            ConquestBonus.Init();
 
 
             // Initialize Views

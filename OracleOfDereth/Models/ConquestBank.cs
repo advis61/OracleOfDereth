@@ -49,6 +49,17 @@ namespace OracleOfDereth
 
         public static ConquestBank Get(string name) => All.FirstOrDefault(b => b.Name == name);
 
+        // Clear the previous character's balances on login (called from PluginCore.Init). All +
+        // LastRefresh are static and otherwise only updated while the Bank tab is visible (throttled
+        // to 5 min), so without this a new character sees the prior character's balances — including
+        // character-specific lines like Daily Transfer — until the throttle expires. Resetting
+        // LastRefresh lets the tab pull fresh data immediately when it's next opened.
+        public static void Init()
+        {
+            All.Clear();
+            LastRefresh = DateTime.MinValue;
+        }
+
         // Ask the server to reprint balances so we can reparse them. Conquest-only.
         public static void Refresh()
         {

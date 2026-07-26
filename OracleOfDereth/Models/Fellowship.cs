@@ -92,6 +92,19 @@ namespace OracleOfDereth
             }
         }
 
+        // Reset per-character fellowship state on login (called from PluginCore.Init). Auto-recruit
+        // is a per-session toggle kept in a static, so without this it silently stays ON for the next
+        // character — and the tick would auto-open and recruit players into their fellowship. Also
+        // clears the selected fellow and re-baselines the zone/pause trackers so nothing carries over.
+        public static void Init()
+        {
+            _autoRecruitEnabled = false;
+            CurrentFellowId = 0;
+            _lastLandblock = -1;
+            _lastPauseAt = DateTime.MinValue;
+            _lastPauseReason = "";
+        }
+
         // If my current target is in the fellow, return that.
         // Otherwise last selected fellow on the FellowsList UI
         public static int SelectedFellowId()

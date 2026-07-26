@@ -49,6 +49,7 @@ namespace OracleOfDereth
         public static void Init()
         {
             Titles.Clear();
+            KnownTitleIds.Clear();   // the current character's earned titles; else they linger until the title packet lands
             LoadTitlesCSV();
         }
         public static List<Title> Available() { return Titles.Where(a => a.Category != "Unavailable").ToList(); }

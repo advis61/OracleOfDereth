@@ -48,6 +48,15 @@ namespace OracleOfDereth
 
         public static ConquestBonus Get(string name) => All.FirstOrDefault(b => b.Name == name);
 
+        // Clear the previous character's bonus values on login (called from PluginCore.Init) — same
+        // stale-across-switch issue as ConquestBank. All is a fixed list, so blank each entry's value
+        // rather than clearing the list. Resetting LastRefresh lets the tab re-pull on next open.
+        public static void Init()
+        {
+            foreach (var b in All) b.Value = "";
+            LastRefresh = DateTime.MinValue;
+        }
+
         // Ask the server to reprint the bonus block so we can reparse it. Only meaningful on
         // Conquest — the only server with these bonuses.
         public static void Refresh()

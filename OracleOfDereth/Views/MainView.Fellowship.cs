@@ -35,6 +35,9 @@ namespace OracleOfDereth
             FellowsName = (HudStaticText)view["FellowsName"];
 
             FellowshipAutoRecruit = (HudCheckBox)view["FellowshipAutoRecruit"];
+            // Reflect the (login-reset) auto-recruit state. Set before subscribing Change so this
+            // sync doesn't fire the handler — keeps the checkbox from desyncing across a character switch.
+            FellowshipAutoRecruit.Checked = Fellowship.AutoRecruitEnabled;
             FellowshipAutoRecruit.Change += FellowshipAutoRecruit_Change;
 
             FellowshipCreate = (HudButton)view["FellowshipCreate"];

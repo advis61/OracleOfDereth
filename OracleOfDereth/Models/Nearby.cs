@@ -31,6 +31,7 @@ namespace OracleOfDereth
         public static void Init()
         {
             Nearbys.Clear();
+            Objects.Clear();   // drop the previous character's tracked objects (Tick reconciles anyway, but not until the first tick)
             LoadNearbysCSV();
         }
 

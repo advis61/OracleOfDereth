@@ -30,6 +30,9 @@ namespace OracleOfDereth {
         public static void Init()
         {
             Markers.Clear();
+            // Reset the per-character delta baselines, else the next character's first Info() prints
+            // a spurious "prev->current" line off the previous character's counts.
+            lasta = lastb = lastc = lastd = laste = lastf = lastg = lasth = lasti = lastj = 0;
             LoadMarkersCSV();
         }
 

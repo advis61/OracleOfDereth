@@ -110,7 +110,7 @@ namespace OracleOfDereth
         {
             MyItems.Clear();
             ItemList.Trade?.Clear();
-            Set("", false);
+            ResetSession();
         }
 
         // A trade window opened. Snapshot our inventory, work out the partner, and reset the
@@ -131,7 +131,7 @@ namespace OracleOfDereth
         {
             MyItems.Clear();
             ItemList.Trade.Clear();
-            Set("", false);
+            ResetSession();
         }
 
         // Both sides cleared their offered items; the window stays open. Drop the list.
@@ -429,6 +429,10 @@ namespace OracleOfDereth
         {
             return double.TryParse((text ?? "").Replace(",", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out value);
         }
+
+        // Reset the session to "no trade open" — reads clearer than a bare Set("", false) at the
+        // End/Init call sites (empty partner name, not open).
+        private static void ResetSession() => Set("", false);
 
         private static void Set(string partnerName, bool open)
         {
