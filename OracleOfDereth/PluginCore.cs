@@ -159,10 +159,14 @@ namespace OracleOfDereth
             timer.Start();
         }
 
+        [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
+        [System.Security.SecurityCritical]
         private void Tick(object sender, EventArgs e)
         {
             try
             {
+                if (CoreManager.Current.CharacterFilter.LoginStatus < 1) return;
+
                 Target.RemoveAllExpired();
                 // Pause player identify requests while the Items tab or a trade window is open,
                 // so they don't compete with the item/trade appraisal queue for the server's

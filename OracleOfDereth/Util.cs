@@ -218,6 +218,7 @@ namespace OracleOfDereth
         public unsafe static int CurrentLandblockId()
         {
             var p = CoreManager.Current.Actions.Underlying.GetPhysicsObjectPtr(CoreManager.Current.CharacterFilter.Id);
+            if (p == 0) return 0;
             return *(int*)(p + 0x4C);
         }
 

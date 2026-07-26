@@ -345,6 +345,7 @@ namespace OracleOfDereth
 
         public unsafe static bool IsInFellowship()
         {
+            if (*ClientFellowshipSystem.s_pFellowshipSystem == null) return false;
             return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship != null;
         }
 
