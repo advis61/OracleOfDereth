@@ -101,7 +101,6 @@ namespace OracleOfDereth
             try
             {
                 System.Windows.Forms.Clipboard.SetText(message);
-                Chat("Copied to clipboard", Util.ColorPink);
             }
             catch { }
         }
