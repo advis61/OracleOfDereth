@@ -52,6 +52,10 @@ namespace OracleOfDereth
         public static void Tick()
         {
             int current = Util.CurrentLandblock();
+            // 0 means we couldn't read the landblock (logged-out sentinel, or a transient physics-object
+            // gap while in-world). Skip the tick rather than treat 0 as a real block and detect a false
+            // zone jump that would wipe the whole appraisal cache. _lastLandblock is left intact.
+            if (current == 0) return;
             if (_lastLandblock == -1) { _lastLandblock = current; return; }
             if (current == _lastLandblock) return;
 

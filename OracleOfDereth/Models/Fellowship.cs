@@ -232,6 +232,11 @@ namespace OracleOfDereth
             // while a teleport is a single large-distance jump that does.
             int current = Util.CurrentLandblock();
 
+            // 0 means we couldn't read the landblock (logged-out sentinel, or a transient physics-object
+            // gap while in-world). Treat it as "no change" rather than a real block, so it can't register
+            // a false zone-in that pauses auto-recruit. _lastLandblock is left intact.
+            if (current == 0) return false;
+
             // The very first poll only establishes a baseline. RecentlyZoned() isn't called until
             // auto-recruit is enabled, so without this the act of turning it on would look like a zone-in.
             if (_lastLandblock == -1) { _lastLandblock = current; return false; }
