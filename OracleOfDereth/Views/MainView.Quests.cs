@@ -386,10 +386,19 @@ namespace OracleOfDereth
 
             QuestFlag.QuestFlags.TryGetValue(flag, out QuestFlag questFlag);
 
-            // Quest URL
-            if (col == 0 && quest.Url.Length > 0)
+            // Quest URL. Say so when there isn't one rather than swallowing the click — a few
+            // hundred rows are internal counters and Conquest-only flags with no wiki page, and
+            // silence there is indistinguishable from a misclick.
+            if (col == 0)
             {
-                Util.ThinkQuestUrl($"{quest.Flag}: {quest.Url}", quest.Url);
+                if (quest.Url.Length > 0)
+                {
+                    Util.ThinkQuestUrl($"{quest.Flag}: {quest.Url}", quest.Url);
+                }
+                else
+                {
+                    Util.Chat($"{quest.Flag}: No Url", Util.ColorPink);
+                }
             }
 
             // Quest Info + Hint
