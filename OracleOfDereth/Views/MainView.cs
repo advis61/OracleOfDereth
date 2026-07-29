@@ -309,6 +309,15 @@ namespace OracleOfDereth
             if (completed) { AssignImage(row, IconComplete); } else { AssignImage(row, IconNotComplete); }
         }
 
+        // VVS re-renders a cell on every Text assignment, so skip the ones that would write the
+        // same string back. Barely matters on a 30-row list; on the thousands of rows the Flags
+        // tab paints it's the difference between a free repaint and a costly one.
+        private void SetText(HudList.HudListRowAccessor row, int column, string value)
+        {
+            HudStaticText cell = (HudStaticText)row[column];
+            if (cell.Text != value) { cell.Text = value; }
+        }
+
         private void AssignSelected(HudList.HudListRowAccessor row, bool selected, List<int> columns)
         {
             foreach (int column in columns)
@@ -387,12 +396,10 @@ namespace OracleOfDereth
             UpdateMarkersList();
 
             // /myquests is the source of truth for what flags exist, so fold anything it
-            // reported that quests.csv doesn't list into the collection before the next paint.
+            // reported that quests.csv doesn't list into the collection. No repaint from here:
+            // the Flags tab paints thousands of rows and does it on its own tick, only while
+            // it's the open tab — unlike the small lists above, which are cheap to redraw.
             Quest.MergeQuestFlags();
-
-            // The Flags tab paints thousands of rows, so it only repaints on its own tick,
-            // and only while it's the open tab — not from here, off-screen.
-            questsListStale = true;
 
             // Display feedback
             Util.Chat("Quest data updated.", Util.ColorPink);

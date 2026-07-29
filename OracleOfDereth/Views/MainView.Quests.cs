@@ -22,19 +22,6 @@ namespace OracleOfDereth
         // actually flips.
         private readonly List<bool> questsRowTinted = new List<bool>();
 
-        // VVS re-renders a cell on every Text assignment, so skip the ones that would write the
-        // same string back. Most repaints here change a handful of cells out of ~17,000.
-        private static void SetText(HudList.HudListRowAccessor row, int column, string value)
-        {
-            HudStaticText cell = (HudStaticText)row[column];
-            if (cell.Text != value) { cell.Text = value; }
-        }
-
-        // Painting every row of quests.csv is expensive, so the tick only repaints when
-        // something that affects the list has actually changed: the filter, or the quest
-        // flags behind the completed/ready/solves columns.
-        private bool questsListStale = true;
-
         public HudStaticText QuestsText { get; private set; }
         public HudButton QuestsRefresh { get; private set; }
         public HudButton QuestsClipboard { get; private set; }
@@ -153,7 +140,14 @@ namespace OracleOfDereth
         public void UpdateQuests()
         {
             if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
-            if (questsListStale) { UpdateQuestsList(); }
+
+            // Repaint every tick like the other tabs, so the Ready column's countdowns actually
+            // count down — SetText makes that cheap by writing only the cells that changed. The
+            // one thing not worth doing is painting thousands of rows into a closed window,
+            // which the other tabs are small enough not to bother guarding against.
+            if (!view.Visible) { return; }
+
+            UpdateQuestsList();
         }
 
         // Build the filter from the tab's search box + checkboxes.
@@ -239,8 +233,6 @@ namespace OracleOfDereth
             } else {
                 QuestsText.Text = $"Quest Flags: {completed} of {quests.Count} completed";
             }
-
-            questsListStale = false;
         }
 
         private void QuestsFilter_Change(object sender, EventArgs e)
@@ -357,7 +349,7 @@ namespace OracleOfDereth
         // wouldn't survive the trip.
         private void QuestsHelp_Hit(object sender, EventArgs e)
         {
-            Util.Think("This quest list was put together with AI, so expect the odd mistake - the plugin's other lists are all hand-curated.");
+            Util.Think("This list of quest flags was built from the ACE database and the ILT Mega Book v2.0 with AI assistance, so expect the odd mistake - the plugin's other lists are all hand-curated.");
             Util.Think("The New filter shows flags this server reports that aren't in the Oracle of Dereth master list yet. Send them along to Advis Eveldan if you'd like them added.");
         }
 
