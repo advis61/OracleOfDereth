@@ -387,6 +387,13 @@ namespace OracleOfDereth
         // Quest Flag Changes
         public void UpdateQuestFlags()
         {
+            // /myquests is the source of truth for what flags exist, so fold anything it
+            // reported that quests.csv doesn't list into the collection before anything reads
+            // it. No repaint from here: the Flags tab paints thousands of rows and does it on
+            // its own tick, only while it's the open tab — unlike the small lists below, which
+            // are cheap to redraw.
+            Quest.MergeQuestFlags();
+
             // Update anything that relies on quest flags
             UpdateJohnList();
             UpdateAugmentationQuestsList();
@@ -394,12 +401,6 @@ namespace OracleOfDereth
             UpdateFlagsList();
             UpdateLuminanceList();
             UpdateMarkersList();
-
-            // /myquests is the source of truth for what flags exist, so fold anything it
-            // reported that quests.csv doesn't list into the collection. No repaint from here:
-            // the Flags tab paints thousands of rows and does it on its own tick, only while
-            // it's the open tab — unlike the small lists above, which are cheap to redraw.
-            Quest.MergeQuestFlags();
 
             // Display feedback
             Util.Chat("Quest data updated.", Util.ColorPink);
