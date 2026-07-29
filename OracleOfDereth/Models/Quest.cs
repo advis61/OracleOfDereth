@@ -286,11 +286,14 @@ namespace OracleOfDereth
             return questFlag.Solves;
         }
 
-        // The Info blurb and the coordinate walkthrough, as one chat line. Either can be empty.
+        // The Info blurb and the coordinate walkthrough, as one chat line. Either can be empty,
+        // and for the rows with no walkthrough to give — counters, pickups, most Conquest-only
+        // flags — the two columns hold the same sentence, so print it once rather than twice.
         public string Details()
         {
             if (Info.Length == 0) { return Hint; }
             if (Hint.Length == 0) { return Info; }
+            if (string.Equals(Info, Hint, StringComparison.OrdinalIgnoreCase)) { return Info; }
 
             return $"{Info} {Hint}";
         }
