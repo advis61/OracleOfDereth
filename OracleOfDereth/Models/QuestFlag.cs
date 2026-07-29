@@ -17,9 +17,11 @@ namespace OracleOfDereth
         public static readonly Regex MyQuestRegex = new Regex(@"(?<key>\S+) \- (?<solves>\d+) solves \((?<completedOn>\d{0,11})\)""?((?<description>.*)"" (?<maxSolves>.*) (?<repeatTime>\d{0,11}))?.*$");
         public static readonly Regex KillTaskRegex = new Regex(@"(killtask|killcount|slayerquest|totalgolem.*dead|(kills$))");
 
-        // Quest Flags I care to track
-        private static readonly List<string> QuestFlagsToTrack = new List<string> 
-            { 
+        // Quest Flags I care to track. A HashSet rather than a List: Add() probes this once per
+        // /myquests line, and quests.csv alone contributes several thousand flags.
+        private static readonly HashSet<string> QuestFlagsToTrack = new HashSet<string>(
+            new List<string>
+            {
                 "legendaryquestsa",
                 "legendaryquestsb",
                 "legendaryquestsc",
@@ -39,8 +41,8 @@ namespace OracleOfDereth
             .Concat(JohnQuest.JohnQuests.Select(q => q.Flag))
             .Concat(SocietyQuest.SocietyQuests.Select(q => q.Flag))
             .Concat(CustomQuest.CustomQuests.Select(q => q.Flag))
-            .Concat(Marker.Markers.Select(q => q.Flag))
-            .ToList();
+            .Concat(Quest.Quests.Select(q => q.Flag))
+            .Concat(Marker.Markers.Select(q => q.Flag)));
 
         // Collection of Quest Flags data objects
         public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();

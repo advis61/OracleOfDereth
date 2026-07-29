@@ -59,11 +59,12 @@ namespace OracleOfDereth
             { 2_05, 530 }, // Society
 
             // Quests Tab
-            { 3_00, 430 }, // John
-            { 3_01, 430 }, // Markers
-            { 3_02, 350 }, // Flags
-            { 3_03, 450 }, // Facility Hub
-            { 3_04, 560 }, // Titles (Available and Unavailable)
+            { 3_00, 580 }, // Flags (every quest flag)
+            { 3_01, 430 }, // John
+            { 3_02, 430 }, // Markers
+            { 3_03, 350 }, // Flaggings
+            { 3_04, 450 }, // Facility Hub
+            { 3_05, 560 }, // Titles (Available and Unavailable)
 
             // Server
             { 4_00, 650 }, // Augs (Conquest)
@@ -95,11 +96,12 @@ namespace OracleOfDereth
             { 2_05, 570 }, // Society
 
             // Quests Tab
-            { 3_00, 545}, // John
-            { 3_01, 545 }, // Markers
-            { 3_02, 490 }, // Flags
-            { 3_03, 485 }, // Facility Hub
-            { 3_04, 545 }, // Titles (Available and Unavailable)
+            { 3_00, 545 }, // Flags (every quest flag)
+            { 3_01, 545}, // John
+            { 3_02, 545 }, // Markers
+            { 3_03, 490 }, // Flaggings
+            { 3_04, 485 }, // Facility Hub
+            { 3_05, 545 }, // Titles (Available and Unavailable)
 
             // Server
             { 4_00, 505 }, // Augs (Conquest)
@@ -165,6 +167,7 @@ namespace OracleOfDereth
                 InitFellowship();
                 InitItems();
                 InitNearby();
+                InitQuests();
                 InitJohn();
                 InitMarkers();
                 InitFlags();
@@ -210,6 +213,7 @@ namespace OracleOfDereth
                 DisposeItems();
                 DisposeNearby();
                 DisposeFellowship();
+                DisposeQuests();
                 DisposeJohn();
                 DisposeMarkers();
                 DisposeFlags();
@@ -284,7 +288,10 @@ namespace OracleOfDereth
             // Lists that rebuild via ClearRows()/RemoveRow() leave their old (destroyed) boxes
             // as dead keys here. Cap the cache so those can't accumulate without bound — the
             // live rows just re-cache on the next paint. Cheaper than cleaning every call site.
-            if (AssignedImages.Count > 1000) AssignedImages.Clear();
+            // The cap has to clear the live set comfortably: the Flags tab alone holds a box per
+            // quest flag (~4,300), and a cap below that would flush the cache on every paint,
+            // costing an image assignment per row instead of saving one.
+            if (AssignedImages.Count > 10000) AssignedImages.Clear();
 
             if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
 
@@ -341,11 +348,12 @@ namespace OracleOfDereth
             if (currentTab == 2_05) { UpdateSociety(); }
 
             // Quests Tab
-            if (currentTab == 3_00) { UpdateJohn(); }
-            if (currentTab == 3_01) { UpdateMarkers(); }
-            if (currentTab == 3_02) { UpdateFlags(); }
-            if (currentTab == 3_03) { UpdateFacility(); }
-            if (currentTab == 3_04) { UpdateTitles(); }
+            if (currentTab == 3_00) { UpdateQuests(); }
+            if (currentTab == 3_01) { UpdateJohn(); }
+            if (currentTab == 3_02) { UpdateMarkers(); }
+            if (currentTab == 3_03) { UpdateFlags(); }
+            if (currentTab == 3_04) { UpdateFacility(); }
+            if (currentTab == 3_05) { UpdateTitles(); }
 
             // Server Tab
             if (currentTab == 4_00) { UpdateConquestAugmentations(); }
@@ -377,6 +385,10 @@ namespace OracleOfDereth
             UpdateFlagsList();
             UpdateLuminanceList();
             UpdateMarkersList();
+
+            // The Flags tab paints thousands of rows, so it only repaints on its own tick,
+            // and only while it's the open tab — not from here, off-screen.
+            questsListStale = true;
 
             // Display feedback
             Util.Chat("Quest data updated.", Util.ColorPink);
