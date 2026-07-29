@@ -150,12 +150,19 @@ namespace OracleOfDereth
         }
         public static string GetFriendlyTimeDifference(TimeSpan difference)
         {
+            // Seconds only inside the last hour. On a countdown measured in hours or days they
+            // churn once a second without telling you anything; on the last stretch before a
+            // quest comes up they're the part you're actually watching.
+            bool showSeconds = difference.TotalHours < 1;
             string output = "";
 
+            // Leading zero units are dropped, but once a unit is on screen every smaller one
+            // follows even at zero — a five hour wait reads "5h 0m", not "5h", so the column
+            // doesn't change shape as the minutes tick past a round hour.
             if (difference.Days > 0) output += difference.Days.ToString() + "d ";
-            if (difference.Hours > 0) output += difference.Hours.ToString() + "h ";
-            if (difference.Minutes > 0) output += difference.Minutes.ToString() + "m ";
-            if (difference.Seconds > 0) output += difference.Seconds.ToString() + "s ";
+            if (output.Length > 0 || difference.Hours > 0) output += difference.Hours.ToString() + "h ";
+            if (output.Length > 0 || difference.Minutes > 0) output += difference.Minutes.ToString() + "m ";
+            if (showSeconds && (output.Length > 0 || difference.Seconds > 0)) output += difference.Seconds.ToString() + "s ";
 
             if (output.Length == 0) return "0s";
 

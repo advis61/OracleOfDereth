@@ -59,11 +59,12 @@ namespace OracleOfDereth
             { 2_05, 530 }, // Society
 
             // Quests Tab
-            { 3_00, 430 }, // John
-            { 3_01, 430 }, // Markers
-            { 3_02, 350 }, // Flags
-            { 3_03, 450 }, // Facility Hub
-            { 3_04, 560 }, // Titles (Available and Unavailable)
+            { 3_00, 640 }, // Flags (every quest flag)
+            { 3_01, 430 }, // John
+            { 3_02, 430 }, // Markers
+            { 3_03, 350 }, // Flaggings
+            { 3_04, 450 }, // Facility Hub
+            { 3_05, 560 }, // Titles (Available and Unavailable)
 
             // Server
             { 4_00, 650 }, // Augs (Conquest)
@@ -95,11 +96,12 @@ namespace OracleOfDereth
             { 2_05, 570 }, // Society
 
             // Quests Tab
-            { 3_00, 545}, // John
-            { 3_01, 545 }, // Markers
-            { 3_02, 490 }, // Flags
-            { 3_03, 485 }, // Facility Hub
-            { 3_04, 545 }, // Titles (Available and Unavailable)
+            { 3_00, 570 }, // Flags (every quest flag) — taller: three rows of chrome above the list
+            { 3_01, 545}, // John
+            { 3_02, 545 }, // Markers
+            { 3_03, 490 }, // Flaggings
+            { 3_04, 485 }, // Facility Hub
+            { 3_05, 545 }, // Titles (Available and Unavailable)
 
             // Server
             { 4_00, 505 }, // Augs (Conquest)
@@ -165,6 +167,7 @@ namespace OracleOfDereth
                 InitFellowship();
                 InitItems();
                 InitNearby();
+                InitQuests();
                 InitJohn();
                 InitMarkers();
                 InitFlags();
@@ -210,6 +213,7 @@ namespace OracleOfDereth
                 DisposeItems();
                 DisposeNearby();
                 DisposeFellowship();
+                DisposeQuests();
                 DisposeJohn();
                 DisposeMarkers();
                 DisposeFlags();
@@ -284,7 +288,10 @@ namespace OracleOfDereth
             // Lists that rebuild via ClearRows()/RemoveRow() leave their old (destroyed) boxes
             // as dead keys here. Cap the cache so those can't accumulate without bound — the
             // live rows just re-cache on the next paint. Cheaper than cleaning every call site.
-            if (AssignedImages.Count > 1000) AssignedImages.Clear();
+            // The cap has to clear the live set comfortably: the Flags tab alone holds a box per
+            // quest flag (~4,300), and a cap below that would flush the cache on every paint,
+            // costing an image assignment per row instead of saving one.
+            if (AssignedImages.Count > 10000) AssignedImages.Clear();
 
             if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
 
@@ -300,6 +307,15 @@ namespace OracleOfDereth
         private void AssignImage(HudPictureBox row, bool completed)
         {
             if (completed) { AssignImage(row, IconComplete); } else { AssignImage(row, IconNotComplete); }
+        }
+
+        // VVS re-renders a cell on every Text assignment, so skip the ones that would write the
+        // same string back. Barely matters on a 30-row list; on the thousands of rows the Flags
+        // tab paints it's the difference between a free repaint and a costly one.
+        private void SetText(HudList.HudListRowAccessor row, int column, string value)
+        {
+            HudStaticText cell = (HudStaticText)row[column];
+            if (cell.Text != value) { cell.Text = value; }
         }
 
         private void AssignSelected(HudList.HudListRowAccessor row, bool selected, List<int> columns)
@@ -341,11 +357,12 @@ namespace OracleOfDereth
             if (currentTab == 2_05) { UpdateSociety(); }
 
             // Quests Tab
-            if (currentTab == 3_00) { UpdateJohn(); }
-            if (currentTab == 3_01) { UpdateMarkers(); }
-            if (currentTab == 3_02) { UpdateFlags(); }
-            if (currentTab == 3_03) { UpdateFacility(); }
-            if (currentTab == 3_04) { UpdateTitles(); }
+            if (currentTab == 3_00) { UpdateQuests(); }
+            if (currentTab == 3_01) { UpdateJohn(); }
+            if (currentTab == 3_02) { UpdateMarkers(); }
+            if (currentTab == 3_03) { UpdateFlags(); }
+            if (currentTab == 3_04) { UpdateFacility(); }
+            if (currentTab == 3_05) { UpdateTitles(); }
 
             // Server Tab
             if (currentTab == 4_00) { UpdateConquestAugmentations(); }
@@ -370,6 +387,13 @@ namespace OracleOfDereth
         // Quest Flag Changes
         public void UpdateQuestFlags()
         {
+            // /myquests is the source of truth for what flags exist, so fold anything it
+            // reported that quests.csv doesn't list into the collection before anything reads
+            // it. No repaint from here: the Flags tab paints thousands of rows and does it on
+            // its own tick, only while it's the open tab — unlike the small lists below, which
+            // are cheap to redraw.
+            Quest.MergeQuestFlags();
+
             // Update anything that relies on quest flags
             UpdateJohnList();
             UpdateAugmentationQuestsList();

@@ -151,6 +151,7 @@ namespace OracleOfDereth
             JohnQuest.Init();
             SocietyQuest.Init();
             CustomQuest.Init();
+            Quest.Init();
             Marker.Init();
             Nearby.Init();
             QuestFlag.Init();

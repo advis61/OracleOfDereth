@@ -60,6 +60,7 @@
     <EmbeddedResource Include="targetView.xml" />
     <EmbeddedResource Include="tradeView.xml" />
     <EmbeddedResource Include="Resources\johnquests.csv" />
+    <EmbeddedResource Include="Resources\quests.csv" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Decal.Adapter">

@@ -245,6 +245,46 @@
 		<page label="Quests">
 			<control progid="DecalControls.Notebook" name="QuestsViewNotebook">
 
+				<page label="Flags">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="QuestsText" left="5" top="5" width="368" height="20" text="Quest Flags"/>
+						<control progid="DecalControls.PushButton" name="QuestsClipboard" left="384" top="3" width="52" height="22" text="Copy"/>
+						<control progid="DecalControls.PushButton" name="QuestsExportText" left="440" top="3" width="52" height="22" text="Text"/>
+						<control progid="DecalControls.PushButton" name="QuestsExportCsv" left="496" top="3" width="52" height="22" text="CSV"/>
+						<control progid="DecalControls.PushButton" name="QuestsExportJson" left="552" top="3" width="52" height="22" text="JSON"/>
+						<control progid="DecalControls.PushButton" name="QuestsHelp" left="608" top="3" width="24" height="22" text="?"/>
+
+						<control progid="DecalControls.StaticText" name="QuestsFilterLabel" left="5" top="33" width="38" height="16" text="Filter:"/>
+						<control progid="DecalControls.Edit" name="QuestsFilterText" left="46" top="31" width="274" height="20" text=""/>
+						<control progid="DecalControls.PushButton" name="QuestsFilterReset" left="326" top="30" width="50" height="22" text="Reset"/>
+						<control progid="DecalControls.PushButton" name="QuestsRefresh" left="533" top="29" width="100" height="24" text="Refresh"/>
+
+						<control progid="DecalControls.CheckBox" name="QuestsFilterCompleted" left="5" top="59" width="90" height="16" text="Completed" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterIncomplete" left="101" top="59" width="90" height="16" text="Incomplete" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterOneTime" left="197" top="59" width="85" height="16" text="One Time" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterRepeatable" left="288" top="59" width="95" height="16" text="Repeatable" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterKillTask" left="379" top="59" width="75" height="16" text="Killtask" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterServer" left="455" top="59" width="70" height="16" text="Server" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterNew" left="521" top="59" width="55" height="16" text="New" checked="false"/>
+
+						<control progid="DecalControls.FixedLayout" name="QuestsListSortComplete" left="1" top="89" width="16" height="16"/>
+						<control progid="DecalControls.StaticText" name="QuestsListSortFlag" left="25" top="85" width="210" height="17" text="Quest Flag"/>
+						<control progid="DecalControls.StaticText" name="QuestsListSortName" left="253" top="85" width="240" height="17" text="Quest Name"/>
+						<control progid="DecalControls.StaticText" name="QuestsListSortReady" left="532" top="85" width="60" height="17" text="Ready In"/>
+						<control progid="DecalControls.StaticText" name="QuestsListSortSolves" left="596" top="85" width="44" height="17" text="Solves"/>
+
+						<control progid="DecalControls.List" name="QuestsList" left="0" top="105" width="640" height="2000">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Flag" fixedwidth="220" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="250" />
+							<!-- Ready matches the John tab; Solves is wider than John's 32, which was
+							     too cramped for the four-digit counts this list turns up. -->
+							<column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
+							<column progid="DecalControls.TextColumn" name="Solves" fixedwidth="60" />
+						</control>
+					</control>
+				</page>
+
 				<page label="John">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="JohnText" left="5" top="5" width="300" height="20" text="Legendary John Quests"/>
