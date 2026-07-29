@@ -83,7 +83,7 @@ namespace OracleOfDereth
                 Quests.Add(new Quest
                 {
                     Flag = pair.Key,
-                    Name = pair.Value.Description.Trim(),
+                    Name = CleanDescription(pair.Value.Description),
                     // No CSV row to read Repeatable from, but the server just told us: a flag
                     // carrying a repeat timer is repeatable.
                     Repeatable = pair.Value.RepeatTime != TimeSpan.Zero,
@@ -91,6 +91,17 @@ namespace OracleOfDereth
                 });
                 KnownFlags.Add(pair.Key);
             }
+        }
+
+        // The description in a /myquests line is wrapped in double quotes, and for a flag whose
+        // description is itself empty or quoted the quote characters survive the parse — uberbellas2
+        // arrives as a bare ". They're never part of the real name, so drop both quote forms; a
+        // description that was nothing but quotes cleans down to empty, same as no description.
+        private static string CleanDescription(string description)
+        {
+            if (string.IsNullOrEmpty(description)) return "";
+
+            return new string(description.Where(c => c != '"' && c != '\'').ToArray()).Trim();
         }
 
         public static void LoadQuestsCSV()
@@ -297,15 +308,21 @@ namespace OracleOfDereth
         // quests.csv. Mirrors how ItemFilter.Doubles narrows on top of the category boxes.
         public bool New = false;
 
+        // Another extra AND condition: only rows quests.csv tied to a named world. LoadQuestsCSV
+        // has already dropped every other world's rows, so what's left is the content specific to
+        // the one you're logged into, as opposed to the everywhere-rows with a blank Server.
+        public bool Server = false;
+
         public bool OneTime = false;
         public bool Repeatable = false;
 
         // True when the filter actually narrows the list — some box ticked or text typed.
-        public bool IsActive => New || Completed || Incomplete || OneTime || Repeatable || !string.IsNullOrWhiteSpace(Text);
+        public bool IsActive => New || Server || Completed || Incomplete || OneTime || Repeatable || !string.IsNullOrWhiteSpace(Text);
 
         public bool Matches(Quest quest)
         {
             if (New && !quest.IsNew) return false;
+            if (Server && quest.Server.Length == 0) return false;
             if (!MatchesStatus(quest)) return false;
             if (!MatchesRepeat(quest)) return false;
 
