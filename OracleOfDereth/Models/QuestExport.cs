@@ -69,7 +69,7 @@ namespace OracleOfDereth
             string solves = quest.SolvesText();
             if (solves.Length > 0) { solves = $" | {solves} solves"; }
 
-            return $"{quest.Flag} | {quest.Name} | {repeat} | {quest.Status()}{solves}";
+            return $"{quest.Flag} | {quest.DisplayName()} | {repeat} | {quest.Status()}{solves}";
         }
 
         private static string ExportPath(string extension, string nameOverride = null)
@@ -95,7 +95,7 @@ namespace OracleOfDereth
                 CoreManager.Current.CharacterFilter.Name,
                 Server.Name,
                 quest.Flag,
-                quest.Name,
+                quest.DisplayName(),
                 quest.IsComplete() ? "Yes" : "No",
                 quest.Status(),
                 // Raw count here, unlike the tab's Solves column — an export is data, so a

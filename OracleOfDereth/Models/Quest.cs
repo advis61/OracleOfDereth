@@ -177,10 +177,10 @@ namespace OracleOfDereth
                     Quests = Quests.OrderByDescending(q => q.Flag).ToList();
                     break;
                 case SortType.NameAscending:
-                    Quests = Quests.OrderBy(q => q.Name).ThenBy(q => q.Flag).ToList();
+                    Quests = Quests.OrderBy(q => q.DisplayName()).ThenBy(q => q.Flag).ToList();
                     break;
                 case SortType.NameDescending:
-                    Quests = Quests.OrderByDescending(q => q.Name).ThenBy(q => q.Flag).ToList();
+                    Quests = Quests.OrderByDescending(q => q.DisplayName()).ThenBy(q => q.Flag).ToList();
                     break;
                 case SortType.ReadyAscending:
                     Quests = Quests.OrderBy(q => q.Ready()).ThenBy(q => q.NextAvailableTime()).ThenBy(q => q.Flag).ToList();
@@ -232,6 +232,16 @@ namespace OracleOfDereth
         public bool IsComplete()
         {
             return QuestFlag.QuestFlags.ContainsKey(Flag);
+        }
+
+        // The Name column's text, and the single definition of it. Plenty of rows carry no
+        // curated quest name — most Conquest-only flags, and anything whose questline the wiki
+        // doesn't cover — but nearly all of them do carry the one-line Info describing what the
+        // flag marks, which beats an empty cell. The tab, the sort, the search and both exports
+        // come through here so they can't drift apart.
+        public string DisplayName()
+        {
+            return Name.Length > 0 ? Name : Info;
         }
 
         // The Ready column's text, and the single definition of it: a flag never earned reads
@@ -374,7 +384,7 @@ namespace OracleOfDereth
             string trimmed = (query ?? "").Trim();
             if (trimmed.Length == 0) return true;
 
-            string combined = $"{quest.Flag} {quest.Name}";
+            string combined = $"{quest.Flag} {quest.DisplayName()}";
 
             foreach (string term in trimmed.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
             {

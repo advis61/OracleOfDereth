@@ -2,7 +2,7 @@
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.15.2/OracleOfDerethInstaller-1.15.2.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.16.0/OracleOfDerethInstaller-1.16.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
@@ -76,6 +76,10 @@ Recalls
 Society
 
 ![Society](./docs/Society.png)
+
+Quest Flags
+
+![Flags](./docs/Flags.png)
 
 John Tracker
 
@@ -199,11 +203,11 @@ Only displays cantrips for skills that you have known.
 
 ### Quest Flags
 
-Every quest flag the plugin knows about, in one searchable list — the raw database behind the curated tabs below.
+Displays your /myquests cross-referenced with every quest flag the plugin knows about, in one searchable list — the raw database behind the curated tabs below.
 
 - A green icon means your character holds that flag. A red icon means it has never been completed.
 - Ready In shows `completed` for a one-time quest, or the remaining cooldown for a repeatable one.
-- Filter by flag or quest name, and narrow by Completed / Incomplete, One Time / Repeatable, or New.
+- Filter by flag or quest name, and narrow by Completed / Incomplete, One Time / Repeatable, Server or New.
 - New means the server reported a flag that isn't in the plugin's master list yet. Please send those along to Advis Eveldan so they can be added.
 
 Click the quest icon to /think the wiki url to yourself. Click the flag or name for its quest notes. Click Ready In or Solves to print the raw quest flag data to chat.

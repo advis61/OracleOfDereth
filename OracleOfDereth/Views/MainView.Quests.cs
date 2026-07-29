@@ -209,7 +209,7 @@ namespace OracleOfDereth
 
                 AssignImage((HudPictureBox)row[0], complete);
                 SetText(row, 1, quest.Flag);
-                SetText(row, 2, quest.Name);
+                SetText(row, 2, quest.DisplayName());
                 SetText(row, 3, quest.Status());
                 SetText(row, 4, quest.SolvesText());
 
@@ -397,7 +397,7 @@ namespace OracleOfDereth
                 }
                 else
                 {
-                    Util.Chat($"{quest.Flag}: No Url", Util.ColorPink);
+                    Util.Think($"{quest.Flag}: No Url");
                 }
             }
 
