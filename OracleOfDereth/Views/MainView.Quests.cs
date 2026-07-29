@@ -22,10 +22,17 @@ namespace OracleOfDereth
 
         public HudStaticText QuestsText { get; private set; }
         public HudButton QuestsRefresh { get; private set; }
+        public HudButton QuestsClipboard { get; private set; }
+        public HudButton QuestsExportText { get; private set; }
+        public HudButton QuestsExportCsv { get; private set; }
+        public HudButton QuestsExportJson { get; private set; }
         public HudTextBox QuestsFilterText { get; private set; }
         public HudButton QuestsFilterReset { get; private set; }
         public HudCheckBox QuestsFilterCompleted { get; private set; }
         public HudCheckBox QuestsFilterIncomplete { get; private set; }
+        public HudCheckBox QuestsFilterOneTime { get; private set; }
+        public HudCheckBox QuestsFilterRepeatable { get; private set; }
+        public HudCheckBox QuestsFilterUnknown { get; private set; }
         public HudCheckBox QuestsFilterNew { get; private set; }
         public HudList QuestsList { get; private set; }
 
@@ -36,6 +43,18 @@ namespace OracleOfDereth
 
             QuestsRefresh = (HudButton)view["QuestsRefresh"];
             QuestsRefresh.Hit += QuestFlagsRefresh_Hit;
+
+            QuestsClipboard = (HudButton)view["QuestsClipboard"];
+            QuestsClipboard.Hit += QuestsClipboard_Hit;
+
+            QuestsExportText = (HudButton)view["QuestsExportText"];
+            QuestsExportText.Hit += QuestsExportText_Hit;
+
+            QuestsExportCsv = (HudButton)view["QuestsExportCsv"];
+            QuestsExportCsv.Hit += QuestsExportCsv_Hit;
+
+            QuestsExportJson = (HudButton)view["QuestsExportJson"];
+            QuestsExportJson.Hit += QuestsExportJson_Hit;
 
             QuestsFilterText = (HudTextBox)view["QuestsFilterText"];
             QuestsFilterText.Change += QuestsFilter_Change;
@@ -48,6 +67,15 @@ namespace OracleOfDereth
 
             QuestsFilterIncomplete = (HudCheckBox)view["QuestsFilterIncomplete"];
             QuestsFilterIncomplete.Change += QuestsFilter_Change;
+
+            QuestsFilterOneTime = (HudCheckBox)view["QuestsFilterOneTime"];
+            QuestsFilterOneTime.Change += QuestsFilter_Change;
+
+            QuestsFilterRepeatable = (HudCheckBox)view["QuestsFilterRepeatable"];
+            QuestsFilterRepeatable.Change += QuestsFilter_Change;
+
+            QuestsFilterUnknown = (HudCheckBox)view["QuestsFilterUnknown"];
+            QuestsFilterUnknown.Change += QuestsFilter_Change;
 
             QuestsFilterNew = (HudCheckBox)view["QuestsFilterNew"];
             QuestsFilterNew.Change += QuestsFilter_Change;
@@ -64,7 +92,14 @@ namespace OracleOfDereth
             QuestsFilterReset.Hit -= QuestsFilterReset_Hit;
             QuestsFilterCompleted.Change -= QuestsFilter_Change;
             QuestsFilterIncomplete.Change -= QuestsFilter_Change;
+            QuestsFilterOneTime.Change -= QuestsFilter_Change;
+            QuestsFilterRepeatable.Change -= QuestsFilter_Change;
+            QuestsFilterUnknown.Change -= QuestsFilter_Change;
             QuestsFilterNew.Change -= QuestsFilter_Change;
+            QuestsClipboard.Hit -= QuestsClipboard_Hit;
+            QuestsExportText.Hit -= QuestsExportText_Hit;
+            QuestsExportCsv.Hit -= QuestsExportCsv_Hit;
+            QuestsExportJson.Hit -= QuestsExportJson_Hit;
             QuestsRefresh.Hit -= QuestFlagsRefresh_Hit;
         }
 
@@ -82,6 +117,9 @@ namespace OracleOfDereth
                 Text = QuestsFilterText?.Text ?? "",
                 Completed = QuestsFilterCompleted.Checked,
                 Incomplete = QuestsFilterIncomplete.Checked,
+                OneTime = QuestsFilterOneTime.Checked,
+                Repeatable = QuestsFilterRepeatable.Checked,
+                Unknown = QuestsFilterUnknown.Checked,
                 New = QuestsFilterNew.Checked,
             };
         }
@@ -105,11 +143,13 @@ namespace OracleOfDereth
                     row = QuestsList[x];
                 }
 
-                // Update
+                // Update. One lookup serves the whole row — IsComplete() and IsOneTime() would
+                // each re-hash the same key, and deriving both from this questFlag also means
+                // the icon and the Ready column can't disagree about the same flag.
                 Quest quest = quests[x];
                 QuestFlag.QuestFlags.TryGetValue(quest.Flag, out QuestFlag questFlag);
 
-                bool complete = quest.IsComplete();
+                bool complete = questFlag != null;
                 if (complete) { completed += 1; }
 
                 AssignImage((HudPictureBox)row[0], complete);
@@ -122,11 +162,12 @@ namespace OracleOfDereth
                 AssignSelected(row, quest.IsNew, QuestsRowColumns);
 
                 // Same three-way split the Society tab uses: never earned, a permanent one-time
-                // stamp (no cooldown to count down, solves always 1), or a repeatable on timer.
-                if (questFlag == null) {
+                // stamp (nothing to count down), or a repeatable — where NextAvailable() gives
+                // the cooldown, or "ready" once it's elapsed.
+                if (!complete) {
                     ((HudStaticText)row[3]).Text = "ready";
                     ((HudStaticText)row[4]).Text = "";
-                } else if (quest.IsOneTime()) {
+                } else if (questFlag.RepeatTime == TimeSpan.Zero) {
                     ((HudStaticText)row[3]).Text = "completed";
                     ((HudStaticText)row[4]).Text = "";
                 } else {
@@ -169,10 +210,50 @@ namespace OracleOfDereth
             QuestsFilterText.Text = "";
             QuestsFilterCompleted.Checked = false;
             QuestsFilterIncomplete.Checked = false;
+            QuestsFilterOneTime.Checked = false;
+            QuestsFilterRepeatable.Checked = false;
+            QuestsFilterUnknown.Checked = false;
             QuestsFilterNew.Checked = false;
             suppressQuestsFilter = false;
 
             UpdateQuestsList();
+        }
+
+        // The rows currently on screen: the collection narrowed by the search box and the
+        // status/new checkboxes. Export and Copy act on this, not the full list, so what you
+        // save matches what you see.
+        private List<Quest> DisplayedQuests() => Quest.Quests.Where(QuestsFilter().Matches).ToList();
+
+        private void QuestsExportText_Hit(object sender, EventArgs e)
+        {
+            List<Quest> quests = DisplayedQuests();
+            string path = QuestExport.ToText(quests);
+            Util.ClipboardCopy(path);
+            Util.Chat($"Exported {quests.Count} quests to {path}");
+        }
+
+        private void QuestsExportCsv_Hit(object sender, EventArgs e)
+        {
+            List<Quest> quests = DisplayedQuests();
+            string path = QuestExport.ToCsv(quests);
+            Util.ClipboardCopy(path);
+            Util.Chat($"Exported {quests.Count} quests to {path}");
+        }
+
+        private void QuestsExportJson_Hit(object sender, EventArgs e)
+        {
+            List<Quest> quests = DisplayedQuests();
+            string path = QuestExport.ToJson(quests);
+            Util.ClipboardCopy(path);
+            Util.Chat($"Exported {quests.Count} quests to {path}");
+        }
+
+        private void QuestsClipboard_Hit(object sender, EventArgs e)
+        {
+            List<Quest> quests = DisplayedQuests();
+            string text = string.Join("\n", quests.Select(QuestExport.Describe));
+            Util.ClipboardCopy(text);
+            Util.Chat($"Copied {quests.Count} quests to clipboard");
         }
 
         private void QuestsList_Click(object sender, int row, int col)

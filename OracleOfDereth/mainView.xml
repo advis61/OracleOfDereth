@@ -247,22 +247,30 @@
 
 				<page label="Flags">
 					<control progid="DecalControls.FixedLayout" clipped="">
-						<control progid="DecalControls.StaticText" name="QuestsText" left="5" top="5" width="300" height="20" text="Quest Flags"/>
-						<control progid="DecalControls.PushButton" name="QuestsRefresh" left="477" top="3" width="100" height="24" text="Refresh"/>
+						<control progid="DecalControls.StaticText" name="QuestsText" left="5" top="5" width="336" height="20" text="Quest Flags"/>
+						<control progid="DecalControls.PushButton" name="QuestsClipboard" left="352" top="3" width="52" height="22" text="Copy"/>
+						<control progid="DecalControls.PushButton" name="QuestsExportText" left="408" top="3" width="52" height="22" text="Text"/>
+						<control progid="DecalControls.PushButton" name="QuestsExportCsv" left="464" top="3" width="52" height="22" text="CSV"/>
+						<control progid="DecalControls.PushButton" name="QuestsExportJson" left="520" top="3" width="52" height="22" text="JSON"/>
 
 						<control progid="DecalControls.StaticText" name="QuestsFilterLabel" left="5" top="33" width="38" height="16" text="Filter:"/>
-						<control progid="DecalControls.Edit" name="QuestsFilterText" left="46" top="31" width="180" height="20" text=""/>
-						<control progid="DecalControls.PushButton" name="QuestsFilterReset" left="232" top="30" width="50" height="22" text="Reset"/>
-						<control progid="DecalControls.CheckBox" name="QuestsFilterCompleted" left="292" top="33" width="90" height="16" text="Completed" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="QuestsFilterIncomplete" left="388" top="33" width="90" height="16" text="Incomplete" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="QuestsFilterNew" left="484" top="33" width="55" height="16" text="New" checked="false"/>
+						<control progid="DecalControls.Edit" name="QuestsFilterText" left="46" top="31" width="244" height="20" text=""/>
+						<control progid="DecalControls.PushButton" name="QuestsFilterReset" left="296" top="30" width="50" height="22" text="Reset"/>
+						<control progid="DecalControls.PushButton" name="QuestsRefresh" left="473" top="29" width="100" height="24" text="Refresh"/>
 
-						<control progid="DecalControls.StaticText" name="QuestsHeaderFlag" left="20" top="59" width="190" height="17" text="Quest Flag"/>
-						<control progid="DecalControls.StaticText" name="QuestsHeaderName" left="220" top="59" width="220" height="17" text="Quest Name"/>
-						<control progid="DecalControls.StaticText" name="QuestsHeaderReady" left="452" top="59" width="60" height="17" text="Ready In"/>
-						<control progid="DecalControls.StaticText" name="QuestsHeaderSolves" left="516" top="59" width="45" height="17" text="Solves"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterCompleted" left="5" top="59" width="90" height="16" text="Completed" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterIncomplete" left="101" top="59" width="90" height="16" text="Incomplete" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterOneTime" left="197" top="59" width="85" height="16" text="One Time" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterRepeatable" left="288" top="59" width="95" height="16" text="Repeatable" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterUnknown" left="389" top="59" width="85" height="16" text="Unknown" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterNew" left="480" top="59" width="55" height="16" text="New" checked="false"/>
 
-						<control progid="DecalControls.List" name="QuestsList" left="0" top="79" width="580" height="2000">
+						<control progid="DecalControls.StaticText" name="QuestsHeaderFlag" left="20" top="85" width="190" height="17" text="Quest Flag"/>
+						<control progid="DecalControls.StaticText" name="QuestsHeaderName" left="220" top="85" width="220" height="17" text="Quest Name"/>
+						<control progid="DecalControls.StaticText" name="QuestsHeaderReady" left="452" top="85" width="60" height="17" text="Ready In"/>
+						<control progid="DecalControls.StaticText" name="QuestsHeaderSolves" left="516" top="85" width="45" height="17" text="Solves"/>
+
+						<control progid="DecalControls.List" name="QuestsList" left="0" top="105" width="580" height="2000">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Flag" fixedwidth="200" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="220" />

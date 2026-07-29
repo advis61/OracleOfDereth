@@ -129,17 +129,27 @@ namespace OracleOfDereth
             return questFlag.RepeatTime == TimeSpan.Zero;
         }
 
-        public bool IsComplete()
+        // The other half of the pair. Note both are false for a flag the character has never
+        // earned — which kind it is simply isn't knowable until the server reports it once.
+        public bool IsRepeatable()
         {
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return false; }
 
-            // One-time quests are complete once the stamp is present. Repeatable quests count as
-            // complete only while on cooldown — once the repeat timer elapses they're available
-            // again, so they show as not-completed. Mirrors CustomQuest / SocietyQuest.
-            if (questFlag.RepeatTime == TimeSpan.Zero) { return questFlag.Solves > 0; }
+            return questFlag.RepeatTime != TimeSpan.Zero;
+        }
 
-            return !questFlag.Ready();
+        // Having the flag at all is the whole test. /myquests only reports flags the character
+        // has actually earned, so its presence is the fact; the solve count is not consulted
+        // because custom and server-specific quests keep odd counts (zero solves on a stamp
+        // that's been spent, counters that reset) that say nothing about whether it was done.
+        //
+        // Note this is the opposite of CustomQuest / SocietyQuest, which treat a repeatable
+        // that's off cooldown as not-complete. Those tabs are worklists; this one is a record
+        // of what a character has done, and the Ready column carries the cooldown state.
+        public bool IsComplete()
+        {
+            return QuestFlag.QuestFlags.ContainsKey(Flag);
         }
 
         // The Info blurb and the coordinate walkthrough, as one chat line. Either can be empty.
@@ -164,13 +174,18 @@ namespace OracleOfDereth
         // quests.csv. Mirrors how ItemFilter.Doubles narrows on top of the category boxes.
         public bool New = false;
 
+        public bool OneTime = false;
+        public bool Repeatable = false;
+        public bool Unknown = false;
+
         // True when the filter actually narrows the list — some box ticked or text typed.
-        public bool IsActive => New || Completed || Incomplete || !string.IsNullOrWhiteSpace(Text);
+        public bool IsActive => New || Completed || Incomplete || OneTime || Repeatable || Unknown || !string.IsNullOrWhiteSpace(Text);
 
         public bool Matches(Quest quest)
         {
             if (New && !quest.IsNew) return false;
             if (!MatchesStatus(quest)) return false;
+            if (!MatchesRepeat(quest)) return false;
 
             return MatchesText(quest);
         }
@@ -182,6 +197,21 @@ namespace OracleOfDereth
             if (Completed == Incomplete) return true;
 
             return quest.IsComplete() ? Completed : Incomplete;
+        }
+
+        // Same whitelist behaviour across the three repeat types, which between them cover every
+        // quest: one-time, repeatable, or unknown. Unknown is the honest third state — /myquests
+        // only reports a repeat timer for flags the character has actually earned, so for
+        // anything never completed the server simply hasn't said which kind it is.
+        private bool MatchesRepeat(Quest quest)
+        {
+            // None ticked (or all three) narrows nothing.
+            if (OneTime == Repeatable && Repeatable == Unknown) return true;
+
+            if (quest.IsOneTime()) return OneTime;
+            if (quest.IsRepeatable()) return Repeatable;
+
+            return Unknown;
         }
 
         // Space-separated terms, all of which must appear in the quest's flag or name — the two

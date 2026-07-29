@@ -96,7 +96,7 @@ namespace OracleOfDereth
             { 2_05, 570 }, // Society
 
             // Quests Tab
-            { 3_00, 545 }, // Flags (every quest flag)
+            { 3_00, 570 }, // Flags (every quest flag) — taller: three rows of chrome above the list
             { 3_01, 545}, // John
             { 3_02, 545 }, // Markers
             { 3_03, 490 }, // Flaggings
