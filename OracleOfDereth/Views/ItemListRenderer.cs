@@ -153,10 +153,9 @@ namespace OracleOfDereth
         private static readonly Color ColorSelected = Color.FromArgb(255, 130, 210, 255);
 
         // Paint the given items into the HudList: status/loading icon, item icon, name and
-        // the four summary columns, with the id stashed in the (hidden) last column. The
-        // caller passes its own image-tracking dict (so repeated repaints skip identical
-        // images), the "not complete" icon for column 0, and the id of the selected row.
-        public static void Render(HudList list, List<Item> items, Dictionary<HudPictureBox, int> assigned, int iconNotComplete, int selectedId)
+        // the four summary columns, with the id stashed in the (hidden) last column. Takes
+        // the "not complete" icon for column 0 and the id of the selected row.
+        public static void Render(HudList list, List<Item> items, int iconNotComplete, int selectedId)
         {
             for (int x = 0; x < items.Count; x++)
             {
@@ -165,8 +164,8 @@ namespace OracleOfDereth
 
                 Item item = items[x];
 
-                AssignImage(assigned, (HudPictureBox)row[0], iconNotComplete);
-                AssignImage(assigned, (HudPictureBox)row[1], item.Icon);
+                AssignImage((HudPictureBox)row[0], iconNotComplete);
+                AssignImage((HudPictureBox)row[1], item.Icon);
                 ((HudStaticText)row[2]).Text = item.Name;
                 ((HudStaticText)row[3]).Text = item.SummaryCol1;
                 ((HudStaticText)row[4]).Text = item.SummaryCol2;
@@ -181,13 +180,10 @@ namespace OracleOfDereth
                 SetRowColor(row, selected: item.Id == selectedId && selectedId != 0, loading: !item.IsIdentified);
             }
 
-            // Trim surplus rows, dropping their image boxes from the tracking dict — otherwise
-            // those (now destroyed) boxes leak as dead keys every time the list shrinks.
+            // Trim surplus rows. Nothing to clean up alongside them: AssignImage keeps its
+            // state on the box, so a destroyed row takes it with it.
             while (list.RowCount > items.Count)
             {
-                HudList.HudListRowAccessor row = list[list.RowCount - 1];
-                assigned.Remove((HudPictureBox)row[0]);
-                assigned.Remove((HudPictureBox)row[1]);
                 list.RemoveRow(list.RowCount - 1);
             }
         }
@@ -206,19 +202,22 @@ namespace OracleOfDereth
         }
 
         // Only swap the image when it actually changes; assigning is comparatively expensive.
-        private static void AssignImage(Dictionary<HudPictureBox, int> assigned, HudPictureBox box, int icon)
+        // The box is its own record of what it's showing — an int converts implicitly to
+        // ACImage and PortalImageID reads that id back — so there's nothing to cache, and no
+        // dead keys to clean up when a row is destroyed. Mirrors MainView.AssignImage.
+        private static void AssignImage(HudPictureBox box, int icon)
         {
-            if (assigned.TryGetValue(box, out int assignedIcon) && assignedIcon == icon) return;
+            // A cleared box reads back as null rather than 0, which is the same "no image".
+            int current = box.Image == null ? 0 : box.Image.PortalImageID;
+            if (current == icon) return;
 
             if (icon == 0)
             {
                 box.Image = null;
-                assigned.Remove(box);
             }
             else
             {
                 box.Image = icon;
-                assigned[box] = icon;
             }
         }
 

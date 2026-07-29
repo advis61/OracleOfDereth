@@ -223,12 +223,10 @@ namespace OracleOfDereth
                 }
             }
 
-            // Trim surplus rows the filter has hidden, dropping their image boxes from the
-            // tracking dict — otherwise those (now destroyed) boxes leak as dead keys.
+            // Trim surplus rows the filter has hidden. Nothing to clean up alongside them:
+            // AssignImage keeps its state on the box, so a destroyed row takes it with it.
             while (QuestsList.RowCount > quests.Count)
             {
-                HudList.HudListRowAccessor row = QuestsList[QuestsList.RowCount - 1];
-                AssignedImages.Remove((HudPictureBox)row[0]);
                 QuestsList.RemoveRow(QuestsList.RowCount - 1);
             }
 

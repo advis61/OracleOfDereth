@@ -115,9 +115,6 @@ namespace OracleOfDereth
             { 5_02, 340 }, // Help
         };
 
-        // Assign Images Tracking
-        private Dictionary<HudPictureBox, int> AssignedImages = new Dictionary<HudPictureBox, int>();
-
         public MainView()
         {
             try
@@ -136,7 +133,6 @@ namespace OracleOfDereth
                 view.UserResizeable = true;
                 view.MaximumClientArea = new Size(1920, 1080);
                 view.Resize += MainView_Resized;
-                AssignedImages.Clear();
 
                 // Main Notebook
                 MainViewNotebook = (HudTabView)view["MainViewNotebook"];
@@ -231,7 +227,6 @@ namespace OracleOfDereth
                 DisposeSettings();
 
                 // Other cleanup
-                AssignedImages.Clear();
                 view?.Dispose();
             }
         }
@@ -283,24 +278,24 @@ namespace OracleOfDereth
             QuestFlag.Refresh();
         }
 
+        // Only swap the image when it actually changes; assigning is comparatively expensive on
+        // the lists that paint thousands of rows a tick.
+        //
+        // The box itself is the record of what it's showing: an int converts implicitly to
+        // ACImage and PortalImageID reads that id straight back, so there's nothing to cache.
+        // A side dictionary keyed on the box would need every list that trims rows to remove
+        // its boxes, or it pins destroyed controls alive forever — see the Items renderer,
+        // which still carries one because it tracks two boxes per row.
         private void AssignImage(HudPictureBox row, int icon)
         {
-            // Lists that rebuild via ClearRows()/RemoveRow() leave their old (destroyed) boxes
-            // as dead keys here. Cap the cache so those can't accumulate without bound — the
-            // live rows just re-cache on the next paint. Cheaper than cleaning every call site.
-            // The cap has to clear the live set comfortably: the Flags tab alone holds a box per
-            // quest flag (~4,300), and a cap below that would flush the cache on every paint,
-            // costing an image assignment per row instead of saving one.
-            if (AssignedImages.Count > 10000) AssignedImages.Clear();
-
-            if (AssignedImages.TryGetValue(row, out int assignedIcon) && assignedIcon == icon) return;
+            // A cleared box reads back as null rather than 0, which is the same "no image".
+            int current = row.Image == null ? 0 : row.Image.PortalImageID;
+            if (current == icon) return;
 
             if (icon == 0) {
                 row.Image = null;
-                AssignedImages.Remove(row);
             } else {
                 row.Image = icon;
-                AssignedImages[row] = icon;
             }
         }
 
