@@ -41,6 +41,7 @@ namespace OracleOfDereth
         public HudButton QuestsExportText { get; private set; }
         public HudButton QuestsExportCsv { get; private set; }
         public HudButton QuestsExportJson { get; private set; }
+        public HudButton QuestsHelp { get; private set; }
         public HudTextBox QuestsFilterText { get; private set; }
         public HudButton QuestsFilterReset { get; private set; }
         public HudCheckBox QuestsFilterCompleted { get; private set; }
@@ -78,6 +79,9 @@ namespace OracleOfDereth
 
             QuestsExportJson = (HudButton)view["QuestsExportJson"];
             QuestsExportJson.Hit += QuestsExportJson_Hit;
+
+            QuestsHelp = (HudButton)view["QuestsHelp"];
+            QuestsHelp.Hit += QuestsHelp_Hit;
 
             QuestsFilterText = (HudTextBox)view["QuestsFilterText"];
             QuestsFilterText.Change += QuestsFilter_Change;
@@ -142,6 +146,7 @@ namespace OracleOfDereth
             QuestsExportText.Hit -= QuestsExportText_Hit;
             QuestsExportCsv.Hit -= QuestsExportCsv_Hit;
             QuestsExportJson.Hit -= QuestsExportJson_Hit;
+            QuestsHelp.Hit -= QuestsHelp_Hit;
             QuestsRefresh.Hit -= QuestFlagsRefresh_Hit;
         }
 
@@ -346,6 +351,14 @@ namespace OracleOfDereth
             string path = QuestExport.ToJson(quests);
             Util.ClipboardCopy(path);
             Util.Chat($"Exported {quests.Count} quests to {path}");
+        }
+
+        // Two lines rather than one: Util.Think sends a single chat command, so a newline
+        // wouldn't survive the trip.
+        private void QuestsHelp_Hit(object sender, EventArgs e)
+        {
+            Util.Think("This quest list was put together with AI, so expect the odd mistake - the plugin's other lists are all hand-curated.");
+            Util.Think("The New filter shows flags this server reports that aren't in the Oracle of Dereth master list yet. Send them along to Advis Eveldan if you'd like them added.");
         }
 
         private void QuestsClipboard_Hit(object sender, EventArgs e)

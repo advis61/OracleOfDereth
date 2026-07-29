@@ -59,7 +59,7 @@ namespace OracleOfDereth
             { 2_05, 530 }, // Society
 
             // Quests Tab
-            { 3_00, 580 }, // Flags (every quest flag)
+            { 3_00, 640 }, // Flags (every quest flag)
             { 3_01, 430 }, // John
             { 3_02, 430 }, // Markers
             { 3_03, 350 }, // Flaggings

@@ -62,10 +62,14 @@ namespace OracleOfDereth
         // clipboard, mirroring the flag / name / ready / solves columns actually on screen.
         public static string Describe(Quest quest)
         {
+            // Repeat type sits before the status so the fields line up row to row — the trailing
+            // solve count is the only part that comes and goes.
+            string repeat = quest.IsOneTime() ? "one-time" : "repeatable";
+
             string solves = quest.SolvesText();
             if (solves.Length > 0) { solves = $" | {solves} solves"; }
 
-            return $"{quest.Flag} | {quest.Name} | {quest.Status()}{solves}";
+            return $"{quest.Flag} | {quest.Name} | {repeat} | {quest.Status()}{solves}";
         }
 
         private static string ExportPath(string extension, string nameOverride = null)
