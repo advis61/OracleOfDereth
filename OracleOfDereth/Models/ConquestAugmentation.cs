@@ -187,7 +187,7 @@ namespace OracleOfDereth
                     double resist = Math.Min(Count, 10) * 0.3 + Math.Max(Count - 10, 0) * 0.1;
                     return $"+{resist:0.#}% resist, +{Count} heal/revit, +{Count * 0.1:0.#} surge";
                 case "War":            return $"+{Count * 2}% war magic potency";
-                case "Void":           return $"+{Count * 2.5:0.#}% void magic potency";
+                case "Void":           return $"+{Count * 2}% void magic potency";
                 case "Melee":          return $"+{Count} damage with melee weapons";
                 case "Missile":        return $"+{Count} damage with missile weapons";
                 case "Duration":       return $"+{Count * 5}% spell duration";
