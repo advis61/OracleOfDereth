@@ -266,10 +266,10 @@
 						<control progid="DecalControls.CheckBox" name="QuestsFilterNew" left="389" top="59" width="55" height="16" text="New" checked="false"/>
 
 						<control progid="DecalControls.FixedLayout" name="QuestsListSortComplete" left="1" top="89" width="16" height="16"/>
-						<control progid="DecalControls.StaticText" name="QuestsListSortFlag" left="20" top="85" width="210" height="17" text="Quest Flag"/>
-						<control progid="DecalControls.StaticText" name="QuestsListSortName" left="240" top="85" width="240" height="17" text="Quest Name"/>
-						<control progid="DecalControls.StaticText" name="QuestsListSortReady" left="502" top="85" width="60" height="17" text="Ready In"/>
-						<control progid="DecalControls.StaticText" name="QuestsListSortSolves" left="566" top="85" width="50" height="17" text="Solves"/>
+						<control progid="DecalControls.StaticText" name="QuestsListSortFlag" left="25" top="85" width="210" height="17" text="Quest Flag"/>
+						<control progid="DecalControls.StaticText" name="QuestsListSortName" left="253" top="85" width="240" height="17" text="Quest Name"/>
+						<control progid="DecalControls.StaticText" name="QuestsListSortReady" left="532" top="85" width="60" height="17" text="Ready In"/>
+						<control progid="DecalControls.StaticText" name="QuestsListSortSolves" left="596" top="85" width="44" height="17" text="Solves"/>
 
 						<control progid="DecalControls.List" name="QuestsList" left="0" top="105" width="640" height="2000">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
