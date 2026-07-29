@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using VirindiViewService.Controls;
 
@@ -34,6 +35,15 @@ namespace OracleOfDereth
         public HudCheckBox QuestsFilterRepeatable { get; private set; }
         public HudCheckBox QuestsFilterUnknown { get; private set; }
         public HudCheckBox QuestsFilterNew { get; private set; }
+
+        public HudFixedLayout QuestsListSortComplete { get; private set; }
+        public HudPictureBox QuestsListSortCompleteIcon { get; private set; }
+
+        public HudStaticText QuestsListSortFlag { get; private set; }
+        public HudStaticText QuestsListSortName { get; private set; }
+        public HudStaticText QuestsListSortReady { get; private set; }
+        public HudStaticText QuestsListSortSolves { get; private set; }
+
         public HudList QuestsList { get; private set; }
 
         private void InitQuests()
@@ -83,11 +93,34 @@ namespace OracleOfDereth
             QuestsList = (HudList)view["QuestsList"];
             QuestsList.Click += QuestsList_Click;
             QuestsList.ClearRows();
+
+            QuestsListSortCompleteIcon = new HudPictureBox();
+            QuestsListSortCompleteIcon.Image = IconSort;
+            QuestsListSortComplete = (HudFixedLayout)view["QuestsListSortComplete"];
+            QuestsListSortComplete.AddControl(QuestsListSortCompleteIcon, new Rectangle(0, 0, 16, 16));
+            QuestsListSortCompleteIcon.Hit += QuestsListSortComplete_Click;
+
+            QuestsListSortFlag = (HudStaticText)view["QuestsListSortFlag"];
+            QuestsListSortFlag.Hit += QuestsListSortFlag_Click;
+
+            QuestsListSortName = (HudStaticText)view["QuestsListSortName"];
+            QuestsListSortName.Hit += QuestsListSortName_Click;
+
+            QuestsListSortReady = (HudStaticText)view["QuestsListSortReady"];
+            QuestsListSortReady.Hit += QuestsListSortReady_Click;
+
+            QuestsListSortSolves = (HudStaticText)view["QuestsListSortSolves"];
+            QuestsListSortSolves.Hit += QuestsListSortSolves_Click;
         }
 
         private void DisposeQuests()
         {
             QuestsList.Click -= QuestsList_Click;
+            QuestsListSortCompleteIcon.Hit -= QuestsListSortComplete_Click;
+            QuestsListSortFlag.Hit -= QuestsListSortFlag_Click;
+            QuestsListSortName.Hit -= QuestsListSortName_Click;
+            QuestsListSortReady.Hit -= QuestsListSortReady_Click;
+            QuestsListSortSolves.Hit -= QuestsListSortSolves_Click;
             QuestsFilterText.Change -= QuestsFilter_Change;
             QuestsFilterReset.Hit -= QuestsFilterReset_Hit;
             QuestsFilterCompleted.Change -= QuestsFilter_Change;
@@ -143,13 +176,10 @@ namespace OracleOfDereth
                     row = QuestsList[x];
                 }
 
-                // Update. One lookup serves the whole row — IsComplete() and IsOneTime() would
-                // each re-hash the same key, and deriving both from this questFlag also means
-                // the icon and the Ready column can't disagree about the same flag.
+                // Update
                 Quest quest = quests[x];
-                QuestFlag.QuestFlags.TryGetValue(quest.Flag, out QuestFlag questFlag);
 
-                bool complete = questFlag != null;
+                bool complete = quest.IsComplete();
                 if (complete) { completed += 1; }
 
                 AssignImage((HudPictureBox)row[0], complete);
@@ -161,19 +191,8 @@ namespace OracleOfDereth
                 // already fills the column, and a "(new)" prefix would just crowd it out.
                 AssignSelected(row, quest.IsNew, QuestsRowColumns);
 
-                // Same three-way split the Society tab uses: never earned, a permanent one-time
-                // stamp (nothing to count down), or a repeatable — where NextAvailable() gives
-                // the cooldown, or "ready" once it's elapsed.
-                if (!complete) {
-                    ((HudStaticText)row[3]).Text = "ready";
-                    ((HudStaticText)row[4]).Text = "";
-                } else if (questFlag.RepeatTime == TimeSpan.Zero) {
-                    ((HudStaticText)row[3]).Text = "completed";
-                    ((HudStaticText)row[4]).Text = "";
-                } else {
-                    ((HudStaticText)row[3]).Text = questFlag.NextAvailable();
-                    ((HudStaticText)row[4]).Text = $"{questFlag.Solves}";
-                }
+                ((HudStaticText)row[3]).Text = quest.Status();
+                ((HudStaticText)row[4]).Text = quest.SolvesText();
             }
 
             // Trim surplus rows the filter has hidden, dropping their image boxes from the
@@ -215,6 +234,65 @@ namespace OracleOfDereth
             QuestsFilterUnknown.Checked = false;
             QuestsFilterNew.Checked = false;
             suppressQuestsFilter = false;
+
+            UpdateQuestsList();
+        }
+
+        // Each header toggles its own column between ascending and descending, same as the John
+        // and Titles tabs. Quest.Sort reorders the collection, so the repaint picks it up.
+        void QuestsListSortComplete_Click(object sender, EventArgs e)
+        {
+            if (Quest.CurrentSortType == Quest.SortType.CompleteAscending) {
+                Quest.Sort(Quest.SortType.CompleteDescending);
+            } else {
+                Quest.Sort(Quest.SortType.CompleteAscending);
+            }
+
+            UpdateQuestsList();
+        }
+
+        void QuestsListSortFlag_Click(object sender, EventArgs e)
+        {
+            if (Quest.CurrentSortType == Quest.SortType.FlagAscending) {
+                Quest.Sort(Quest.SortType.FlagDescending);
+            } else {
+                Quest.Sort(Quest.SortType.FlagAscending);
+            }
+
+            UpdateQuestsList();
+        }
+
+        void QuestsListSortName_Click(object sender, EventArgs e)
+        {
+            if (Quest.CurrentSortType == Quest.SortType.NameAscending) {
+                Quest.Sort(Quest.SortType.NameDescending);
+            } else {
+                Quest.Sort(Quest.SortType.NameAscending);
+            }
+
+            UpdateQuestsList();
+        }
+
+        void QuestsListSortReady_Click(object sender, EventArgs e)
+        {
+            if (Quest.CurrentSortType == Quest.SortType.ReadyAscending) {
+                Quest.Sort(Quest.SortType.ReadyDescending);
+            } else {
+                Quest.Sort(Quest.SortType.ReadyAscending);
+            }
+
+            UpdateQuestsList();
+        }
+
+        // Solves opens descending, unlike the other columns: the vast majority of rows have no
+        // solve count at all, so ascending would just show thousands of blanks.
+        void QuestsListSortSolves_Click(object sender, EventArgs e)
+        {
+            if (Quest.CurrentSortType == Quest.SortType.SolvesDescending) {
+                Quest.Sort(Quest.SortType.SolvesAscending);
+            } else {
+                Quest.Sort(Quest.SortType.SolvesDescending);
+            }
 
             UpdateQuestsList();
         }

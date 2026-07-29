@@ -62,12 +62,10 @@ namespace OracleOfDereth
         // clipboard, mirroring the flag / name / ready / solves columns actually on screen.
         public static string Describe(Quest quest)
         {
-            QuestFlag.QuestFlags.TryGetValue(quest.Flag, out QuestFlag questFlag);
+            string solves = quest.SolvesText();
+            if (solves.Length > 0) { solves = $" | {solves} solves"; }
 
-            if (questFlag == null) { return $"{quest.Flag} | {quest.Name} | ready"; }
-            if (quest.IsOneTime()) { return $"{quest.Flag} | {quest.Name} | completed"; }
-
-            return $"{quest.Flag} | {quest.Name} | {questFlag.NextAvailable()} | {questFlag.Solves} solves";
+            return $"{quest.Flag} | {quest.Name} | {quest.Status()}{solves}";
         }
 
         private static string ExportPath(string extension, string nameOverride = null)
@@ -90,15 +88,16 @@ namespace OracleOfDereth
             QuestFlag.QuestFlags.TryGetValue(quest.Flag, out QuestFlag questFlag);
 
             bool oneTime = quest.IsOneTime();
-            bool complete = quest.IsComplete();
 
             return new[] {
                 CoreManager.Current.CharacterFilter.Name,
                 Server.Name,
                 quest.Flag,
                 quest.Name,
-                complete ? "Yes" : "No",
-                questFlag == null ? "ready" : oneTime ? "completed" : questFlag.NextAvailable(),
+                quest.IsComplete() ? "Yes" : "No",
+                quest.Status(),
+                // Raw count here, unlike the tab's Solves column — an export is data, so a
+                // one-time stamp's count is worth carrying even though the tab hides it.
                 questFlag == null ? "" : questFlag.Solves.ToString(),
                 questFlag == null || questFlag.CompletedOn == DateTime.MinValue ? "" : questFlag.CompletedOn.ToString("yyyy-MM-dd HH:mm:ss"),
                 oneTime ? "Yes" : "No",

@@ -23,6 +23,24 @@ namespace OracleOfDereth
         // Every flag in Quests, for O(1) "do we already have this one?" during the merge.
         private static readonly HashSet<string> KnownFlags = new HashSet<string>();
 
+        // quests.csv is already flag-ascending, so that's the order the tab opens in — nothing
+        // is sorted until a header is clicked.
+        public static SortType CurrentSortType = SortType.FlagAscending;
+
+        public enum SortType
+        {
+            CompleteAscending,
+            CompleteDescending,
+            FlagAscending,
+            FlagDescending,
+            NameAscending,
+            NameDescending,
+            ReadyAscending,
+            ReadyDescending,
+            SolvesAscending,
+            SolvesDescending,
+        }
+
         // Properties
         public string Flag = "";
         public string Server = "";
@@ -31,6 +49,9 @@ namespace OracleOfDereth
         public string Url { get => Util.WikiUrl(_url); set => _url = value; }
         public string Info = "";
         public string Hint = "";
+        // From myacquests solve data: maxSolves of -1 or >1, or a non-zero repeat timer.
+        // Rows we had no solve data for are recorded as false.
+        public bool Repeatable = false;
 
         // True for a flag discovered in /myquests rather than loaded from quests.csv. The game
         // grows new quest flags over time, so the curated list is always a little behind.
@@ -80,7 +101,7 @@ namespace OracleOfDereth
                 string headerLine = reader.ReadLine();
                 if (headerLine == null) throw new InvalidDataException("CSV file is empty.");
 
-                // Assume columns: QuestFlag,Server,Quest,Url,Info,Hint
+                // Assume columns: QuestFlag,Server,Quest,Url,Info,Hint,Repeatable
                 while (!reader.EndOfStream)
                 {
                     string line = reader.ReadLine();
@@ -96,7 +117,9 @@ namespace OracleOfDereth
                         Name = fields[2].Trim(),
                         Url = fields[3].Trim(),
                         Info = fields[4].Trim(),
-                        Hint = fields[5].Trim()
+                        Hint = fields[5].Trim(),
+                        // Repeatable arrived after the other six columns, so rows without it stay false.
+                        Repeatable = fields.Length > 6 && string.Equals(fields[6].Trim(), "true", StringComparison.OrdinalIgnoreCase)
                     };
 
                     // A blank Server means every world; otherwise keep only this character's. The
@@ -111,6 +134,47 @@ namespace OracleOfDereth
             Quests.AddRange(quests);
 
             foreach (Quest quest in quests) { KnownFlags.Add(quest.Flag); }
+        }
+
+        // Reorders the collection in place, the same way JohnQuest and Title do. Every sort falls
+        // back to Flag: it's the only column guaranteed unique and non-empty, so rows that tie on
+        // the clicked column keep a stable, predictable order instead of shuffling between clicks.
+        public static void Sort(SortType sortType)
+        {
+            CurrentSortType = sortType;
+            switch (sortType)
+            {
+                case SortType.CompleteAscending:
+                    Quests = Quests.OrderBy(q => q.IsComplete()).ThenBy(q => q.Flag).ToList();
+                    break;
+                case SortType.CompleteDescending:
+                    Quests = Quests.OrderByDescending(q => q.IsComplete()).ThenBy(q => q.Flag).ToList();
+                    break;
+                case SortType.FlagAscending:
+                    Quests = Quests.OrderBy(q => q.Flag).ToList();
+                    break;
+                case SortType.FlagDescending:
+                    Quests = Quests.OrderByDescending(q => q.Flag).ToList();
+                    break;
+                case SortType.NameAscending:
+                    Quests = Quests.OrderBy(q => q.Name).ThenBy(q => q.Flag).ToList();
+                    break;
+                case SortType.NameDescending:
+                    Quests = Quests.OrderByDescending(q => q.Name).ThenBy(q => q.Flag).ToList();
+                    break;
+                case SortType.ReadyAscending:
+                    Quests = Quests.OrderBy(q => q.Ready()).ThenBy(q => q.NextAvailableTime()).ThenBy(q => q.Flag).ToList();
+                    break;
+                case SortType.ReadyDescending:
+                    Quests = Quests.OrderByDescending(q => q.NextAvailableTime()).ThenBy(q => q.Flag).ToList();
+                    break;
+                case SortType.SolvesAscending:
+                    Quests = Quests.OrderBy(q => q.Solves()).ThenBy(q => q.Flag).ToList();
+                    break;
+                case SortType.SolvesDescending:
+                    Quests = Quests.OrderByDescending(q => q.Solves()).ThenBy(q => q.Flag).ToList();
+                    break;
+            }
         }
 
         public override string ToString()
@@ -150,6 +214,58 @@ namespace OracleOfDereth
         public bool IsComplete()
         {
             return QuestFlag.QuestFlags.ContainsKey(Flag);
+        }
+
+        // The Ready column's text, and the single definition of it: a flag never earned reads
+        // "ready", a one-time stamp reads "completed", and a repeatable reads its countdown —
+        // or "ready" again once that has elapsed. The tab, the clipboard and both exports all
+        // come through here so they can't drift apart.
+        public string Status()
+        {
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
+            if (questFlag == null) { return "ready"; }
+            if (questFlag.RepeatTime == TimeSpan.Zero) { return "completed"; }
+
+            return questFlag.NextAvailable();
+        }
+
+        // The Solves column. Blank unless the quest is repeatable: a one-time stamp sits at 1
+        // (or 0 once spent), which says nothing the completed icon hasn't already said.
+        public string SolvesText()
+        {
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
+            if (questFlag == null || questFlag.RepeatTime == TimeSpan.Zero) { return ""; }
+
+            return questFlag.Solves.ToString();
+        }
+
+        // Sort keys. The display columns are strings ("2h 15m" vs "ready"), so the Ready and
+        // Solves sorts run off the underlying values instead — same as JohnQuest.
+        public TimeSpan? NextAvailableTime()
+        {
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
+            if (questFlag == null) { return null; }
+
+            return questFlag.NextAvailableTime();
+        }
+
+        public bool Ready()
+        {
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
+            if (questFlag == null) { return true; }
+
+            return questFlag.Ready();
+        }
+
+        // The numeric twin of SolvesText, and it has to apply the same rule: zero wherever the
+        // column renders blank. Sorting on the raw count instead scatters one-time quests —
+        // whose cell is empty — up among the repeatables that actually show a number.
+        public int Solves()
+        {
+            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
+            if (questFlag == null || questFlag.RepeatTime == TimeSpan.Zero) { return 0; }
+
+            return questFlag.Solves;
         }
 
         // The Info blurb and the coordinate walkthrough, as one chat line. Either can be empty.
