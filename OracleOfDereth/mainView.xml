@@ -263,8 +263,9 @@
 						<control progid="DecalControls.CheckBox" name="QuestsFilterIncomplete" left="101" top="59" width="90" height="16" text="Incomplete" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="QuestsFilterOneTime" left="197" top="59" width="85" height="16" text="One Time" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="QuestsFilterRepeatable" left="288" top="59" width="95" height="16" text="Repeatable" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="QuestsFilterServer" left="379" top="59" width="70" height="16" text="Server" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="QuestsFilterNew" left="445" top="59" width="55" height="16" text="New" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterKillTask" left="379" top="59" width="75" height="16" text="Killtask" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterServer" left="455" top="59" width="70" height="16" text="Server" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterNew" left="521" top="59" width="55" height="16" text="New" checked="false"/>
 
 						<control progid="DecalControls.FixedLayout" name="QuestsListSortComplete" left="1" top="89" width="16" height="16"/>
 						<control progid="DecalControls.StaticText" name="QuestsListSortFlag" left="25" top="85" width="210" height="17" text="Quest Flag"/>

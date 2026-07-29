@@ -316,16 +316,22 @@ namespace OracleOfDereth
         // the one you're logged into, as opposed to the everywhere-rows with a blank Server.
         public bool Server = false;
 
+        // A shortcut for the search everyone types by hand. Deliberately implemented as that
+        // search rather than as its own rule, so the box and the checkbox can't disagree.
+        public bool KillTask = false;
+        private const string KillTaskTerms = "kill task";
+
         public bool OneTime = false;
         public bool Repeatable = false;
 
         // True when the filter actually narrows the list — some box ticked or text typed.
-        public bool IsActive => New || Server || Completed || Incomplete || OneTime || Repeatable || !string.IsNullOrWhiteSpace(Text);
+        public bool IsActive => New || Server || KillTask || Completed || Incomplete || OneTime || Repeatable || !string.IsNullOrWhiteSpace(Text);
 
         public bool Matches(Quest quest)
         {
             if (New && !quest.IsNew) return false;
             if (Server && quest.Server.Length == 0) return false;
+            if (KillTask && !MatchesTerms(quest, KillTaskTerms)) return false;
             if (!MatchesStatus(quest)) return false;
             if (!MatchesRepeat(quest)) return false;
 
@@ -351,12 +357,21 @@ namespace OracleOfDereth
             return Repeatable ? quest.IsRepeatable() : quest.IsOneTime();
         }
 
+        private bool MatchesText(Quest quest)
+        {
+            return MatchesTerms(quest, Text);
+        }
+
         // Space-separated terms, all of which must appear in the quest's flag or name — the two
         // columns actually on screen. Info and hint are deliberately not searched: they're long
         // prose, and matching them turns up rows whose visible text has nothing to do with the term.
-        private bool MatchesText(Quest quest)
+        //
+        // Splitting on spaces is what lets "kill task" find both spellings: the flag runs the words
+        // together as killtaskgurog while the name spells them out as Gurog Kill Task, and each term
+        // only has to appear somewhere in the pair.
+        private static bool MatchesTerms(Quest quest, string query)
         {
-            string trimmed = (Text ?? "").Trim();
+            string trimmed = (query ?? "").Trim();
             if (trimmed.Length == 0) return true;
 
             string combined = $"{quest.Flag} {quest.Name}";

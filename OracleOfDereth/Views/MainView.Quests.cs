@@ -36,6 +36,7 @@ namespace OracleOfDereth
         public HudCheckBox QuestsFilterOneTime { get; private set; }
         public HudCheckBox QuestsFilterRepeatable { get; private set; }
         public HudCheckBox QuestsFilterServer { get; private set; }
+        public HudCheckBox QuestsFilterKillTask { get; private set; }
         public HudCheckBox QuestsFilterNew { get; private set; }
 
         public HudFixedLayout QuestsListSortComplete { get; private set; }
@@ -92,6 +93,9 @@ namespace OracleOfDereth
             QuestsFilterServer = (HudCheckBox)view["QuestsFilterServer"];
             QuestsFilterServer.Change += QuestsFilter_Change;
 
+            QuestsFilterKillTask = (HudCheckBox)view["QuestsFilterKillTask"];
+            QuestsFilterKillTask.Change += QuestsFilter_Change;
+
             QuestsFilterNew = (HudCheckBox)view["QuestsFilterNew"];
             QuestsFilterNew.Change += QuestsFilter_Change;
 
@@ -133,6 +137,7 @@ namespace OracleOfDereth
             QuestsFilterOneTime.Change -= QuestsFilter_Change;
             QuestsFilterRepeatable.Change -= QuestsFilter_Change;
             QuestsFilterServer.Change -= QuestsFilter_Change;
+            QuestsFilterKillTask.Change -= QuestsFilter_Change;
             QuestsFilterNew.Change -= QuestsFilter_Change;
             QuestsClipboard.Hit -= QuestsClipboard_Hit;
             QuestsExportText.Hit -= QuestsExportText_Hit;
@@ -166,6 +171,7 @@ namespace OracleOfDereth
                 OneTime = QuestsFilterOneTime.Checked,
                 Repeatable = QuestsFilterRepeatable.Checked,
                 Server = QuestsFilterServer.Checked,
+                KillTask = QuestsFilterKillTask.Checked,
                 New = QuestsFilterNew.Checked,
             };
         }
@@ -258,6 +264,7 @@ namespace OracleOfDereth
             QuestsFilterOneTime.Checked = false;
             QuestsFilterRepeatable.Checked = false;
             QuestsFilterServer.Checked = false;
+            QuestsFilterKillTask.Checked = false;
             QuestsFilterNew.Checked = false;
             suppressQuestsFilter = false;
 
@@ -358,7 +365,7 @@ namespace OracleOfDereth
         private void QuestsHelp_Hit(object sender, EventArgs e)
         {
             Util.Chat("This list of quest flags was built from the ACE database and the ILT Mega Book v2.0 with AI assistance, so expect the odd mistake - the plugin's other lists are all hand-curated.", Util.ColorPink);
-            Util.Chat("AC quest flags are kind of a cluster, so some of these are likely unobtainable. Looking for help curating this list.");
+            Util.Chat("AC quest flags are kind of a cluster, so some of these are likely unobtainable. Looking for help curating this list.", Util.ColorPink);
             Util.Chat("The New filter shows flags this server reports that aren't in the Oracle of Dereth master list yet. Send them along to Advis Eveldan if you'd like them added.", Util.ColorPink);
         }
 
