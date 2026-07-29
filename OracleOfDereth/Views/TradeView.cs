@@ -20,9 +20,6 @@ namespace OracleOfDereth
         // Icon for the sortable column header (mirrors MainView's constant).
         readonly int IconSort = 0x60011F7;           // Sort Icon
 
-        // Per-view image tracking so repeated repaints skip identical image assignments.
-        private readonly Dictionary<HudPictureBox, int> AssignedImages = new Dictionary<HudPictureBox, int>();
-
         public HudStaticText TradeText { get; private set; }
         public HudButton TradeAddButton { get; private set; }
         public HudButton TradeWithdrawBank { get; private set; }
@@ -205,7 +202,7 @@ namespace OracleOfDereth
             int selectedId = Target.CurrentTargetId;
 
             // Pass 0 for the column-0 icon: the trade view has no row-delete, so no red circle.
-            ItemListRenderer.Render(TradeList, items, AssignedImages, 0, selectedId);
+            ItemListRenderer.Render(TradeList, items, 0, selectedId);
 
             // Window title carries who we're trading with and whether it's a CyTrader bot.
             string title = "Trade";
@@ -418,7 +415,6 @@ namespace OracleOfDereth
             if (TradeListSortCol3 != null) TradeListSortCol3.Hit -= SortCol3_Click;
             if (TradeListSortCol4 != null) TradeListSortCol4.Hit -= SortCol4_Click;
 
-            AssignedImages.Clear();
             view?.Dispose();
         }
     }

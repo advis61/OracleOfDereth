@@ -201,7 +201,7 @@ namespace OracleOfDereth
                 items.Select(t => t.Id),
                 InventoryList.Items.Where(filter.MatchesCategory).Select(t => t.Id));
 
-            ItemListRenderer.Render(ItemsList, items, AssignedImages, IconNotComplete, Target.CurrentTargetId);
+            ItemListRenderer.Render(ItemsList, items, IconNotComplete, Target.CurrentTargetId);
             ItemsText.Text = ItemListRenderer.StatusText("Inventory Items", InventoryList.Items.Count, items.Count, InventoryList.UnidentifiedCount);
         }
 

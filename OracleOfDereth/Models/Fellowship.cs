@@ -154,12 +154,18 @@ namespace OracleOfDereth
             foreach (var fellow in FellowshipTracker.Fellows) { AutoRecruit(fellow, true); }
         }
 
+        // These four run once per tick each while the Fellowship tab is open. A
+        // WorldObjectCollection wraps a COM object, so an undisposed one sits waiting on the
+        // finalizer — hence the using, matching how ItemList and Trade take an inventory
+        // snapshot. Nothing escapes the block: only the distance is read, and only a bool
+        // leaves, so the collection is safe to release on the way out.
         public static bool NearbyLifestone()
         {
-            WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByObjectClass(ObjectClass.Lifestone);
-
-            foreach (WorldObject item in items) {
-                if(Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
+            using (WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByObjectClass(ObjectClass.Lifestone))
+            {
+                foreach (WorldObject item in items) {
+                    if(Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
+                }
             }
 
             return false;
@@ -167,11 +173,12 @@ namespace OracleOfDereth
 
         public static bool NearbyBindstone()
         {
-            WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByName("Bind Stone");
-
-            foreach (WorldObject item in items)
+            using (WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByName("Bind Stone"))
             {
-                if (Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
+                foreach (WorldObject item in items)
+                {
+                    if (Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
+                }
             }
 
             return false;
@@ -179,11 +186,12 @@ namespace OracleOfDereth
 
         public static bool NearbyTownNetworkPortal()
         {
-            WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByName("Portal to Town Network");
-
-            foreach (WorldObject item in items)
+            using (WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByName("Portal to Town Network"))
             {
-                if (Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
+                foreach (WorldObject item in items)
+                {
+                    if (Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
+                }
             }
 
             return false;
@@ -191,11 +199,12 @@ namespace OracleOfDereth
 
         public static bool NearbyFacilityHubPortal()
         {
-            WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByName("Portal to Facility Hub");
-
-            foreach (WorldObject item in items)
+            using (WorldObjectCollection items = CoreManager.Current.WorldFilter.GetByName("Portal to Facility Hub"))
             {
-                if (Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
+                foreach (WorldObject item in items)
+                {
+                    if (Util.GetDistanceFromPlayer(item) < 150.0) { return true; }
+                }
             }
 
             return false;
