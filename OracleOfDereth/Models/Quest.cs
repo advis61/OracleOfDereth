@@ -16,8 +16,12 @@ namespace OracleOfDereth
     // everywhere. That differs from CustomQuest, which drops every row that isn't an exact match.
     public class Quest
     {
-        // Collection of Quests loaded from quests.csv (current server only)
+        // Collection of Quests loaded from quests.csv (current server only), plus any flag the
+        // server reported that the CSV didn't know about — see MergeQuestFlags().
         public static List<Quest> Quests = new List<Quest>();
+
+        // Every flag in Quests, for O(1) "do we already have this one?" during the merge.
+        private static readonly HashSet<string> KnownFlags = new HashSet<string>();
 
         // Properties
         public string Flag = "";
@@ -28,10 +32,35 @@ namespace OracleOfDereth
         public string Info = "";
         public string Hint = "";
 
+        // True for a flag discovered in /myquests rather than loaded from quests.csv. The game
+        // grows new quest flags over time, so the curated list is always a little behind.
+        public bool IsNew = false;
+
         public static void Init()
         {
             Quests.Clear();
+            KnownFlags.Clear();
             LoadQuestsCSV();
+        }
+
+        // Fold anything the server reported but quests.csv doesn't list into the collection,
+        // tagged IsNew. QuestFlag is the source of truth for what a character actually has;
+        // this is the only way a brand-new flag ever shows up on the Flags tab.
+        //
+        // A discovered flag has no url, info or hint — but /myquests does carry the game's own
+        // description for it, which is the closest thing to a name we get for free, so that
+        // becomes Name. It can still be empty: the description is an optional part of the line.
+        // New rows are appended rather than sorted in, which keeps them together at the bottom
+        // of an unfiltered list.
+        public static void MergeQuestFlags()
+        {
+            foreach (KeyValuePair<string, QuestFlag> pair in QuestFlag.QuestFlags)
+            {
+                if (KnownFlags.Contains(pair.Key)) continue;
+
+                Quests.Add(new Quest { Flag = pair.Key, Name = pair.Value.Description.Trim(), IsNew = true });
+                KnownFlags.Add(pair.Key);
+            }
         }
 
         public static void LoadQuestsCSV()
@@ -80,6 +109,8 @@ namespace OracleOfDereth
             }
 
             Quests.AddRange(quests);
+
+            foreach (Quest quest in quests) { KnownFlags.Add(quest.Flag); }
         }
 
         public override string ToString()
@@ -129,8 +160,16 @@ namespace OracleOfDereth
         public bool Completed = false;
         public bool Incomplete = false;
 
+        // Not a status — an extra AND condition: only flags the server reported that aren't in
+        // quests.csv. Mirrors how ItemFilter.Doubles narrows on top of the category boxes.
+        public bool New = false;
+
+        // True when the filter actually narrows the list — some box ticked or text typed.
+        public bool IsActive => New || Completed || Incomplete || !string.IsNullOrWhiteSpace(Text);
+
         public bool Matches(Quest quest)
         {
+            if (New && !quest.IsNew) return false;
             if (!MatchesStatus(quest)) return false;
 
             return MatchesText(quest);

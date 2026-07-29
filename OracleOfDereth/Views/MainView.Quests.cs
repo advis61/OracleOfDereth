@@ -11,6 +11,10 @@ namespace OracleOfDereth
         // trigger its own repaint — we do one at the end instead.
         private bool suppressQuestsFilter = false;
 
+        // The text columns AssignSelected tints for a newly-discovered flag. Hoisted out of the
+        // render loop so it isn't reallocated once per row across thousands of rows.
+        private static readonly List<int> QuestsRowColumns = new List<int> { 1, 2, 3, 4 };
+
         // Painting every row of quests.csv is expensive, so the tick only repaints when
         // something that affects the list has actually changed: the filter, or the quest
         // flags behind the completed/ready/solves columns.
@@ -22,6 +26,7 @@ namespace OracleOfDereth
         public HudButton QuestsFilterReset { get; private set; }
         public HudCheckBox QuestsFilterCompleted { get; private set; }
         public HudCheckBox QuestsFilterIncomplete { get; private set; }
+        public HudCheckBox QuestsFilterNew { get; private set; }
         public HudList QuestsList { get; private set; }
 
         private void InitQuests()
@@ -44,6 +49,9 @@ namespace OracleOfDereth
             QuestsFilterIncomplete = (HudCheckBox)view["QuestsFilterIncomplete"];
             QuestsFilterIncomplete.Change += QuestsFilter_Change;
 
+            QuestsFilterNew = (HudCheckBox)view["QuestsFilterNew"];
+            QuestsFilterNew.Change += QuestsFilter_Change;
+
             QuestsList = (HudList)view["QuestsList"];
             QuestsList.Click += QuestsList_Click;
             QuestsList.ClearRows();
@@ -56,6 +64,7 @@ namespace OracleOfDereth
             QuestsFilterReset.Hit -= QuestsFilterReset_Hit;
             QuestsFilterCompleted.Change -= QuestsFilter_Change;
             QuestsFilterIncomplete.Change -= QuestsFilter_Change;
+            QuestsFilterNew.Change -= QuestsFilter_Change;
             QuestsRefresh.Hit -= QuestFlagsRefresh_Hit;
         }
 
@@ -73,12 +82,14 @@ namespace OracleOfDereth
                 Text = QuestsFilterText?.Text ?? "",
                 Completed = QuestsFilterCompleted.Checked,
                 Incomplete = QuestsFilterIncomplete.Checked,
+                New = QuestsFilterNew.Checked,
             };
         }
 
         private void UpdateQuestsList()
         {
-            List<Quest> quests = Quest.Quests.Where(QuestsFilter().Matches).ToList();
+            QuestFilter filter = QuestsFilter();
+            List<Quest> quests = Quest.Quests.Where(filter.Matches).ToList();
             int completed = 0;
 
             for (int x = 0; x < quests.Count; x++)
@@ -105,6 +116,11 @@ namespace OracleOfDereth
                 ((HudStaticText)row[1]).Text = quest.Flag;
                 ((HudStaticText)row[2]).Text = quest.Name;
 
+                // Flags the server reported that quests.csv doesn't list are tinted rather than
+                // tagged in the Name column — their name is the game's own description, which
+                // already fills the column, and a "(new)" prefix would just crowd it out.
+                AssignSelected(row, quest.IsNew, QuestsRowColumns);
+
                 // Same three-way split the Society tab uses: never earned, a permanent one-time
                 // stamp (no cooldown to count down, solves always 1), or a repeatable on timer.
                 if (questFlag == null) {
@@ -128,8 +144,13 @@ namespace OracleOfDereth
                 QuestsList.RemoveRow(QuestsList.RowCount - 1);
             }
 
-            // Update Text
-            QuestsText.Text = $"Quests Flags: {completed} of {quests.Count} completed";
+            // Update Text. A completed-of-total tally only means something against the whole
+            // list, so once a filter is narrowing things it gives way to a plain match count.
+            if (filter.IsActive) {
+                QuestsText.Text = $"Quest Flags: {quests.Count} quests";
+            } else {
+                QuestsText.Text = $"Quest Flags: {completed} of {quests.Count} completed";
+            }
 
             questsListStale = false;
         }
@@ -148,6 +169,7 @@ namespace OracleOfDereth
             QuestsFilterText.Text = "";
             QuestsFilterCompleted.Checked = false;
             QuestsFilterIncomplete.Checked = false;
+            QuestsFilterNew.Checked = false;
             suppressQuestsFilter = false;
 
             UpdateQuestsList();

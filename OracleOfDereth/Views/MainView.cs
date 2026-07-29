@@ -386,6 +386,10 @@ namespace OracleOfDereth
             UpdateLuminanceList();
             UpdateMarkersList();
 
+            // /myquests is the source of truth for what flags exist, so fold anything it
+            // reported that quests.csv doesn't list into the collection before the next paint.
+            Quest.MergeQuestFlags();
+
             // The Flags tab paints thousands of rows, so it only repaints on its own tick,
             // and only while it's the open tab — not from here, off-screen.
             questsListStale = true;
