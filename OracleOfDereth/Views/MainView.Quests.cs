@@ -129,11 +129,7 @@ namespace OracleOfDereth
             }
 
             // Update Text
-            if (quests.Count == Quest.Quests.Count) {
-                QuestsText.Text = $"Quest Flags: {completed} of {quests.Count} completed";
-            } else {
-                QuestsText.Text = $"Quest Flags: {completed} of {quests.Count} completed ({Quest.Quests.Count} total)";
-            }
+            QuestsText.Text = $"Quests Flags: {completed} of {quests.Count} completed";
 
             questsListStale = false;
         }

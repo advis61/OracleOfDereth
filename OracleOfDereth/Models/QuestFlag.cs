@@ -17,34 +17,9 @@ namespace OracleOfDereth
         public static readonly Regex MyQuestRegex = new Regex(@"(?<key>\S+) \- (?<solves>\d+) solves \((?<completedOn>\d{0,11})\)""?((?<description>.*)"" (?<maxSolves>.*) (?<repeatTime>\d{0,11}))?.*$");
         public static readonly Regex KillTaskRegex = new Regex(@"(killtask|killcount|slayerquest|totalgolem.*dead|(kills$))");
 
-        // Quest Flags I care to track. A HashSet rather than a List: Add() probes this once per
-        // /myquests line, and quests.csv alone contributes several thousand flags.
-        private static readonly HashSet<string> QuestFlagsToTrack = new HashSet<string>(
-            new List<string>
-            {
-                "legendaryquestsa",
-                "legendaryquestsb",
-                "legendaryquestsc",
-                "explorationmarkersfound",
-                "burflagged(metal)",
-                "burflagged(motes)",
-                "burflagged(gem)",
-                "societyribbonsperdaytimer",
-                "societyribbonsperdaycounter"
-            }
-            .Concat(Augmentation.Augmentations.Select(q => q.Flag))
-            .Concat(AugQuest.AugQuests.Select(q => q.Flag))
-            .Concat(CreditQuest.CreditQuests.Select(q => q.Flag))
-            .Concat(FacilityQuest.FacilityQuests.Select(q => q.Flag))
-            .Concat(FlagQuest.FlagQuests.Select(q => q.Flag))
-            .Concat(FlagQuest.FlagQuests.Select(q => q.Flag2))
-            .Concat(JohnQuest.JohnQuests.Select(q => q.Flag))
-            .Concat(SocietyQuest.SocietyQuests.Select(q => q.Flag))
-            .Concat(CustomQuest.CustomQuests.Select(q => q.Flag))
-            .Concat(Quest.Quests.Select(q => q.Flag))
-            .Concat(Marker.Markers.Select(q => q.Flag)));
-
-        // Collection of Quest Flags data objects
+        // Collection of Quest Flags data objects — every flag /myquests reports, unfiltered.
+        // There used to be a whitelist built from the quest CSVs, but the Flags tab wants the
+        // whole picture, and a character's flag list is small enough to just keep in full.
         public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();
 
         // MyQuests tracking
@@ -83,11 +58,7 @@ namespace OracleOfDereth
             if (questFlag == null) { return false; }
 
             // Store this quest flag in the QuestFlags dictionary
-            if (QuestFlagsToTrack.Contains(questFlag.Key))
-            {
-                QuestFlags[questFlag.Key] = questFlag;
-                //Util.Chat($"Now tracking #{questFlag.ToString()}.#{QuestFlags.Count()} quests tracked total", 1);
-            }
+            QuestFlags[questFlag.Key] = questFlag;
 
             return true;
         }

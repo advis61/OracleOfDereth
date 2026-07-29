@@ -145,14 +145,15 @@ namespace OracleOfDereth
             return quest.IsComplete() ? Completed : Incomplete;
         }
 
-        // Space-separated terms, all of which must appear somewhere in the quest's flag,
-        // name, info or hint.
+        // Space-separated terms, all of which must appear in the quest's flag or name — the two
+        // columns actually on screen. Info and hint are deliberately not searched: they're long
+        // prose, and matching them turns up rows whose visible text has nothing to do with the term.
         private bool MatchesText(Quest quest)
         {
             string trimmed = (Text ?? "").Trim();
             if (trimmed.Length == 0) return true;
 
-            string combined = $"{quest.Flag} {quest.Name} {quest.Info} {quest.Hint}";
+            string combined = $"{quest.Flag} {quest.Name}";
 
             foreach (string term in trimmed.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
             {
