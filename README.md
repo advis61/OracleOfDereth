@@ -197,6 +197,23 @@ Displays your known recall spells.
 
 Only displays cantrips for skills that you have known.
 
+### Quest Flags
+
+Every quest flag the plugin knows about, in one searchable list — the raw database behind the curated tabs below.
+
+- A green icon means your character holds that flag. A red icon means it has never been completed.
+- Ready In shows `completed` for a one-time quest, or the remaining cooldown for a repeatable one.
+- Filter by flag or quest name, and narrow by Completed / Incomplete, One Time / Repeatable, or New.
+- New means the server reported a flag that isn't in the plugin's master list yet. Please send those along to Advis Eveldan so they can be added.
+
+Click the quest icon to /think the wiki url to yourself. Click the flag or name for its quest notes. Click Ready In or Solves to print the raw quest flag data to chat.
+
+Click any column header to sort by it; click again to reverse.
+
+The Copy / Text / CSV / JSON buttons export whatever the filter is currently showing.
+
+Unlike the hand-curated lists elsewhere in the plugin, this one was assembled with AI assistance and may contain errors.
+
 ### John Tracker
 
 Displays how many legendary quests you've completed in this round of a [John](https://acportalstorm.com/wiki/John) 30 [Legendary Quests](https://acportalstorm.com/wiki/Legendary_Quests) cycle.
