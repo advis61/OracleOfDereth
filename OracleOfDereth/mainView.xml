@@ -262,21 +262,20 @@
 						<control progid="DecalControls.CheckBox" name="QuestsFilterIncomplete" left="101" top="59" width="90" height="16" text="Incomplete" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="QuestsFilterOneTime" left="197" top="59" width="85" height="16" text="One Time" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="QuestsFilterRepeatable" left="288" top="59" width="95" height="16" text="Repeatable" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="QuestsFilterUnknown" left="389" top="59" width="85" height="16" text="Unknown" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="QuestsFilterNew" left="480" top="59" width="55" height="16" text="New" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="QuestsFilterNew" left="389" top="59" width="55" height="16" text="New" checked="false"/>
 
 						<control progid="DecalControls.FixedLayout" name="QuestsListSortComplete" left="1" top="89" width="16" height="16"/>
 						<control progid="DecalControls.StaticText" name="QuestsListSortFlag" left="20" top="85" width="190" height="17" text="Quest Flag"/>
 						<control progid="DecalControls.StaticText" name="QuestsListSortName" left="220" top="85" width="220" height="17" text="Quest Name"/>
 						<control progid="DecalControls.StaticText" name="QuestsListSortReady" left="452" top="85" width="60" height="17" text="Ready In"/>
-						<control progid="DecalControls.StaticText" name="QuestsListSortSolves" left="516" top="85" width="45" height="17" text="Solves"/>
+						<control progid="DecalControls.StaticText" name="QuestsListSortSolves" left="516" top="85" width="55" height="17" text="Solves"/>
 
 						<control progid="DecalControls.List" name="QuestsList" left="0" top="105" width="580" height="2000">
 							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Flag" fixedwidth="200" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="220" />
 							<column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
-							<column progid="DecalControls.TextColumn" name="Solves" fixedwidth="40" />
+							<column progid="DecalControls.TextColumn" name="Solves" fixedwidth="60" />
 						</control>
 					</control>
 				</page>

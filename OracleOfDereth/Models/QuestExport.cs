@@ -87,8 +87,6 @@ namespace OracleOfDereth
         {
             QuestFlag.QuestFlags.TryGetValue(quest.Flag, out QuestFlag questFlag);
 
-            bool oneTime = quest.IsOneTime();
-
             return new[] {
                 CoreManager.Current.CharacterFilter.Name,
                 Server.Name,
@@ -100,7 +98,7 @@ namespace OracleOfDereth
                 // one-time stamp's count is worth carrying even though the tab hides it.
                 questFlag == null ? "" : questFlag.Solves.ToString(),
                 questFlag == null || questFlag.CompletedOn == DateTime.MinValue ? "" : questFlag.CompletedOn.ToString("yyyy-MM-dd HH:mm:ss"),
-                oneTime ? "Yes" : "No",
+                quest.IsOneTime() ? "Yes" : "No",
                 quest.IsNew ? "Yes" : "No",
                 quest.Url,
                 quest.Info,

@@ -49,8 +49,9 @@ namespace OracleOfDereth
         public string Url { get => Util.WikiUrl(_url); set => _url = value; }
         public string Info = "";
         public string Hint = "";
-        // From myacquests solve data: maxSolves of -1 or >1, or a non-zero repeat timer.
-        // Rows we had no solve data for are recorded as false.
+        // From the CSV's Repeatable column: maxSolves of -1 or >1, or a non-zero repeat timer.
+        // Unlike anything derived from /myquests this is known for every quest, earned or not,
+        // which is what lets the One Time / Repeatable filters cover the whole list.
         public bool Repeatable = false;
 
         // True for a flag discovered in /myquests rather than loaded from quests.csv. The game
@@ -79,7 +80,15 @@ namespace OracleOfDereth
             {
                 if (KnownFlags.Contains(pair.Key)) continue;
 
-                Quests.Add(new Quest { Flag = pair.Key, Name = pair.Value.Description.Trim(), IsNew = true });
+                Quests.Add(new Quest
+                {
+                    Flag = pair.Key,
+                    Name = pair.Value.Description.Trim(),
+                    // No CSV row to read Repeatable from, but the server just told us: a flag
+                    // carrying a repeat timer is repeatable.
+                    Repeatable = pair.Value.RepeatTime != TimeSpan.Zero,
+                    IsNew = true
+                });
                 KnownFlags.Add(pair.Key);
             }
         }
@@ -108,7 +117,7 @@ namespace OracleOfDereth
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
                     var fields = line.Split(',');
-                    if (fields.Length < 6) continue;
+                    if (fields.Length < 7) continue;
 
                     var quest = new Quest
                     {
@@ -118,8 +127,8 @@ namespace OracleOfDereth
                         Url = fields[3].Trim(),
                         Info = fields[4].Trim(),
                         Hint = fields[5].Trim(),
-                        // Repeatable arrived after the other six columns, so rows without it stay false.
-                        Repeatable = fields.Length > 6 && string.Equals(fields[6].Trim(), "true", StringComparison.OrdinalIgnoreCase)
+                        // TRUE / FALSE in the file; anything that isn't "true" reads as one-time.
+                        Repeatable = string.Equals(fields[6].Trim(), "true", StringComparison.OrdinalIgnoreCase)
                     };
 
                     // A blank Server means every world; otherwise keep only this character's. The
@@ -182,25 +191,23 @@ namespace OracleOfDereth
             return $"{Flag}: {Name}";
         }
 
-        // A one-time quest is a permanent stamp with no repeat timer; a repeatable one carries a
-        // RepeatTime cooldown in /myquests. A flag the character has never earned is unknowable
-        // either way — /myquests only reports what you've done — so it counts as repeatable.
-        public bool IsOneTime()
-        {
-            QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
-            if (questFlag == null) { return false; }
-
-            return questFlag.RepeatTime == TimeSpan.Zero;
-        }
-
-        // The other half of the pair. Note both are false for a flag the character has never
-        // earned — which kind it is simply isn't knowable until the server reports it once.
+        // Is this quest repeatable? The server is the source of truth wherever it has spoken: if
+        // the character holds the flag, its RepeatTime is what actually governs the cooldown, and
+        // it beats whatever the CSV claims. For everything never earned there's no server data,
+        // so the master list's Repeatable column stands in — and anything not marked repeatable
+        // is treated as one-time. Between them every quest is classified, which is what lets the
+        // two filter boxes partition the whole list without an Unknown bucket.
         public bool IsRepeatable()
         {
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
-            if (questFlag == null) { return false; }
+            if (questFlag != null) { return questFlag.RepeatTime != TimeSpan.Zero; }
 
-            return questFlag.RepeatTime != TimeSpan.Zero;
+            return Repeatable;
+        }
+
+        public bool IsOneTime()
+        {
+            return !IsRepeatable();
         }
 
         // Having the flag at all is the whole test. /myquests only reports flags the character
@@ -224,7 +231,7 @@ namespace OracleOfDereth
         {
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
             if (questFlag == null) { return "ready"; }
-            if (questFlag.RepeatTime == TimeSpan.Zero) { return "completed"; }
+            if (IsOneTime()) { return "completed"; }
 
             return questFlag.NextAvailable();
         }
@@ -234,7 +241,7 @@ namespace OracleOfDereth
         public string SolvesText()
         {
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
-            if (questFlag == null || questFlag.RepeatTime == TimeSpan.Zero) { return ""; }
+            if (questFlag == null || IsOneTime()) { return ""; }
 
             return questFlag.Solves.ToString();
         }
@@ -263,7 +270,7 @@ namespace OracleOfDereth
         public int Solves()
         {
             QuestFlag.QuestFlags.TryGetValue(Flag, out QuestFlag questFlag);
-            if (questFlag == null || questFlag.RepeatTime == TimeSpan.Zero) { return 0; }
+            if (questFlag == null || IsOneTime()) { return 0; }
 
             return questFlag.Solves;
         }
@@ -292,10 +299,9 @@ namespace OracleOfDereth
 
         public bool OneTime = false;
         public bool Repeatable = false;
-        public bool Unknown = false;
 
         // True when the filter actually narrows the list — some box ticked or text typed.
-        public bool IsActive => New || Completed || Incomplete || OneTime || Repeatable || Unknown || !string.IsNullOrWhiteSpace(Text);
+        public bool IsActive => New || Completed || Incomplete || OneTime || Repeatable || !string.IsNullOrWhiteSpace(Text);
 
         public bool Matches(Quest quest)
         {
@@ -315,19 +321,14 @@ namespace OracleOfDereth
             return quest.IsComplete() ? Completed : Incomplete;
         }
 
-        // Same whitelist behaviour across the three repeat types, which between them cover every
-        // quest: one-time, repeatable, or unknown. Unknown is the honest third state — /myquests
-        // only reports a repeat timer for flags the character has actually earned, so for
-        // anything never completed the server simply hasn't said which kind it is.
+        // Same whitelist behaviour for the one-time / repeatable pair. Quest.IsRepeatable()
+        // classifies every row — server data where the character holds the flag, the CSV's
+        // master list everywhere else — so the two boxes partition the whole list.
         private bool MatchesRepeat(Quest quest)
         {
-            // None ticked (or all three) narrows nothing.
-            if (OneTime == Repeatable && Repeatable == Unknown) return true;
+            if (OneTime == Repeatable) return true;
 
-            if (quest.IsOneTime()) return OneTime;
-            if (quest.IsRepeatable()) return Repeatable;
-
-            return Unknown;
+            return Repeatable ? quest.IsRepeatable() : quest.IsOneTime();
         }
 
         // Space-separated terms, all of which must appear in the quest's flag or name — the two

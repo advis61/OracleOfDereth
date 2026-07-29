@@ -16,6 +16,20 @@ namespace OracleOfDereth
         // render loop so it isn't reallocated once per row across thousands of rows.
         private static readonly List<int> QuestsRowColumns = new List<int> { 1, 2, 3, 4 };
 
+        // Which rows are currently tinted as new, parallel to the list's rows. AssignSelected
+        // writes four colour properties per row, so firing it on every row of every repaint is
+        // the most expensive thing on this tab — this lets it fire only when a row's tint
+        // actually flips.
+        private readonly List<bool> questsRowTinted = new List<bool>();
+
+        // VVS re-renders a cell on every Text assignment, so skip the ones that would write the
+        // same string back. Most repaints here change a handful of cells out of ~17,000.
+        private static void SetText(HudList.HudListRowAccessor row, int column, string value)
+        {
+            HudStaticText cell = (HudStaticText)row[column];
+            if (cell.Text != value) { cell.Text = value; }
+        }
+
         // Painting every row of quests.csv is expensive, so the tick only repaints when
         // something that affects the list has actually changed: the filter, or the quest
         // flags behind the completed/ready/solves columns.
@@ -33,7 +47,6 @@ namespace OracleOfDereth
         public HudCheckBox QuestsFilterIncomplete { get; private set; }
         public HudCheckBox QuestsFilterOneTime { get; private set; }
         public HudCheckBox QuestsFilterRepeatable { get; private set; }
-        public HudCheckBox QuestsFilterUnknown { get; private set; }
         public HudCheckBox QuestsFilterNew { get; private set; }
 
         public HudFixedLayout QuestsListSortComplete { get; private set; }
@@ -84,9 +97,6 @@ namespace OracleOfDereth
             QuestsFilterRepeatable = (HudCheckBox)view["QuestsFilterRepeatable"];
             QuestsFilterRepeatable.Change += QuestsFilter_Change;
 
-            QuestsFilterUnknown = (HudCheckBox)view["QuestsFilterUnknown"];
-            QuestsFilterUnknown.Change += QuestsFilter_Change;
-
             QuestsFilterNew = (HudCheckBox)view["QuestsFilterNew"];
             QuestsFilterNew.Change += QuestsFilter_Change;
 
@@ -127,7 +137,6 @@ namespace OracleOfDereth
             QuestsFilterIncomplete.Change -= QuestsFilter_Change;
             QuestsFilterOneTime.Change -= QuestsFilter_Change;
             QuestsFilterRepeatable.Change -= QuestsFilter_Change;
-            QuestsFilterUnknown.Change -= QuestsFilter_Change;
             QuestsFilterNew.Change -= QuestsFilter_Change;
             QuestsClipboard.Hit -= QuestsClipboard_Hit;
             QuestsExportText.Hit -= QuestsExportText_Hit;
@@ -152,7 +161,6 @@ namespace OracleOfDereth
                 Incomplete = QuestsFilterIncomplete.Checked,
                 OneTime = QuestsFilterOneTime.Checked,
                 Repeatable = QuestsFilterRepeatable.Checked,
-                Unknown = QuestsFilterUnknown.Checked,
                 New = QuestsFilterNew.Checked,
             };
         }
@@ -160,7 +168,11 @@ namespace OracleOfDereth
         private void UpdateQuestsList()
         {
             QuestFilter filter = QuestsFilter();
-            List<Quest> quests = Quest.Quests.Where(filter.Matches).ToList();
+
+            // With nothing filtering, use the collection as-is. The Where(...).ToList() otherwise
+            // allocates a 4,000-entry list and runs a delegate per row on every single repaint,
+            // only to reproduce the list we already have. Read-only either way.
+            List<Quest> quests = filter.IsActive ? Quest.Quests.Where(filter.Matches).ToList() : Quest.Quests;
             int completed = 0;
 
             for (int x = 0; x < quests.Count; x++)
@@ -176,6 +188,8 @@ namespace OracleOfDereth
                     row = QuestsList[x];
                 }
 
+                while (questsRowTinted.Count <= x) { questsRowTinted.Add(false); }
+
                 // Update
                 Quest quest = quests[x];
 
@@ -183,16 +197,19 @@ namespace OracleOfDereth
                 if (complete) { completed += 1; }
 
                 AssignImage((HudPictureBox)row[0], complete);
-                ((HudStaticText)row[1]).Text = quest.Flag;
-                ((HudStaticText)row[2]).Text = quest.Name;
+                SetText(row, 1, quest.Flag);
+                SetText(row, 2, quest.Name);
+                SetText(row, 3, quest.Status());
+                SetText(row, 4, quest.SolvesText());
 
                 // Flags the server reported that quests.csv doesn't list are tinted rather than
                 // tagged in the Name column — their name is the game's own description, which
                 // already fills the column, and a "(new)" prefix would just crowd it out.
-                AssignSelected(row, quest.IsNew, QuestsRowColumns);
-
-                ((HudStaticText)row[3]).Text = quest.Status();
-                ((HudStaticText)row[4]).Text = quest.SolvesText();
+                if (questsRowTinted[x] != quest.IsNew)
+                {
+                    AssignSelected(row, quest.IsNew, QuestsRowColumns);
+                    questsRowTinted[x] = quest.IsNew;
+                }
             }
 
             // Trim surplus rows the filter has hidden, dropping their image boxes from the
@@ -202,6 +219,12 @@ namespace OracleOfDereth
                 HudList.HudListRowAccessor row = QuestsList[QuestsList.RowCount - 1];
                 AssignedImages.Remove((HudPictureBox)row[0]);
                 QuestsList.RemoveRow(QuestsList.RowCount - 1);
+            }
+
+            // Keep the tint tracking the same length as the rows it describes.
+            if (questsRowTinted.Count > quests.Count)
+            {
+                questsRowTinted.RemoveRange(quests.Count, questsRowTinted.Count - quests.Count);
             }
 
             // Update Text. A completed-of-total tally only means something against the whole
@@ -231,7 +254,6 @@ namespace OracleOfDereth
             QuestsFilterIncomplete.Checked = false;
             QuestsFilterOneTime.Checked = false;
             QuestsFilterRepeatable.Checked = false;
-            QuestsFilterUnknown.Checked = false;
             QuestsFilterNew.Checked = false;
             suppressQuestsFilter = false;
 
