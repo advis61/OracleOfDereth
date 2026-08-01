@@ -111,6 +111,10 @@ namespace OracleOfDereth
         {
             try
             {
+                // Re-read the world name now that we're fully in: Init() runs on the Login event,
+                // early enough that the filter may not have reported it yet (see Server).
+                Server.Init();
+
                 if(Setting.BuffsRemaining.IsYes) Util.Chat($"{Hud.BuffNowText()}", Util.ColorOrange, "[Oracle of Dereth] ");
                 if(Setting.CheckForUpdates.IsYes) UpdateChecker.Arm();
                 ConquestAugmentation.Refresh();
@@ -136,6 +140,7 @@ namespace OracleOfDereth
             didInit = true;
 
             // Initialize Settings
+            Server.Init();
             SettingsFile.Init();
             Setting.Init();
 

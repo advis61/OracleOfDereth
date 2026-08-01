@@ -14,7 +14,13 @@ namespace OracleOfDereth
 {
     public class QuestFlag
     {
-        public static readonly Regex MyQuestRegex = new Regex(@"(?<key>\S+) \- (?<solves>\d+) solves \((?<completedOn>\d{0,11})\)""?((?<description>.*)"" (?<maxSolves>.*) (?<repeatTime>\d{0,11}))?.*$");
+        // A "/myquests" line, e.g. 'blankquestflag - 3 solves (1719432000)"Some Quest" 5 82800'.
+        // Anchored so the flag must lead the line (after an optional chat timestamp), which is only
+        // ever true of our own "/myquests" output — the same hardening the Bank / Augs / Fship
+        // parsers carry, so a pasted 'Someone says, "somequest - 1 solves (0)"' can't inject a
+        // flag. It also matters for speed: unanchored, this was retried at every position of every
+        // chat line in the game, and it runs third in PluginCore's chain.
+        public static readonly Regex MyQuestRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?(?<key>\S+) \- (?<solves>\d+) solves \((?<completedOn>\d{0,11})\)""?((?<description>.*)"" (?<maxSolves>.*) (?<repeatTime>\d{0,11}))?.*$");
         public static readonly Regex KillTaskRegex = new Regex(@"(killtask|killcount|slayerquest|totalgolem.*dead|(kills$))");
 
         // Collection of Quest Flags data objects — every flag /myquests reports, unfiltered.
