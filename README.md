@@ -123,6 +123,11 @@ Fship List
 ![Fship](./docs/Fship.png)
 
 
+Top Players
+
+![Top Players](./docs/Top.png)
+
+
 ## Quest Directions and Wiki URLs
 
 Click on a row's quest name to think the directions to yourself. Or the completed/uncompleted icon to think the wiki URL.
@@ -302,12 +307,22 @@ Displays your bank balance.  Auto deposit every 10 minutes. Withdraw and transfe
 
 Works with the `/fship list` command to browse and join server fellowships.
 
-### Top
+### Top Players
 
-Works with the `/top` command to browse the server leaderboards. One sub-tab per board — Augs,
-Deaths, Enlightens, Levels, Luminance, Pyreals, Quests and Titles — each ranking the players by
-that total. Boards refresh when you open them (at most once every five minutes) or on demand
-with the Refresh button.
+Works with the `/top` command to browse the server leaderboards without the output scrolling past
+in chat.
+
+There's a sub-tab per board — Augs, Deaths, Enlightens, Levels, Luminance, Pyreals, Quests and
+Titles — each listing the top 25 players by that total, in rank order.
+
+A board refreshes on its own when you open its tab, and at most once every five minutes while you
+sit on it, so switching to a tab shows current standings without doing anything. The Refresh
+button pulls immediately and says `Refreshing...` while it does.
+
+Typing `/top` yourself still works and still prints to chat as normal — only the plugin's own
+lookups are suppressed, and only while `Suppress Plugin Refresh Chat` is on.
+
+Conquest only; on other servers the tab shows `None`.
 
 
 ### Suppress Plugin Refresh Chat

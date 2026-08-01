@@ -156,6 +156,16 @@ namespace OracleOfDereth
             return Item().Values((LongValueKey)134) == 64; // PkLite
         }
 
+        // Player levels top out at 275, so anything the server levels past this is a creature no
+        // matter what Decal filed it as.
+        private const int BossLevel = 301;
+
+        public int CreatureLevel()
+        {
+            if (Item() == null) return 0;
+            return Item().Values(LongValueKey.CreatureLevel, 0);
+        }
+
         public bool IsTarget()
         {
             if (Item() == null) return false;
@@ -164,6 +174,10 @@ namespace OracleOfDereth
             if (ObjectClass() == "Monster") return true;
             if (ObjectClass() == "Player" && IsPk()) return true;
             if (ObjectClass() == "Player" && IsPkLite()) return true;
+
+            // Fallback for bosses the rules above miss — Decal files some of them, humanoid ones
+            // such as Viamontian Knights, outside "Monster".
+            if (CreatureLevel() >= BossLevel) return true;
 
             return false;
         }
