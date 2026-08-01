@@ -19,18 +19,20 @@ namespace OracleOfDereth
     public class TopBoard
     {
         // The "/top <Key>" argument, and the sub-tab label. The label also names this board's
-        // controls in mainView.xml ("Top" + Label + "List", etc.) — see MainView.Top.
+        // controls in mainView.xml ("Top" + Label + "List", etc.) — see MainView.Top. Everything
+        // shown on a tab comes from Label; nothing is read out of the server's own wording.
         public string Key { get; }
         public string Label { get; }
 
-        // The metric as the server names it in the header line ("Quest Bonus", "Total
-        // Augmentations"). Not displayed — the tab and column headers read from Label, so they
-        // stay stable and consistent with the sub-tab you clicked. This exists solely to
-        // attribute a block we didn't ask for (you typed "/top lum" yourself) to the right board.
-        // Seeded with our best guess and corrected to the server's own wording once we've seen a
-        // block; an exact match only, so a wrong guess just means we fall back to the board whose
-        // command we issued, which is the stronger signal anyway.
-        public string Title { get; private set; }
+        // This board's chat command, e.g. "/top qb".
+        public readonly string Command;
+
+        // The metric this board's header line names, e.g. "Top 25 Players by Quest Bonus:".
+        // Hardcoded and never updated from what the server prints — nothing on a tab reads it.
+        // Its only job is to attribute a block we didn't ask for (you typed "/top lum" yourself)
+        // to the right board. Confirmed for augs / lum / qb; the rest are best guesses, and a
+        // wrong one only means a hand-typed command for that board isn't picked up.
+        private readonly string Header;
 
         // The players of the current block, in arrival order. Rebuilt in full on each block.
         // Read Sorted() to display them — the server splits a block across several chat messages
@@ -41,17 +43,16 @@ namespace OracleOfDereth
         // that's still arriving reads correctly too.
         public List<TopPlayer> Sorted() => Players.OrderBy(p => p.Rank).ToList();
 
-        // When we last issued this board's command (UtcNow). Drives the throttle below.
+        // When this board's command last went out (UtcNow). Drives the throttle below.
         private DateTime LastRefresh = DateTime.MinValue;
 
-        private TopBoard(string key, string label, string title)
+        private TopBoard(string key, string label, string header)
         {
             Key = key;
             Label = label;
-            Title = title;
+            Header = header;
+            Command = $"/top {key}";
         }
-
-        public string Command => $"/top {Key}";
 
         // The eight leaderboards, alphabetically by label — which is also the sub-tab order in
         // mainView.xml, and what makes the open sub-tab's index an index into this list. Keep the
@@ -59,10 +60,11 @@ namespace OracleOfDereth
         // label ("/top qb" is the Quests board).
         public static readonly List<TopBoard> All = new List<TopBoard>
         {
+            //            key       label (shown)  header wording (attribution only)
             new TopBoard("augs",   "Augs",       "Total Augmentations"),
             new TopBoard("deaths", "Deaths",     "Deaths"),
             new TopBoard("enl",    "Enlightens", "Enlightenment"),
-            new TopBoard("level",  "Level",      "Level"),
+            new TopBoard("level",  "Levels",     "Level"),
             new TopBoard("lum",    "Luminance",  "Banked Luminance"),
             new TopBoard("bank",   "Pyreals",    "Banked Pyreals"),
             new TopBoard("qb",     "Quests",     "Quest Bonus"),
@@ -74,10 +76,10 @@ namespace OracleOfDereth
         // this, so it never spams "/top". The manual Refresh button ignores it.
         private static readonly TimeSpan RefreshThrottle = TimeSpan.FromMinutes(5);
 
-        // Clear the previous character's boards on login (called from PluginCore.Init). The
-        // standings are server-wide rather than character-specific, but a character switch can
-        // also be a server switch — and off Conquest these must not linger. Resetting
-        // LastRefresh lets each tab pull fresh data immediately when it's next opened.
+        // Drop everything held from the previous character on login (called from PluginCore.Init).
+        // The standings are server-wide rather than character-specific, but a character switch can
+        // also be a server switch, and off Conquest they must not linger. Resetting LastRefresh
+        // lets each tab pull fresh data immediately when it's next opened.
         public static void Init()
         {
             foreach (TopBoard board in All)
@@ -86,7 +88,7 @@ namespace OracleOfDereth
                 board.LastRefresh = DateTime.MinValue;
             }
 
-            Collecting = null;
+            EndBlock();
             Orphans.Clear();
         }
 
@@ -128,10 +130,10 @@ namespace OracleOfDereth
         //     Top 25 Players by Total Augmentations:
         //     1: 370 - Slayer
         //     ...
-        // So the header can't delimit a block. What does is the command we issued: collection
-        // opens when we ask, and every ranked line that arrives while it's open belongs to the
-        // board that asked. The header, whenever it turns up, only names the metric and says how
-        // many players to expect.
+        // So the header can't delimit a block. What does is the command that went out: collection
+        // opens when Refresh issues one, and every ranked line that arrives while it's open
+        // belongs to that board. The header only says how many players to expect — plus, for a
+        // block we didn't ask for, which board it belongs to (see Header).
 
         // The board currently collecting, and when collection opened. Null once the block is
         // complete, or once CollectWindow has passed without one.
@@ -143,7 +145,7 @@ namespace OracleOfDereth
         private static int CollectingExpected = int.MaxValue;
 
         // Whether this block has dropped the board's previous standings yet. Deferred to the
-        // first line that actually arrives, so a refresh the server never answers leaves the old
+        // first line that actually arrives, so a request the server never answers leaves the old
         // standings on screen rather than blanking the tab.
         private static bool CollectingCleared;
 
@@ -163,7 +165,7 @@ namespace OracleOfDereth
 
         // The line that names a block, e.g. "Top 25 Players by Quest Bonus:". Anchored so the
         // phrase must lead the line (after optional chat-timestamp / "[TOP]:" tags), so a pasted
-        // 'Someone says, "Top 25 Players by..."' can't retitle a board. Groups: 1=count, 2=metric.
+        // 'Someone says, "Top 25 Players by..."' can't disturb a board. Groups: 1=count, 2=metric.
         private static readonly Regex HeaderRegex = new Regex(
             @"^\s*(?:\[[^\]]*\][\s:]*)*Top\s+(\d+)\s+Players?\s+by\s+(.+?):\s*$");
 
@@ -194,30 +196,24 @@ namespace OracleOfDereth
             if (entry.Success) { NoteEntry(entry); }
         }
 
-        // The header names the metric and the size of the block. It may be opening a block we
-        // didn't request, or arriving partway through one we did.
+        // The header says how big the block is, and — for one we didn't ask for — which board it
+        // belongs to.
         private static void NoteHeader(Match header)
         {
-            string title = header.Groups[2].Value.Trim();
-
-            // The board whose command we issued is the strongest signal — the server is answering
-            // it. Only when nothing is collecting (you typed "/top ..." yourself) do we go by the
-            // header wording.
-            TopBoard board = Active() ?? ByTitle(title);
-
-            // A block for a metric we can't place: an unrequested "/top" for a board whose
-            // seeded title doesn't match the server's wording. Leave everything alone rather than
-            // filing it under the wrong board.
+            // The board whose command we issued is the strongest signal, since the server is
+            // answering it. Only when nothing is collecting (you typed "/top ..." yourself) do we
+            // go by the header wording, which may be a board we can't place: leave everything
+            // alone rather than filing it under the wrong one.
+            TopBoard board = Active() ?? ByHeader(header.Groups[2].Value.Trim());
             if (board == null) return;
 
             OpenBlock(board);
-            ClearOnce(board);
+            ClearOnce();
 
-            board.Title = title;
             CollectingExpected = int.TryParse(header.Groups[1].Value, out int count) ? count : int.MaxValue;
 
-            AdoptOrphans(board);
-            CloseIfComplete(board);
+            AdoptOrphans();
+            CloseIfComplete();
         }
 
         private static void NoteEntry(Match entry)
@@ -226,22 +222,33 @@ namespace OracleOfDereth
 
             TopPlayer player = new TopPlayer(rank, entry.Groups[2].Value.Trim(), entry.Groups[3].Value.Trim());
 
-            TopBoard board = Active();
-            if (board == null) { HoldOrphan(player); return; }
+            if (Active() == null) { HoldOrphan(player); return; }
 
-            ClearOnce(board);
-            Add(board, player);
-            CloseIfComplete(board);
+            ClearOnce();
+            Add(player);
+            CloseIfComplete();
         }
 
-        // Begin collecting for this board, unless we already are (the header of a block we
-        // requested must not restart it — that would discard the rows that beat it in).
+        private static TopBoard ByHeader(string metric)
+        {
+            return All.FirstOrDefault(b => string.Equals(b.Header, metric, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Begin collecting for this board, unless we already are — a second request must not
+        // restart the block and discard what has already come in.
         private static void OpenBlock(TopBoard board)
         {
             if (Active() == board) return;
 
             Collecting = board;
             CollectingAt = DateTime.UtcNow;
+            CollectingExpected = int.MaxValue;
+            CollectingCleared = false;
+        }
+
+        private static void EndBlock()
+        {
+            Collecting = null;
             CollectingExpected = int.MaxValue;
             CollectingCleared = false;
         }
@@ -253,25 +260,35 @@ namespace OracleOfDereth
             return (DateTime.UtcNow - CollectingAt < CollectWindow) ? Collecting : null;
         }
 
-        private static void ClearOnce(TopBoard board)
+        private static void ClearOnce()
         {
             if (CollectingCleared) return;
 
-            board.Players.Clear();
+            Collecting.Players.Clear();
             CollectingCleared = true;
         }
 
         // Ranks are unique within a block, so this drops a repeated line without dropping players
         // who tie on value — and keeps a repeat from counting twice toward the expected total.
-        private static void Add(TopBoard board, TopPlayer player)
+        private static void Add(TopPlayer player)
         {
-            if (board.Players.Any(p => p.Rank == player.Rank)) return;
-            board.Players.Add(player);
+            if (Collecting.Players.Any(p => p.Rank == player.Rank)) return;
+            Collecting.Players.Add(player);
         }
 
-        private static void CloseIfComplete(TopBoard board)
+        private static void CloseIfComplete()
         {
-            if (board.Players.Count >= CollectingExpected) { Collecting = null; }
+            if (Collecting.Players.Count >= CollectingExpected) { EndBlock(); }
+        }
+
+        private static void AdoptOrphans()
+        {
+            if (DateTime.UtcNow - OrphansAt <= OrphanWindow)
+            {
+                foreach (TopPlayer player in Orphans) { Add(player); }
+            }
+
+            Orphans.Clear();
         }
 
         private static void HoldOrphan(TopPlayer player)
@@ -280,21 +297,6 @@ namespace OracleOfDereth
 
             OrphansAt = DateTime.UtcNow;
             if (Orphans.Count < OrphanLimit) { Orphans.Add(player); }
-        }
-
-        private static void AdoptOrphans(TopBoard board)
-        {
-            if (DateTime.UtcNow - OrphansAt <= OrphanWindow)
-            {
-                foreach (TopPlayer player in Orphans) { Add(board, player); }
-            }
-
-            Orphans.Clear();
-        }
-
-        private static TopBoard ByTitle(string title)
-        {
-            return All.FirstOrDefault(b => string.Equals(b.Title, title, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

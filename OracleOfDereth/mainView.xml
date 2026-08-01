@@ -545,16 +545,16 @@
 							</control>
 						</page>
 
-						<page label="Level">
+						<page label="Levels">
 							<control progid="DecalControls.FixedLayout" clipped="">
-								<control progid="DecalControls.StaticText" name="TopLevelText" left="5" top="7" width="290" height="20" text="Top Players by Level"/>
-								<control progid="DecalControls.PushButton" name="TopLevelRefresh" left="348" top="26" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.StaticText" name="TopLevelsText" left="5" top="7" width="290" height="20" text="Top Players by Levels"/>
+								<control progid="DecalControls.PushButton" name="TopLevelsRefresh" left="348" top="26" width="100" height="24" text="Refresh"/>
 
-								<control progid="DecalControls.StaticText" name="TopLevelRank" left="1" top="33" width="28" height="17" text="#"/>
-								<control progid="DecalControls.StaticText" name="TopLevelName" left="40" top="33" width="230" height="17" text="Player"/>
-								<control progid="DecalControls.StaticText" name="TopLevelValue" left="194" top="33" width="104" height="17" text="Level"/>
+								<control progid="DecalControls.StaticText" name="TopLevelsRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopLevelsName" left="40" top="33" width="230" height="17" text="Player"/>
+								<control progid="DecalControls.StaticText" name="TopLevelsValue" left="194" top="33" width="104" height="17" text="Levels"/>
 
-								<control progid="DecalControls.List" name="TopLevelList" left="0" top="53" width="450" height="460">
+								<control progid="DecalControls.List" name="TopLevelsList" left="0" top="53" width="450" height="460">
 									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
 									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="150" />
 									<column progid="DecalControls.TextColumn" name="Value" fixedwidth="270" />

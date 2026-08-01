@@ -323,6 +323,13 @@ namespace OracleOfDereth
             if (cell.Text != value) { cell.Text = value; }
         }
 
+        // Same idea for a standalone label rather than a list cell: most of these are rewritten
+        // every tick with the string they already hold.
+        private void SetText(HudStaticText control, string value)
+        {
+            if (control.Text != value) { control.Text = value; }
+        }
+
         private void AssignSelected(HudList.HudListRowAccessor row, bool selected, List<int> columns)
         {
             foreach (int column in columns)

@@ -15,11 +15,10 @@ namespace OracleOfDereth
         private class TopPage
         {
             public TopBoard Board;
-            public HudStaticText Text;
+            public HudStaticText Heading;
+            public string HeadingText;      // the heading's settled text, built once
             public HudButton Refresh;
-            public HudStaticText RankHeader;
-            public HudStaticText ValueHeader;
-            public HudStaticText NameHeader;
+            public HudStaticText[] Headers; // the column headers, only ever shown or hidden together
             public HudList List;
         }
 
@@ -37,22 +36,26 @@ namespace OracleOfDereth
                 TopPage page = new TopPage
                 {
                     Board = board,
-                    Text = (HudStaticText)view[$"Top{board.Label}Text"],
+                    Heading = (HudStaticText)view[$"Top{board.Label}Text"],
+                    HeadingText = $"Top Players by {board.Label}",
                     Refresh = (HudButton)view[$"Top{board.Label}Refresh"],
-                    RankHeader = (HudStaticText)view[$"Top{board.Label}Rank"],
-                    ValueHeader = (HudStaticText)view[$"Top{board.Label}Value"],
-                    NameHeader = (HudStaticText)view[$"Top{board.Label}Name"],
+                    Headers = new[]
+                    {
+                        (HudStaticText)view[$"Top{board.Label}Rank"],
+                        (HudStaticText)view[$"Top{board.Label}Name"],
+                        (HudStaticText)view[$"Top{board.Label}Value"],
+                    },
                     List = (HudList)view[$"Top{board.Label}List"],
                 };
 
-                // Headings read from the board's label rather than the metric name the server
-                // prints, so a tab always describes itself the same way you selected it. The value
-                // column header is set once and never changes; the heading is only seeded here,
-                // since UpdateTop swaps it for the loading / off-server states.
-                page.Text.Text = $"Top Players by {board.Label}";
-                page.ValueHeader.Text = board.Label;
+                // Both headings read from the board's label rather than the metric name the server
+                // prints, so a tab always describes itself the way you selected it. The value
+                // column header never changes; the heading is only seeded here, since UpdateTop
+                // swaps it for the loading / off-server states.
+                page.Headers[TopColValue].Text = board.Label;
+                page.Heading.Text = page.HeadingText;
+                page.Heading.FontHeight = 10;
 
-                page.Text.FontHeight = 10;
                 page.Refresh.Hit += TopRefresh_Hit;
                 page.List.ClearRows();
 
@@ -63,6 +66,9 @@ namespace OracleOfDereth
         private void DisposeTop()
         {
             foreach (TopPage page in TopPages) { page.Refresh.Hit -= TopRefresh_Hit; }
+
+            // Drop the references so nothing here outlives the view being disposed.
+            TopPages.Clear();
         }
 
         public void UpdateTop()
@@ -77,14 +83,12 @@ namespace OracleOfDereth
             bool available = Server.IsConquest;
 
             page.Refresh.Visible = available;
-            page.RankHeader.Visible = available;
-            page.ValueHeader.Visible = available;
-            page.NameHeader.Visible = available;
             page.List.Visible = available;
+            foreach (HudStaticText header in page.Headers) { header.Visible = available; }
 
             if (!available)
             {
-                page.Text.Text = "None";
+                SetText(page.Heading, "None");
                 return;
             }
 
@@ -94,11 +98,11 @@ namespace OracleOfDereth
             // window is closed — we don't want to issue "/top" then.
             if (view.Visible) { page.Board.RefreshIfStale(); }
 
-            // The heading is fixed (set in InitTop) except while the first block is still on its
-            // way, when it says so instead of sitting over an empty list.
-            page.Text.Text = page.Board.Players.Count > 0
-                ? $"Top Players by {page.Board.Label}"
-                : $"Loading {page.Board.Command}...";
+            // Say so while the first block is still on its way, rather than sitting over an empty
+            // list.
+            SetText(page.Heading, page.Board.Players.Count > 0
+                ? page.HeadingText
+                : $"Loading {page.Board.Command}...");
 
             UpdateTopList(page);
         }

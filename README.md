@@ -305,7 +305,7 @@ Works with the `/fship list` command to browse and join server fellowships.
 ### Top
 
 Works with the `/top` command to browse the server leaderboards. One sub-tab per board — Augs,
-Deaths, Enlightens, Level, Luminance, Pyreals, Quests and Titles — each ranking the players by
+Deaths, Enlightens, Levels, Luminance, Pyreals, Quests and Titles — each ranking the players by
 that total. Boards refresh when you open them (at most once every five minutes) or on demand
 with the Refresh button.
 
