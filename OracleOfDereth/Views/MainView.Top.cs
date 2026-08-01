@@ -16,7 +16,7 @@ namespace OracleOfDereth
         {
             public TopBoard Board;
             public HudStaticText Heading;
-            public string HeadingText;      // fixed, built once
+            public string HeadingText;      // fixed, read off the control once
             public HudButton Refresh;
             public HudStaticText[] Headers; // the column headers, only ever shown or hidden together
             public HudList List;
@@ -37,7 +37,6 @@ namespace OracleOfDereth
                 {
                     Board = board,
                     Heading = (HudStaticText)view[$"Top{board.Label}Text"],
-                    HeadingText = $"Top Players by {board.Label}",
                     Refresh = (HudButton)view[$"Top{board.Label}Refresh"],
                     Headers = new[]
                     {
@@ -48,12 +47,13 @@ namespace OracleOfDereth
                     List = (HudList)view[$"Top{board.Label}List"],
                 };
 
-                // Both headings read from the board's label rather than the metric name the server
-                // prints, so a tab always describes itself the way you selected it. Neither
-                // changes while a board is on screen — a pull in progress shows on the Refresh
-                // button instead. UpdateTop only swaps the heading for the off-server state.
-                page.Headers[TopColValue].Text = board.Label;
-                page.Heading.Text = page.HeadingText;
+                // A tab's own wording — the heading and the header above the value column — is set
+                // on the controls in mainView.xml, so it sits with the rest of the layout and a tab
+                // can name its metric however it reads best ("QB" on the strip, "Quest Bonus"
+                // inside). Nothing here rewrites it, and nothing reads the server's wording either.
+                // The heading is kept because UpdateTop swaps it for "None" off-server and has to
+                // put it back.
+                page.HeadingText = page.Heading.Text;
                 page.Heading.FontHeight = 10;
 
                 page.Refresh.Hit += TopRefresh_Hit;

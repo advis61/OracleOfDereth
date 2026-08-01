@@ -298,45 +298,46 @@ namespace OracleOfDereth
         // — the list just quietly updates a moment later. Flashing the label is the acknowledgement.
         //
         // Every one of these buttons reads "Refresh" (all 21 in mainView.xml), so there's nothing
-        // per-button to remember except when to put the label back. Keyed by reference: re-clicking
-        // simply pushes the deadline out, and entries are gone within the second.
+        // per-button to remember except which one to put back. Only one can be mid-flash: a click
+        // is a single button, and the auto-refresh flashes belong to whichever tab is drawing.
+        // Flashing a second one just restores the first early rather than stranding its label.
         private const string RefreshLabel = "Refresh";
         private const string RefreshingLabel = "Refreshing...";
 
         // Restored on the first Update() tick at or after the deadline, and that tick is 1s — so
         // the label actually sits for between half a second and a second and a half, depending on
-        // where the click lands in the tick. Close enough for an acknowledgement, and it costs
-        // nothing beyond the tick that already runs.
+        // where the click lands in the tick. The deadline is what stops a click that lands just
+        // before a tick from flashing for no visible time at all.
         private static readonly TimeSpan ButtonFlashDuration = TimeSpan.FromMilliseconds(500);
 
-        private readonly Dictionary<HudButton, DateTime> ButtonFlashes = new Dictionary<HudButton, DateTime>();
+        private HudButton FlashedButton;
+        private DateTime FlashedUntil;
 
         private void FlashButton(HudButton button)
         {
             if (button == null) { return; }
 
+            RestoreFlashedButton();
+
             button.Text = RefreshingLabel;
-            ButtonFlashes[button] = DateTime.UtcNow + ButtonFlashDuration;
+            FlashedButton = button;
+            FlashedUntil = DateTime.UtcNow + ButtonFlashDuration;
         }
 
-        // Driven from Update(), which ticks every second regardless of the open tab — so a label
-        // still restores if you click Refresh and immediately switch away.
-        private void TickButtonFlashes()
+        // Called from Update() once the deadline passes, and from FlashButton when a second button
+        // takes the slot early.
+        private void RestoreFlashedButton()
         {
-            if (ButtonFlashes.Count == 0) { return; }
+            if (FlashedButton == null) { return; }
 
-            foreach (KeyValuePair<HudButton, DateTime> flash in ButtonFlashes.ToList())
-            {
-                if (DateTime.UtcNow < flash.Value) { continue; }
-
-                flash.Key.Text = RefreshLabel;
-                ButtonFlashes.Remove(flash.Key);
-            }
+            FlashedButton.Text = RefreshLabel;
+            FlashedButton = null;
         }
 
+        // Just drop the reference — the control is going away with the view.
         private void DisposeButtonFlashes()
         {
-            ButtonFlashes.Clear();
+            FlashedButton = null;
         }
 
         // Only swap the image when it actually changes; assigning is comparatively expensive on
@@ -399,7 +400,7 @@ namespace OracleOfDereth
             if (QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
 
             // Runs for every tab, so a flashed Refresh label restores even if you switch away.
-            TickButtonFlashes();
+            if (FlashedButton != null && DateTime.UtcNow >= FlashedUntil) { RestoreFlashedButton(); }
 
             // Runs every tick regardless of the active tab, so auto-deposit still fires while you're
             // on another tab (or the window is closed).

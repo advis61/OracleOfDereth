@@ -596,16 +596,16 @@
 							</control>
 						</page>
 
-						<page label="Quests">
+						<page label="QB">
 							<control progid="DecalControls.FixedLayout" clipped="">
-								<control progid="DecalControls.StaticText" name="TopQuestsText" left="5" top="7" width="290" height="20" text="Top Players by Quests"/>
-								<control progid="DecalControls.PushButton" name="TopQuestsRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.StaticText" name="TopQBText" left="5" top="7" width="290" height="20" text="Top Players by Quest Bonus"/>
+								<control progid="DecalControls.PushButton" name="TopQBRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
 
-								<control progid="DecalControls.StaticText" name="TopQuestsRank" left="1" top="33" width="28" height="17" text="#"/>
-								<control progid="DecalControls.StaticText" name="TopQuestsName" left="40" top="33" width="230" height="17" text="Player"/>
-								<control progid="DecalControls.StaticText" name="TopQuestsValue" left="194" top="33" width="104" height="17" text="Quests"/>
+								<control progid="DecalControls.StaticText" name="TopQBRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopQBName" left="40" top="33" width="230" height="17" text="Player"/>
+								<control progid="DecalControls.StaticText" name="TopQBValue" left="194" top="33" width="104" height="17" text="Quest Bonus"/>
 
-								<control progid="DecalControls.List" name="TopQuestsList" left="0" top="53" width="450" height="460">
+								<control progid="DecalControls.List" name="TopQBList" left="0" top="53" width="450" height="460">
 									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
 									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="150" />
 									<column progid="DecalControls.TextColumn" name="Value" fixedwidth="270" />

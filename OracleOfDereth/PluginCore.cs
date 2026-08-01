@@ -299,9 +299,6 @@ namespace OracleOfDereth
                 }
                 else if (Bank.MatchesAutoDeposit(e.Text))
                 {
-                    // Nothing to parse — the reply to the unattended 10-minute deposit exists only
-                    // to be suppressed. Must precede Bank.Matches below, which would otherwise
-                    // claim these lines when the server tags them "[BANK]".
                     Suppress(e, true);
                 }
                 else if (ConquestBank.Matches(e.Text))

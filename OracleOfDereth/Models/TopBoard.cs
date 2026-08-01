@@ -19,8 +19,9 @@ namespace OracleOfDereth
     public class TopBoard
     {
         // The "/top <Key>" argument, and the sub-tab label. The label also names this board's
-        // controls in mainView.xml ("Top" + Label + "List", etc.) — see MainView.Top. Everything
-        // shown on a tab comes from Label; nothing is read out of the server's own wording.
+        // controls in mainView.xml ("Top" + Label + "List", etc.) — see MainView.Top. The wording
+        // shown inside a tab is set on those controls in the XML, not here; nothing is read out of
+        // the server's own wording.
         public string Key { get; }
         public string Label { get; }
 
@@ -57,17 +58,17 @@ namespace OracleOfDereth
         // The eight leaderboards, alphabetically by label — which is also the sub-tab order in
         // mainView.xml, and what makes the open sub-tab's index an index into this list. Keep the
         // two in sync. The keys are the server's own "/top" arguments and don't all match the
-        // label ("/top qb" is the Quests board).
+        // label ("/top bank" is the Pyreals board).
         public static readonly List<TopBoard> All = new List<TopBoard>
         {
-            //            key       label (shown)  header wording (attribution only)
+            //            key       label (tab)    header wording (attribution only)
             new TopBoard("augs",   "Augs",       "Total Augmentations"),
             new TopBoard("deaths", "Deaths",     "Deaths"),
             new TopBoard("enl",    "Enlightens", "Enlightenment"),
             new TopBoard("level",  "Levels",     "Level"),
             new TopBoard("lum",    "Luminance",  "Banked Luminance"),
             new TopBoard("bank",   "Pyreals",    "Banked Pyreals"),
-            new TopBoard("qb",     "Quests",     "Quest Bonus"),
+            new TopBoard("qb",     "QB",         "Quest Bonus"),
             new TopBoard("titles", "Titles",     "Titles"),
         };
 
