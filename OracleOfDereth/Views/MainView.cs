@@ -292,60 +292,51 @@ namespace OracleOfDereth
             FlashButton(sender as HudButton);
         }
 
-        // ---- Transient button labels ----------------------------------------------------------
+        // ---- Refresh button feedback -----------------------------------------------------------
         // A Refresh button fires a server command whose reply is now kept out of chat (see
         // Setting.SuppressPluginRefreshChat), so without this a click has no visible effect at all
-        // — the list just quietly updates a second later. Flashing the label is the acknowledgement.
-        private class ButtonLabelFlash
-        {
-            public HudButton Button;
-            public string Restore;      // the label to put back
-            public DateTime RestoreAt;
-        }
+        // — the list just quietly updates a moment later. Flashing the label is the acknowledgement.
+        //
+        // Every one of these buttons reads "Refresh" (all 21 in mainView.xml), so there's nothing
+        // per-button to remember except when to put the label back. Keyed by reference: re-clicking
+        // simply pushes the deadline out, and entries are gone within the second.
+        private const string RefreshLabel = "Refresh";
+        private const string RefreshingLabel = "Refreshing...";
 
-        private readonly List<ButtonLabelFlash> ButtonLabelFlashes = new List<ButtonLabelFlash>();
-
-        // Restored on the first Update() tick at or after this, and the tick is 1s — so the label
-        // actually sits for somewhere between half a second and a second and a half, depending on
+        // Restored on the first Update() tick at or after the deadline, and that tick is 1s — so
+        // the label actually sits for between half a second and a second and a half, depending on
         // where the click lands in the tick. Close enough for an acknowledgement, and it costs
         // nothing beyond the tick that already runs.
         private static readonly TimeSpan ButtonFlashDuration = TimeSpan.FromMilliseconds(500);
 
-        private void DisposeButtonFlashes()
-        {
-            ButtonLabelFlashes.Clear();
-        }
+        private readonly Dictionary<HudButton, DateTime> ButtonFlashes = new Dictionary<HudButton, DateTime>();
 
-        private void FlashButton(HudButton button, string text = "Refreshing...")
+        private void FlashButton(HudButton button)
         {
             if (button == null) { return; }
 
-            ButtonLabelFlash flash = ButtonLabelFlashes.FirstOrDefault(f => ReferenceEquals(f.Button, button));
-
-            // Only capture the label the first time. Clicking again while one is pending must not
-            // record "Refreshing..." as the text to restore.
-            if (flash == null)
-            {
-                flash = new ButtonLabelFlash { Button = button, Restore = button.Text };
-                ButtonLabelFlashes.Add(flash);
-            }
-
-            button.Text = text;
-            flash.RestoreAt = DateTime.UtcNow + ButtonFlashDuration;
+            button.Text = RefreshingLabel;
+            ButtonFlashes[button] = DateTime.UtcNow + ButtonFlashDuration;
         }
 
         // Driven from Update(), which ticks every second regardless of the open tab — so a label
         // still restores if you click Refresh and immediately switch away.
-        private void TickButtonLabelFlashes()
+        private void TickButtonFlashes()
         {
-            for (int x = ButtonLabelFlashes.Count - 1; x >= 0; x--)
-            {
-                ButtonLabelFlash flash = ButtonLabelFlashes[x];
-                if (DateTime.UtcNow < flash.RestoreAt) { continue; }
+            if (ButtonFlashes.Count == 0) { return; }
 
-                flash.Button.Text = flash.Restore;
-                ButtonLabelFlashes.RemoveAt(x);
+            foreach (KeyValuePair<HudButton, DateTime> flash in ButtonFlashes.ToList())
+            {
+                if (DateTime.UtcNow < flash.Value) { continue; }
+
+                flash.Key.Text = RefreshLabel;
+                ButtonFlashes.Remove(flash.Key);
             }
+        }
+
+        private void DisposeButtonFlashes()
+        {
+            ButtonFlashes.Clear();
         }
 
         // Only swap the image when it actually changes; assigning is comparatively expensive on
@@ -408,7 +399,7 @@ namespace OracleOfDereth
             if (QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
 
             // Runs for every tab, so a flashed Refresh label restores even if you switch away.
-            TickButtonLabelFlashes();
+            TickButtonFlashes();
 
             // Runs every tick regardless of the active tab, so auto-deposit still fires while you're
             // on another tab (or the window is closed).
