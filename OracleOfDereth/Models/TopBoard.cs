@@ -92,10 +92,12 @@ namespace OracleOfDereth
             Orphans.Clear();
         }
 
-        // Ask the server to reprint this leaderboard so we can reparse it. Conquest-only.
-        public void Refresh()
+        // Ask the server to reprint this leaderboard so we can reparse it. Conquest-only. Returns
+        // true when the command actually went out, which the view uses to acknowledge it on the
+        // Refresh button.
+        public bool Refresh()
         {
-            if (!Server.IsConquest) return;
+            if (!Server.IsConquest) return false;
 
             // One block at a time. A reply carries nothing that ties it back to the command that
             // asked for it, so two in-flight "/top" replies would interleave and land on the
@@ -103,22 +105,25 @@ namespace OracleOfDereth
             // pulls on arrival. Skipping rather than queueing is enough: LastRefresh is only
             // stamped once the command actually goes out, so the tab's per-tick RefreshIfStale
             // reissues it as soon as the current block finishes.
-            if (Active() != null) return;
+            if (Active() != null) return false;
 
             LastRefresh = DateTime.UtcNow;
-            OpenBlock(this);
+            OpenBlock(this, requested: true);
             Util.Command(Command);
+
+            return true;
         }
 
         // Refresh only if it's been at least RefreshThrottle since this board's last pull. The
         // view calls this every tick for the open sub-tab, so coming back to it shows current
         // standings on its own — immediately if it's been a while, and at most once per throttle
         // window while you sit on it — without a manual Refresh and without hammering the server.
-        public void RefreshIfStale()
+        public bool RefreshIfStale()
         {
-            if (!Server.IsConquest) return;
-            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return;
-            Refresh();
+            if (!Server.IsConquest) return false;
+            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return false;
+
+            return Refresh();
         }
 
         // ---- Parsing ------------------------------------------------------------------------
@@ -148,6 +153,11 @@ namespace OracleOfDereth
         // first line that actually arrives, so a request the server never answers leaves the old
         // standings on screen rather than blanking the tab.
         private static bool CollectingCleared;
+
+        // Whether the plugin asked for this block (a tab Refresh) rather than you typing "/top"
+        // yourself. Only our own output is eligible to be suppressed from chat — what you typed,
+        // you get to see. NoteChat reports this per line; PluginCore does the eating.
+        private static bool CollectingRequested;
 
         // How long a block stays open. Generous enough for the server to spread one across
         // several messages, short enough that an unanswered request can't swallow an unrelated
@@ -184,21 +194,25 @@ namespace OracleOfDereth
             return HeaderRegex.IsMatch(text) || EntryRegex.IsMatch(text);
         }
 
-        // Forwarded from PluginCore's chat handler.
-        public static void NoteChat(string text)
+        // Forwarded from PluginCore's chat handler. Returns true when the line was part of a block
+        // the plugin asked for, which is what makes it eligible to be kept out of the chat window
+        // — see Setting.SuppressPluginRefreshChat. Anything you typed yourself returns false.
+        public static bool NoteChat(string text)
         {
-            if (text == null) return;
+            if (text == null) return false;
 
             Match header = HeaderRegex.Match(text);
-            if (header.Success) { NoteHeader(header); return; }
+            if (header.Success) { return NoteHeader(header); }
 
             Match entry = EntryRegex.Match(text);
-            if (entry.Success) { NoteEntry(entry); }
+            if (entry.Success) { return NoteEntry(entry); }
+
+            return false;
         }
 
         // The header says how big the block is, and — for one we didn't ask for — which board it
         // belongs to.
-        private static void NoteHeader(Match header)
+        private static bool NoteHeader(Match header)
         {
             // The board whose command we issued is the strongest signal, since the server is
             // answering it. Only when nothing is collecting (you typed "/top ..." yourself) do we
@@ -206,9 +220,13 @@ namespace OracleOfDereth
             // alone rather than filing it under the wrong one.
             TopBoard requested = Active();
             TopBoard board = requested ?? ByHeader(header.Groups[2].Value.Trim());
-            if (board == null) return;
+            if (board == null) return false;
 
-            OpenBlock(board);
+            OpenBlock(board, requested != null);
+
+            // Read before CloseIfComplete, which ends the block and resets the flag.
+            bool ours = CollectingRequested;
+
             ClearOnce();
 
             CollectingExpected = int.TryParse(header.Groups[1].Value, out int count) ? count : int.MaxValue;
@@ -219,19 +237,27 @@ namespace OracleOfDereth
             if (requested == null) { AdoptOrphans(); } else { Orphans.Clear(); }
 
             CloseIfComplete();
+
+            return ours;
         }
 
-        private static void NoteEntry(Match entry)
+        private static bool NoteEntry(Match entry)
         {
-            if (!int.TryParse(entry.Groups[1].Value, out int rank)) return;
+            if (!int.TryParse(entry.Groups[1].Value, out int rank)) return false;
 
             TopPlayer player = new TopPlayer(rank, entry.Groups[2].Value.Trim(), entry.Groups[3].Value.Trim());
 
-            if (Active() == null) { HoldOrphan(player); return; }
+            // Nothing collecting: this is a stray row of something we never asked for, so it stays
+            // visible as well as buffered.
+            if (Active() == null) { HoldOrphan(player); return false; }
+
+            bool ours = CollectingRequested;
 
             ClearOnce();
             Add(player);
             CloseIfComplete();
+
+            return ours;
         }
 
         private static TopBoard ByHeader(string metric)
@@ -240,8 +266,10 @@ namespace OracleOfDereth
         }
 
         // Begin collecting for this board, unless we already are — a second request must not
-        // restart the block and discard what has already come in.
-        private static void OpenBlock(TopBoard board)
+        // restart the block and discard what has already come in. Also preserves the requested
+        // flag of a block already under way, which is why the header of one we asked for doesn't
+        // downgrade it.
+        private static void OpenBlock(TopBoard board, bool requested)
         {
             if (Active() == board) return;
 
@@ -249,6 +277,7 @@ namespace OracleOfDereth
             CollectingAt = DateTime.UtcNow;
             CollectingExpected = int.MaxValue;
             CollectingCleared = false;
+            CollectingRequested = requested;
         }
 
         private static void EndBlock()
@@ -256,6 +285,7 @@ namespace OracleOfDereth
             Collecting = null;
             CollectingExpected = int.MaxValue;
             CollectingCleared = false;
+            CollectingRequested = false;
         }
 
         // The board collecting right now, or null if nothing is or the window has passed.

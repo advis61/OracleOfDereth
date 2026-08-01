@@ -38,6 +38,11 @@ namespace OracleOfDereth
         private static readonly Regex LineRegex = new Regex(
             @"^\s*(?:\[[^\]]*\]\s*)?(Quest|Enlightenment|PK Dungeon|Augmentation|Equipment|Total) Bonus:\s*(.+\S)\s*$");
 
+        // The block's title line, e.g. "=== XP Bonuses ===". Nothing to parse; recognised only so
+        // it can be suppressed with the values, and only while a reply we asked for is arriving.
+        private static readonly Regex ChromeRegex = new Regex(
+            @"^\s*(?:\[[^\]]*\]\s*)?={2,}\s*XP Bonuses\s*={2,}\s*$");
+
         // When we last issued "/bonus" (UtcNow). Drives the throttle below.
         private static DateTime LastRefresh = DateTime.MinValue;
 
@@ -55,45 +60,64 @@ namespace OracleOfDereth
         {
             foreach (var b in All) b.Value = "";
             LastRefresh = DateTime.MinValue;
+            Request.Clear();
         }
 
+        // Marks the window in which a reply to our own "/bonus" is expected, so the chat handler
+        // can suppress it without touching a "/bonus" you typed yourself.
+        private static readonly ChatRequest Request = new ChatRequest();
+
         // Ask the server to reprint the bonus block so we can reparse it. Only meaningful on
-        // Conquest — the only server with these bonuses.
-        public static void Refresh()
+        // Conquest — the only server with these bonuses. Returns true when the command actually
+        // went out, which the view uses to acknowledge it on the Refresh button.
+        public static bool Refresh()
         {
-            if (!Server.IsConquest) return;
+            if (!Server.IsConquest) return false;
+
             LastRefresh = DateTime.UtcNow;
+            Request.Sent();
             Util.Command("/bonus");
+
+            return true;
         }
 
         // Refresh only if it's been at least RefreshThrottle since the last pull. The view calls
         // this every tick while the augs tab is visible, so coming back to the tab shows current
         // bonuses on its own — immediately if it's been a while, and at most once per throttle
         // window while you sit on it — without a manual Refresh and without hammering the server.
-        public static void RefreshIfStale()
+        public static bool RefreshIfStale()
         {
-            if (!Server.IsConquest) return;
-            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return;
-            Refresh();
+            if (!Server.IsConquest) return false;
+            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return false;
+
+            return Refresh();
         }
 
         // True when this chat line is a "/bonus" bonus line — lets PluginCore route only the
         // relevant lines here. Gated to Conquest to avoid matching stray chat.
         public static bool Matches(string text)
         {
-            return text != null && Server.IsConquest && LineRegex.IsMatch(text);
+            return text != null
+                && Server.IsConquest
+                && (LineRegex.IsMatch(text) || (Request.Awaiting && ChromeRegex.IsMatch(text)));
         }
 
         // Forwarded from PluginCore's chat handler: parse one bonus line and store its value.
-        public static void NoteChat(string text)
+        // Returns true when the line answers a "/bonus" the plugin issued, which is what makes it
+        // eligible for suppression.
+        public static bool NoteChat(string text)
         {
-            if (text == null) return;
+            if (text == null) return false;
 
+            // Only reached behind Matches, so a line that isn't a bonus is the block's title:
+            // nothing to store, but still ours to suppress.
             Match m = LineRegex.Match(text);
-            if (!m.Success) return;
+            if (!m.Success) return Request.Awaiting;
 
             ConquestBonus entry = Get(m.Groups[1].Value);
             if (entry != null) { entry.Value = m.Groups[2].Value.Trim(); }
+
+            return Request.Awaiting;
         }
     }
 }

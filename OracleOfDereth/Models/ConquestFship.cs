@@ -92,23 +92,34 @@ namespace OracleOfDereth
         // The manual Refresh button ignores it.
         private static readonly TimeSpan RefreshThrottle = TimeSpan.FromMinutes(5);
 
+        // Marks the window in which a reply to our own "/fship list" is expected, so the chat
+        // handler can suppress it without touching a "/fship list" you typed yourself.
+        private static readonly ChatRequest Request = new ChatRequest();
+
         // Ask the server to reprint the recruiting list so we can reparse it. Conquest-only.
-        public static void Refresh()
+        // Returns true when the command actually went out, which the view uses to acknowledge it
+        // on the Refresh button.
+        public static bool Refresh()
         {
-            if (!Server.IsConquest) return;
+            if (!Server.IsConquest) return false;
+
             LastRefresh = DateTime.UtcNow;
+            Request.Sent();
             Util.Command("/fship list");
+
+            return true;
         }
 
         // Refresh only if it's been at least RefreshThrottle since the last pull. The view calls
         // this every tick while the Fship tab is visible, so coming back to the tab shows a current
         // list on its own — immediately if it's been a while, and at most once per throttle window
         // while you sit on it — without a manual Refresh and without hammering the server.
-        public static void RefreshIfStale()
+        public static bool RefreshIfStale()
         {
-            if (!Server.IsConquest) return;
-            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return;
-            Refresh();
+            if (!Server.IsConquest) return false;
+            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return false;
+
+            return Refresh();
         }
 
         // True when this chat line is part of a "/fship list" block (header or a fellowship row) —
@@ -121,21 +132,25 @@ namespace OracleOfDereth
         }
 
         // Forwarded from PluginCore's chat handler: the header clears the set to begin a fresh
-        // block; each subsequent fellowship line is parsed and appended.
-        public static void NoteChat(string text)
+        // block; each subsequent fellowship line is parsed and appended. Returns true when the
+        // line answers a "/fship list" the plugin issued, which is what makes it eligible for
+        // suppression.
+        public static bool NoteChat(string text)
         {
-            if (text == null) return;
+            if (text == null) return false;
 
-            if (HeaderRegex.IsMatch(text)) { All.Clear(); return; }
+            if (HeaderRegex.IsMatch(text)) { All.Clear(); return Request.Awaiting; }
 
             Match m = LineRegex.Match(text);
-            if (!m.Success) return;
+            if (!m.Success) return false;
 
             All.Add(new ConquestFship(
                 m.Groups[1].Value.Trim(),
                 m.Groups[2].Value.Trim(),
                 m.Groups[3].Value.Trim(),
                 m.Groups[4].Success ? m.Groups[4].Value.Trim() : ""));
+
+            return Request.Awaiting;
         }
     }
 }

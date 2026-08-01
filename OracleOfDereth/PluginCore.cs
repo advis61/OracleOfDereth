@@ -301,9 +301,16 @@ namespace OracleOfDereth
                 {
                     Trade.RecheckFunds();
                 }
+                else if (Bank.MatchesAutoDeposit(e.Text))
+                {
+                    // Nothing to parse — the reply to the unattended 10-minute deposit exists only
+                    // to be suppressed. Must precede Bank.Matches below, which would otherwise
+                    // claim these lines when the server tags them "[BANK]".
+                    Suppress(e, true);
+                }
                 else if (ConquestBank.Matches(e.Text))
                 {
-                    ConquestBank.NoteChat(e.Text);
+                    Suppress(e, ConquestBank.NoteChat(e.Text));
                 }
                 else if (Bank.Matches(e.Text))
                 {
@@ -311,19 +318,19 @@ namespace OracleOfDereth
                 }
                 else if (ConquestAugmentation.Matches(e.Text))
                 {
-                    ConquestAugmentation.NoteChat(e.Text);
+                    Suppress(e, ConquestAugmentation.NoteChat(e.Text));
                 }
                 else if (ConquestBonus.Matches(e.Text))
                 {
-                    ConquestBonus.NoteChat(e.Text);
+                    Suppress(e, ConquestBonus.NoteChat(e.Text));
                 }
                 else if (ConquestFship.Matches(e.Text))
                 {
-                    ConquestFship.NoteChat(e.Text);
+                    Suppress(e, ConquestFship.NoteChat(e.Text));
                 }
                 else if (TopBoard.Matches(e.Text))
                 {
-                    TopBoard.NoteChat(e.Text);
+                    Suppress(e, TopBoard.NoteChat(e.Text));
                 }
                 else if (Trade.CheckPriceRegex.IsMatch(e.Text))
                 {
@@ -340,6 +347,14 @@ namespace OracleOfDereth
             }
             catch (Exception ex) { Util.Log(ex); }
         }
+        // Keep a chat line out of the window when it was the reply to a command the plugin issued
+        // on your behalf — the tab already shows that data. `ours` comes from the model that just
+        // parsed the line; it is false for the same command typed by hand, which always prints.
+        private void Suppress(ChatTextInterceptEventArgs e, bool ours)
+        {
+            if (ours && Setting.SuppressPluginRefreshChat.IsYes) { e.Eat = true; }
+        }
+
         private void Current_ItemSelected(object sender, ItemSelectedEventArgs e)
         {
             try

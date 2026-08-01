@@ -64,6 +64,13 @@ namespace OracleOfDereth
         private static readonly Regex LineRegex = new Regex(
             @"^\s*(?:\[[^\]]*\]\s*)?(Creature|Item|Life|War|Void|Duration|Specialization|Melee|Missile):\s*([\d,]+)\b");
 
+        // The decoration the server prints around the block — a rule and the section title. There's
+        // nothing to parse in these; they're recognised only so they can be suppressed along with
+        // the counts, which is why they're claimed solely while a reply we asked for is arriving.
+        // A bare rule is far too generic a shape to touch at any other time.
+        private static readonly Regex ChromeRegex = new Regex(
+            @"^\s*(?:\[[^\]]*\]\s*)?(?:-{3,}|Advanced Augmentation Levels:)\s*$");
+
         // When we last issued "/augs" (UtcNow). Drives the throttle below. Set on login too (see
         // PluginCore), so the tab won't immediately re-pull if you open it right after logging in.
         private static DateTime LastRefresh = DateTime.MinValue;
@@ -97,26 +104,37 @@ namespace OracleOfDereth
         {
             foreach (var a in All) a.Count = 0;
             LastRefresh = DateTime.MinValue;
+            Request.Clear();
         }
 
+        // Marks the window in which a reply to our own "/augs" is expected, so the chat handler
+        // can suppress it without touching a "/augs" you typed yourself.
+        private static readonly ChatRequest Request = new ChatRequest();
+
         // Ask the server to reprint the aug block so we can reparse it. Only meaningful on
-        // Conquest — the only server with these augs.
-        public static void Refresh()
+        // Conquest — the only server with these augs. Returns true when the command actually went
+        // out, which the view uses to acknowledge it on the Refresh button.
+        public static bool Refresh()
         {
-            if (!Server.IsConquest) return;
+            if (!Server.IsConquest) return false;
+
             LastRefresh = DateTime.UtcNow;
+            Request.Sent();
             Util.Command("/augs");
+
+            return true;
         }
 
         // Refresh only if it's been at least RefreshThrottle since the last pull. The view calls
         // this every tick while the augs tab is visible, so coming back to the tab shows current
         // aug counts on its own — immediately if it's been a while, and at most once per throttle
         // window while you sit on it — without a manual Refresh and without hammering the server.
-        public static void RefreshIfStale()
+        public static bool RefreshIfStale()
         {
-            if (!Server.IsConquest) return;
-            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return;
-            Refresh();
+            if (!Server.IsConquest) return false;
+            if (DateTime.UtcNow - LastRefresh < RefreshThrottle) return false;
+
+            return Refresh();
         }
 
         // True when this chat line is a "/augs" aug line — lets PluginCore route only the
@@ -125,19 +143,25 @@ namespace OracleOfDereth
         {
             return text != null
                 && Server.IsConquest
-                && LineRegex.IsMatch(text);
+                && (LineRegex.IsMatch(text) || (Request.Awaiting && ChromeRegex.IsMatch(text)));
         }
 
         // Forwarded from PluginCore's chat handler: parse one aug line and store its count.
-        public static void NoteChat(string text)
+        // Returns true when the line answers a "/augs" the plugin issued, which is what makes it
+        // eligible for suppression.
+        public static bool NoteChat(string text)
         {
-            if (text == null) return;
+            if (text == null) return false;
 
+            // Only reached behind Matches, so a line that isn't a count is the block's decoration:
+            // nothing to store, but still ours to suppress.
             Match m = LineRegex.Match(text);
-            if (!m.Success) return;
+            if (!m.Success) return Request.Awaiting;
 
             ConquestAugmentation aug = Get(m.Groups[1].Value);
             if (aug != null && int.TryParse(m.Groups[2].Value.Replace(",", ""), out int count)) { aug.Count = count; }
+
+            return Request.Awaiting;
         }
 
         // Luminance cost of the NEXT purchase of this aug, mirroring the Conquest-ACE `live` branch

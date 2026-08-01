@@ -16,7 +16,7 @@ namespace OracleOfDereth
         {
             public TopBoard Board;
             public HudStaticText Heading;
-            public string HeadingText;      // the heading's settled text, built once
+            public string HeadingText;      // fixed, built once
             public HudButton Refresh;
             public HudStaticText[] Headers; // the column headers, only ever shown or hidden together
             public HudList List;
@@ -49,9 +49,9 @@ namespace OracleOfDereth
                 };
 
                 // Both headings read from the board's label rather than the metric name the server
-                // prints, so a tab always describes itself the way you selected it. The value
-                // column header never changes; the heading is only seeded here, since UpdateTop
-                // swaps it for the loading / off-server states.
+                // prints, so a tab always describes itself the way you selected it. Neither
+                // changes while a board is on screen — a pull in progress shows on the Refresh
+                // button instead. UpdateTop only swaps the heading for the off-server state.
                 page.Headers[TopColValue].Text = board.Label;
                 page.Heading.Text = page.HeadingText;
                 page.Heading.FontHeight = 10;
@@ -95,14 +95,11 @@ namespace OracleOfDereth
             // While the tab is actually on screen, keep this board current on its own (throttled
             // inside RefreshIfStale), so opening it shows standings without hitting Refresh. The
             // view.Visible gate matters because Update() still ticks this method while the plugin
-            // window is closed — we don't want to issue "/top" then.
-            if (view.Visible) { page.Board.RefreshIfStale(); }
+            // window is closed — we don't want to issue "/top" then. When a pull does go out, the
+            // Refresh button says so — the heading stays put.
+            if (view.Visible && page.Board.RefreshIfStale()) { FlashButton(page.Refresh); }
 
-            // Say so while the first block is still on its way, rather than sitting over an empty
-            // list.
-            SetText(page.Heading, page.Board.Players.Count > 0
-                ? page.HeadingText
-                : $"Loading {page.Board.Command}...");
+            SetText(page.Heading, page.HeadingText);
 
             UpdateTopList(page);
         }
@@ -137,7 +134,10 @@ namespace OracleOfDereth
         private void TopRefresh_Hit(object sender, EventArgs e)
         {
             TopPage page = TopPages.FirstOrDefault(p => ReferenceEquals(p.Refresh, sender));
-            page?.Board.Refresh();
+            if (page == null) { return; }
+
+            page.Board.Refresh();
+            FlashButton(page.Refresh);
         }
     }
 }

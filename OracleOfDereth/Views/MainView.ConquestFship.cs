@@ -104,7 +104,7 @@ namespace OracleOfDereth
             // (throttled inside RefreshIfStale). Coming back to the tab shows fresh data without
             // hitting Refresh. The view.Visible gate matters because Update() still ticks this
             // method while the plugin window is closed — we don't want to pull the list then.
-            if (view.Visible) { ConquestFship.RefreshIfStale(); }
+            if (view.Visible && ConquestFship.RefreshIfStale()) { FlashButton(ConquestFshipRefresh); }
 
             ConquestFshipText.Text = Fellowship.IsInFellowship()
                 ? $"Fellowship: {Fellowship.Name()}"
@@ -162,6 +162,7 @@ namespace OracleOfDereth
         private void ConquestFshipRefresh_Hit(object sender, EventArgs e)
         {
             ConquestFship.Refresh();
+            FlashButton(ConquestFshipRefresh);
         }
 
         // Select the clicked fellowship: highlight its row and reveal the Join button.

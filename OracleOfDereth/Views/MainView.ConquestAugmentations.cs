@@ -93,8 +93,11 @@ namespace OracleOfDereth
             // method while the plugin window is closed — we don't want to pull them then.
             if (view.Visible)
             {
-                ConquestAugmentation.RefreshIfStale();
-                ConquestBonus.RefreshIfStale();
+                // Both share the one Refresh button, so either pull going out acknowledges on it.
+                // Not short-circuited — both still need the chance to pull.
+                bool pulled = ConquestAugmentation.RefreshIfStale();
+                pulled |= ConquestBonus.RefreshIfStale();
+                if (pulled) { FlashButton(ConquestAugsRefresh); }
             }
 
             ConquestBonusText.Text = "XP Bonuses";
@@ -173,6 +176,7 @@ namespace OracleOfDereth
         {
             ConquestAugmentation.Refresh();
             ConquestBonus.Refresh();
+            FlashButton(ConquestAugsRefresh);
         }
 
         // Thinks the aug summary (to self, or fellowship/alliance with Shift/Alt) and copies it.

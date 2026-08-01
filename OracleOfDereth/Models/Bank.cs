@@ -182,8 +182,31 @@ namespace OracleOfDereth
             if (block == lastAutoDepositBlock) return;
 
             lastAutoDepositBlock = block;
+            AutoDeposit.Sent();
             DepositAll();
             Util.Chat("Auto-deposited to bank.", Util.ColorPink);
+        }
+
+        // Marks the window in which the reply to an automatic deposit is expected. Deliberately set
+        // only here and not in DepositAll: pressing "Deposit Now" is you asking, so that reply keeps
+        // printing. This one fires unattended every ten minutes, and its nine-line reply is the
+        // spam worth losing — the "Auto-deposited to bank." line above still confirms it ran.
+        private static readonly ChatRequest AutoDeposit = new ChatRequest();
+
+        // The reply to "/bank deposit": a "No <currency> found to deposit" line per currency that
+        // had nothing to move, a "Deposited <amount> <currency>" line per one that did, and a
+        // closing summary. Anything opening with "Deposited" is taken, rather than enumerating
+        // every currency's wording. That breadth is safe because it's claimed only while an
+        // automatic deposit is awaiting its reply — the same output from the button or a
+        // hand-typed command is left alone. Nothing here is worth parsing; it exists purely to be
+        // suppressed.
+        private static readonly Regex DepositReplyRegex = new Regex(
+            @"^\s*(?:\[[^\]]*\][\s:]*)*(?:No .+? (?:found|available) to deposit|Deposited\b.*)\s*$",
+            RegexOptions.IgnoreCase);
+
+        public static bool MatchesAutoDeposit(string text)
+        {
+            return text != null && AutoDeposit.Awaiting && DepositReplyRegex.IsMatch(text);
         }
 
         // True when this chat line is one of the replies we're waiting on — lets PluginCore route

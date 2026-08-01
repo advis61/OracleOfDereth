@@ -36,6 +36,7 @@ namespace OracleOfDereth
         public static Setting CopyQuestUrl;
         public static Setting ShowNearbyWcid;
         public static Setting ShowTradeWindow;
+        public static Setting SuppressPluginRefreshChat;
         public static Setting SummonScore;
         public static Setting WeaponScore;
         public static Setting WikiSource;
@@ -55,6 +56,7 @@ namespace OracleOfDereth
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "NearbyWcid", YesNo, "No");
             WeaponScore = Register("Show Weapons Score", "WeaponScore", YesNo, "Yes");
             ShowTradeWindow = Register("Use Trade Window", "TradeWindow", YesNo, "Yes");
+            SuppressPluginRefreshChat = Register("Suppress Plugin Refresh Chat", "SuppressPluginRefreshChat", YesNo, "Yes");
             WikiSource = Register("Wiki Source", "WikiSource", new List<string> { "Levistras", "ACPedia", "Fandom" }, "Levistras");
         }
 

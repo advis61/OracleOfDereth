@@ -310,6 +310,20 @@ that total. Boards refresh when you open them (at most once every five minutes) 
 with the Refresh button.
 
 
+### Suppress Plugin Refresh Chat
+
+The plugin runs server commands on your behalf to fill its tabs, and their replies would otherwise
+scroll past in chat. With this setting on (the default), those replies are kept out of the chat
+window — the tab shows the data anyway. Commands you type yourself are never suppressed, so
+`/top qb` still prints normally.
+
+Covers the Server tab refreshes: `/top` (leaderboards), `/augs` and `/bonus` (Augs), `/b` (Bank),
+and `/fship list` (Fship), plus the reply to the unattended 10-minute auto-deposit — the
+"Auto-deposited to bank." line still confirms that ran.
+
+Deliberately excluded: `/myquests`, which other plugins read; bank withdraw and transfer
+confirmations; and the Bank tab's "Deposit Now" button, since pressing it is you asking.
+
 ### Commands
 
 Type `/ood` to print the version number.
