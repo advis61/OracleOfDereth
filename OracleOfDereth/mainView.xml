@@ -487,6 +487,150 @@
 						</control>
 					</control>
 				</page>
+
+				<!-- One page per "/top" leaderboard. The page order and the control-name prefixes
+				     ("Top" + the board's Label) are what tie these to TopBoard.All — keep them in
+				     sync with that list. Every page has the same shape; MainView.Top wires them
+				     up from the model rather than one block of code each. -->
+				<page label="Top">
+					<control progid="DecalControls.Notebook" name="TopViewNotebook">
+						<page label="Augs">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="TopAugsText" left="5" top="7" width="290" height="20" text="Augmentations"/>
+								<control progid="DecalControls.PushButton" name="TopAugsRefresh" left="298" top="3" width="100" height="24" text="Refresh"/>
+
+								<control progid="DecalControls.StaticText" name="TopAugsRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopAugsValue" left="32" top="33" width="110" height="17" text="Augmentations"/>
+								<control progid="DecalControls.StaticText" name="TopAugsName" left="147" top="33" width="230" height="17" text="Player"/>
+
+								<control progid="DecalControls.List" name="TopAugsList" left="0" top="53" width="400" height="460">
+									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
+									<column progid="DecalControls.TextColumn" name="Value" fixedwidth="115" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="235" />
+								</control>
+							</control>
+						</page>
+
+						<page label="Bank">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="TopBankText" left="5" top="7" width="290" height="20" text="Banked Pyreals"/>
+								<control progid="DecalControls.PushButton" name="TopBankRefresh" left="298" top="3" width="100" height="24" text="Refresh"/>
+
+								<control progid="DecalControls.StaticText" name="TopBankRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopBankValue" left="32" top="33" width="110" height="17" text="Banked Pyreals"/>
+								<control progid="DecalControls.StaticText" name="TopBankName" left="147" top="33" width="230" height="17" text="Player"/>
+
+								<control progid="DecalControls.List" name="TopBankList" left="0" top="53" width="400" height="460">
+									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
+									<column progid="DecalControls.TextColumn" name="Value" fixedwidth="115" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="235" />
+								</control>
+							</control>
+						</page>
+
+						<page label="Deaths">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="TopDeathsText" left="5" top="7" width="290" height="20" text="Deaths"/>
+								<control progid="DecalControls.PushButton" name="TopDeathsRefresh" left="298" top="3" width="100" height="24" text="Refresh"/>
+
+								<control progid="DecalControls.StaticText" name="TopDeathsRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopDeathsValue" left="32" top="33" width="110" height="17" text="Deaths"/>
+								<control progid="DecalControls.StaticText" name="TopDeathsName" left="147" top="33" width="230" height="17" text="Player"/>
+
+								<control progid="DecalControls.List" name="TopDeathsList" left="0" top="53" width="400" height="460">
+									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
+									<column progid="DecalControls.TextColumn" name="Value" fixedwidth="115" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="235" />
+								</control>
+							</control>
+						</page>
+
+						<page label="Enlightens">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="TopEnlightensText" left="5" top="7" width="290" height="20" text="Enlightenment"/>
+								<control progid="DecalControls.PushButton" name="TopEnlightensRefresh" left="298" top="3" width="100" height="24" text="Refresh"/>
+
+								<control progid="DecalControls.StaticText" name="TopEnlightensRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopEnlightensValue" left="32" top="33" width="110" height="17" text="Enlightenment"/>
+								<control progid="DecalControls.StaticText" name="TopEnlightensName" left="147" top="33" width="230" height="17" text="Player"/>
+
+								<control progid="DecalControls.List" name="TopEnlightensList" left="0" top="53" width="400" height="460">
+									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
+									<column progid="DecalControls.TextColumn" name="Value" fixedwidth="115" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="235" />
+								</control>
+							</control>
+						</page>
+
+						<page label="Level">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="TopLevelText" left="5" top="7" width="290" height="20" text="Level"/>
+								<control progid="DecalControls.PushButton" name="TopLevelRefresh" left="298" top="3" width="100" height="24" text="Refresh"/>
+
+								<control progid="DecalControls.StaticText" name="TopLevelRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopLevelValue" left="32" top="33" width="110" height="17" text="Level"/>
+								<control progid="DecalControls.StaticText" name="TopLevelName" left="147" top="33" width="230" height="17" text="Player"/>
+
+								<control progid="DecalControls.List" name="TopLevelList" left="0" top="53" width="400" height="460">
+									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
+									<column progid="DecalControls.TextColumn" name="Value" fixedwidth="115" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="235" />
+								</control>
+							</control>
+						</page>
+
+						<page label="Luminance">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="TopLuminanceText" left="5" top="7" width="290" height="20" text="Banked Luminance"/>
+								<control progid="DecalControls.PushButton" name="TopLuminanceRefresh" left="298" top="3" width="100" height="24" text="Refresh"/>
+
+								<control progid="DecalControls.StaticText" name="TopLuminanceRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopLuminanceValue" left="32" top="33" width="110" height="17" text="Banked Luminance"/>
+								<control progid="DecalControls.StaticText" name="TopLuminanceName" left="147" top="33" width="230" height="17" text="Player"/>
+
+								<control progid="DecalControls.List" name="TopLuminanceList" left="0" top="53" width="400" height="460">
+									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
+									<column progid="DecalControls.TextColumn" name="Value" fixedwidth="115" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="235" />
+								</control>
+							</control>
+						</page>
+
+						<page label="Quests">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="TopQuestsText" left="5" top="7" width="290" height="20" text="Quest Bonus"/>
+								<control progid="DecalControls.PushButton" name="TopQuestsRefresh" left="298" top="3" width="100" height="24" text="Refresh"/>
+
+								<control progid="DecalControls.StaticText" name="TopQuestsRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopQuestsValue" left="32" top="33" width="110" height="17" text="Quest Bonus"/>
+								<control progid="DecalControls.StaticText" name="TopQuestsName" left="147" top="33" width="230" height="17" text="Player"/>
+
+								<control progid="DecalControls.List" name="TopQuestsList" left="0" top="53" width="400" height="460">
+									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
+									<column progid="DecalControls.TextColumn" name="Value" fixedwidth="115" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="235" />
+								</control>
+							</control>
+						</page>
+
+						<page label="Titles">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="TopTitlesText" left="5" top="7" width="290" height="20" text="Titles"/>
+								<control progid="DecalControls.PushButton" name="TopTitlesRefresh" left="298" top="3" width="100" height="24" text="Refresh"/>
+
+								<control progid="DecalControls.StaticText" name="TopTitlesRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopTitlesValue" left="32" top="33" width="110" height="17" text="Titles"/>
+								<control progid="DecalControls.StaticText" name="TopTitlesName" left="147" top="33" width="230" height="17" text="Player"/>
+
+								<control progid="DecalControls.List" name="TopTitlesList" left="0" top="53" width="400" height="460">
+									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
+									<column progid="DecalControls.TextColumn" name="Value" fixedwidth="115" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="235" />
+								</control>
+							</control>
+						</page>
+					</control>
+				</page>
 			</control>
 		</page>
 

@@ -39,6 +39,7 @@ namespace OracleOfDereth
         public HudTabView CharacterViewNotebook { get; private set; }
         public HudTabView QuestsViewNotebook { get; private set; }
         public HudTabView ServerViewNotebook { get; private set; }
+        public HudTabView TopViewNotebook { get; private set; }
         public HudTabView AboutViewNotebook { get; private set; }
 
         private Dictionary<int, int> MainViewWidths = new Dictionary<int, int>
@@ -71,6 +72,7 @@ namespace OracleOfDereth
             { 4_01, 580 }, // Bank
             { 4_02, 600 }, // Fship (recruiting fellowships)
             { 4_03, 430 }, // Quests (Custom Quests)
+            { 4_04, 420 }, // Top (leaderboards; every sub-tab is the same shape)
 
             // About / Settings / Help
             { 5_00, 350 }, // About
@@ -108,6 +110,7 @@ namespace OracleOfDereth
             { 4_01, 350 }, // Bank
             { 4_02, 545 }, // Fship (recruiting fellowships)
             { 4_03, 545 }, // Quests (Custom Quests)
+            { 4_04, 570 }, // Top (leaderboards) — taller: a third row of tabs above the list
 
             // About / Settings / Help
             { 5_00, 270 }, // About
@@ -154,6 +157,10 @@ namespace OracleOfDereth
                 ServerViewNotebook = (HudTabView)view["ServerViewNotebook"];
                 ServerViewNotebook.OpenTabChange += Notebook_OpenTabChange;
 
+                // Top (leaderboards) Notebook, nested inside the Server tab
+                TopViewNotebook = (HudTabView)view["TopViewNotebook"];
+                TopViewNotebook.OpenTabChange += Notebook_OpenTabChange;
+
                 // About Notebook
                 AboutViewNotebook = (HudTabView)view["AboutViewNotebook"];
                 AboutViewNotebook.OpenTabChange += Notebook_OpenTabChange;
@@ -173,6 +180,7 @@ namespace OracleOfDereth
                 InitConquestAugmentations();
                 InitConquestBank();
                 InitConquestFship();
+                InitTop();
                 InitAugmentations();
                 InitCantrips();
                 InitCredits();
@@ -204,6 +212,7 @@ namespace OracleOfDereth
                 StatusViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 ServerViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                TopViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
                 AboutViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
 
                 DisposeItems();
@@ -219,6 +228,7 @@ namespace OracleOfDereth
                 DisposeConquestAugmentations();
                 DisposeConquestBank();
                 DisposeConquestFship();
+                DisposeTop();
                 DisposeAugmentations();
                 DisposeCredits();
                 DisposeRecalls();
@@ -364,6 +374,7 @@ namespace OracleOfDereth
             if (currentTab == 4_01) { UpdateConquestBank(); }
             if (currentTab == 4_02) { UpdateConquestFship(); }
             if (currentTab == 4_03) { UpdateCustomQuests(); }
+            if (currentTab == 4_04) { UpdateTop(); }
 
             // About / Settings / Help
             if (currentTab == 5_00) {; }
