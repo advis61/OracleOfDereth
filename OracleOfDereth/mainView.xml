@@ -497,7 +497,7 @@
 						<page label="Augs">
 							<control progid="DecalControls.FixedLayout" clipped="">
 								<control progid="DecalControls.StaticText" name="TopAugsText" left="5" top="7" width="290" height="20" text="Top Players by Augs"/>
-								<control progid="DecalControls.PushButton" name="TopAugsRefresh" left="348" top="26" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.PushButton" name="TopAugsRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
 
 								<control progid="DecalControls.StaticText" name="TopAugsRank" left="1" top="33" width="28" height="17" text="#"/>
 								<control progid="DecalControls.StaticText" name="TopAugsName" left="40" top="33" width="230" height="17" text="Player"/>
@@ -514,7 +514,7 @@
 						<page label="Deaths">
 							<control progid="DecalControls.FixedLayout" clipped="">
 								<control progid="DecalControls.StaticText" name="TopDeathsText" left="5" top="7" width="290" height="20" text="Top Players by Deaths"/>
-								<control progid="DecalControls.PushButton" name="TopDeathsRefresh" left="348" top="26" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.PushButton" name="TopDeathsRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
 
 								<control progid="DecalControls.StaticText" name="TopDeathsRank" left="1" top="33" width="28" height="17" text="#"/>
 								<control progid="DecalControls.StaticText" name="TopDeathsName" left="40" top="33" width="230" height="17" text="Player"/>
@@ -531,7 +531,7 @@
 						<page label="Enlightens">
 							<control progid="DecalControls.FixedLayout" clipped="">
 								<control progid="DecalControls.StaticText" name="TopEnlightensText" left="5" top="7" width="290" height="20" text="Top Players by Enlightens"/>
-								<control progid="DecalControls.PushButton" name="TopEnlightensRefresh" left="348" top="26" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.PushButton" name="TopEnlightensRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
 
 								<control progid="DecalControls.StaticText" name="TopEnlightensRank" left="1" top="33" width="28" height="17" text="#"/>
 								<control progid="DecalControls.StaticText" name="TopEnlightensName" left="40" top="33" width="230" height="17" text="Player"/>
@@ -548,7 +548,7 @@
 						<page label="Levels">
 							<control progid="DecalControls.FixedLayout" clipped="">
 								<control progid="DecalControls.StaticText" name="TopLevelsText" left="5" top="7" width="290" height="20" text="Top Players by Levels"/>
-								<control progid="DecalControls.PushButton" name="TopLevelsRefresh" left="348" top="26" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.PushButton" name="TopLevelsRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
 
 								<control progid="DecalControls.StaticText" name="TopLevelsRank" left="1" top="33" width="28" height="17" text="#"/>
 								<control progid="DecalControls.StaticText" name="TopLevelsName" left="40" top="33" width="230" height="17" text="Player"/>
@@ -565,7 +565,7 @@
 						<page label="Luminance">
 							<control progid="DecalControls.FixedLayout" clipped="">
 								<control progid="DecalControls.StaticText" name="TopLuminanceText" left="5" top="7" width="290" height="20" text="Top Players by Luminance"/>
-								<control progid="DecalControls.PushButton" name="TopLuminanceRefresh" left="348" top="26" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.PushButton" name="TopLuminanceRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
 
 								<control progid="DecalControls.StaticText" name="TopLuminanceRank" left="1" top="33" width="28" height="17" text="#"/>
 								<control progid="DecalControls.StaticText" name="TopLuminanceName" left="40" top="33" width="230" height="17" text="Player"/>
@@ -582,7 +582,7 @@
 						<page label="Pyreals">
 							<control progid="DecalControls.FixedLayout" clipped="">
 								<control progid="DecalControls.StaticText" name="TopPyrealsText" left="5" top="7" width="290" height="20" text="Top Players by Pyreals"/>
-								<control progid="DecalControls.PushButton" name="TopPyrealsRefresh" left="348" top="26" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.PushButton" name="TopPyrealsRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
 
 								<control progid="DecalControls.StaticText" name="TopPyrealsRank" left="1" top="33" width="28" height="17" text="#"/>
 								<control progid="DecalControls.StaticText" name="TopPyrealsName" left="40" top="33" width="230" height="17" text="Player"/>
@@ -599,7 +599,7 @@
 						<page label="Quests">
 							<control progid="DecalControls.FixedLayout" clipped="">
 								<control progid="DecalControls.StaticText" name="TopQuestsText" left="5" top="7" width="290" height="20" text="Top Players by Quests"/>
-								<control progid="DecalControls.PushButton" name="TopQuestsRefresh" left="348" top="26" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.PushButton" name="TopQuestsRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
 
 								<control progid="DecalControls.StaticText" name="TopQuestsRank" left="1" top="33" width="28" height="17" text="#"/>
 								<control progid="DecalControls.StaticText" name="TopQuestsName" left="40" top="33" width="230" height="17" text="Player"/>
@@ -616,7 +616,7 @@
 						<page label="Titles">
 							<control progid="DecalControls.FixedLayout" clipped="">
 								<control progid="DecalControls.StaticText" name="TopTitlesText" left="5" top="7" width="290" height="20" text="Top Players by Titles"/>
-								<control progid="DecalControls.PushButton" name="TopTitlesRefresh" left="348" top="26" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.PushButton" name="TopTitlesRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
 
 								<control progid="DecalControls.StaticText" name="TopTitlesRank" left="1" top="33" width="28" height="17" text="#"/>
 								<control progid="DecalControls.StaticText" name="TopTitlesName" left="40" top="33" width="230" height="17" text="Player"/>

@@ -27,11 +27,11 @@ namespace OracleOfDereth
         // This board's chat command, e.g. "/top qb".
         public readonly string Command;
 
-        // The metric this board's header line names, e.g. "Top 25 Players by Quest Bonus:".
-        // Hardcoded and never updated from what the server prints — nothing on a tab reads it.
-        // Its only job is to attribute a block we didn't ask for (you typed "/top lum" yourself)
-        // to the right board. Confirmed for augs / lum / qb; the rest are best guesses, and a
-        // wrong one only means a hand-typed command for that board isn't picked up.
+        // The metric this board's header line names — the "Quest Bonus" of "Top 25 Players by
+        // Quest Bonus:". Hardcoded and never updated from what the server prints; nothing on a tab
+        // reads it. Its only job is to attribute a block we didn't ask for (you typed "/top lum"
+        // yourself) to the right board. Confirmed for augs / lum / qb; the rest are best guesses,
+        // and a wrong one only means a hand-typed command for that board isn't picked up.
         private readonly string Header;
 
         // The players of the current block, in arrival order. Rebuilt in full on each block.
@@ -204,7 +204,8 @@ namespace OracleOfDereth
             // answering it. Only when nothing is collecting (you typed "/top ..." yourself) do we
             // go by the header wording, which may be a board we can't place: leave everything
             // alone rather than filing it under the wrong one.
-            TopBoard board = Active() ?? ByHeader(header.Groups[2].Value.Trim());
+            TopBoard requested = Active();
+            TopBoard board = requested ?? ByHeader(header.Groups[2].Value.Trim());
             if (board == null) return;
 
             OpenBlock(board);
@@ -212,7 +213,11 @@ namespace OracleOfDereth
 
             CollectingExpected = int.TryParse(header.Groups[1].Value, out int count) ? count : int.MaxValue;
 
-            AdoptOrphans();
+            // Buffered rows belong to this block only if this header is what opened it. A block we
+            // requested was already collecting its own rows directly, so anything still buffered
+            // came from something else — drop it rather than mixing another board's standings in.
+            if (requested == null) { AdoptOrphans(); } else { Orphans.Clear(); }
+
             CloseIfComplete();
         }
 
