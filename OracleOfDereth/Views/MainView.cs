@@ -72,7 +72,7 @@ namespace OracleOfDereth
             { 4_01, 580 }, // Bank
             { 4_02, 600 }, // Fship (recruiting fellowships)
             { 4_03, 430 }, // Quests (Custom Quests)
-            { 4_04, 400 }, // Top (leaderboards; every sub-tab is the same shape)
+            { 4_04, 450 }, // Top (leaderboards; every sub-tab is the same shape)
 
             // About / Settings / Help
             { 5_00, 350 }, // About
