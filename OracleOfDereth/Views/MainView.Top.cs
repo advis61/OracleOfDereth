@@ -27,8 +27,8 @@ namespace OracleOfDereth
 
         // Column indices for every Top*List (see mainView.xml).
         private const int TopColRank = 0;
-        private const int TopColValue = 1;
-        private const int TopColName = 2;
+        private const int TopColName = 1;
+        private const int TopColValue = 2;
 
         private void InitTop()
         {
@@ -44,6 +44,13 @@ namespace OracleOfDereth
                     NameHeader = (HudStaticText)view[$"Top{board.Label}Name"],
                     List = (HudList)view[$"Top{board.Label}List"],
                 };
+
+                // Headings read from the board's label rather than the metric name the server
+                // prints, so a tab always describes itself the same way you selected it. The value
+                // column header is set once and never changes; the heading is only seeded here,
+                // since UpdateTop swaps it for the loading / off-server states.
+                page.Text.Text = $"Top Players by {board.Label}";
+                page.ValueHeader.Text = board.Label;
 
                 page.Text.FontHeight = 10;
                 page.Refresh.Hit += TopRefresh_Hit;
@@ -87,12 +94,10 @@ namespace OracleOfDereth
             // window is closed — we don't want to issue "/top" then.
             if (view.Visible) { page.Board.RefreshIfStale(); }
 
-            // The server's own wording for this metric, which it may word differently than our
-            // seeded guess (see TopBoard.Title).
-            page.ValueHeader.Text = page.Board.Title;
-
+            // The heading is fixed (set in InitTop) except while the first block is still on its
+            // way, when it says so instead of sitting over an empty list.
             page.Text.Text = page.Board.Players.Count > 0
-                ? $"Top {page.Board.Players.Count} Players by {page.Board.Title}"
+                ? $"Top Players by {page.Board.Label}"
                 : $"Loading {page.Board.Command}...";
 
             UpdateTopList(page);
@@ -110,24 +115,13 @@ namespace OracleOfDereth
 
             for (int x = 0; x < players.Count; x++)
             {
-                HudList.HudListRowAccessor row;
-
-                if (x >= page.List.RowCount)
-                {
-                    row = page.List.AddRow();
-
-                    // Values run from single digits to billions; right-aligning keeps the digits
-                    // in columns instead of ragged.
-                    ((HudStaticText)row[TopColValue]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
-                }
-                else
-                {
-                    row = page.List[x];
-                }
+                HudList.HudListRowAccessor row = (x >= page.List.RowCount)
+                    ? page.List.AddRow()
+                    : page.List[x];
 
                 SetText(row, TopColRank, $"{players[x].Rank}");
-                SetText(row, TopColValue, players[x].Value);
                 SetText(row, TopColName, players[x].Name);
+                SetText(row, TopColValue, players[x].Value);
             }
 
             // Trim stale rows (a shorter board than the one previously shown here).

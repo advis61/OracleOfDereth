@@ -9,7 +9,7 @@ namespace OracleOfDereth
     // the available ones:
     //   [TOP] Specify a leaderboard: /top qb, /top level, /top enl, /top bank, /top lum,
     //         /top augs, /top deaths, or /top titles
-    // and each of those prints a header line followed by one ranked line per player, e.g.:
+    // and each of those prints a header line and one ranked line per player, e.g.:
     //   Top 25 Players by Quest Bonus:
     //   1: 5,682 - Stannonkor
     //   2: 5,543 - Raen
@@ -23,12 +23,13 @@ namespace OracleOfDereth
         public string Key { get; }
         public string Label { get; }
 
-        // The metric as the server names it in the header line ("Quest Bonus", "Banked
-        // Luminance"). Seeded with our best guess so the tab reads sensibly before the first
-        // refresh, then overwritten with the server's own wording once we've seen a block. Also
-        // the fallback that attributes a block we didn't ask for (you typed "/top lum" yourself)
-        // to the right board — an exact match only, so a wrong guess just means that block is
-        // ignored until the tab has fetched once.
+        // The metric as the server names it in the header line ("Quest Bonus", "Total
+        // Augmentations"). Not displayed — the tab and column headers read from Label, so they
+        // stay stable and consistent with the sub-tab you clicked. This exists solely to
+        // attribute a block we didn't ask for (you typed "/top lum" yourself) to the right board.
+        // Seeded with our best guess and corrected to the server's own wording once we've seen a
+        // block; an exact match only, so a wrong guess just means we fall back to the board whose
+        // command we issued, which is the stronger signal anyway.
         public string Title { get; private set; }
 
         // The players of the current block, in arrival order. Rebuilt in full on each block.
@@ -58,12 +59,12 @@ namespace OracleOfDereth
         // label ("/top qb" is the Quests board).
         public static readonly List<TopBoard> All = new List<TopBoard>
         {
-            new TopBoard("augs",   "Augs",       "Augmentations"),
-            new TopBoard("bank",   "Bank",       "Banked Pyreals"),
+            new TopBoard("augs",   "Augs",       "Total Augmentations"),
             new TopBoard("deaths", "Deaths",     "Deaths"),
             new TopBoard("enl",    "Enlightens", "Enlightenment"),
             new TopBoard("level",  "Level",      "Level"),
             new TopBoard("lum",    "Luminance",  "Banked Luminance"),
+            new TopBoard("bank",   "Pyreals",    "Banked Pyreals"),
             new TopBoard("qb",     "Quests",     "Quest Bonus"),
             new TopBoard("titles", "Titles",     "Titles"),
         };
@@ -85,8 +86,8 @@ namespace OracleOfDereth
                 board.LastRefresh = DateTime.MinValue;
             }
 
-            Pending = null;
-            Receiving = null;
+            Collecting = null;
+            Orphans.Clear();
         }
 
         // Ask the server to reprint this leaderboard so we can reparse it. Conquest-only.
@@ -94,9 +95,16 @@ namespace OracleOfDereth
         {
             if (!Server.IsConquest) return;
 
+            // One block at a time. A reply carries nothing that ties it back to the command that
+            // asked for it, so two in-flight "/top" replies would interleave and land on the
+            // wrong boards — easy to trigger by clicking through the sub-tabs, since each one
+            // pulls on arrival. Skipping rather than queueing is enough: LastRefresh is only
+            // stamped once the command actually goes out, so the tab's per-tick RefreshIfStale
+            // reissues it as soon as the current block finishes.
+            if (Active() != null) return;
+
             LastRefresh = DateTime.UtcNow;
-            Pending = this;
-            PendingAt = DateTime.UtcNow;
+            OpenBlock(this);
             Util.Command(Command);
         }
 
@@ -111,90 +119,177 @@ namespace OracleOfDereth
             Refresh();
         }
 
-        // The board whose command we've issued but whose header hasn't come back yet. The reply
-        // itself doesn't echo the "/top" argument, so this is what ties a block to the board that
-        // asked for it; the header wording is only a fallback (see Title).
-        private static TopBoard Pending;
-        private static DateTime PendingAt = DateTime.MinValue;
+        // ---- Parsing ------------------------------------------------------------------------
+        //
+        // The server sends a block as several chat messages and they do NOT arrive in order — the
+        // header can land in the middle of the ranked lines, or after all of them:
+        //     9: 310 - Grief
+        //     ...
+        //     Top 25 Players by Total Augmentations:
+        //     1: 370 - Slayer
+        //     ...
+        // So the header can't delimit a block. What does is the command we issued: collection
+        // opens when we ask, and every ranked line that arrives while it's open belongs to the
+        // board that asked. The header, whenever it turns up, only names the metric and says how
+        // many players to expect.
 
-        // How long a request stays claimable. If the server never answers (a mistyped or removed
-        // leaderboard), the claim expires instead of misattributing whatever block shows up next.
-        private static readonly TimeSpan PendingWindow = TimeSpan.FromSeconds(15);
+        // The board currently collecting, and when collection opened. Null once the block is
+        // complete, or once CollectWindow has passed without one.
+        private static TopBoard Collecting;
+        private static DateTime CollectingAt = DateTime.MinValue;
 
-        // The board currently accumulating rows: set by a header line, cleared once the promised
-        // number of players have arrived. Entry lines are only claimed while this is set, which is
-        // what keeps the loose "N: value - name" shape from scraping unrelated chat.
-        private static TopBoard Receiving;
-        private static int ReceivingExpected;
+        // How many players the header promised. Unknown until it arrives, which is why it can't
+        // be the only thing that ends a block.
+        private static int CollectingExpected = int.MaxValue;
 
-        // The line that begins a block, e.g. "Top 25 Players by Quest Bonus:". Anchored so the
+        // Whether this block has dropped the board's previous standings yet. Deferred to the
+        // first line that actually arrives, so a refresh the server never answers leaves the old
+        // standings on screen rather than blanking the tab.
+        private static bool CollectingCleared;
+
+        // How long a block stays open. Generous enough for the server to spread one across
+        // several messages, short enough that an unanswered request can't swallow an unrelated
+        // block minutes later.
+        private static readonly TimeSpan CollectWindow = TimeSpan.FromSeconds(15);
+
+        // Ranked lines that arrived with nothing collecting — you typed "/top lum" yourself and
+        // the rows beat the header that says which board they belong to. Held briefly and folded
+        // in when that header lands. A block we requested never needs these: collection is
+        // already open before any of its lines arrive.
+        private static readonly List<TopPlayer> Orphans = new List<TopPlayer>();
+        private static DateTime OrphansAt = DateTime.MinValue;
+        private static readonly TimeSpan OrphanWindow = TimeSpan.FromSeconds(10);
+        private const int OrphanLimit = 100;
+
+        // The line that names a block, e.g. "Top 25 Players by Quest Bonus:". Anchored so the
         // phrase must lead the line (after optional chat-timestamp / "[TOP]:" tags), so a pasted
-        // 'Someone says, "Top 25 Players by..."' can't wipe a board. Groups: 1=count, 2=metric.
+        // 'Someone says, "Top 25 Players by..."' can't retitle a board. Groups: 1=count, 2=metric.
         private static readonly Regex HeaderRegex = new Regex(
             @"^\s*(?:\[[^\]]*\][\s:]*)*Top\s+(\d+)\s+Players?\s+by\s+(.+?):\s*$");
 
-        // One ranked line, e.g. "1: 5,682 - Stannonkor". Groups: 1=rank, 2=value, 3=name.
+        // One ranked line, e.g. "1: 5,682 - Stannonkor". Groups: 1=rank, 2=value, 3=name. Same
+        // anchoring: a quoted 'Someone says, "1: 5,682 - Bob"' doesn't start with the rank, so it
+        // can't inject a row.
         private static readonly Regex EntryRegex = new Regex(
             @"^\s*(?:\[[^\]]*\][\s:]*)*(\d+):\s+([\d,]+)\s+-\s+(.+?)\s*$");
 
         // True when this chat line is part of a "/top" block — lets PluginCore route only the
-        // relevant lines here. Gated to Conquest, and entry lines only count while a block is
-        // actually in flight.
+        // relevant lines here. Gated to Conquest.
         public static bool Matches(string text)
         {
             if (text == null || !Server.IsConquest) return false;
 
-            return HeaderRegex.IsMatch(text) || (Receiving != null && EntryRegex.IsMatch(text));
+            return HeaderRegex.IsMatch(text) || EntryRegex.IsMatch(text);
         }
 
-        // Forwarded from PluginCore's chat handler: a header opens a block on the board it
-        // belongs to (clearing that board's previous standings); each following ranked line is
-        // parsed and appended until the header's promised count is reached.
+        // Forwarded from PluginCore's chat handler.
         public static void NoteChat(string text)
         {
             if (text == null) return;
 
             Match header = HeaderRegex.Match(text);
-            if (header.Success) { BeginBlock(header); return; }
-
-            if (Receiving == null) return;
+            if (header.Success) { NoteHeader(header); return; }
 
             Match entry = EntryRegex.Match(text);
-            if (!entry.Success) return;
-
-            Receiving.Players.Add(new TopPlayer(
-                int.TryParse(entry.Groups[1].Value, out int rank) ? rank : Receiving.Players.Count + 1,
-                entry.Groups[2].Value.Trim(),
-                entry.Groups[3].Value.Trim()));
-
-            if (Receiving.Players.Count >= ReceivingExpected) { Receiving = null; }
+            if (entry.Success) { NoteEntry(entry); }
         }
 
-        private static void BeginBlock(Match header)
+        // The header names the metric and the size of the block. It may be opening a block we
+        // didn't request, or arriving partway through one we did.
+        private static void NoteHeader(Match header)
         {
             string title = header.Groups[2].Value.Trim();
-            TopBoard board = TakePending() ?? ByTitle(title);
 
-            // A block for a metric we can't place (an unrequested "/top <something new>"): drop it
-            // rather than filing it under the wrong board.
-            if (board == null) { Receiving = null; return; }
+            // The board whose command we issued is the strongest signal — the server is answering
+            // it. Only when nothing is collecting (you typed "/top ..." yourself) do we go by the
+            // header wording.
+            TopBoard board = Active() ?? ByTitle(title);
+
+            // A block for a metric we can't place: an unrequested "/top" for a board whose
+            // seeded title doesn't match the server's wording. Leave everything alone rather than
+            // filing it under the wrong board.
+            if (board == null) return;
+
+            OpenBlock(board);
+            ClearOnce(board);
 
             board.Title = title;
-            board.Players.Clear();
+            CollectingExpected = int.TryParse(header.Groups[1].Value, out int count) ? count : int.MaxValue;
 
-            Receiving = board;
-            ReceivingExpected = int.TryParse(header.Groups[1].Value, out int count) ? count : int.MaxValue;
+            AdoptOrphans(board);
+            CloseIfComplete(board);
         }
 
-        // The board we asked for, if the request is still fresh. Claimed once either way, so a
-        // second block can't also land on it.
-        private static TopBoard TakePending()
+        private static void NoteEntry(Match entry)
         {
-            TopBoard pending = Pending;
-            Pending = null;
+            if (!int.TryParse(entry.Groups[1].Value, out int rank)) return;
 
-            if (pending == null) return null;
-            return (DateTime.UtcNow - PendingAt < PendingWindow) ? pending : null;
+            TopPlayer player = new TopPlayer(rank, entry.Groups[2].Value.Trim(), entry.Groups[3].Value.Trim());
+
+            TopBoard board = Active();
+            if (board == null) { HoldOrphan(player); return; }
+
+            ClearOnce(board);
+            Add(board, player);
+            CloseIfComplete(board);
+        }
+
+        // Begin collecting for this board, unless we already are (the header of a block we
+        // requested must not restart it — that would discard the rows that beat it in).
+        private static void OpenBlock(TopBoard board)
+        {
+            if (Active() == board) return;
+
+            Collecting = board;
+            CollectingAt = DateTime.UtcNow;
+            CollectingExpected = int.MaxValue;
+            CollectingCleared = false;
+        }
+
+        // The board collecting right now, or null if nothing is or the window has passed.
+        private static TopBoard Active()
+        {
+            if (Collecting == null) return null;
+            return (DateTime.UtcNow - CollectingAt < CollectWindow) ? Collecting : null;
+        }
+
+        private static void ClearOnce(TopBoard board)
+        {
+            if (CollectingCleared) return;
+
+            board.Players.Clear();
+            CollectingCleared = true;
+        }
+
+        // Ranks are unique within a block, so this drops a repeated line without dropping players
+        // who tie on value — and keeps a repeat from counting twice toward the expected total.
+        private static void Add(TopBoard board, TopPlayer player)
+        {
+            if (board.Players.Any(p => p.Rank == player.Rank)) return;
+            board.Players.Add(player);
+        }
+
+        private static void CloseIfComplete(TopBoard board)
+        {
+            if (board.Players.Count >= CollectingExpected) { Collecting = null; }
+        }
+
+        private static void HoldOrphan(TopPlayer player)
+        {
+            if (DateTime.UtcNow - OrphansAt > OrphanWindow) { Orphans.Clear(); }
+
+            OrphansAt = DateTime.UtcNow;
+            if (Orphans.Count < OrphanLimit) { Orphans.Add(player); }
+        }
+
+        private static void AdoptOrphans(TopBoard board)
+        {
+            if (DateTime.UtcNow - OrphansAt <= OrphanWindow)
+            {
+                foreach (TopPlayer player in Orphans) { Add(board, player); }
+            }
+
+            Orphans.Clear();
         }
 
         private static TopBoard ByTitle(string title)
