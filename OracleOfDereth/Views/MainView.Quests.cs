@@ -239,7 +239,7 @@ namespace OracleOfDereth
             // Update Text. A completed-of-total tally only means something against the whole
             // list, so once a filter is narrowing things it gives way to a plain match count.
             if (filter.IsActive) {
-                QuestsText.Text = $"Quest Flags: {quests.Count} quests";
+                QuestsText.Text = $"Quest Flags: {quests.Count} flags";
             } else {
                 QuestsText.Text = $"Quest Flags: {completed} of {quests.Count} completed";
             }

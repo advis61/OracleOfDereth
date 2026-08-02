@@ -60,11 +60,11 @@ namespace OracleOfDereth
             { 2_05, 530 }, // Society
 
             // Quests Tab
-            { 3_00, 640 }, // Flags (every quest flag)
-            { 3_01, 430 }, // John
-            { 3_02, 430 }, // Markers
-            { 3_03, 350 }, // Flaggings
-            { 3_04, 450 }, // Facility Hub
+            { 3_00, 430 }, // John
+            { 3_01, 640 }, // Flags (every quest flag)
+            { 3_02, 350 }, // Flaggings
+            { 3_03, 450 }, // Hub
+            { 3_04, 430 }, // Markers
             { 3_05, 560 }, // Titles (Available and Unavailable)
 
             // Server
@@ -98,11 +98,11 @@ namespace OracleOfDereth
             { 2_05, 570 }, // Society
 
             // Quests Tab
-            { 3_00, 570 }, // Flags (every quest flag) — taller: three rows of chrome above the list
-            { 3_01, 545}, // John
-            { 3_02, 545 }, // Markers
-            { 3_03, 490 }, // Flaggings
-            { 3_04, 485 }, // Facility Hub
+            { 3_00, 545}, // John
+            { 3_01, 570 }, // Flags (every quest flag) — taller: three rows of chrome above the list
+            { 3_02, 490 }, // Flaggings
+            { 3_03, 485 }, // Hub
+            { 3_04, 545 }, // Markers
             { 3_05, 545 }, // Titles (Available and Unavailable)
 
             // Server
@@ -424,11 +424,11 @@ namespace OracleOfDereth
             if (currentTab == 2_05) { UpdateSociety(); }
 
             // Quests Tab
-            if (currentTab == 3_00) { UpdateQuests(); }
-            if (currentTab == 3_01) { UpdateJohn(); }
-            if (currentTab == 3_02) { UpdateMarkers(); }
-            if (currentTab == 3_03) { UpdateFlags(); }
-            if (currentTab == 3_04) { UpdateFacility(); }
+            if (currentTab == 3_00) { UpdateJohn(); }
+            if (currentTab == 3_01) { UpdateQuests(); }
+            if (currentTab == 3_02) { UpdateFlags(); }
+            if (currentTab == 3_03) { UpdateFacility(); }
+            if (currentTab == 3_04) { UpdateMarkers(); }
             if (currentTab == 3_05) { UpdateTitles(); }
 
             // Server Tab
