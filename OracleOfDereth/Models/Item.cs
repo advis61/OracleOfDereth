@@ -20,6 +20,7 @@ namespace OracleOfDereth
         public int SortCol3OD = 0;     // OD value (Col3 cycle leads with this for weapons)
         public int SortCol3 = 0;       // total attack modifier (Col3 secondary sort)
         public int SortCol3Melee = 0;  // total melee-defense modifier (Col3 tertiary sort)
+        public int SortCol3Work = 0;   // workmanship (Col3 fourth sort)
         public int SortCol4 = 0;
         public string Description = "";
 
@@ -57,6 +58,7 @@ namespace OracleOfDereth
             SortCol3OD = GetSortInt(info.GetODValue()); // Col3 cycle leads with OD, then the attack/melee mods
             SortCol3 = GetSortInt((int)info.GetTotalAttack());
             SortCol3Melee = GetSortInt((int)info.GetTotalMeleeDefense());
+            SortCol3Work = GetSortInt(info.GetWorkmanshipValue());
             SortCol4 = 0; // Col4 (cantrips) is a string; sort falls through to SummaryCol4
             Description = info.ToString();
             IsIdentified = true;
@@ -94,7 +96,7 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol3(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetWeaponODModsString(); // OD + attack/melee mods, e.g. "OD +5 | 18% | 20%"
+            if (info.IsWeapon) return info.GetWeaponODModsWorkString(); // OD + attack/melee mods + workmanship, e.g. "OD +5 | 18% | 20% | w6"
             if (info.IsCloak) return info.GetRatingsString();
             if (info.IsSummon) return info.GetSummonString(); // "DMG x% | DEF y%"
             if (info.IsArmorClothing) return info.GetRatingsString();

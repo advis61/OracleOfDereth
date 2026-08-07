@@ -529,6 +529,23 @@ namespace OracleOfDereth
             return string.Join(" | ", parts);
         }
 
+        // The column form of the above, with the workmanship tagged on the end, e.g.
+        // "OD +5 | 18% | 20% | w6". Only the item columns use this — the full description
+        // reports workmanship on its own (GetWorkmanshipString), so it stays out of
+        // GetWeaponODModsString to avoid printing it twice.
+        public string GetWeaponODModsWorkString()
+        {
+            var parts = new List<string>();
+
+            string odMods = GetWeaponODModsString();
+            if (odMods.Length > 0) parts.Add(odMods);
+
+            int work = GetWorkmanshipValue();
+            if (work > 0) parts.Add("w" + work);
+
+            return string.Join(" | ", parts);
+        }
+
         // Extra weapon attributes not shown in the other columns
         public string GetWeaponExtrasString()
         {
@@ -654,7 +671,7 @@ namespace OracleOfDereth
                 if ((imbued & 1024) == 1024) parts.Add("MeleeImbue");
                 if ((imbued & 4096) == 4096) parts.Add("MagicImbue");
                 if ((imbued & 8192) == 8192) parts.Add("Hematited");
-                if ((imbued & 536870912) == 536870912) parts.Add("MagicAbsorb");
+                if ((imbued & 536870912) == 536870912) parts.Add("Absorb");
             }
 
             // Resistance cleaving lives in the same imbue-like slot as the rends, using the same
@@ -857,6 +874,8 @@ namespace OracleOfDereth
             if (GetLoreValue() <= 0) return "";
             return "Diff " + GetLoreValue();
         }
+
+        public int GetWorkmanshipValue() => wo.Values(LongValueKey.Workmanship, 0);
 
         public string GetWorkmanshipString()
         {
