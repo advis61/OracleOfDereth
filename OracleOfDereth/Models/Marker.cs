@@ -56,7 +56,7 @@ namespace OracleOfDereth {
                     string line = reader.ReadLine();
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
-                    var fields = line.Split(',');
+                    var fields = Util.CsvParseLine(line);
 
                     markers.Add(new Marker
                     {

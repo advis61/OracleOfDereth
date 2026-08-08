@@ -68,7 +68,7 @@ namespace OracleOfDereth
                     string line = reader.ReadLine();
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
-                    var fields = line.Split(',');
+                    var fields = Util.CsvParseLine(line);
                     string name = fields[0].Trim().ToLower();
 
                     Nearbys[name] = new Nearby {

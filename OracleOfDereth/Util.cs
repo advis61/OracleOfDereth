@@ -13,6 +13,75 @@ namespace OracleOfDereth
 {
     public static class Util
     {
+        // ============================================================
+        // CSV
+        // ============================================================
+        //
+        // The plugin could not previously read back what it wrote: the exporters quote their output
+        // properly, while every reader split on bare commas. That was survivable only because the
+        // shipped Resources\*.csv files were hand-kept comma-free — a constraint nothing enforced,
+        // and one that quietly shaped the data (quests.csv hints use " - " as a separator precisely
+        // to dodge it).
+        //
+        // Escape and ParseLine are inverses. Keep them that way.
+
+        // Wrap a field in quotes when it contains a comma, a quote or a newline, doubling any
+        // embedded quotes. A field needing none of that is returned untouched, so files stay
+        // readable rather than becoming a wall of quotation marks.
+        public static string CsvEscape(string field)
+        {
+            if (string.IsNullOrEmpty(field)) { return ""; }
+
+            if (field.IndexOf(',') < 0 && field.IndexOf('"') < 0 && field.IndexOf('\n') < 0 && field.IndexOf('\r') < 0)
+            {
+                return field;
+            }
+
+            return "\"" + field.Replace("\"", "\"\"") + "\"";
+        }
+
+        // Split one CSV line into fields, honouring quoted sections and doubled "" escapes.
+        //
+        // Returns string[] deliberately: every reader in the plugin was written against
+        // line.Split(','), so this drops straight in where that was, and their existing
+        // fields.Length guards and fields[n] indexing keep working untouched.
+        //
+        // Single-line only. A quoted field containing a real newline is legal CSV but would require
+        // the reader to pull further lines, and it makes files miserable to hand-edit or diff. Such
+        // a field simply ends at the line break here.
+        public static string[] CsvParseLine(string line)
+        {
+            if (string.IsNullOrEmpty(line)) { return new string[0]; }
+
+            var fields = new List<string>();
+            var field = new StringBuilder();
+            bool quoted = false;
+
+            for (int i = 0; i < line.Length; i++)
+            {
+                char c = line[i];
+
+                if (quoted)
+                {
+                    if (c != '"') { field.Append(c); continue; }
+
+                    // Doubled quote inside a quoted field is a literal quote; a lone one closes it.
+                    if (i + 1 < line.Length && line[i + 1] == '"') { field.Append('"'); i++; }
+                    else { quoted = false; }
+
+                    continue;
+                }
+
+                if (c == '"') { quoted = true; }
+                else if (c == ',') { fields.Add(field.ToString()); field.Length = 0; }
+                else { field.Append(c); }
+            }
+
+            fields.Add(field.ToString());
+
+            return fields.ToArray();
+        }
+
         public static void Log(Exception ex)
         {
             try

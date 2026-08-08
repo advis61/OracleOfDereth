@@ -134,13 +134,8 @@ namespace OracleOfDereth
             };
         }
 
-        private static string CsvEscape(string value)
-        {
-            if (string.IsNullOrEmpty(value)) return "";
-            if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
-                return "\"" + value.Replace("\"", "\"\"") + "\"";
-            return value;
-        }
+        // See the note in QuestExport: one escaping rule for every csv the plugin writes.
+        private static string CsvEscape(string value) => Util.CsvEscape(value);
 
         private static string JsonEscape(string value)
         {

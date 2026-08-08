@@ -125,7 +125,7 @@ namespace OracleOfDereth
                     string line = reader.ReadLine();
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
-                    var fields = line.Split(',');
+                    var fields = Util.CsvParseLine(line);
 
                     titles.Add(new Title
                     {

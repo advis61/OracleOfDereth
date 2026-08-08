@@ -110,13 +110,9 @@ namespace OracleOfDereth
             };
         }
 
-        private static string CsvEscape(string value)
-        {
-            if (string.IsNullOrEmpty(value)) return "";
-            if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
-                return "\"" + value.Replace("\"", "\"\"") + "\"";
-            return value;
-        }
+        // One escaping rule for every csv the plugin writes, and the exact inverse of the
+        // Util.CsvParseLine every reader now uses — so an export can be read back in.
+        private static string CsvEscape(string value) => Util.CsvEscape(value);
 
         private static string JsonEscape(string value)
         {
