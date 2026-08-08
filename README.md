@@ -2,7 +2,7 @@
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.16.0/OracleOfDerethInstaller-1.16.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.17.0/OracleOfDerethInstaller-1.17.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
@@ -27,11 +27,9 @@ Void Target View
 
 ![Void Target View](./docs/Void.png)
 
-
 Trade Browser
 
 ![Trade Browser](./docs/Trade.png)
-
 
 Status HUD
 
@@ -117,11 +115,9 @@ Bank
 
 ![Bank](./docs/Bank.png)
 
-
 Fship List
 
 ![Fship](./docs/Fship.png)
-
 
 Top Players
 
@@ -203,6 +199,7 @@ Displays your known recall spells.
 - Displays minor / moderate / epic / legendary for every cantrip. 
 - Displays suit set bonuses.
 - Displays Essence Glutton and Warrior's Vitality
+- Displays a (2) or more if you have more than 1 of the same cantrip equipped.
 
 Only displays cantrips for skills that you have known.
 
@@ -293,7 +290,7 @@ Displays a damage score and a defense score when you identify a Summons. 0% - 10
 
 ### Weapon Score
 
-Displays an O(Damage), O(Attack), O(Melee) based on the max rolls of the weapon
+Displays an O(Damage), % attack, % melee based on the max rolls of the weapon
 
 ### Conquest Augs
 
@@ -309,39 +306,12 @@ Works with the `/fship list` command to browse and join server fellowships.
 
 ### Top Players
 
-Works with the `/top` command to browse the server leaderboards without the output scrolling past
-in chat.
+Works with the `/top` command to browse the server leaderboards.
 
-There's a sub-tab per board — Augs, Deaths, Enlightens, Levels, Luminance, Pyreals, Quests and
-Titles — each listing the top 25 players by that total, in rank order.
-
-A board refreshes on its own when you open its tab, and at most once every five minutes while you
-sit on it, so switching to a tab shows current standings without doing anything. The Refresh
-button pulls immediately and says `Refreshing...` while it does.
-
-Typing `/top` yourself still works and still prints to chat as normal — only the plugin's own
-lookups are suppressed, and only while `Suppress Plugin Refresh Chat` is on.
-
-Conquest only; on other servers the tab shows `None`.
-
-
-### Suppress Plugin Refresh Chat
-
-The plugin runs server commands on your behalf to fill its tabs, and their replies would otherwise
-scroll past in chat. With this setting on (the default), those replies are kept out of the chat
-window — the tab shows the data anyway. Commands you type yourself are never suppressed, so
-`/top qb` still prints normally.
-
-Covers the Server tab refreshes: `/top` (leaderboards), `/augs` and `/bonus` (Augs), `/b` (Bank),
-and `/fship list` (Fship), plus the reply to the unattended 10-minute auto-deposit — the
-"Auto-deposited to bank." line still confirms that ran.
-
-Deliberately excluded: `/myquests`, which other plugins read; bank withdraw and transfer
-confirmations; and the Bank tab's "Deposit Now" button, since pressing it is you asking.
 
 ### Commands
 
-Type `/ood` to print the version number.
+Type `/od` to print the version number.
 
 Type `/myquests` to manually refresh the John tracker.
 
