@@ -61,6 +61,8 @@ namespace OracleOfDereth
         public bool IsSalvage => wo.ObjectClass == ObjectClass.Salvage;
         public bool IsHealingKit => wo.ObjectClass == ObjectClass.HealingKit;
         public bool IsManaStone => wo.ObjectClass == ObjectClass.ManaStone;
+        // Aetheria is also ObjectClass.Gem but is worn rather than used up, so it's not a "gem" here.
+        public bool IsGem => wo.ObjectClass == ObjectClass.Gem && !IsAetheria;
         public bool IsFoolproof => wo.Name.EndsWith(" Foolproof");
         // Only underwear shirts/pants count as "clothing" — the no-armor-level pieces in the
         // ChestWear (0x02) / UpperLegWear (0x40) slots, i.e. the ones that carry damage ratings
@@ -133,6 +135,14 @@ namespace OracleOfDereth
             if (destruct > 0) parts.Add((destruct * 100).ToString("0.#") + "% Chance");
 
             return string.Join(" | ", parts);
+        }
+
+        // Whether a gem survives being used — the difference between a reusable portal gem and
+        // one that's consumed on the trip. Appraisal-only, like the two above.
+        public string GetGemUseString()
+        {
+            if (!IsGem) return "";
+            return wo.Values(BoolValueKey.UnlimitedUses) ? "Unlimited Use" : "Single Use";
         }
 
         public string GetMaterial()

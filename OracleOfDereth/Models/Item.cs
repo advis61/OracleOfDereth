@@ -114,6 +114,7 @@ namespace OracleOfDereth
             if (info.IsSalvage) return info.GetSalvageWorkmanshipString(); // e.g. "Work 9.50"
             if (info.IsHealingKit) return info.GetHealingKitString();      // e.g. "+250 Skill | +200% Bonus"
             if (info.IsManaStone) return info.GetManaStoneString();        // e.g. "250% Efficient | 10% Chance"
+            if (info.IsGem) return info.GetGemUseString();                 // "Unlimited Use" / "Single Use"
             if (info.IsCloak) return info.GetRatingsString();
             if (info.IsSummon) return info.GetSummonString(); // "DMG x% | DEF y%"
             if (info.IsArmorClothing) return info.GetRatingsString();

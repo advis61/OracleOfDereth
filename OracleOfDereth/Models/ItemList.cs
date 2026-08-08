@@ -115,9 +115,9 @@ namespace OracleOfDereth
         // story. We mark these identified immediately instead of spending an appraisal request
         // that returns nothing useful (and would otherwise leave the row stuck "loading", and
         // re-requested every tick since it never gets HasIdData).
-        // Healing kits and mana stones are deliberately absent: their skill/restoration bonuses
-        // and efficiency/destruction chances only come with the appraisal, so they take the
-        // normal stub-then-identify path.
+        // Healing kits, mana stones and gems are deliberately absent: their skill/restoration
+        // bonuses, efficiency/destruction chances and unlimited-use flag only come with the
+        // appraisal, so they take the normal stub-then-identify path.
         public static bool NeedsNoAppraisal(WorldObject wo)
         {
             // Aetheria has ObjectClass.Gem but carries appraisal-only detail (level, surge,
@@ -134,7 +134,6 @@ namespace OracleOfDereth
                 case ObjectClass.Food:
                 case ObjectClass.Money:
                 case ObjectClass.TradeNote:
-                case ObjectClass.Gem:
                 case ObjectClass.Plant:
                 case ObjectClass.Ust:
                 case ObjectClass.Foci:
