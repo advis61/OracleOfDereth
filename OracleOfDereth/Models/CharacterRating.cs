@@ -26,7 +26,7 @@ namespace OracleOfDereth
             AddPair(parts, self, "Def", DamageResist, CritDamageResist);
 
             int vitality = Value(self, Vitality);
-            if (vitality != 0) parts.Add($"{vitality}V");
+            if (vitality != 0) parts.Add($"Vit: {vitality}");
 
             return string.Join(", ", parts);
         }

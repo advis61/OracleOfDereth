@@ -62,6 +62,12 @@ namespace OracleOfDereth
                 ? Cantrip.Cantrips.ToList()
                 : Cantrip.Cantrips.Where(x => x.SkillIsKnown()).ToList();
 
+            // Regroup the skill section by training every refresh rather than caching it. Both the
+            // filter above and the ranks below read the character filter live, so specialising or
+            // untraining a skill in game reshuffles the list on the next tick with no invalidation
+            // step to forget.
+            cantrips = Cantrip.SortSkillSection(cantrips);
+
             for (int x = 0; x < cantrips.Count(); x++)
             {
                 HudList.HudListRowAccessor row;
