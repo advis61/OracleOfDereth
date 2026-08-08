@@ -1,7 +1,9 @@
+using Decal.Adapter;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using VirindiViewService.Controls;
 
 namespace OracleOfDereth
@@ -24,6 +26,7 @@ namespace OracleOfDereth
 
         public HudStaticText QuestsText { get; private set; }
         public HudButton QuestsRefresh { get; private set; }
+        public HudButton QuestsSend { get; private set; }
         public HudButton QuestsClipboard { get; private set; }
         public HudButton QuestsExportText { get; private set; }
         public HudButton QuestsExportCsv { get; private set; }
@@ -58,6 +61,9 @@ namespace OracleOfDereth
 
             QuestsRefresh = (HudButton)view["QuestsRefresh"];
             QuestsRefresh.Hit += QuestFlagsRefresh_Hit;
+
+            QuestsSend = (HudButton)view["QuestsSend"];
+            QuestsSend.Hit += QuestsSend_Hit;
 
             QuestsClipboard = (HudButton)view["QuestsClipboard"];
             QuestsClipboard.Hit += QuestsClipboard_Hit;
@@ -155,6 +161,7 @@ namespace OracleOfDereth
             QuestsExportJson.Hit -= QuestsExportJson_Hit;
             QuestsHelp.Hit -= QuestsHelp_Hit;
             QuestsRefresh.Hit -= QuestFlagsRefresh_Hit;
+            QuestsSend.Hit -= QuestsSend_Hit;
         }
 
         public void UpdateQuests()
@@ -379,6 +386,115 @@ namespace OracleOfDereth
             Util.Chat("This list of quest flags was built from the ACE database and the ILT Mega Book v2.0 with AI assistance, so expect the odd mistake - the plugin's other lists are all hand-curated.", Util.ColorPink);
             Util.Chat("AC quest flags are kind of a cluster, so some of these are likely unobtainable. Looking for help curating this list.", Util.ColorPink);
             Util.Chat("The New filter shows flags this server reports that aren't in the Oracle of Dereth master list yet. Send them along to Advis Eveldan if you'd like them added.", Util.ColorPink);
+        }
+
+        // ---- Send button --------------------------------------------------------------------
+        // Writes the two things worth curating — flags this character holds that quests.csv has
+        // never heard of, and flags it holds that the CSV lists but hasn't marked Verified — to a
+        // file alongside the other exports, in /myquests format. Attach that file on Discord;
+        // nothing is uploaded from here.
+        //
+        // Reads the tracked flags as they stand and issues no server command of its own. The
+        // collection is already current: every tab that shows quest data runs QuestFlag.Refresh()
+        // on first view, and Refresh is one button to the right for a deliberate re-pull. That
+        // makes this synchronous — no /log to toggle, no waiting on chat, nothing left half-done
+        // if the character logs out.
+        private void QuestsSend_Hit(object sender, EventArgs e)
+        {
+            int flagCount = QuestFlag.QuestFlags.Count;
+
+            if (flagCount == 0)
+            {
+                Util.Chat("Send: no quest flags tracked yet - hit Refresh first.", Util.ColorPink);
+                return;
+            }
+
+            QuestsSendReport(flagCount);
+        }
+
+        private void QuestsSendReport(int flagCount)
+        {
+            // The merge normally happens on MainView's own tick; call it here so the diff can't
+            // run against a collection that's a tick behind. It's idempotent.
+            Quest.MergeQuestFlags();
+
+            // Two separate curation jobs, so they're reported separately: unknown flags need a new
+            // CSV row written, known-but-unverified ones only need the column filled in.
+            List<Quest> unknown = Quest.Quests
+                .Where(q => q.IsNew && q.IsComplete())
+                .OrderBy(q => q.Flag).ToList();
+
+            List<Quest> unverified = Quest.Quests
+                .Where(q => !q.IsNew && q.IsComplete() && !q.VerifiedConquest)
+                .OrderBy(q => q.Flag).ToList();
+
+            // Both groups go in the one file: each needs sending, and the recipient can tell them
+            // apart by checking against the master list. Kept as pure /myquests lines with no
+            // headers or blank separators, so it stays parseable by anything that reads a real
+            // chat log — the breakdown lives in chat and on the clipboard instead.
+            List<Quest> send = unknown.Concat(unverified).OrderBy(q => q.Flag).ToList();
+
+            Util.Chat($"Send: {flagCount} flags held. {unknown.Count} not in the master list, {unverified.Count} held but unverified.", Util.ColorPink);
+
+            if (send.Count == 0)
+            {
+                Util.Chat("Nothing new to send - the master list already covers every flag you hold.", Util.ColorPink);
+                return;
+            }
+
+            string path;
+            try
+            {
+                path = QuestExport.ToMyQuests(send);
+            }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
+                Util.Chat($"Send: could not write the export file - {ex.Message}", Util.ColorRed);
+                return;
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"# {CoreManager.Current.CharacterFilter.Name} ({Server.Name}) {DateTime.Now:yyyy-MM-dd HH:mm} - {flagCount} flags held");
+            sb.AppendLine();
+            sb.AppendLine($"# Not in the master list ({unknown.Count}) - flag,name");
+            foreach (Quest quest in unknown)
+            {
+                string name = quest.DisplayName();
+                sb.AppendLine(name.Length > 0 ? $"{quest.Flag},{name}" : quest.Flag);
+            }
+            sb.AppendLine();
+            sb.AppendLine($"# Held but not marked Verified ({unverified.Count})");
+            foreach (Quest quest in unverified) { sb.AppendLine(quest.Flag); }
+
+            Util.ClipboardCopy(sb.ToString());
+
+            Util.Chat($"Wrote {send.Count} flags to {path} - attach that file on Discord. Breakdown copied to clipboard.", Util.ColorPink);
+
+            // Chat gets a preview only. The interesting list runs to hundreds of rows on a mature
+            // character, and the clipboard already has all of it.
+            QuestsSendPreview("Not in the master list", unknown);
+            QuestsSendPreview("Held but not marked Verified", unverified);
+        }
+
+        private const int QuestsSendPreviewRows = 20;
+
+        private static void QuestsSendPreview(string heading, List<Quest> quests)
+        {
+            if (quests.Count == 0) { return; }
+
+            Util.Chat($"{heading}:", Util.ColorPink);
+
+            foreach (Quest quest in quests.Take(QuestsSendPreviewRows))
+            {
+                string name = quest.DisplayName();
+                Util.Chat(name.Length > 0 ? $"  {quest.Flag} - {name}" : $"  {quest.Flag}", Util.ColorPink);
+            }
+
+            if (quests.Count > QuestsSendPreviewRows)
+            {
+                Util.Chat($"  ...and {quests.Count - QuestsSendPreviewRows} more (clipboard has them all).", Util.ColorPink);
+            }
         }
 
         private void QuestsClipboard_Hit(object sender, EventArgs e)

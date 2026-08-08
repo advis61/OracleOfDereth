@@ -193,6 +193,18 @@ namespace OracleOfDereth
 
             return dtDateTime;
         }
+
+        // The inverse, for writing a /myquests line back out in the shape the game prints it.
+        // Clamps at zero: a flag the server reported with no completion time parses to the epoch
+        // itself, and anything at or before that is "never", not a negative stamp.
+        public static long DateTimeToUnixTimeStamp(DateTime dateTime)
+        {
+            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            double seconds = (dateTime - epoch).TotalSeconds;
+
+            return seconds <= 0 ? 0 : (long)seconds;
+        }
+
         public static string GetFriendlyTimeDifference(TimeSpan difference)
         {
             // Seconds only inside the last hour. On a countdown measured in hours or days they
