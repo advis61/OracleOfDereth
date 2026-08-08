@@ -115,6 +115,9 @@ namespace OracleOfDereth
         // story. We mark these identified immediately instead of spending an appraisal request
         // that returns nothing useful (and would otherwise leave the row stuck "loading", and
         // re-requested every tick since it never gets HasIdData).
+        // Healing kits and mana stones are deliberately absent: their skill/restoration bonuses
+        // and efficiency/destruction chances only come with the appraisal, so they take the
+        // normal stub-then-identify path.
         public static bool NeedsNoAppraisal(WorldObject wo)
         {
             // Aetheria has ObjectClass.Gem but carries appraisal-only detail (level, surge,
@@ -128,14 +131,12 @@ namespace OracleOfDereth
             {
                 case ObjectClass.Salvage:
                 case ObjectClass.SpellComponent:
-                case ObjectClass.HealingKit:
                 case ObjectClass.Food:
                 case ObjectClass.Money:
                 case ObjectClass.TradeNote:
                 case ObjectClass.Gem:
                 case ObjectClass.Plant:
                 case ObjectClass.Ust:
-                case ObjectClass.ManaStone:
                 case ObjectClass.Foci:
                 case ObjectClass.Bundle:
                 case ObjectClass.Container:
@@ -247,7 +248,7 @@ namespace OracleOfDereth
                     // rows below before the IsTradeable container check is ever reached.)
                     if (wo.ObjectClass == ObjectClass.Container) continue;
 
-                    // Salvage, food, gems, healing kits, etc. carry no appraisal info — add now.
+                    // Salvage, food, gems, components, etc. carry no appraisal info — add now.
                     if (NeedsNoAppraisal(wo))
                     {
                         AddFromWorldObject(wo);

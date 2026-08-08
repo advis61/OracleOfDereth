@@ -59,6 +59,8 @@ namespace OracleOfDereth
         public bool IsAetheria => wo.Name == "Aetheria";
         public bool IsRare => wo.Values((LongValueKey)218103850, 0) == 23308;
         public bool IsSalvage => wo.ObjectClass == ObjectClass.Salvage;
+        public bool IsHealingKit => wo.ObjectClass == ObjectClass.HealingKit;
+        public bool IsManaStone => wo.ObjectClass == ObjectClass.ManaStone;
         public bool IsFoolproof => wo.Name.EndsWith(" Foolproof");
         // Only underwear shirts/pants count as "clothing" — the no-armor-level pieces in the
         // ChestWear (0x02) / UpperLegWear (0x40) slots, i.e. the ones that carry damage ratings
@@ -95,6 +97,42 @@ namespace OracleOfDereth
             if (!IsSalvage) return "";
             if (SalvageTinkerSkillInfo.TryGetValue(wo.Values(LongValueKey.Material, 0), out string skill)) return skill;
             return "Unknown Tink";
+        }
+
+        // Healing kit detail: the bonus it adds to the Healing skill and the multiplier it
+        // applies to the amount restored, e.g. "+250 Skill | +200% Bonus". Both are
+        // appraisal-only, so this stays blank until the identify lands.
+        public string GetHealingKitString()
+        {
+            if (!IsHealingKit) return "";
+
+            var parts = new List<string>();
+
+            int skill = wo.Values(LongValueKey.HealKitSkillBonus, 0);
+            if (skill != 0) parts.Add((skill > 0 ? "+" : "") + skill + " Skill");
+
+            double restore = wo.Values(DoubleValueKey.HealingKitRestoreBonus, 0);
+            if (restore > 0) parts.Add("+" + Math.Round(restore * 100) + "% Bonus");
+
+            return string.Join(" | ", parts);
+        }
+
+        // Mana stone detail: the share of the drained item's mana it keeps and the odds the
+        // stone shatters on use, e.g. "250% Efficient | 10% Chance". Appraisal-only, like
+        // the healing kit numbers above.
+        public string GetManaStoneString()
+        {
+            if (!IsManaStone) return "";
+
+            var parts = new List<string>();
+
+            double efficiency = wo.Values(DoubleValueKey.ManaTransferEfficiency, 0);
+            if (efficiency > 0) parts.Add((efficiency * 100).ToString("0.#") + "% Efficient");
+
+            double destruct = wo.Values(DoubleValueKey.ManaStoneChanceDestruct, 0);
+            if (destruct > 0) parts.Add((destruct * 100).ToString("0.#") + "% Chance");
+
+            return string.Join(" | ", parts);
         }
 
         public string GetMaterial()
