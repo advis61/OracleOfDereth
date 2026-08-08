@@ -11,6 +11,8 @@ namespace OracleOfDereth
         public HudList TitlesList { get; private set; }
         public HudStaticText TitlesText { get; private set; }
         public HudCheckBox TitlesDisplayUnavailable { get; private set; }
+        public HudTextBox TitlesFilterText { get; private set; }
+        public HudButton TitlesFilterReset { get; private set; }
 
         public HudFixedLayout TitlesListSortComplete { get; private set; }
         public HudPictureBox TitlesListSortCompleteIcon { get; private set; }
@@ -26,6 +28,12 @@ namespace OracleOfDereth
 
             TitlesDisplayUnavailable = (HudCheckBox)view["TitlesDisplayUnavailable"];
             TitlesDisplayUnavailable.Change += TitlesDisplayUnavailable_Change;
+
+            TitlesFilterText = (HudTextBox)view["TitlesFilterText"];
+            TitlesFilterText.Change += TitlesFilter_Change;
+
+            TitlesFilterReset = (HudButton)view["TitlesFilterReset"];
+            TitlesFilterReset.Hit += TitlesFilterReset_Hit;
 
             TitlesList = (HudList)view["TitlesList"];
             TitlesList.Click += TitlesList_Click;
@@ -51,6 +59,8 @@ namespace OracleOfDereth
         {
             TitlesList.Click -= TitlesList_Click;
             TitlesDisplayUnavailable.Change -= TitlesDisplayUnavailable_Change;
+            TitlesFilterText.Change -= TitlesFilter_Change;
+            TitlesFilterReset.Hit -= TitlesFilterReset_Hit;
             TitlesListSortCompleteIcon.Hit -= TitlesListSortComplete_Click;
             TitlesListSortName.Hit -= TitlesListSortName_Click;
             TitlesListSortLevel.Hit -= TitlesListSortLevel_Click;
@@ -69,7 +79,32 @@ namespace OracleOfDereth
         private List<Title> DisplayedTitles()
         {
             bool showUnavailable = TitlesDisplayUnavailable.Checked;
-            return Title.Titles.Where(t => showUnavailable || t.Category != "Unavailable").ToList();
+            var titles = Title.Titles.Where(t => showUnavailable || t.Category != "Unavailable");
+
+            string filter = (TitlesFilterText?.Text ?? "").Trim();
+            if (filter.Length == 0) { return titles.ToList(); }
+
+            string[] terms = filter.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            // "Blank" rows are spacers between categories. They're dropped while filtering — with an
+            // arbitrary subset of titles showing, the groups they separate no longer exist, and
+            // leaving them in strands empty rows through the results.
+            return titles.Where(t => t.Name != "Blank" && MatchesTitlesFilter(t, terms)).ToList();
+        }
+
+        // Every whitespace-separated term must appear somewhere in the name or category, in any
+        // order — so "aerlinthe run" finds it regardless of which word comes first, and typing a
+        // category name alone pulls up that whole group.
+        private static bool MatchesTitlesFilter(Title title, string[] terms)
+        {
+            string haystack = $"{title.Name} {title.Category}";
+
+            foreach (string term in terms)
+            {
+                if (haystack.IndexOf(term, StringComparison.OrdinalIgnoreCase) < 0) { return false; }
+            }
+
+            return true;
         }
 
         private void UpdateTitlesList()
@@ -131,6 +166,20 @@ namespace OracleOfDereth
 
         void TitlesDisplayUnavailable_Change(object sender, EventArgs e)
         {
+            UpdateTitlesList();
+        }
+
+        void TitlesFilter_Change(object sender, EventArgs e)
+        {
+            UpdateTitlesList();
+        }
+
+        // Clears the search box only; the "Display Unavailable" tick is a separate choice and is
+        // left alone, unlike the Items tab's Reset which owns its category checkboxes too.
+        private void TitlesFilterReset_Hit(object sender, EventArgs e)
+        {
+            TitlesFilterText.Text = "";
+
             UpdateTitlesList();
         }
 
