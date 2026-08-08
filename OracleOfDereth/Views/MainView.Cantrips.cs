@@ -55,6 +55,11 @@ namespace OracleOfDereth
 
         private void UpdateCantripsList()
         {
+            // One inventory walk for the whole redraw; every Level() below reads it out of a
+            // dictionary. Refreshed every tick like the rest of the tab, so swapping a piece of
+            // gear updates the source counts without any invalidation step.
+            Cantrip.RefreshGearSources();
+
             // SkillIsKnown() is already true for the non-skill rows (set bonuses, essences and the
             // "Blank" spacers all carry SkillId <= 0), so those show either way and only the real
             // skill-backed cantrips are affected by the box.

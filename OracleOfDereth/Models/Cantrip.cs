@@ -34,6 +34,7 @@ namespace OracleOfDereth
         public static void Init()
         {
             Cantrips.Clear();
+            GearSources.Clear();
             LoadCantripsCSV();
         }
 
@@ -232,12 +233,70 @@ namespace OracleOfDereth
 
         public string CantripLevel()
         {
-            if(IsLegendary()) { return "Legendary"; };
-            if(IsEpic()) { return "Epic"; };
-            if(IsMajor()) { return "Major"; };
-            if(IsModerate()) { return "Moderate"; };
-            if(IsMinor()) { return "Minor"; };
+            if(IsLegendary()) { return "Legendary" + GearSuffix(Legendary); };
+            if(IsEpic()) { return "Epic" + GearSuffix(Epic); };
+            if(IsMajor()) { return "Major" + GearSuffix(Major); };
+            if(IsModerate()) { return "Moderate" + GearSuffix(Moderate); };
+            if(IsMinor()) { return "Minor" + GearSuffix(Minor); };
             return "-";
+        }
+
+        // " (2)" when more than one equipped piece grants this exact cantrip — two items casting
+        // Legendary Recklessness at you means one of them is contributing nothing, which is the
+        // whole point of showing this. Silent at one source, because that's the normal case and
+        // marking every row "(1)" would bury the signal.
+        //
+        // Counts sources of THIS tier only. A piece granting Epic Recklessness alongside a piece
+        // granting Legendary is also redundant, but it doesn't show up here — the row reports the
+        // level you actually have, and only the pieces feeding that level.
+        private static string GearSuffix(int spellId)
+        {
+            if (spellId <= 0) { return ""; }
+
+            int sources = GearSources.ContainsKey(spellId) ? GearSources[spellId] : 0;
+
+            return sources >= 2 ? $" ({sources})" : "";
+        }
+
+        // spell id -> how many equipped pieces grant it. Rebuilt by RefreshGearSources().
+        private static Dictionary<int, int> GearSources = new Dictionary<int, int>();
+
+        // Recount which spells the equipped gear is granting. ONE inventory walk, cached here and
+        // reused by every row of a redraw — asking per cantrip would mean ~80 walks a tick, and the
+        // walk is the only part of this that costs anything.
+        //
+        // Reads INNATE spells (WorldObject.Spell(i)), not active ones: an item's innate list is what
+        // it grants while worn, whereas its active list is what has been cast onto the item. Only
+        // the former makes a piece of gear the source of a buff.
+        public static void RefreshGearSources()
+        {
+            var counts = new Dictionary<int, int>();
+
+            if (CoreManager.Current.CharacterFilter.LoginStatus < 1)
+            {
+                GearSources = counts;
+                return;
+            }
+
+            using (var inventory = CoreManager.Current.WorldFilter.GetInventory())
+            {
+                foreach (WorldObject item in inventory)
+                {
+                    // Key 10 is EquippedSlots — nonzero only while worn or wielded, so spares in the
+                    // pack don't count. Matches ItemInfo.IsEquipped.
+                    if (item.Values((LongValueKey)10, 0) <= 0) { continue; }
+
+                    for (int i = 0; i < item.SpellCount; i++)
+                    {
+                        int spellId = item.Spell(i);
+                        if (spellId <= 0) { continue; }
+
+                        counts[spellId] = counts.ContainsKey(spellId) ? counts[spellId] + 1 : 1;
+                    }
+                }
+            }
+
+            GearSources = counts;
         }
 
         public string SetBonusLevel()
