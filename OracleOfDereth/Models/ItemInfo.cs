@@ -877,6 +877,19 @@ namespace OracleOfDereth
 
         public int GetWorkmanshipValue() => wo.Values(LongValueKey.Workmanship, 0);
 
+        // Salvage carries a fractional average workmanship (the mean of the pieces that
+        // went into the bag) instead of the integer craft value equipment uses.
+        public double GetSalvageWorkmanshipValue() => wo.Values(DoubleValueKey.SalvageWorkmanship, 0);
+
+        // Column form, e.g. "Work 9.50". The columns sort numerically off
+        // GetSalvageWorkmanshipValue, so the decimals here are display only.
+        public string GetSalvageWorkmanshipString()
+        {
+            double work = GetSalvageWorkmanshipValue();
+            if (work <= 0) return "";
+            return "Work " + work.ToString("N2");
+        }
+
         public string GetWorkmanshipString()
         {
             if (wo.ObjectClass == ObjectClass.Salvage)

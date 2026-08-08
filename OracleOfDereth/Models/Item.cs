@@ -59,6 +59,19 @@ namespace OracleOfDereth
             SortCol3 = GetSortInt((int)info.GetTotalAttack());
             SortCol3Melee = GetSortInt((int)info.GetTotalMeleeDefense());
             SortCol3Work = GetSortInt(info.GetWorkmanshipValue());
+
+            // Salvage's Col3 is a lone decimal workmanship, not the OD/attack/melee spread the
+            // Col3 cycle steps through — so point every position of the cycle at it (x100 to keep
+            // the decimals). Otherwise the sort falls through to the string, where "Work 10.00"
+            // would come out ahead of "Work 6.15".
+            if (info.IsSalvage)
+            {
+                int salvageWork = (int)(info.GetSalvageWorkmanshipValue() * 100);
+                SortCol3OD = salvageWork;
+                SortCol3 = salvageWork;
+                SortCol3Melee = salvageWork;
+                SortCol3Work = salvageWork;
+            }
             SortCol4 = 0; // Col4 (cantrips) is a string; sort falls through to SummaryCol4
             Description = info.ToString();
             IsIdentified = true;
@@ -97,6 +110,7 @@ namespace OracleOfDereth
         private static string GetSummaryCol3(ItemInfo info)
         {
             if (info.IsWeapon) return info.GetWeaponODModsWorkString(); // OD + attack/melee mods + workmanship, e.g. "OD +5 | 18% | 20% | w6"
+            if (info.IsSalvage) return info.GetSalvageWorkmanshipString(); // e.g. "Work 9.50"
             if (info.IsCloak) return info.GetRatingsString();
             if (info.IsSummon) return info.GetSummonString(); // "DMG x% | DEF y%"
             if (info.IsArmorClothing) return info.GetRatingsString();
