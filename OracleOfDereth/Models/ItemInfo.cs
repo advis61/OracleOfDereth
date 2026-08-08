@@ -87,6 +87,16 @@ namespace OracleOfDereth
             return "";
         }
 
+        // Which tinkering skill applies this salvage, e.g. "Weapon Tink". Like the description
+        // above it's fixed per material, so it needs no identify. Materials with no tinkering
+        // use at all come back blank (their description column already says "No Apparent Use").
+        public string GetSalvageTinkerSkillString()
+        {
+            if (!IsSalvage) return "";
+            if (SalvageTinkerSkillInfo.TryGetValue(wo.Values(LongValueKey.Material, 0), out string skill)) return skill;
+            return "Unknown Tink";
+        }
+
         public string GetMaterial()
         {
             if (wo.Values(LongValueKey.Material) <= 0) return "";
@@ -2065,6 +2075,87 @@ namespace OracleOfDereth
             { 75, "Decreases the weapon's speed by 50" },                       // Oak
             { 76, "Reduces the item's value by 25%" },                          // Pine
             { 77, "Changes heritage requirement to Aluvian" },                 // Teak
+        };
+
+        // The tinkering skill each salvage material is applied with, keyed by Material id (same
+        // ids as MaterialInfo). Taken from the crafted salvage table at
+        // https://acportalstorm.com/wiki/Salvaging. Ivory/Leather/Sandstone/Silk are the four
+        // "Special" applications (no skill check). Materials with no tinkering use are listed
+        // with "" so they read as blank rather than Unknown.
+        private static readonly Dictionary<int, string> SalvageTinkerSkillInfo = new Dictionary<int, string>
+        {
+            { 1, "Armor Tink" },        // Ceramic
+            { 2, "Item Tink" },         // Porcelain
+            { 4, "Item Tink" },         // Linen
+            { 5, "Item Tink" },         // Satin
+            { 6, "Special Tink" },      // Silk
+            { 7, "Weapon Tink" },       // Velvet
+            { 8, "Armor Tink" },        // Wool
+            { 10, "Magic Item Tink" },  // Agate
+            { 11, "Item Tink" },        // Amber
+            { 12, "" },                 // Amethyst — no apparent use
+            { 13, "Weapon Tink" },      // Aquamarine
+            { 14, "Magic Item Tink" },  // Azurite
+            { 15, "Weapon Tink" },      // Black Garnet
+            { 16, "Magic Item Tink" },  // Black Opal
+            { 17, "Magic Item Tink" },  // Bloodstone
+            { 18, "Magic Item Tink" },  // Carnelian
+            { 19, "Magic Item Tink" },  // Citrine
+            { 20, "Item Tink" },        // Diamond
+            { 21, "Weapon Tink" },      // Emerald
+            { 22, "Magic Item Tink" },  // Fire Opal
+            { 23, "Magic Item Tink" },  // Green Garnet
+            { 24, "" },                 // Green Jade — no apparent use
+            { 25, "Magic Item Tink" },  // Hematite
+            { 26, "Weapon Tink" },      // Imperial Topaz
+            { 27, "Weapon Tink" },      // Jet
+            { 28, "Magic Item Tink" },  // Lapis Lazuli
+            { 29, "Magic Item Tink" },  // Lavender Jade
+            { 30, "Magic Item Tink" },  // Malachite
+            { 31, "Item Tink" },        // Moonstone
+            { 32, "Weapon Tink" },      // Onyx — Conquest's Nether Rending imbue, matching the other rendings
+            { 33, "Magic Item Tink" },  // Opal
+            { 34, "Armor Tink" },       // Peridot
+            { 35, "Weapon Tink" },      // Red Garnet
+            { 36, "Magic Item Tink" },  // Red Jade
+            { 37, "Magic Item Tink" },  // Rose Quartz
+            { 38, "Item Tink" },        // Ruby
+            { 39, "Item Tink" },        // Sapphire
+            { 40, "Magic Item Tink" },  // Smokey Quartz
+            { 41, "Magic Item Tink" },  // Sunstone
+            { 42, "" },                 // Tiger Eye — no apparent use
+            { 43, "" },                 // Tourmaline — no apparent use
+            { 44, "" },                 // Turquoise — no apparent use
+            { 45, "" },                 // White Jade — no apparent use
+            { 46, "Weapon Tink" },      // White Quartz — Conquest's cleaving/split arrow imbue
+            { 47, "Weapon Tink" },      // White Sapphire
+            { 48, "" },                 // Yellow Garnet — no apparent use
+            { 49, "Armor Tink" },       // Yellow Topaz
+            { 50, "Armor Tink" },       // Zircon
+            { 51, "Special Tink" },     // Ivory
+            { 52, "Special Tink" },     // Leather
+            { 53, "Armor Tink" },       // Armoredillo Hide
+            { 54, "Item Tink" },        // Gromnie Hide
+            { 55, "Armor Tink" },       // Reed Shark Hide
+            { 57, "Weapon Tink" },      // Brass
+            { 58, "Armor Tink" },       // Bronze
+            { 59, "Item Tink" },        // Copper
+            { 60, "Item Tink" },        // Gold
+            { 61, "Weapon Tink" },      // Iron
+            { 62, "Item Tink" },        // Pyreal
+            { 63, "Item Tink" },        // Silver
+            { 64, "Armor Tink" },       // Steel
+            { 66, "Armor Tink" },       // Alabaster
+            { 67, "Weapon Tink" },      // Granite
+            { 68, "Armor Tink" },       // Marble
+            { 69, "" },                 // Obsidian — no apparent use
+            { 70, "Special Tink" },     // Sandstone
+            { 71, "" },                 // Serpentine — no apparent use
+            { 73, "Item Tink" },        // Ebony
+            { 74, "Weapon Tink" },      // Mahogany
+            { 75, "Weapon Tink" },      // Oak
+            { 76, "Item Tink" },        // Pine
+            { 77, "Item Tink" },        // Teak
         };
 
         #endregion

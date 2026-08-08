@@ -104,6 +104,7 @@ namespace OracleOfDereth
             if (info.IsCloak) return info.GetCloakProc();
             if (info.IsArmorClothing) return info.GetSetName();
             if (info.IsJewelry) return info.GetSetName();
+            if (info.IsSalvage) return info.GetSalvageTinkerSkillString(); // e.g. "Weapon Tink"
             return "";
         }
 
