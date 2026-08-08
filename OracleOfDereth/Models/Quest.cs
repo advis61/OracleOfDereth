@@ -138,8 +138,10 @@ namespace OracleOfDereth
                     {
                         Flag = fields[0].Trim().ToLower(),
                         Server = fields[1].Trim(),
-                        // TRUE / blank in the file; anything that isn't "true" reads as unverified.
-                        VerifiedConquest = string.Equals(fields[2].Trim(), "true", StringComparison.OrdinalIgnoreCase),
+                        // "Verified" / blank in the file; anything else reads as unverified. Note
+                        // this column doesn't follow the TRUE/FALSE convention the Repeatable one
+                        // below does — it's a marker word, so blank is the only other state.
+                        VerifiedConquest = string.Equals(fields[2].Trim(), "verified", StringComparison.OrdinalIgnoreCase),
                         Name = fields[3].Trim(),
                         Url = fields[4].Trim(),
                         Info = fields[5].Trim(),
