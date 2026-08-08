@@ -199,21 +199,126 @@ namespace OracleOfDereth
             return (lum / 1_000_000.0).ToString("0.##") + "M";
         }
 
-        // Short, human-readable description of this aug's effect at its current Count, from the
-        // in-game aug descriptions. Shown even at Count 0 so players can preview each aug.
+        // Base stat_Mod_Val of the top-tier spells the Life aug effects land on, read out of the
+        // Conquest world DB (ace_world.spell). The server adds/subtracts raw MULTIPLIER POINTS; the
+        // three percentages below divide through by these bases so they read as felt effect — "how
+        // much less damage / more regen do I actually get" — rather than as multiplier points, which
+        // are close to uninterpretable in a tooltip.
+        //   Incantation of <element> Protection Self       0.32  damage multiplier, i.e. you take 32%
+        //   Incantation of Regeneration Self               2.45  (Rejuvenation and Mana Renewal
+        //                                                         Self are 2.45 as well)
+        //   <element> Vulnerability Other VI               2.50  damage multiplier on the target
+        //
+        // The protection and regen bases are the level-VIII (Incantation) values. Lower spell tiers
+        // have smaller bases — Regeneration Self I is 1.1 — so anyone buffed below Incantation gets
+        // MORE relative benefit than shown. These are the conservative endgame numbers.
+        //
+        // The vuln base is the level-VI value, corroborated twice: Conquest-ACE pins its rend cap to
+        // it (WorldObject_Weapon.MaxRendingMod = 2.5f, commented "equivalent to level 6 vuln") and
+        // the community wiki gives Vulnerability Other VI as +150% damage taken. If Conquest's top
+        // vuln is an Incantation tier with a bigger base, VulnPercent overstates and this constant
+        // is the only thing to change.
+        //
+        // The protection cap and the protection base being the same 0.32 is not a coincidence: the
+        // aug subtracts from the multiplier, so at the cap it reaches 0.00 and nullifies that damage
+        // type outright. ResistPercent therefore asymptotes to 100%.
+        private const double BaseProtection = 0.32;
+        private const double BaseRegen = 2.45;
+        private const double BaseVuln = 2.50;
+
+        // Damage-reduction gained on Protection Self, as a percentage of damage that used to get
+        // through. Mirrors Conquest-ACE EnchantmentManager.GetLifeAugProtectRating: linear 0.3%/aug
+        // for the first 10, then exponential decay onto the remaining headroom, clamped at 32.
+        //
+        // Those four constants are PropertyManager reads (life_aug_prot_*), so this mirrors the
+        // server's defaults rather than a guarantee — a retuned shard drifts from it silently. The
+        // shape is confirmed against the author's own worked examples at EnchantmentManager.cs:429
+        // (400 augs 24%, 600 augs 28%, 1000+ 32%), which are raw points, i.e. pre-division here.
+        private double ResistPercent()
+        {
+            const double MaxBonus = 0.32, LinearRate = 0.003, Tuning = 0.0034597;
+            const int LinearCap = 10;
+
+            if (Count <= 0) return 0.0;
+
+            double bonus = Count <= LinearCap
+                ? Count * LinearRate
+                : (LinearCap * LinearRate)
+                  + (MaxBonus - LinearCap * LinearRate) * (1.0 - Math.Pow(1.0 - Tuning, Count - LinearCap));
+
+            return Math.Min(bonus, MaxBonus) / BaseProtection * 100.0;
+        }
+
+        // Extra damage your vulnerabilities amplify, as a percentage over an unaugmented vuln.
+        // EnchantmentManager.BuildEntry, MagicSchool.LifeMagic, HARMFUL, same StatModKeys 64-70 the
+        // protections use: the aug adds Count * 0.01 onto the vuln's damage multiplier.
+        //
+        // Nothing like the protection curve on those same keys — this side is flat, linear and
+        // uncapped, with neither the 10-aug linear phase nor the exponential decay, so it outruns
+        // every other Life effect at high counts (100 augs is +1.0 multiplier points here against
+        // the protection side's +0.06). Cast at a target, so unlike the rest of the Life line this
+        // one is not self-targeted and applies to whatever you're fighting.
+        private double VulnPercent()
+        {
+            if (Count <= 0) return 0.0;
+
+            return Count * 0.01 / BaseVuln * 100.0;
+        }
+
+        // Extra health/stamina/mana regeneration, as a percentage over having the top self buff up
+        // unaugmented. EnchantmentManager.BuildEntry adds Count * 0.10 onto the spell's multiplier,
+        // which GetRegenerationMod multiplies into the tick at Creature_Vitals.cs:144 — so the aug
+        // takes 2.45 to 2.45 + 0.1N. Works out to a flat ~4.08%/aug, and it does not taper: there is
+        // no cap anywhere on this path (the server even carries a "// cap rate?" TODO above the
+        // line). Self-cast only — the Other variants of these spells get no aug bonus at all.
+        private double RegenPercent()
+        {
+            if (Count <= 0) return 0.0;
+
+            return Count * 0.10 / BaseRegen * 100.0;
+        }
+
+        // Short, human-readable description of this aug's effect at its current Count. Numbers come
+        // from the Conquest-ACE `live` source, not the in-game aug text. Kept to one short line —
+        // the Conquest tab renders these in a narrow column. Shown even at Count 0 so players can
+        // preview each aug.
         public string Effect()
         {
             switch (Name)
             {
-                case "Creature":       return $"+{Count} effective level";
-                case "Item":           return $"+{Count}% attack/melee, +{Count * 0.5:0.#} blood/spirit drinker";
-                case "Life":
-                    double resist = Math.Min(Count, 10) * 0.3 + Math.Max(Count - 10, 0) * 0.1;
-                    return $"+{resist:0.#}% resist, +{Count} heal/revit, +{Count * 0.1:0.#} surge";
+                // EnchantmentManager.BuildEntry, MagicSchool.CreatureEnchantment: beneficial and
+                // self-targeted adds Count to the spell's StatModValue, harmful subtracts it — so
+                // buffs and debuffs alike land Count points harder. Fellowship spells are excluded.
+                case "Creature":       return $"+{Count} to creature buffs, -{Count} to debuffs";
+                case "Item":           return $"+{Count}% attack/melee, +{Count * 0.5:0.#} blood/spirit, +{Count} AL";
+
+                // EnchantmentManager.BuildEntry, MagicSchool.LifeMagic, beneficial + self-targeted:
+                //   StatModKey 64-70 (Protections)                 -> -= ResistPercent, multiplicative
+                //   everything else (Regeneration/Rejuvenation/    -> += Count * 0.10, added onto a
+                //     Mana Renewal)                                    MULTIPLIER
+                // ...and on the harmful side, StatModKey 64-70 (Vulnerabilities) -> += Count * 0.01.
+                // StatModKey 0 (BodyArmorValue, i.e. Armor Self) takes a flat += Count of AL, left
+                // off the line: the Item aug already advertises AL, and a point per aug is the least
+                // interesting thing Life does.
+                //
+                // Surges take that same += Count * 0.10, but land on PropertyInt ratings that
+                // GetAdditiveMod casts with (int) per enchantment — the fraction is thrown away, so
+                // only whole points ever apply, one per 10 augs. Integer-divided here to match
+                // rather than printing a 2.5 the game will never hand out.
+                //
+                // prot / vuln / regen are all felt effect against the matching unaugmented spell
+                // (see the Base* constants), so they read as comparable percentages; surge rating is
+                // a flat count and needs no baseline. The rending bonus is left off — it needs no
+                // spell cast and only pays out on a rending weapon, so it doesn't belong on the
+                // same line.
+                case "Life":           return $"+{ResistPercent():0.#}% prot, +{VulnPercent():0.#}% vuln, +{RegenPercent():0}% regen, +{Count / 10} surge rating";
                 case "War":            return $"+{Count * 2}% war magic potency";
                 case "Void":           return $"+{Count * 2}% void magic potency";
-                case "Melee":          return $"+{Count} damage with melee weapons";
-                case "Missile":        return $"+{Count} damage with missile weapons";
+                // DamageEvent: a flat +Count onto BaseDamage, plus 1.5% crit damage per aug
+                // (luminanceAugmentCritDamageMultiplier, hardcoded 0.015). Both are dropped in PvP
+                // when pvp_disable_custom_augs is set. The PvP-only evasion reduction is omitted.
+                case "Melee":          return $"+{Count} melee damage, +{Count * 1.5:0.#}% crit damage";
+                case "Missile":        return $"+{Count} missile damage, +{Count * 1.5:0.#}% crit damage";
                 case "Duration":       return $"+{Count * 5}% spell duration";
                 case "Specialization": return $"+{Count} skill spec cap (now {70 + Count})";
                 default:               return "";

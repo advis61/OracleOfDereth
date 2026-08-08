@@ -380,17 +380,17 @@
 				<page label="Augs">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="ConquestAugsText" left="5" top="5" width="300" height="20" text="Conquest Augs: 0"/>
-						<control progid="DecalControls.PushButton" name="ConquestAugsRefresh" left="548" top="3" width="100" height="24" text="Refresh"/>
-						<control progid="DecalControls.PushButton" name="ConquestAugsCopy" left="494" top="3" width="50" height="24" text="Copy"/>
+						<control progid="DecalControls.PushButton" name="ConquestAugsRefresh" left="618" top="3" width="100" height="24" text="Refresh"/>
+						<control progid="DecalControls.PushButton" name="ConquestAugsCopy" left="564" top="3" width="50" height="24" text="Copy"/>
 
 						<control progid="DecalControls.StaticText" name="ConquestAugsName" left="1" top="30" width="110" height="17" text="Augmentation"/>
 						<control progid="DecalControls.StaticText" name="ConquestAugsLevel" left="120" top="30" width="40" height="17" text="Level"/>
 						<control progid="DecalControls.StaticText" name="ConquestAugsEffect" left="161" top="30" width="290" height="17" text="Effect"/>
-						<control progid="DecalControls.StaticText" name="ConquestAugsCost" left="472" top="30" width="200" height="17" text="Cost"/>
-						<control progid="DecalControls.List" name="ConquestAugsList" left="0" top="50" width="650" height="170">
+						<control progid="DecalControls.StaticText" name="ConquestAugsCost" left="542" top="30" width="200" height="17" text="Cost"/>
+						<control progid="DecalControls.List" name="ConquestAugsList" left="0" top="50" width="720" height="170">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="110" />
 							<column progid="DecalControls.TextColumn" name="Count" fixedwidth="34" />
-							<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="305" />
+							<column progid="DecalControls.TextColumn" name="Effect" fixedwidth="375" />
 							<column progid="DecalControls.TextColumn" name="Cost" fixedwidth="215" />
 						</control>
 
