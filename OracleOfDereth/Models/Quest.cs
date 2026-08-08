@@ -53,6 +53,10 @@ namespace OracleOfDereth
         // Unlike anything derived from /myquests this is known for every quest, earned or not,
         // which is what lets the One Time / Repeatable filters cover the whole list.
         public bool Repeatable = false;
+        // From the CSV's "Verified Conquest" column: the flag has been confirmed by hand to exist
+        // on Conquest, as opposed to merely being inherited from the retail flag list. Blank for
+        // everything not yet checked, so absence means "unverified", not "absent".
+        public bool VerifiedConquest = false;
 
         // True for a flag discovered in /myquests rather than loaded from quests.csv. The game
         // grows new quest flags over time, so the curated list is always a little behind.
@@ -121,25 +125,27 @@ namespace OracleOfDereth
                 string headerLine = reader.ReadLine();
                 if (headerLine == null) throw new InvalidDataException("CSV file is empty.");
 
-                // Assume columns: QuestFlag,Server,Quest,Url,Info,Hint,Repeatable
+                // Assume columns: QuestFlag,Server,Verified Conquest,Quest,Url,Info,Hint,Repeatable
                 while (!reader.EndOfStream)
                 {
                     string line = reader.ReadLine();
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
                     var fields = Util.CsvParseLine(line);
-                    if (fields.Length < 7) continue;
+                    if (fields.Length < 8) continue;
 
                     var quest = new Quest
                     {
                         Flag = fields[0].Trim().ToLower(),
                         Server = fields[1].Trim(),
-                        Name = fields[2].Trim(),
-                        Url = fields[3].Trim(),
-                        Info = fields[4].Trim(),
-                        Hint = fields[5].Trim(),
+                        // TRUE / blank in the file; anything that isn't "true" reads as unverified.
+                        VerifiedConquest = string.Equals(fields[2].Trim(), "true", StringComparison.OrdinalIgnoreCase),
+                        Name = fields[3].Trim(),
+                        Url = fields[4].Trim(),
+                        Info = fields[5].Trim(),
+                        Hint = fields[6].Trim(),
                         // TRUE / FALSE in the file; anything that isn't "true" reads as one-time.
-                        Repeatable = string.Equals(fields[6].Trim(), "true", StringComparison.OrdinalIgnoreCase)
+                        Repeatable = string.Equals(fields[7].Trim(), "true", StringComparison.OrdinalIgnoreCase)
                     };
 
                     // A blank Server means every world; otherwise keep only this character's. The
@@ -219,6 +225,23 @@ namespace OracleOfDereth
         public bool IsOneTime()
         {
             return !IsRepeatable();
+        }
+
+        // Is this flag known to really exist on the world you're playing? Two independent kinds
+        // of evidence, either of which settles it:
+        //
+        //  - The CSV's Verified Conquest column, which only counts on Conquest. It was populated
+        //    from real /myquests dumps off that server, so it says nothing about anywhere else.
+        //  - The character holding the flag. If /myquests reports it, it exists — that's proof
+        //    from the server itself, and it holds on every world.
+        //
+        // The point is to separate the flags confirmed real from the long tail of the master list
+        // that was machine-built from the ACE database and may name quests no live server has.
+        public bool IsVerified()
+        {
+            if (VerifiedConquest && OracleOfDereth.Server.IsConquest) { return true; }
+
+            return IsComplete();
         }
 
         // Having the flag at all is the whole test. /myquests only reports flags the character
@@ -326,6 +349,12 @@ namespace OracleOfDereth
         // the one you're logged into, as opposed to the everywhere-rows with a blank Server.
         public bool Server = false;
 
+        // A third status pair, on Quest.IsVerified(). Unverified is the one worth having:
+        // it's the slice of the master list nothing has confirmed yet, which is exactly what
+        // needs curating.
+        public bool Verified = false;
+        public bool Unverified = false;
+
         // A shortcut for the search everyone types by hand. Deliberately implemented as that
         // search rather than as its own rule, so the box and the checkbox can't disagree.
         public bool KillTask = false;
@@ -335,7 +364,7 @@ namespace OracleOfDereth
         public bool Repeatable = false;
 
         // True when the filter actually narrows the list — some box ticked or text typed.
-        public bool IsActive => New || Server || KillTask || Completed || Incomplete || OneTime || Repeatable || !string.IsNullOrWhiteSpace(Text);
+        public bool IsActive => New || Server || KillTask || Completed || Incomplete || Verified || Unverified || OneTime || Repeatable || !string.IsNullOrWhiteSpace(Text);
 
         public bool Matches(Quest quest)
         {
@@ -343,6 +372,7 @@ namespace OracleOfDereth
             if (Server && quest.Server.Length == 0) return false;
             if (KillTask && !MatchesTerms(quest, KillTaskTerms)) return false;
             if (!MatchesStatus(quest)) return false;
+            if (!MatchesVerified(quest)) return false;
             if (!MatchesRepeat(quest)) return false;
 
             return MatchesText(quest);
@@ -355,6 +385,17 @@ namespace OracleOfDereth
             if (Completed == Incomplete) return true;
 
             return quest.IsComplete() ? Completed : Incomplete;
+        }
+
+        // Same whitelist behaviour again for verified / unverified. Note this pair overlaps the
+        // completed pair rather than being independent of it — every completed flag is verified
+        // by definition — so ticking Incomplete + Verified is the useful combination: quests
+        // known to be real on this world that this character hasn't done.
+        private bool MatchesVerified(Quest quest)
+        {
+            if (Verified == Unverified) return true;
+
+            return Verified ? quest.IsVerified() : !quest.IsVerified();
         }
 
         // Same whitelist behaviour for the one-time / repeatable pair. Quest.IsRepeatable()

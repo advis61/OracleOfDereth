@@ -33,6 +33,8 @@ namespace OracleOfDereth
         public HudButton QuestsFilterReset { get; private set; }
         public HudCheckBox QuestsFilterCompleted { get; private set; }
         public HudCheckBox QuestsFilterIncomplete { get; private set; }
+        public HudCheckBox QuestsFilterVerified { get; private set; }
+        public HudCheckBox QuestsFilterUnverified { get; private set; }
         public HudCheckBox QuestsFilterOneTime { get; private set; }
         public HudCheckBox QuestsFilterRepeatable { get; private set; }
         public HudCheckBox QuestsFilterServer { get; private set; }
@@ -84,6 +86,12 @@ namespace OracleOfDereth
             QuestsFilterIncomplete = (HudCheckBox)view["QuestsFilterIncomplete"];
             QuestsFilterIncomplete.Change += QuestsFilter_Change;
 
+            QuestsFilterVerified = (HudCheckBox)view["QuestsFilterVerified"];
+            QuestsFilterVerified.Change += QuestsFilter_Change;
+
+            QuestsFilterUnverified = (HudCheckBox)view["QuestsFilterUnverified"];
+            QuestsFilterUnverified.Change += QuestsFilter_Change;
+
             QuestsFilterOneTime = (HudCheckBox)view["QuestsFilterOneTime"];
             QuestsFilterOneTime.Change += QuestsFilter_Change;
 
@@ -134,6 +142,8 @@ namespace OracleOfDereth
             QuestsFilterReset.Hit -= QuestsFilterReset_Hit;
             QuestsFilterCompleted.Change -= QuestsFilter_Change;
             QuestsFilterIncomplete.Change -= QuestsFilter_Change;
+            QuestsFilterVerified.Change -= QuestsFilter_Change;
+            QuestsFilterUnverified.Change -= QuestsFilter_Change;
             QuestsFilterOneTime.Change -= QuestsFilter_Change;
             QuestsFilterRepeatable.Change -= QuestsFilter_Change;
             QuestsFilterServer.Change -= QuestsFilter_Change;
@@ -168,6 +178,8 @@ namespace OracleOfDereth
                 Text = QuestsFilterText?.Text ?? "",
                 Completed = QuestsFilterCompleted.Checked,
                 Incomplete = QuestsFilterIncomplete.Checked,
+                Verified = QuestsFilterVerified.Checked,
+                Unverified = QuestsFilterUnverified.Checked,
                 OneTime = QuestsFilterOneTime.Checked,
                 Repeatable = QuestsFilterRepeatable.Checked,
                 Server = QuestsFilterServer.Checked,
@@ -259,6 +271,8 @@ namespace OracleOfDereth
             QuestsFilterText.Text = "";
             QuestsFilterCompleted.Checked = false;
             QuestsFilterIncomplete.Checked = false;
+            QuestsFilterVerified.Checked = false;
+            QuestsFilterUnverified.Checked = false;
             QuestsFilterOneTime.Checked = false;
             QuestsFilterRepeatable.Checked = false;
             QuestsFilterServer.Checked = false;
