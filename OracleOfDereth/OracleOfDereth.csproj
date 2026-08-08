@@ -78,6 +78,13 @@
       <HintPath>..\deps\VirindiViewService.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <!-- Virindi Tank's public interop assembly. Compile-time only (Private=False): VTank ships its
+         own copy, and it is an OPTIONAL dependency — see Models\VTank.cs for how a missing VTank is
+         kept from taking the plugin down with it. -->
+    <Reference Include="uTank2">
+      <HintPath>..\deps\utank2-i.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NSIS-Tool" Version="3.0.8">
