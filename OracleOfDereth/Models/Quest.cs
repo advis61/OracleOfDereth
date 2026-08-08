@@ -227,21 +227,21 @@ namespace OracleOfDereth
             return !IsRepeatable();
         }
 
-        // Is this flag known to really exist on the world you're playing? Two independent kinds
-        // of evidence, either of which settles it:
-        //
-        //  - The CSV's Verified Conquest column, which only counts on Conquest. It was populated
-        //    from real /myquests dumps off that server, so it says nothing about anywhere else.
-        //  - The character holding the flag. If /myquests reports it, it exists — that's proof
-        //    from the server itself, and it holds on every world.
+        // Is this flag known to really exist on the world you're playing? The CSV's Verified
+        // Conquest column is the whole answer, and it only counts on Conquest — it was populated
+        // from real /myquests dumps off that server, so it says nothing about anywhere else.
         //
         // The point is to separate the flags confirmed real from the long tail of the master list
         // that was machine-built from the ACE database and may name quests no live server has.
+        //
+        // This deliberately ignores whether the character holds the flag. Holding it does prove
+        // it exists — on any world, not just Conquest — so `|| IsComplete()` is a one-line change
+        // if that turns out to be the more useful reading. The tradeoff: with it, Verified is a
+        // superset of Completed and can never hide anything you've done, which makes the box on
+        // its own fairly weak; without it, Verified is purely a statement about the master list.
         public bool IsVerified()
         {
-            if (VerifiedConquest && OracleOfDereth.Server.IsConquest) { return true; }
-
-            return IsComplete();
+            return VerifiedConquest && OracleOfDereth.Server.IsConquest;
         }
 
         // Having the flag at all is the whole test. /myquests only reports flags the character
@@ -387,10 +387,10 @@ namespace OracleOfDereth
             return quest.IsComplete() ? Completed : Incomplete;
         }
 
-        // Same whitelist behaviour again for verified / unverified. Note this pair overlaps the
-        // completed pair rather than being independent of it — every completed flag is verified
-        // by definition — so ticking Incomplete + Verified is the useful combination: quests
-        // known to be real on this world that this character hasn't done.
+        // Same whitelist behaviour again for verified / unverified. Independent of the completed
+        // pair, so the combinations all mean something: Incomplete + Verified is the worklist of
+        // real quests this character hasn't done, and Completed + Unverified surfaces flags the
+        // character actually holds that the CSV hasn't marked — i.e. gaps in the column.
         private bool MatchesVerified(Quest quest)
         {
             if (Verified == Unverified) return true;
