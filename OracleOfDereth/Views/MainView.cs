@@ -230,6 +230,7 @@ namespace OracleOfDereth
                 DisposeConquestFship();
                 DisposeTop();
                 DisposeAugmentations();
+                DisposeCantrips();
                 DisposeCredits();
                 DisposeRecalls();
                 DisposeLuminance();
