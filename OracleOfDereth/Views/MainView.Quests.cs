@@ -2,6 +2,7 @@ using Decal.Adapter;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using VirindiViewService.Controls;
@@ -197,6 +198,9 @@ namespace OracleOfDereth
 
         private void UpdateQuestsList()
         {
+            // Nothing to report means nothing to click.
+            QuestsSend.Visible = QuestSubmit.PendingCount() > 0;
+
             QuestFilter filter = QuestsFilter();
 
             // With nothing filtering, use the collection as-is. The Where(...).ToList() otherwise
@@ -388,53 +392,31 @@ namespace OracleOfDereth
             Util.Chat("The New filter shows flags this server reports that aren't in the Oracle of Dereth master list yet. Send them along to Advis Eveldan if you'd like them added.", Util.ColorPink);
         }
 
-        // ---- Send button --------------------------------------------------------------------
-        // Writes the two things worth curating — flags this character holds that quests.csv has
-        // never heard of, and flags it holds that the CSV lists but hasn't marked Verified — to a
-        // file alongside the other exports, in /myquests format. Attach that file on Discord;
-        // nothing is uploaded from here.
+        // ---- Send ------------------------------------------------------------------------------
+        // Exports the flags the master list doesn't cover yet, posts them to the submission
+        // channel, and leaves the file behind either way so it can be passed along by hand.
         //
-        // Reads the tracked flags as they stand and issues no server command of its own. The
-        // collection is already current: every tab that shows quest data runs QuestFlag.Refresh()
-        // on first view, and Refresh is one button to the right for a deliberate re-pull. That
-        // makes this synchronous — no /log to toggle, no waiting on chat, nothing left half-done
-        // if the character logs out.
-        private void QuestsSend_Hit(object sender, EventArgs e)
-        {
-            int flagCount = QuestFlag.QuestFlags.Count;
+        // Issues no server command: every quest tab runs QuestFlag.Refresh() on first view, and
+        // Refresh sits one button to the right for a deliberate re-pull.
+        private const int SendPreviewRows = 20;
 
-            if (flagCount == 0)
+        private void QuestsSend_Hit(object sender, EventArgs e) => SendQuestFlags();
+
+        // Also "/od quests send", which stays reachable when the button is hidden — hence the
+        // explicit nothing-to-send message rather than a silent no-op.
+        public void SendQuestFlags()
+        {
+            int held = QuestFlag.QuestFlags.Count;
+            if (held == 0)
             {
                 Util.Chat("Send: no quest flags tracked yet - hit Refresh first.", Util.ColorPink);
                 return;
             }
 
-            QuestsSendReport(flagCount);
-        }
-
-        private void QuestsSendReport(int flagCount)
-        {
-            // The merge normally happens on MainView's own tick; call it here so the diff can't
-            // run against a collection that's a tick behind. It's idempotent.
-            Quest.MergeQuestFlags();
-
-            // Two separate curation jobs, so they're reported separately: unknown flags need a new
-            // CSV row written, known-but-unverified ones only need the column filled in.
-            List<Quest> unknown = Quest.Quests
-                .Where(q => q.IsNew && q.IsComplete())
-                .OrderBy(q => q.Flag).ToList();
-
-            List<Quest> unverified = Quest.Quests
-                .Where(q => !q.IsNew && q.IsComplete() && !q.VerifiedConquest)
-                .OrderBy(q => q.Flag).ToList();
-
-            // Both groups go in the one file: each needs sending, and the recipient can tell them
-            // apart by checking against the master list. Kept as pure /myquests lines with no
-            // headers or blank separators, so it stays parseable by anything that reads a real
-            // chat log — the breakdown lives in chat and on the clipboard instead.
+            QuestSubmit.Pending(out List<Quest> unknown, out List<Quest> unverified);
             List<Quest> send = unknown.Concat(unverified).OrderBy(q => q.Flag).ToList();
 
-            Util.Chat($"Send: {flagCount} flags held. {unknown.Count} not in the master list, {unverified.Count} held but unverified.", Util.ColorPink);
+            Util.Chat($"Send: {held} flags held. {unknown.Count} not in the master list, {unverified.Count} held but unverified.", Util.ColorPink);
 
             if (send.Count == 0)
             {
@@ -445,6 +427,9 @@ namespace OracleOfDereth
             string path;
             try
             {
+                // Both groups in one file, as pure /myquests lines — no headers or blank
+                // separators, so it stays readable by anything that parses a real chat log. The
+                // labelled breakdown goes to the clipboard instead.
                 path = QuestExport.ToMyQuests(send);
             }
             catch (Exception ex)
@@ -454,8 +439,57 @@ namespace OracleOfDereth
                 return;
             }
 
+            Util.ClipboardCopy(SendBreakdown(held, unknown, unverified));
+            SendPost(path, send, unknown.Count, unverified.Count);
+
+            SendPreview("Not in the master list", unknown);
+            SendPreview("Held but not marked Verified", unverified);
+        }
+
+        // Posts the file just written rather than re-deriving its text, so what arrives is exactly
+        // what's on disk and the manual fallback can't disagree with it. Names what leaves the
+        // machine — this ships to other players, and a button called Send shouldn't be vague.
+        private static void SendPost(string path, List<Quest> send, int unknown, int unverified)
+        {
+            string character = CoreManager.Current.CharacterFilter.Name;
+            string server = Server.Name;
+
+            if (!QuestSubmit.CanSend)
+            {
+                Util.Chat($"Send: no submission address in this build - pass {path} along by hand.", Util.ColorPink);
+                return;
+            }
+
+            string content;
+            try
+            {
+                content = File.ReadAllText(path);
+            }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
+                Util.Chat($"Send: wrote {path} but couldn't read it back to post it.", Util.ColorRed);
+                return;
+            }
+
+            string summary = $"**{character}** ({server}) - {send.Count} flags: {unknown} new, {unverified} unverified";
+            string[] flags = send.Select(q => q.Flag).ToArray();
+
+            if (QuestSubmit.Send(Path.GetFileName(path), content, summary, server, flags, out string reason))
+            {
+                Util.Chat($"Sent {send.Count} flags as {character} of {server}. Thanks! They won't be sent again.", Util.ColorPink);
+            }
+            else
+            {
+                Util.Chat($"Send: not posted - {reason}. Saved to {path}, pass it along by hand.", Util.ColorPink);
+            }
+        }
+
+        private static string SendBreakdown(int held, List<Quest> unknown, List<Quest> unverified)
+        {
             var sb = new StringBuilder();
-            sb.AppendLine($"# {CoreManager.Current.CharacterFilter.Name} ({Server.Name}) {DateTime.Now:yyyy-MM-dd HH:mm} - {flagCount} flags held");
+
+            sb.AppendLine($"# {CoreManager.Current.CharacterFilter.Name} ({Server.Name}) {DateTime.Now:yyyy-MM-dd HH:mm} - {held} flags held");
             sb.AppendLine();
             sb.AppendLine($"# Not in the master list ({unknown.Count}) - flag,name");
             foreach (Quest quest in unknown)
@@ -463,37 +497,31 @@ namespace OracleOfDereth
                 string name = quest.DisplayName();
                 sb.AppendLine(name.Length > 0 ? $"{quest.Flag},{name}" : quest.Flag);
             }
+
             sb.AppendLine();
             sb.AppendLine($"# Held but not marked Verified ({unverified.Count})");
             foreach (Quest quest in unverified) { sb.AppendLine(quest.Flag); }
 
-            Util.ClipboardCopy(sb.ToString());
-
-            Util.Chat($"Wrote {send.Count} flags to {path} - attach that file on Discord. Breakdown copied to clipboard.", Util.ColorPink);
-
-            // Chat gets a preview only. The interesting list runs to hundreds of rows on a mature
-            // character, and the clipboard already has all of it.
-            QuestsSendPreview("Not in the master list", unknown);
-            QuestsSendPreview("Held but not marked Verified", unverified);
+            return sb.ToString();
         }
 
-        private const int QuestsSendPreviewRows = 20;
-
-        private static void QuestsSendPreview(string heading, List<Quest> quests)
+        // Chat gets a preview; a mature character runs to hundreds of rows and the clipboard
+        // already has all of them.
+        private static void SendPreview(string heading, List<Quest> quests)
         {
             if (quests.Count == 0) { return; }
 
             Util.Chat($"{heading}:", Util.ColorPink);
 
-            foreach (Quest quest in quests.Take(QuestsSendPreviewRows))
+            foreach (Quest quest in quests.Take(SendPreviewRows))
             {
                 string name = quest.DisplayName();
                 Util.Chat(name.Length > 0 ? $"  {quest.Flag} - {name}" : $"  {quest.Flag}", Util.ColorPink);
             }
 
-            if (quests.Count > QuestsSendPreviewRows)
+            if (quests.Count > SendPreviewRows)
             {
-                Util.Chat($"  ...and {quests.Count - QuestsSendPreviewRows} more (clipboard has them all).", Util.ColorPink);
+                Util.Chat($"  ...and {quests.Count - SendPreviewRows} more (clipboard has them all).", Util.ColorPink);
             }
         }
 

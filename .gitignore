@@ -365,3 +365,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 .claude/
+# Discord webhook URL for the Flags tab Send button. Never commit: GitHub secret
+# scanning reports Discord webhooks and Discord auto-revokes them, which would break
+# Send for every user. Release builds embed it; the repo must not carry it.
+OracleOfDereth/Resources/webhook.txt

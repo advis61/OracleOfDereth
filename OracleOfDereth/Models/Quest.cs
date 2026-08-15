@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace OracleOfDereth
 {
@@ -108,46 +109,63 @@ namespace OracleOfDereth
             return new string(description.Where(c => c != '"' && c != '\'').ToArray()).Trim();
         }
 
+        // Columns are located by header name, not position, so the CSV can be reordered, renamed
+        // within the aliases below, or grown new columns without touching this code. Only the flag
+        // column is required; anything else missing just leaves its field empty, which is a
+        // thinner row rather than a failed import.
+        private static readonly string[] FlagNames = { "questflag", "flag" };
+        private static readonly string[] ServerNames = { "server", "world" };
+        private static readonly string[] VerifiedNames = { "verifiedconquest", "verified" };
+        private static readonly string[] NameNames = { "quest", "questname", "name", "title" };
+        private static readonly string[] UrlNames = { "url", "link", "wiki" };
+        private static readonly string[] InfoNames = { "info", "notes", "description" };
+        private static readonly string[] HintNames = { "hint", "hints", "directions", "walkthrough" };
+        private static readonly string[] RepeatNames = { "repeatable", "repeat" };
+
         public static void LoadQuestsCSV()
         {
             var quests = new List<Quest>();
 
-            var assembly = Assembly.GetExecutingAssembly();
-
-            // Match the full resource path, not just "quests.csv" — johnquests.csv, customquests.csv,
-            // augquests.csv, creditquests.csv, facilityquests.csv and flagquests.csv all end with it.
-            string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(".Resources.quests.csv", StringComparison.OrdinalIgnoreCase));
-            if (resourceName == null) throw new FileNotFoundException("Embedded resource quests.csv not found.");
-
-            using (var stream = assembly.GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
+            using (var reader = OpenQuestsCSV())
             {
                 string headerLine = reader.ReadLine();
                 if (headerLine == null) throw new InvalidDataException("CSV file is empty.");
 
-                // Assume columns: QuestFlag,Server,Verified Conquest,Quest,Url,Info,Hint,Repeatable
+                Dictionary<string, int> columns = MapColumns(headerLine);
+
+                int flagCol = ColumnIndex(columns, FlagNames);
+                if (flagCol < 0) throw new InvalidDataException("CSV has no quest flag column.");
+
+                int serverCol = ColumnIndex(columns, ServerNames);
+                int verifiedCol = ColumnIndex(columns, VerifiedNames);
+                int nameCol = ColumnIndex(columns, NameNames);
+                int urlCol = ColumnIndex(columns, UrlNames);
+                int infoCol = ColumnIndex(columns, InfoNames);
+                int hintCol = ColumnIndex(columns, HintNames);
+                int repeatCol = ColumnIndex(columns, RepeatNames);
+
                 while (!reader.EndOfStream)
                 {
                     string line = reader.ReadLine();
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
-                    var fields = Util.CsvParseLine(line);
-                    if (fields.Length < 8) continue;
+                    string[] fields = Util.CsvParseLine(line);
+
+                    // Short rows are read as far as they go rather than dropped — a row that lost
+                    // its trailing columns still carries a usable flag.
+                    string flag = Field(fields, flagCol).ToLower();
+                    if (flag.Length == 0) continue;
 
                     var quest = new Quest
                     {
-                        Flag = fields[0].Trim().ToLower(),
-                        Server = fields[1].Trim(),
-                        // "Verified" / blank in the file; anything else reads as unverified. Note
-                        // this column doesn't follow the TRUE/FALSE convention the Repeatable one
-                        // below does — it's a marker word, so blank is the only other state.
-                        VerifiedConquest = string.Equals(fields[2].Trim(), "verified", StringComparison.OrdinalIgnoreCase),
-                        Name = fields[3].Trim(),
-                        Url = fields[4].Trim(),
-                        Info = fields[5].Trim(),
-                        Hint = fields[6].Trim(),
-                        // TRUE / FALSE in the file; anything that isn't "true" reads as one-time.
-                        Repeatable = string.Equals(fields[7].Trim(), "true", StringComparison.OrdinalIgnoreCase)
+                        Flag = flag,
+                        Server = Field(fields, serverCol),
+                        VerifiedConquest = IsTrue(Field(fields, verifiedCol)),
+                        Name = Field(fields, nameCol),
+                        Url = Field(fields, urlCol),
+                        Info = Field(fields, infoCol),
+                        Hint = Field(fields, hintCol),
+                        Repeatable = IsTrue(Field(fields, repeatCol))
                     };
 
                     // A blank Server means every world; otherwise keep only this character's. The
@@ -162,6 +180,83 @@ namespace OracleOfDereth
             Quests.AddRange(quests);
 
             foreach (Quest quest in quests) { KnownFlags.Add(quest.Flag); }
+        }
+
+        // Header name -> position. First occurrence wins, so a duplicated column doesn't shadow
+        // the original.
+        private static Dictionary<string, int> MapColumns(string headerLine)
+        {
+            var columns = new Dictionary<string, int>();
+            string[] headers = Util.CsvParseLine(headerLine);
+
+            for (int i = 0; i < headers.Length; i++)
+            {
+                string key = NormalizeHeader(headers[i]);
+                if (key.Length > 0 && !columns.ContainsKey(key)) { columns[key] = i; }
+            }
+
+            return columns;
+        }
+
+        // Everything but letters and digits is dropped, so "Verified Conquest", "verified_conquest"
+        // and "VerifiedConquest" are one column. Also disposes of a UTF-8 BOM, which would
+        // otherwise attach itself to the first header only and quietly break that one column.
+        private static string NormalizeHeader(string header)
+        {
+            var sb = new StringBuilder();
+
+            foreach (char c in header ?? "")
+            {
+                if (char.IsLetterOrDigit(c)) { sb.Append(char.ToLowerInvariant(c)); }
+            }
+
+            return sb.ToString();
+        }
+
+        private static int ColumnIndex(Dictionary<string, int> columns, string[] names)
+        {
+            foreach (string name in names)
+            {
+                if (columns.TryGetValue(name, out int index)) { return index; }
+            }
+
+            return -1;
+        }
+
+        private static string Field(string[] fields, int index)
+        {
+            return index >= 0 && index < fields.Length ? fields[index].Trim() : "";
+        }
+
+        // One truthiness rule for every boolean column. Repeatable has always used TRUE/FALSE and
+        // Verified Conquest the word "Verified", so both spellings are accepted along with what
+        // hand-editing a CSV tends to produce. Anything unrecognised is false.
+        private static bool IsTrue(string value)
+        {
+            switch (value.ToLowerInvariant())
+            {
+                case "true":
+                case "yes":
+                case "y":
+                case "1":
+                case "x":
+                case "verified":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static StreamReader OpenQuestsCSV()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+
+            // Match the full resource path, not just "quests.csv" — johnquests.csv, customquests.csv,
+            // augquests.csv, creditquests.csv, facilityquests.csv and flagquests.csv all end with it.
+            string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(".Resources.quests.csv", StringComparison.OrdinalIgnoreCase));
+            if (resourceName == null) throw new FileNotFoundException("Embedded resource quests.csv not found.");
+
+            return new StreamReader(assembly.GetManifestResourceStream(resourceName));
         }
 
         // Reorders the collection in place, the same way JohnQuest and Title do. Every sort falls

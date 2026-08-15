@@ -61,6 +61,10 @@
     <EmbeddedResource Include="tradeView.xml" />
     <EmbeddedResource Include="Resources\johnquests.csv" />
     <EmbeddedResource Include="Resources\quests.csv" />
+    <!-- Gitignored, so it isn't there in a clean clone. Conditional or the build breaks for
+         anyone building from source; QuestSubmit treats a missing resource as "posting not
+         configured" and falls back to writing the local file only. -->
+    <EmbeddedResource Include="Resources\webhook.txt" Condition="Exists('Resources\webhook.txt')" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Decal.Adapter">

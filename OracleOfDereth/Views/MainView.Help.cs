@@ -21,6 +21,8 @@ namespace OracleOfDereth
             ("/od landblock",             "Print the current landblock ID"),
             ("/od logout",                "Log out of the game"),
             ("/od questflag",             "Look up quest info for the selected NPC"),
+            ("/od quests send",           "Send your new quest flags to Oracle of Dereth"),
+            ("/od quests send clear",     "Forget which quest flags you've sent"),
             ("/od update",                "Checks for available updates"),
         };
 
