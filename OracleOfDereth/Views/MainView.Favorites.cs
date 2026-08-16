@@ -22,6 +22,13 @@ namespace OracleOfDereth
         public HudButton FavoritesRemove { get; private set; }
         public HudButton FavoritesRefresh { get; private set; }
 
+        // Reorder arrows. Picture boxes in a fixed layout rather than push buttons, same as the
+        // sort icons on the other tabs.
+        public HudFixedLayout FavoritesUp { get; private set; }
+        public HudFixedLayout FavoritesDown { get; private set; }
+        public HudPictureBox FavoritesUpIcon { get; private set; }
+        public HudPictureBox FavoritesDownIcon { get; private set; }
+
         public HudStaticText FavoritesListFlag { get; private set; }
         public HudStaticText FavoritesListName { get; private set; }
         public HudStaticText FavoritesListReady { get; private set; }
@@ -40,6 +47,18 @@ namespace OracleOfDereth
             FavoritesRefresh = (HudButton)view["FavoritesRefresh"];
             FavoritesRefresh.Hit += QuestFlagsRefresh_Hit;
 
+            FavoritesUpIcon = new HudPictureBox();
+            FavoritesUpIcon.Image = IconArrowUp;
+            FavoritesUp = (HudFixedLayout)view["FavoritesUp"];
+            FavoritesUp.AddControl(FavoritesUpIcon, new Rectangle(0, 0, 16, 16));
+            FavoritesUpIcon.Hit += FavoritesUp_Hit;
+
+            FavoritesDownIcon = new HudPictureBox();
+            FavoritesDownIcon.Image = IconArrowDown;
+            FavoritesDown = (HudFixedLayout)view["FavoritesDown"];
+            FavoritesDown.AddControl(FavoritesDownIcon, new Rectangle(0, 0, 16, 16));
+            FavoritesDownIcon.Hit += FavoritesDown_Hit;
+
             FavoritesListFlag = (HudStaticText)view["FavoritesListFlag"];
             FavoritesListName = (HudStaticText)view["FavoritesListName"];
             FavoritesListReady = (HudStaticText)view["FavoritesListReady"];
@@ -54,6 +73,8 @@ namespace OracleOfDereth
         {
             FavoritesRemove.Hit -= FavoritesRemove_Hit;
             FavoritesRefresh.Hit -= QuestFlagsRefresh_Hit;
+            FavoritesUpIcon.Hit -= FavoritesUp_Hit;
+            FavoritesDownIcon.Hit -= FavoritesDown_Hit;
             FavoritesList.Click -= FavoritesList_Click;
         }
 
@@ -72,7 +93,11 @@ namespace OracleOfDereth
         {
             List<Quest> quests = QuestFavorite.Quests();
 
-            FavoritesRemove.Visible = favoritesSelectedFlag.Length > 0;
+            // Reordering and removing both act on the picked row, so all three appear together.
+            bool picked = favoritesSelectedFlag.Length > 0;
+            FavoritesRemove.Visible = picked;
+            FavoritesUp.Visible = picked;
+            FavoritesDown.Visible = picked;
 
             int completed = 0;
 
@@ -149,6 +174,18 @@ namespace OracleOfDereth
         private static bool FavoriteIsDone(Quest quest)
         {
             return quest.IsOneTime() ? quest.IsComplete() : !quest.Ready();
+        }
+
+        // The picked row keeps its selection across a move, so a row can be walked several places
+        // with repeated clicks instead of being re-picked each time.
+        private void FavoritesUp_Hit(object sender, EventArgs e)
+        {
+            if (QuestFavorite.MoveUp(favoritesSelectedFlag)) { UpdateFavoritesList(); }
+        }
+
+        private void FavoritesDown_Hit(object sender, EventArgs e)
+        {
+            if (QuestFavorite.MoveDown(favoritesSelectedFlag)) { UpdateFavoritesList(); }
         }
 
         private void FavoritesRemove_Hit(object sender, EventArgs e)

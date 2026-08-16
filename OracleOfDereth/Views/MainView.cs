@@ -31,6 +31,11 @@ namespace OracleOfDereth
         readonly int IconComplete = 0x60011F9;   // Green Circle
         readonly int IconNotComplete = 0x60011F8;    // Red Circle
         readonly int IconSort = 0x60011F7;    // Sort Icon 6D76
+
+        // Reorder arrows on the Favorites tab, the same pair SSSort draws in its move-up /
+        // move-down columns.
+        readonly int IconArrowUp = 0x60028FC;
+        readonly int IconArrowDown = 0x60028FD;
         readonly ACImage ImageDisabled = new ACImage(Color.FromArgb(255, 75, 75, 75));
         readonly Color ColorSelected = Color.Orange;
 
