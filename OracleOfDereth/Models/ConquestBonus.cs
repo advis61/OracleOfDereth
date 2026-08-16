@@ -8,9 +8,9 @@ namespace OracleOfDereth
     // The Conquest server's XP bonus breakdown, printed by the "/bonus" command as one
     // "<Type> Bonus: <percent>% (<detail>)" line per source under a "=== XP Bonuses ===" header.
     // This class issues that command, parses the lines, and stores each bonus separately for
-    // display on the Conquest (Custom) tab beneath the augs list. Mirrors ConquestAugmentation /
-    // ConquestBank. Conquest-only. Unlike "/augs", "/bonus" is NOT refreshed on login — it lazy-
-    // loads the first time the tab is shown, and on the tab's Refresh button.
+    // display on the Server -> Experience tab. Mirrors ConquestAugmentation / ConquestBank.
+    // Conquest-only. Unlike "/augs", "/bonus" is NOT refreshed on login — it lazy-loads the first
+    // time the tab is shown, and on the tab's Refresh button.
     public class ConquestBonus
     {
         public string Name { get; }
@@ -18,7 +18,9 @@ namespace OracleOfDereth
 
         private ConquestBonus(string name) { Name = name; }
 
-        // Registry, in "/bonus" output order.
+        // Registry, in "/bonus" output order. The server splits the total two ways — kills are
+        // multiplied by a different set of bonuses than quest and luminance awards — so both
+        // totals are kept and shown, under the server's own wording.
         public static readonly List<ConquestBonus> All = new List<ConquestBonus>
         {
             new ConquestBonus("Quest"),
@@ -26,17 +28,23 @@ namespace OracleOfDereth
             new ConquestBonus("PK Dungeon"),
             new ConquestBonus("Augmentation"),
             new ConquestBonus("Equipment"),
-            new ConquestBonus("Total"),
+            new ConquestBonus("Total (Kills)"),
+            new ConquestBonus("Total (Quest/Lum)"),
         };
 
-        // A "/bonus" output line, e.g. "Quest Bonus: 14.18% (1,418 quests)" or
-        // "PK Dungeon Bonus: 0.00%". The label MUST be at the start of the line (after an optional
-        // chat timestamp like "[12:34:56] "), which is only ever true of our own "/bonus" output.
-        // When another player copies their bonuses into chat it arrives wrapped — 'Someone says,
-        // "Quest Bonus: 99.99%"' — so the label is no longer at the start and is ignored, instead
-        // of overwriting our own bonuses. Group 1 = type, group 2 = the rest of the line.
+        // A "/bonus" output line, e.g. "Quest Bonus: 14.18% (1,418 quests)", "PK Dungeon Bonus:
+        // 0.00%" or "Total Bonus (Kills): 0.16%". The label MUST be at the start of the line (after
+        // an optional chat timestamp like "[12:34:56] "), which is only ever true of our own
+        // "/bonus" output. When another player copies their bonuses into chat it arrives wrapped —
+        // 'Someone says, "Quest Bonus: 99.99%"' — so the label is no longer at the start and is
+        // ignored, instead of overwriting our own bonuses.
+        //
+        // Group 1 = type, group 2 = the qualifier the Total lines carry before the colon (absent on
+        // every other line), group 3 = the rest of the line. The qualifier group must stay before
+        // the colon: the parenthetical the Augmentation and Quest lines carry sits after it and is
+        // part of the value, not part of the label.
         private static readonly Regex LineRegex = new Regex(
-            @"^\s*(?:\[[^\]]*\]\s*)?(Quest|Enlightenment|PK Dungeon|Augmentation|Equipment|Total) Bonus:\s*(.+\S)\s*$");
+            @"^\s*(?:\[[^\]]*\]\s*)?(Quest|Enlightenment|PK Dungeon|Augmentation|Equipment|Total) Bonus(?:\s*\(([^)]+)\))?:\s*(.+\S)\s*$");
 
         // The block's title line, e.g. "=== XP Bonuses ===". Nothing to parse; recognised only so
         // it can be suppressed with the values, and only while a reply we asked for is arriving.
@@ -46,8 +54,8 @@ namespace OracleOfDereth
         // When we last issued "/bonus" (UtcNow). Drives the throttle below.
         private static DateTime LastRefresh = DateTime.MinValue;
 
-        // Minimum spacing between auto-refreshes. The Conquest augs tab re-pulls the bonuses while
-        // it's on screen (see RefreshIfStale, called each tick from UpdateConquestAugmentations) —
+        // Minimum spacing between auto-refreshes. The Experience tab re-pulls the bonuses while
+        // it's on screen (see RefreshIfStale, called each tick from UpdateConquestExperience) —
         // but no more often than this, so it never spams "/bonus". The Refresh button ignores it.
         private static readonly TimeSpan RefreshThrottle = TimeSpan.FromMinutes(5);
 
@@ -82,7 +90,7 @@ namespace OracleOfDereth
         }
 
         // Refresh only if it's been at least RefreshThrottle since the last pull. The view calls
-        // this every tick while the augs tab is visible, so coming back to the tab shows current
+        // this every tick while the Experience tab is visible, so coming back to it shows current
         // bonuses on its own — immediately if it's been a while, and at most once per throttle
         // window while you sit on it — without a manual Refresh and without hammering the server.
         public static bool RefreshIfStale()
@@ -114,8 +122,13 @@ namespace OracleOfDereth
             Match m = LineRegex.Match(text);
             if (!m.Success) return Request.Awaiting;
 
-            ConquestBonus entry = Get(m.Groups[1].Value);
-            if (entry != null) { entry.Value = m.Groups[2].Value.Trim(); }
+            // "Total" + "(Kills)" -> the "Total (Kills)" entry; every other line has no qualifier
+            // and keys on the bare type.
+            string qualifier = m.Groups[2].Value.Trim();
+            string name = qualifier.Length > 0 ? $"{m.Groups[1].Value} ({qualifier})" : m.Groups[1].Value;
+
+            ConquestBonus entry = Get(name);
+            if (entry != null) { entry.Value = m.Groups[3].Value.Trim(); }
 
             return Request.Awaiting;
         }

@@ -162,6 +162,7 @@ namespace OracleOfDereth
             ItemCache.Init();
             Trade.Init();
             ConquestAugmentation.Init();
+            ConquestEnlAugmentation.Init();
             ConquestBank.Init();
             ConquestBonus.Init();
             TopBoard.Init();
@@ -315,6 +316,10 @@ namespace OracleOfDereth
                 else if (ConquestAugmentation.Matches(e.Text))
                 {
                     Suppress(e, ConquestAugmentation.NoteChat(e.Text));
+                }
+                else if (ConquestEnlAugmentation.Matches(e.Text))
+                {
+                    Suppress(e, ConquestEnlAugmentation.NoteChat(e.Text));
                 }
                 else if (ConquestBonus.Matches(e.Text))
                 {

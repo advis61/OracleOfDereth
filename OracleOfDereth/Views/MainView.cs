@@ -69,10 +69,11 @@ namespace OracleOfDereth
 
             // Server
             { 4_00, 720 }, // Augs (Conquest)
-            { 4_01, 580 }, // Bank
-            { 4_02, 600 }, // Fship (recruiting fellowships)
-            { 4_03, 430 }, // Quests (Custom Quests)
-            { 4_04, 450 }, // Top (leaderboards; every sub-tab is the same shape)
+            { 4_01, 720 }, // Experience (character summary + XP bonuses) — same width as Augs
+            { 4_02, 580 }, // Bank
+            { 4_03, 600 }, // Fship (recruiting fellowships)
+            { 4_04, 430 }, // Quests (Custom Quests)
+            { 4_05, 450 }, // Top (leaderboards; every sub-tab is the same shape)
 
             // About / Settings / Help
             { 5_00, 350 }, // About
@@ -106,11 +107,12 @@ namespace OracleOfDereth
             { 3_05, 545 }, // Titles (Available and Unavailable)
 
             // Server
-            { 4_00, 505 }, // Augs (Conquest)
-            { 4_01, 350 }, // Bank
-            { 4_02, 545 }, // Fship (recruiting fellowships)
-            { 4_03, 545 }, // Quests (Custom Quests)
-            { 4_04, 555 }, // Top (leaderboards) — taller: a third row of tabs above the list
+            { 4_00, 561 }, // Augs (Conquest) — advanced augs over enlightenment augs
+            { 4_01, 310 }, // Experience (character summary + seven XP bonus rows)
+            { 4_02, 350 }, // Bank
+            { 4_03, 545 }, // Fship (recruiting fellowships)
+            { 4_04, 545 }, // Quests (Custom Quests)
+            { 4_05, 555 }, // Top (leaderboards) — taller: a third row of tabs above the list
 
             // About / Settings / Help
             { 5_00, 270 }, // About
@@ -178,6 +180,7 @@ namespace OracleOfDereth
                 InitTitles();
                 InitCustomQuests();
                 InitConquestAugmentations();
+                InitConquestExperience();
                 InitConquestBank();
                 InitConquestFship();
                 InitTop();
@@ -226,6 +229,7 @@ namespace OracleOfDereth
                 DisposeTitles();
                 DisposeCustomQuests();
                 DisposeConquestAugmentations();
+                DisposeConquestExperience();
                 DisposeConquestBank();
                 DisposeConquestFship();
                 DisposeTop();
@@ -434,10 +438,11 @@ namespace OracleOfDereth
 
             // Server Tab
             if (currentTab == 4_00) { UpdateConquestAugmentations(); }
-            if (currentTab == 4_01) { UpdateConquestBank(); }
-            if (currentTab == 4_02) { UpdateConquestFship(); }
-            if (currentTab == 4_03) { UpdateCustomQuests(); }
-            if (currentTab == 4_04) { UpdateTop(); }
+            if (currentTab == 4_01) { UpdateConquestExperience(); }
+            if (currentTab == 4_02) { UpdateConquestBank(); }
+            if (currentTab == 4_03) { UpdateConquestFship(); }
+            if (currentTab == 4_04) { UpdateCustomQuests(); }
+            if (currentTab == 4_05) { UpdateTop(); }
 
             // About / Settings / Help
             if (currentTab == 5_00) {; }
