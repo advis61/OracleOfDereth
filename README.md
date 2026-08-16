@@ -2,7 +2,7 @@
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.17.0/OracleOfDerethInstaller-1.17.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.18.0/OracleOfDerethInstaller-1.18.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
@@ -78,6 +78,10 @@ Society
 Quest Flags
 
 ![Flags](./docs/Flags.png)
+
+Favorites
+
+![Flags](./docs/Favorites.png)
 
 John Tracker
 
@@ -218,7 +222,13 @@ Click any column header to sort by it; click again to reverse.
 
 The Copy / Text / CSV / JSON buttons export whatever the filter is currently showing.
 
+Click Add to Favorites to add to the Favorites list. Click Send to send your quest flags to Advis Eveldan to add to the master list.
+
 Unlike the hand-curated lists elsewhere in the plugin, this one was assembled with AI assistance and may contain errors.
+
+### Favorites
+
+Set up your own list of quests. Set order with up or down arrows.
 
 ### John Tracker
 
