@@ -155,7 +155,7 @@ namespace OracleOfDereth
             string missing = stored > quests.Count ? $" ({stored - quests.Count} not on this server)" : "";
 
             if (quests.Count == 0 && stored == 0) {
-                SetText(FavoritesText, "Favorites: none yet - add rows from the Browse tab");
+                SetText(FavoritesText, "Browse quests to add favorites");
             } else {
                 // Counts what the icons show, so the tally can't contradict the list: outstanding
                 // means a one-time quest not yet done, or a repeatable off cooldown.
