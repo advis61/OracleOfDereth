@@ -267,7 +267,7 @@
 					</control>
 				</page>
 
-				<page label="Flags">
+				<page label="Browse">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="QuestsText" left="5" top="5" width="368" height="20" text="Quest Flags"/>
 						<control progid="DecalControls.PushButton" name="QuestsClipboard" left="384" top="3" width="52" height="22" text="Copy"/>
@@ -277,8 +277,9 @@
 						<control progid="DecalControls.PushButton" name="QuestsHelp" left="608" top="3" width="24" height="22" text="?"/>
 
 						<control progid="DecalControls.StaticText" name="QuestsFilterLabel" left="5" top="33" width="38" height="16" text="Filter:"/>
-						<control progid="DecalControls.Edit" name="QuestsFilterText" left="46" top="31" width="274" height="20" text=""/>
-						<control progid="DecalControls.PushButton" name="QuestsFilterReset" left="326" top="30" width="50" height="22" text="Reset"/>
+						<control progid="DecalControls.Edit" name="QuestsFilterText" left="46" top="31" width="220" height="20" text=""/>
+						<control progid="DecalControls.PushButton" name="QuestsFilterReset" left="272" top="30" width="50" height="22" text="Reset"/>
+						<control progid="DecalControls.PushButton" name="QuestsFavorite" left="328" top="29" width="120" height="24" text="Add to Favorites" visible="false"/>
 						<control progid="DecalControls.PushButton" name="QuestsSend" left="455" top="29" width="72" height="24" text="Send" visible="false"/>
 						<control progid="DecalControls.PushButton" name="QuestsRefresh" left="533" top="29" width="100" height="24" text="Refresh"/>
 
@@ -304,6 +305,27 @@
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="250" />
 							<!-- Ready matches the John tab; Solves is wider than John's 32, which was
 							     too cramped for the four-digit counts this list turns up. -->
+							<column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
+							<column progid="DecalControls.TextColumn" name="Solves" fixedwidth="60" />
+						</control>
+					</control>
+				</page>
+
+				<page label="Favorites">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="FavoritesText" left="5" top="5" width="360" height="20" text="Favorites"/>
+						<control progid="DecalControls.PushButton" name="FavoritesRemove" left="370" top="3" width="155" height="24" text="Remove from Favorites" visible="false"/>
+						<control progid="DecalControls.PushButton" name="FavoritesRefresh" left="533" top="3" width="100" height="24" text="Refresh"/>
+
+						<control progid="DecalControls.StaticText" name="FavoritesListFlag" left="25" top="33" width="210" height="17" text="Quest Flag"/>
+						<control progid="DecalControls.StaticText" name="FavoritesListName" left="253" top="33" width="240" height="17" text="Quest Name"/>
+						<control progid="DecalControls.StaticText" name="FavoritesListReady" left="532" top="33" width="60" height="17" text="Ready In"/>
+						<control progid="DecalControls.StaticText" name="FavoritesListSolves" left="596" top="33" width="44" height="17" text="Solves"/>
+
+						<control progid="DecalControls.List" name="FavoritesList" left="0" top="53" width="640" height="2000">
+							<column progid="DecalControls.IconColumn" name="Completed" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Flag" fixedwidth="220" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="250" />
 							<column progid="DecalControls.TextColumn" name="Ready" fixedwidth="80" />
 							<column progid="DecalControls.TextColumn" name="Solves" fixedwidth="60" />
 						</control>

@@ -34,6 +34,10 @@ namespace OracleOfDereth
         readonly ACImage ImageDisabled = new ACImage(Color.FromArgb(255, 75, 75, 75));
         readonly Color ColorSelected = Color.Orange;
 
+        // The clicked row on the Flags and Favorites tabs. Deliberately not ColorSelected: that one
+        // already means "flag the master list doesn't know", and a row can be both at once.
+        readonly Color ColorRowSelected = Color.DeepSkyBlue;
+
         public HudTabView MainViewNotebook { get; private set; }
         public HudTabView StatusViewNotebook { get; private set; }
         public HudTabView CharacterViewNotebook { get; private set; }
@@ -62,10 +66,11 @@ namespace OracleOfDereth
             // Quests Tab
             { 3_00, 430 }, // John
             { 3_01, 640 }, // Flags (every quest flag)
-            { 3_02, 350 }, // Flaggings
-            { 3_03, 450 }, // Hub
-            { 3_04, 430 }, // Markers
-            { 3_05, 560 }, // Titles (Available and Unavailable)
+            { 3_02, 640 }, // Favorites (same columns as Flags)
+            { 3_03, 350 }, // Flaggings
+            { 3_04, 450 }, // Hub
+            { 3_05, 430 }, // Markers
+            { 3_06, 560 }, // Titles (Available and Unavailable)
 
             // Server
             { 4_00, 720 }, // Augs (Conquest)
@@ -101,10 +106,11 @@ namespace OracleOfDereth
             // Quests Tab
             { 3_00, 545}, // John
             { 3_01, 570 }, // Flags (every quest flag) — taller: three rows of chrome above the list
-            { 3_02, 490 }, // Flaggings
-            { 3_03, 485 }, // Hub
-            { 3_04, 545 }, // Markers
-            { 3_05, 545 }, // Titles (Available and Unavailable)
+            { 3_02, 545 }, // Favorites — one row of chrome, so shorter than Flags
+            { 3_03, 490 }, // Flaggings
+            { 3_04, 485 }, // Hub
+            { 3_05, 545 }, // Markers
+            { 3_06, 545 }, // Titles (Available and Unavailable)
 
             // Server
             { 4_00, 561 }, // Augs (Conquest) — advanced augs over enlightenment augs
@@ -173,6 +179,7 @@ namespace OracleOfDereth
                 InitItems();
                 InitNearby();
                 InitQuests();
+                InitFavorites();
                 InitJohn();
                 InitMarkers();
                 InitFlags();
@@ -222,6 +229,7 @@ namespace OracleOfDereth
                 DisposeNearby();
                 DisposeFellowship();
                 DisposeQuests();
+                DisposeFavorites();
                 DisposeJohn();
                 DisposeMarkers();
                 DisposeFlags();
@@ -387,6 +395,20 @@ namespace OracleOfDereth
             if (control.Text != value) { control.Text = value; }
         }
 
+        // Tint by explicit colour, null to reset. The bool overload below is the two-state form;
+        // this one exists for rows that have more than one reason to be tinted.
+        private void AssignTint(HudList.HudListRowAccessor row, Color? color, List<int> columns)
+        {
+            foreach (int column in columns)
+            {
+                if (color.HasValue) {
+                    ((HudStaticText)row[column]).TextColor = color.Value;
+                } else {
+                    ((HudStaticText)row[column]).ResetTextColor();
+                }
+            }
+        }
+
         private void AssignSelected(HudList.HudListRowAccessor row, bool selected, List<int> columns)
         {
             foreach (int column in columns)
@@ -431,10 +453,11 @@ namespace OracleOfDereth
             // Quests Tab
             if (currentTab == 3_00) { UpdateJohn(); }
             if (currentTab == 3_01) { UpdateQuests(); }
-            if (currentTab == 3_02) { UpdateFlags(); }
-            if (currentTab == 3_03) { UpdateFacility(); }
-            if (currentTab == 3_04) { UpdateMarkers(); }
-            if (currentTab == 3_05) { UpdateTitles(); }
+            if (currentTab == 3_02) { UpdateFavorites(); }
+            if (currentTab == 3_03) { UpdateFlags(); }
+            if (currentTab == 3_04) { UpdateFacility(); }
+            if (currentTab == 3_05) { UpdateMarkers(); }
+            if (currentTab == 3_06) { UpdateTitles(); }
 
             // Server Tab
             if (currentTab == 4_00) { UpdateConquestAugmentations(); }

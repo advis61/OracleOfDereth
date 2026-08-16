@@ -19,11 +19,19 @@ namespace OracleOfDereth
         // render loop so it isn't reallocated once per row across thousands of rows.
         private static readonly List<int> QuestsRowColumns = new List<int> { 1, 2, 3, 4 };
 
-        // Which rows are currently tinted as new, parallel to the list's rows. AssignSelected
-        // writes four colour properties per row, so firing it on every row of every repaint is
-        // the most expensive thing on this tab — this lets it fire only when a row's tint
-        // actually flips.
-        private readonly List<bool> questsRowTinted = new List<bool>();
+        // How each row is currently tinted, parallel to the list's rows. Tinting writes four colour
+        // properties per row, so firing it on every row of every repaint is the most expensive
+        // thing on this tab — this lets it fire only when a row's tint actually flips. A row can
+        // qualify for both tints at once, hence a code rather than a bool.
+        private const int TintNone = 0;
+        private const int TintNew = 1;
+        private const int TintRowSelected = 2;
+
+        private readonly List<int> questsRowTinted = new List<int>();
+
+        // The flag of the clicked row, or "" for none. Tracked by flag rather than row index
+        // because sorting and filtering move rows out from under an index between repaints.
+        private string questsSelectedFlag = "";
 
         public HudStaticText QuestsText { get; private set; }
         public HudButton QuestsRefresh { get; private set; }
@@ -35,6 +43,7 @@ namespace OracleOfDereth
         public HudButton QuestsHelp { get; private set; }
         public HudTextBox QuestsFilterText { get; private set; }
         public HudButton QuestsFilterReset { get; private set; }
+        public HudButton QuestsFavorite { get; private set; }
         public HudCheckBox QuestsFilterCompleted { get; private set; }
         public HudCheckBox QuestsFilterIncomplete { get; private set; }
         public HudCheckBox QuestsFilterVerified { get; private set; }
@@ -86,6 +95,9 @@ namespace OracleOfDereth
 
             QuestsFilterReset = (HudButton)view["QuestsFilterReset"];
             QuestsFilterReset.Hit += QuestsFilterReset_Hit;
+
+            QuestsFavorite = (HudButton)view["QuestsFavorite"];
+            QuestsFavorite.Hit += QuestsFavorite_Hit;
 
             QuestsFilterCompleted = (HudCheckBox)view["QuestsFilterCompleted"];
             QuestsFilterCompleted.Change += QuestsFilter_Change;
@@ -147,6 +159,7 @@ namespace OracleOfDereth
             QuestsListSortSolves.Hit -= QuestsListSortSolves_Click;
             QuestsFilterText.Change -= QuestsFilter_Change;
             QuestsFilterReset.Hit -= QuestsFilterReset_Hit;
+            QuestsFavorite.Hit -= QuestsFavorite_Hit;
             QuestsFilterCompleted.Change -= QuestsFilter_Change;
             QuestsFilterIncomplete.Change -= QuestsFilter_Change;
             QuestsFilterVerified.Change -= QuestsFilter_Change;
@@ -201,6 +214,9 @@ namespace OracleOfDereth
             // Nothing to report means nothing to click.
             QuestsSend.Visible = QuestSubmit.PendingCount() > 0;
 
+            // Only offered once a row is picked, so it's never ambiguous what it would add.
+            QuestsFavorite.Visible = questsSelectedFlag.Length > 0;
+
             QuestFilter filter = QuestsFilter();
 
             // With nothing filtering, use the collection as-is. The Where(...).ToList() otherwise
@@ -222,7 +238,7 @@ namespace OracleOfDereth
                     row = QuestsList[x];
                 }
 
-                while (questsRowTinted.Count <= x) { questsRowTinted.Add(false); }
+                while (questsRowTinted.Count <= x) { questsRowTinted.Add(TintNone); }
 
                 // Update
                 Quest quest = quests[x];
@@ -238,11 +254,17 @@ namespace OracleOfDereth
 
                 // Flags the server reported that quests.csv doesn't list are tinted rather than
                 // tagged in the Name column — their name is the game's own description, which
-                // already fills the column, and a "(new)" prefix would just crowd it out.
-                if (questsRowTinted[x] != quest.IsNew)
+                // already fills the column, and a "(new)" prefix would just crowd it out. The
+                // clicked row outranks that: you need to see what you're about to favourite, and
+                // it's one row against however many are new.
+                int tint = quest.Flag == questsSelectedFlag ? TintRowSelected
+                         : quest.IsNew ? TintNew
+                         : TintNone;
+
+                if (questsRowTinted[x] != tint)
                 {
-                    AssignSelected(row, quest.IsNew, QuestsRowColumns);
-                    questsRowTinted[x] = quest.IsNew;
+                    AssignTint(row, TintColor(tint), QuestsRowColumns);
+                    questsRowTinted[x] = tint;
                 }
             }
 
@@ -268,6 +290,14 @@ namespace OracleOfDereth
             }
         }
 
+        private Color? TintColor(int tint)
+        {
+            if (tint == TintRowSelected) { return ColorRowSelected; }
+            if (tint == TintNew) { return ColorSelected; }
+
+            return null;
+        }
+
         private void QuestsFilter_Change(object sender, EventArgs e)
         {
             if (suppressQuestsFilter) return;
@@ -291,6 +321,34 @@ namespace OracleOfDereth
             QuestsFilterNew.Checked = false;
             suppressQuestsFilter = false;
 
+            // The picked row is part of what Reset is clearing — leaving it selected would strand
+            // an Add button pointing at a row that's scrolled off somewhere in the full list.
+            questsSelectedFlag = "";
+
+            UpdateQuestsList();
+        }
+
+        // Adds the picked row to the Favorites tab and clears the selection, so the button goes
+        // away rather than inviting the same click twice.
+        private void QuestsFavorite_Hit(object sender, EventArgs e)
+        {
+            string flag = questsSelectedFlag;
+            if (flag.Length == 0) { return; }
+
+            Quest quest = Quest.Quests.FirstOrDefault(q => q.Flag == flag);
+            string name = quest != null ? quest.DisplayName() : "";
+            string label = name.Length > 0 ? $"{flag} - {name}" : flag;
+
+            if (QuestFavorite.Add(flag))
+            {
+                Util.Chat($"Added to Favorites: {label}", Util.ColorPink);
+            }
+            else
+            {
+                Util.Chat($"Already in Favorites: {label}", Util.ColorPink);
+            }
+
+            questsSelectedFlag = "";
             UpdateQuestsList();
         }
 
@@ -539,6 +597,13 @@ namespace OracleOfDereth
 
             Quest quest = Quest.Quests.FirstOrDefault(x => x.Flag == flag);
             if (quest == null) { return; }
+
+            // Picking the row is on top of what the column click already does, not instead of it:
+            // the URL / details / flag-history actions below are what most clicks are for, and
+            // losing them to make room for selection would be a bad trade. Clicking the picked row
+            // again lets it go, so there's a way out that isn't Reset.
+            questsSelectedFlag = questsSelectedFlag == flag ? "" : flag;
+            UpdateQuestsList();
 
             QuestFlag.QuestFlags.TryGetValue(flag, out QuestFlag questFlag);
 
