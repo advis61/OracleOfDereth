@@ -114,6 +114,7 @@ namespace OracleOfDereth
                 if(Setting.BuffsRemaining.IsYes) Util.Chat($"{Hud.BuffNowText()}", Util.ColorOrange, "[Oracle of Dereth] ");
                 if(Setting.CheckForUpdates.IsYes) UpdateChecker.Arm();
                 ConquestAugmentation.Refresh();
+                if (Setting.OrderDecalPlugins.IsYes) StartBarSettle();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -180,6 +181,52 @@ namespace OracleOfDereth
             timer.Start();
         }
 
+        // ---- Plugin bar order ------------------------------------------------------------------
+        // VVS rebuilds the icon bar from scratch every launch and never persists order, so a saved
+        // arrangement has to be re-applied. LoginComplete is too early to just apply it: plugins are
+        // still bringing their views up, and one that registers afterwards (Virindi Window Tool)
+        // lands wherever VVS puts it, which is how it kept ending up at the far end.
+        //
+        // So this runs on its own timer rather than the plugin's 1s tick — it matters for the first
+        // few seconds of a session and never again, and the timer disposes itself the moment the
+        // bar has settled and the order is applied. Nothing is left running.
+        private WindowsTimer barSettleTimer;
+
+        private void StartBarSettle()
+        {
+            StopBarSettle();
+
+            VVSBar.ArmLoginApply();
+
+            barSettleTimer = new WindowsTimer();
+            barSettleTimer.Interval = 1000;
+            barSettleTimer.Tick += BarSettle_Tick;
+            barSettleTimer.Start();
+        }
+
+        private void BarSettle_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!VVSBar.SettleTick()) StopBarSettle();
+            }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
+                StopBarSettle();
+            }
+        }
+
+        private void StopBarSettle()
+        {
+            if (barSettleTimer == null) return;
+
+            barSettleTimer.Stop();
+            barSettleTimer.Tick -= BarSettle_Tick;
+            barSettleTimer.Dispose();
+            barSettleTimer = null;
+        }
+
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         [System.Security.SecurityCritical]
         private void Tick(object sender, EventArgs e)
@@ -239,6 +286,8 @@ namespace OracleOfDereth
 
                 // Dispose all tools
                 worldObjectIdentifier?.Dispose();
+                StopBarSettle();
+                VVSBar.Shutdown();
 
                 // Dispose all views
                 mainView?.Dispose();

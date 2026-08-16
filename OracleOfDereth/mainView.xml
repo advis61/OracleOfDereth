@@ -693,6 +693,19 @@
 						<control progid="DecalControls.StaticText" name="Quote3" left="5" top="200" width="290" height="300" text="&quot;Not all those who answer the call are lost.&quot; -- J.R.R. Tolkien" />
 					</control>
 				</page>
+				<page label="Decal">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="DecalText" left="5" top="5" width="290" height="20" text="Plugin bar order"/>
+						<control progid="DecalControls.FixedLayout" name="DecalUp" left="300" top="7" width="16" height="16"/>
+						<control progid="DecalControls.FixedLayout" name="DecalDown" left="322" top="7" width="16" height="16"/>
+
+						<control progid="DecalControls.StaticText" name="DecalListPlugin" left="5" top="33" width="240" height="17" text="Plugin"/>
+
+						<control progid="DecalControls.List" name="DecalList" left="0" top="53" width="430" height="2000">
+							<column progid="DecalControls.TextColumn" name="Plugin" fixedwidth="420" />
+						</control>
+					</control>
+				</page>
 				<page label="Settings">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.List" name="SettingsList" left="0" top="5" width="400" height="2000">

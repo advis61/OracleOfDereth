@@ -87,8 +87,9 @@ namespace OracleOfDereth
 
             // About / Settings / Help
             { 5_00, 350 }, // About
-            { 5_01, 350 }, // Settings
-            { 5_02, 540 }, // Help
+            { 5_01, 430 }, // Decal (plugin bar order)
+            { 5_02, 350 }, // Settings
+            { 5_03, 540 }, // Help
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>
@@ -127,8 +128,9 @@ namespace OracleOfDereth
 
             // About / Settings / Help
             { 5_00, 270 }, // About
-            { 5_01, 400 }, // Settings
-            { 5_02, 340 }, // Help
+            { 5_01, 545 }, // Decal (plugin bar order) — one row of chrome, like Favorites
+            { 5_02, 400 }, // Settings
+            { 5_03, 340 }, // Help
         };
 
         public MainView()
@@ -204,6 +206,7 @@ namespace OracleOfDereth
                 InitSociety();
                 InitSettings();
                 InitHelp();
+                InitDecal();
 
                 Update();
             }
@@ -253,6 +256,7 @@ namespace OracleOfDereth
                 DisposeLuminance();
                 DisposeSociety();
                 DisposeSettings();
+                DisposeDecal();
                 DisposeButtonFlashes();
 
                 // Other cleanup
@@ -474,8 +478,9 @@ namespace OracleOfDereth
 
             // About / Settings / Help
             if (currentTab == 5_00) {; }
-            if (currentTab == 5_01) { UpdateSettings(); }
-            if (currentTab == 5_02) { UpdateHelp(); }
+            if (currentTab == 5_01) { UpdateDecal(); }
+            if (currentTab == 5_02) { UpdateSettings(); }
+            if (currentTab == 5_03) { UpdateHelp(); }
         }
 
         // Selected target changed
