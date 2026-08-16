@@ -197,7 +197,7 @@ namespace OracleOfDereth
 
         // Applying at LoginComplete is too early: plugins are still bringing their views up, and one
         // that registers afterwards lands wherever VVS puts it — Virindi Window Tool consistently
-        // ended up at the far end. So rather than guess at a delay, arm here and let SettleTick wait
+        // ended up at the far end. So rather than guess at a delay, arm here and let Tick wait
         // until the bar has actually stopped changing.
         //
         // Gated by the "Order Decal Plugins on Startup" setting: PluginCore doesn't call this at all
@@ -210,12 +210,12 @@ namespace OracleOfDereth
             barSignature = 0;
         }
 
-        // Driven by a short-lived timer in PluginCore that exists only while we wait. Returns false
-        // once there is nothing left to do, which is the caller's cue to dispose that timer — so
-        // this costs nothing for the rest of the session.
-        public static bool SettleTick()
+        // Called from the plugin's 1s tick. Once the order has been applied this is a single bool
+        // read and a return, which is the state it is in for all but the first few seconds of a
+        // session — cheap enough not to deserve a timer of its own.
+        public static void Tick()
         {
-            if (!loginApplyArmed) return false;
+            if (!loginApplyArmed) return;
 
             settleTicks--;
 
@@ -223,7 +223,7 @@ namespace OracleOfDereth
             if (entries == null)
             {
                 if (settleTicks <= 0) loginApplyArmed = false;
-                return loginApplyArmed;
+                return;
             }
 
             int signature = Signature(entries);
@@ -238,7 +238,7 @@ namespace OracleOfDereth
                 stableTicks++;
             }
 
-            if (stableTicks < SettleStableTicks && settleTicks > 0) return true;
+            if (stableTicks < SettleStableTicks && settleTicks > 0) return;
 
             loginApplyArmed = false;
             Apply();
@@ -246,8 +246,6 @@ namespace OracleOfDereth
             // Record what we applied to, so the Decal tab doesn't immediately think it changed.
             var after = Guard(Entries);
             if (after != null) barSignature = Signature(after);
-
-            return false;
         }
 
         // Re-applies the saved order when the bar's make-up has changed since we last looked.
@@ -283,6 +281,11 @@ namespace OracleOfDereth
         {
             barSignature = 0;
             loginApplyArmed = false;
+
+            // Drop the cached reflection handle too. It points at a type in VVS's assembly, and
+            // holding it across a plugin reload keeps that Type alive for no reason — the lookup
+            // costs nothing to repeat.
+            entriesField = null;
         }
 
         // At a 1s timer: "unchanged for 3 seconds, and give up after 30".
