@@ -445,7 +445,7 @@ namespace OracleOfDereth
         // to keep the two topics apart.
         private void QuestsHelp_Hit(object sender, EventArgs e)
         {
-            Util.Chat("These quest flags come from the ACE database and the ILT Mega Book v2.0, so expect the odd mistake - some are likely unobtainable. Verified flags are the ones players on this server have confirmed.", Util.ColorPink);
+            Util.Chat("These quest flags come from the ACE database and the ILT Mega Book v2.0 -- some are likely unobtainable. Verified flags are the ones players on this server have confirmed.", Util.ColorPink);
             Util.Chat("The New filter shows flags this server reports that the master list doesn't have yet. Hit Send to contribute yours to the community-sourced master quest list.", Util.ColorPink);
         }
 

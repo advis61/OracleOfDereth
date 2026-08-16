@@ -297,6 +297,12 @@ namespace OracleOfDereth
                 {
                     QuestFlag.Add(e.Text);
                 }
+                else if (QuestFlag.StampedRegex.IsMatch(e.Text))
+                {
+                    // Read but never eaten: this is the game telling the player they just earned a
+                    // flag, not a reply to something the plugin asked for. No Suppress() here.
+                    QuestFlag.Stamped(e.Text);
+                }
                 else if (Bank.WithdrawConfirmRegex.IsMatch(e.Text))
                 {
                     Trade.RecheckFunds();

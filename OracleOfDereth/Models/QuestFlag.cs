@@ -23,6 +23,17 @@ namespace OracleOfDereth
         public static readonly Regex MyQuestRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?(?<key>\S+) \- (?<solves>\d+) solves \((?<completedOn>\d{0,11})\)""?((?<description>.*)"" (?<maxSolves>.*) (?<repeatTime>\d{0,11}))?.*$");
         public static readonly Regex KillTaskRegex = new Regex(@"(killtask|killcount|slayerquest|totalgolem.*dead|(kills$))");
 
+        // The game's own confirmation that a flag was just set, e.g. "You've stamped moufreward!".
+        // Lets the quest tabs mark a flag complete the moment it lands instead of waiting for the
+        // next "/myquests", which is a whole-list round trip nobody wants to fire per stamp.
+        //
+        // Anchored the same way MyQuestRegex is, so 'Bob says, "You've stamped foo!"' can't inject
+        // a flag. Both apostrophes are accepted because the client renders a typographic one.
+        //
+        // This is the server talking to the player, not a reply the plugin asked for, so it is
+        // never suppressed — see PluginCore, which reads it and lets it print.
+        public static readonly Regex StampedRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?You['’]ve stamped (?<key>[^\s!]+)!");
+
         // Collection of Quest Flags data objects — every flag /myquests reports, unfiltered.
         // There used to be a whitelist built from the quest CSVs, but the Flags tab wants the
         // whole picture, and a character's flag list is small enough to just keep in full.
@@ -65,6 +76,36 @@ namespace OracleOfDereth
 
             // Store this quest flag in the QuestFlags dictionary
             QuestFlags[questFlag.Key] = questFlag;
+
+            return true;
+        }
+
+        // Record a stamp without a "/myquests" round trip, so the tabs show the flag as complete
+        // straight away. The message carries only the flag name, so everything else is kept from
+        // the existing entry where there is one and left at its default where there isn't — a
+        // brand-new flag therefore has no repeat timer, and a repeatable will read as one-time
+        // until the next Refresh() fills in the real figures. Completion, which is what the tabs
+        // key off, is right immediately either way.
+        //
+        // MyQuestsRan is deliberately not set: one stamp is not the full list, and claiming
+        // otherwise would stop the quest tabs pulling it on first view.
+        public static bool Stamped(string line)
+        {
+            Match match = StampedRegex.Match(line);
+            if (!match.Success) { return false; }
+
+            string key = match.Groups["key"].Value.ToLower();
+
+            if (!QuestFlags.TryGetValue(key, out QuestFlag questFlag))
+            {
+                questFlag = new QuestFlag { Key = key };
+                QuestFlags[key] = questFlag;
+            }
+
+            questFlag.Solves += 1;
+            questFlag.CompletedOn = DateTime.UtcNow;
+
+            QuestsChanged = true;
 
             return true;
         }
