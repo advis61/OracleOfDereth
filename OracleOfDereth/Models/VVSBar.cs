@@ -322,7 +322,9 @@ namespace OracleOfDereth
                 KeyValuePair<int, string> current;
                 if (!best.TryGetValue(info.group, out current) || info.zorder < current.Key)
                 {
-                    best[info.group] = new KeyValuePair<int, string>(info.zorder, info.EntryName ?? "");
+                    // Cleaned here, once, so the display, the saved order and the matching all use
+                    // the same stable name.
+                    best[info.group] = new KeyValuePair<int, string>(info.zorder, CleanName(info.EntryName));
                 }
             }
 
@@ -369,8 +371,10 @@ namespace OracleOfDereth
             }
         }
 
-        // Exact name first, then with any version suffix stripped, so a plugin that puts its version
-        // in its title still matches after it updates.
+        // Exact name first. Rows are already cleaned, so that hits for anything saved since; the
+        // second pass cleans the incoming name too, which is what lets an order saved before this
+        // — holding "Virindi Global Inventory (44 to read)" or "UtilityBelt - v0.2.7" — still find
+        // its plugin instead of silently dropping it.
         private static PluginRow FindPlugin(List<PluginRow> rows, string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
@@ -380,25 +384,37 @@ namespace OracleOfDereth
                 if (string.Equals(row.Name, name, StringComparison.OrdinalIgnoreCase)) return row;
             }
 
-            string wanted = StripVersion(name);
+            string wanted = CleanName(name);
             if (wanted.Length < 3) return null;
 
             foreach (PluginRow row in rows)
             {
-                if (string.Equals(StripVersion(row.Name), wanted, StringComparison.OrdinalIgnoreCase)) return row;
+                if (string.Equals(row.Name, wanted, StringComparison.OrdinalIgnoreCase)) return row;
             }
 
             return null;
         }
 
-        // "UtilityBelt - v0.2.7" -> "UtilityBelt", "Virindi Tank v.1.0.0.0" -> "Virindi Tank",
-        // "pkRadar v1.4" -> "pkRadar". Both sides of a comparison go through this, so it only has to
-        // be consistent, not perfect.
-        private static string StripVersion(string name)
+        // Reduces a bar entry to the plugin's stable name:
+        //
+        //   "Virindi Global Inventory (44 to read)" -> "Virindi Global Inventory"
+        //   "UtilityBelt - v1.0.0beta"              -> "UtilityBelt"
+        //   "Virindi Tank v.1.0.0.0"                -> "Virindi Tank"
+        //   "pkRadar v1.4"                          -> "pkRadar"
+        //
+        // This is not just tidier to read. The saved order is keyed on the name, and a live counter
+        // like "(44 to read)" changes between sessions — so without this the saved entry stops
+        // matching and that plugin quietly loses its place on the next login.
+        //
+        // The dash test needs the spaces around it: "Mag-Tools" is a name, " - v1.0" is a suffix.
+        private static string CleanName(string name)
         {
             if (string.IsNullOrEmpty(name)) return "";
 
             string s = name;
+
+            int paren = s.IndexOf('(');
+            if (paren > 0) s = s.Substring(0, paren);
 
             int dash = s.IndexOf(" - ", StringComparison.Ordinal);
             if (dash > 0) s = s.Substring(0, dash);
@@ -412,7 +428,11 @@ namespace OracleOfDereth
                 if (char.IsDigit(s[i + 2]) || s[i + 2] == '.') { s = s.Substring(0, i); break; }
             }
 
-            return s.Trim();
+            s = s.Trim();
+
+            // Never reduce a name to nothing — a plugin whose whole title is a suffix keeps its
+            // original, which is still better than a blank row.
+            return s.Length > 0 ? s : name.Trim();
         }
 
         private static int CompareDrawOrder(KeyValuePair<int, sHudInfo> a, KeyValuePair<int, sHudInfo> b)
@@ -485,22 +505,28 @@ namespace OracleOfDereth
             return slot > 0;
         }
 
-        // The bar's control -> hud key map. Found by shape rather than by its obfuscated name, and
-        // walked as a non-generic IDictionary so the generic arguments never have to be named.
+        // The bar's icon-control -> hud key map, found by shape rather than by its obfuscated name.
+        //
+        // Matched on the exact generic arguments, HudPictureBox -> int. The bar holds TWO control
+        // dictionaries — one of HudPictureBox (the icons, which is this one) and one of
+        // HudThemeElement — and both are keyed by a HudControl subclass. Matching on "key is a
+        // HudControl" therefore picks whichever the runtime happens to return first, and would
+        // silently reposition theme elements instead of icons if that order ever changed.
+        //
+        // The icons are picture boxes: cHudBarHud.a() does newobj HudPictureBox followed by
+        // set_Image on each entry's cloned icon.
         private static System.Collections.IDictionary ControlMap(cHudBarHud bar)
         {
             foreach (FieldInfo f in bar.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 if (!typeof(System.Collections.IDictionary).IsAssignableFrom(f.FieldType)) continue;
 
-                var candidate = f.GetValue(bar) as System.Collections.IDictionary;
-                if (candidate == null || candidate.Count == 0) continue;
+                Type[] args = f.FieldType.GetGenericArguments();
+                if (args.Length != 2) continue;
+                if (!typeof(VirindiViewService.Controls.HudPictureBox).IsAssignableFrom(args[0])) continue;
+                if (args[1] != typeof(int)) continue;
 
-                foreach (System.Collections.DictionaryEntry e in candidate)
-                {
-                    if (e.Key is VirindiViewService.Controls.HudControl) return candidate;
-                    break;
-                }
+                return f.GetValue(bar) as System.Collections.IDictionary;
             }
 
             return null;
@@ -539,6 +565,8 @@ namespace OracleOfDereth
             return entriesField.GetValue(bar) as SortedList<int, sHudInfo>;
         }
 
+        // Only one field has this exact shape, so unlike the control map there is nothing to
+        // disambiguate here.
         private static FieldInfo FindEntriesField(cHudBarHud bar)
         {
             foreach (FieldInfo f in bar.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
