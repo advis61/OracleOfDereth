@@ -2,7 +2,7 @@
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.18.0/OracleOfDerethInstaller-1.18.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.19.0/OracleOfDerethInstaller-1.19.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
@@ -126,6 +126,10 @@ Fship List
 Top Players
 
 ![Top Players](./docs/Top.png)
+
+Decal plugins
+
+![Decal Plugins](./docs/Decal.png)
 
 
 ## Quest Directions and Wiki URLs
@@ -317,6 +321,10 @@ Works with the `/fship list` command to browse and join server fellowships.
 ### Top Players
 
 Works with the `/top` command to browse the server leaderboards.
+
+### Decal plugins
+
+Use this screen to set the display order of plugins on the VVS decal plugins bar.
 
 
 ### Commands

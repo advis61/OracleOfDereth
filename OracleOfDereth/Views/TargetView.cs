@@ -111,6 +111,11 @@ namespace OracleOfDereth
         }
         public void Update()
         {
+            // Turned off in Settings — hide it and do no further work. Checked before the skill so
+            // the window stays away on a void character too, and takes effect on the next tick
+            // rather than needing a relog.
+            if (Setting.VoidTargetWindow.IsNo) { view.Visible = false; return; }
+
             Skill skill = new Skill(CharFilterSkillType.VoidMagic);
             if(skill.IsUnKnown()) { view.Visible = false; return; }
 
