@@ -445,9 +445,8 @@ namespace OracleOfDereth
         // to keep the two topics apart.
         private void QuestsHelp_Hit(object sender, EventArgs e)
         {
-            Util.Chat("This list of quest flags was built from the ACE database and the ILT Mega Book v2.0 with AI assistance, so expect the odd mistake - the plugin's other lists are all hand-curated.", Util.ColorPink);
-            Util.Chat("AC quest flags are kind of a cluster, so some of these are likely unobtainable. Looking for help curating this list.", Util.ColorPink);
-            Util.Chat("The New filter shows flags this server reports that aren't in the Oracle of Dereth master list yet. Send them along to Advis Eveldan if you'd like them added.", Util.ColorPink);
+            Util.Chat("These quest flags come from the ACE database and the ILT Mega Book v2.0, so expect the odd mistake - some are likely unobtainable. Verified flags are the ones players on this server have confirmed.", Util.ColorPink);
+            Util.Chat("The New filter shows flags this server reports that the master list doesn't have yet. Hit Send to contribute yours to the community-sourced master quest list.", Util.ColorPink);
         }
 
         // ---- Send ------------------------------------------------------------------------------

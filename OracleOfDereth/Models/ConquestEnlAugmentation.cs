@@ -13,8 +13,8 @@ namespace OracleOfDereth
     // time the tab is shown, and on the tab's Refresh button.
     //
     // No registry of known augs and no interpretation of the values: rows are whatever the server
-    // printed, in the order it printed them, so augs added or recapped server-side show up without
-    // a plugin change.
+    // printed, so augs added or recapped server-side show up without a plugin change. The one
+    // thing that isn't the server's is the row order — see DisplayOrder below.
     public class ConquestEnlAugmentation
     {
         public string Name { get; }
@@ -31,6 +31,31 @@ namespace OracleOfDereth
         // table shows nothing rather than a wrong price, so a new one added server-side still
         // gets its row.
         public string Cost => Costs.TryGetValue(Name, out string cost) ? cost : "";
+
+        // The order the tab lists these in, which is not the order "/enl augs" prints them: the
+        // multi-level augs come first, then the one-per-character unlocks. Rows are slotted into
+        // this order as they arrive (see InsertIndex), so the view never has to sort.
+        //
+        // A name the server prints that isn't listed here still gets its row — it just lands at
+        // the bottom, keeping the order the server printed it in. That's what keeps this from
+        // becoming a registry the server can outgrow.
+        private static readonly string[] DisplayOrder =
+        {
+            "Damage",
+            "Damage Reduction",
+            "Crit Damage",
+            "Crit Damage Reduction",
+            "Imbue",
+            "Salvage",
+            "Skill Credits",
+            "Stamina Benediction",
+            "Mana Benediction",
+            "Cleave",
+            "Arrow Split",
+            "Spell Chain",
+            "Aetheria Surge",
+            "Void Contagion",
+        };
 
         private const string Pristine = "1 Pristine Token of Enlightenment";
         private const string TwoTokens = "2 Token of Enlightenment";
@@ -64,8 +89,28 @@ namespace OracleOfDereth
         }
 
         // Rebuilt from scratch each time the block's header arrives, so a reprint replaces the
-        // previous rows instead of appending to them.
+        // previous rows instead of appending to them. Held in DisplayOrder, not arrival order.
         public static List<ConquestEnlAugmentation> All { get; private set; } = new List<ConquestEnlAugmentation>();
+
+        // Where a newly-parsed row belongs. Walks past everything ranked at or above it, so rows
+        // sharing a rank — the unlisted ones, all ranked last — stay in the order they arrived.
+        // Fourteen rows, once per "/enl augs", so the quadratic shape costs nothing.
+        private static int InsertIndex(string name)
+        {
+            int rank = DisplayRank(name);
+            int index = 0;
+
+            while (index < All.Count && DisplayRank(All[index].Name) <= rank) { index++; }
+
+            return index;
+        }
+
+        private static int DisplayRank(string name)
+        {
+            int rank = Array.FindIndex(DisplayOrder, n => string.Equals(n, name, StringComparison.OrdinalIgnoreCase));
+
+            return rank < 0 ? DisplayOrder.Length : rank;
+        }
 
         // Sum of every enlightenment aug level, for the section header. Mirrors
         // ConquestAugmentation.Total.
@@ -165,7 +210,8 @@ namespace OracleOfDereth
             // total, which beats dropping the line.
             int.TryParse(m.Groups[3].Value.Replace(",", ""), out int count);
 
-            All.Add(new ConquestEnlAugmentation(m.Groups[1].Value.Trim(), m.Groups[2].Value.Trim(), count));
+            var aug = new ConquestEnlAugmentation(m.Groups[1].Value.Trim(), m.Groups[2].Value.Trim(), count);
+            All.Insert(InsertIndex(aug.Name), aug);
 
             return Request.Awaiting;
         }
