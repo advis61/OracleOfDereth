@@ -90,13 +90,4 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NSIS-Tool" Version="3.0.8">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="powershell -ExecutionPolicy RemoteSigned -NoProfile &quot;$(ProjectDir)scripts\post-build.ps1&quot; -NuGetPackageRoot &quot;$(NuGetPackageRoot)&quot; -ProjectDir &quot;$(ProjectDir)&quot;" />
-  </Target>
 </Project>
