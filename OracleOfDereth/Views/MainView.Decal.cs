@@ -66,9 +66,9 @@ namespace OracleOfDereth
 
             // A plugin that recreates its view comes back with the group value VVS generates for
             // it, losing the place we gave it — Virindi Window Tool does this. Re-apply when the
-            // bar's make-up changes. Scoped to this tab rather than the global tick: it is the only
-            // place the order is being looked at, and a hash of the bar's keys every second for the
-            // rest of the session buys nothing when nobody is watching.
+            // bar's make-up changes. VVSBar.Tick already watches for this after login, but only
+            // until the bar goes quiet; past that this tab is the catch, and it costs a hash of the
+            // bar's keys only while somebody has it open.
             VVSBar.ReapplyIfChanged();
 
             UpdateDecalList();

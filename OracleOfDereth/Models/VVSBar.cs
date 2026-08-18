@@ -122,8 +122,32 @@ namespace OracleOfDereth
                 if (!string.IsNullOrEmpty(row.Name)) names.Add(row.Name);
             }
 
+            // Carry forward anything in the saved order that isn't on the bar right now — disabled,
+            // failed to load, or uninstalled. Writing only what is present would drop it, so a
+            // single reorder made while a plugin happened to be off would cost that plugin its
+            // place permanently. Re-inserted at the index it used to hold, so if it comes back it
+            // lands roughly where it was rather than at the end with the new arrivals.
+            string[] previous = SettingsFile.GetSetting(OrderSettingKey, "").Split(Separator);
+            for (int i = 0; i < previous.Length; i++)
+            {
+                string name = CleanName(previous[i]);
+                if (name.Length == 0 || Contains(names, name)) continue;
+
+                names.Insert(i < names.Count ? i : names.Count, name);
+            }
+
             SettingsFile.PutSetting(OrderSettingKey, string.Join(Separator.ToString(), names.ToArray()));
         }
+
+        private static bool Contains(List<string> names, string name)
+        {
+            foreach (string n in names)
+            {
+                if (string.Equals(n, name, StringComparison.OrdinalIgnoreCase)) return true;
+            }
+            return false;
+        }
+
 
         // Puts the saved plugins at the front of the bar in the saved order; anything not in the
         // list keeps its own group and follows on behind, in its natural order.
@@ -198,54 +222,77 @@ namespace OracleOfDereth
         // Applying at LoginComplete is too early: plugins are still bringing their views up, and one
         // that registers afterwards lands wherever VVS puts it — Virindi Window Tool consistently
         // ended up at the far end. So rather than guess at a delay, arm here and let Tick wait
-        // until the bar has actually stopped changing.
+        // until the bar has actually stopped changing — and then keep watching it for a while, since
+        // "stopped changing" is a guess too and a slow plugin can register long after it looks true.
         //
         // Gated by the "Order Decal Plugins on Startup" setting: PluginCore doesn't call this at all
         // when that is off, so nothing is armed and no timer is created.
         public static void ArmLoginApply()
         {
-            loginApplyArmed = true;
+            phase = BarPhase.Settling;
             settleTicks = SettleTimeoutTicks;
             stableTicks = 0;
+            watchTicks = 0;
             barSignature = 0;
         }
 
-        // Called from the plugin's 1s tick. Once the order has been applied this is a single bool
-        // read and a return, which is the state it is in for all but the first few seconds of a
-        // session — cheap enough not to deserve a timer of its own.
+        // Called from the plugin's 1s tick. Once the bar has gone quiet this is a single enum read
+        // and a return, which is the state it is in for all but the opening stretch of a session —
+        // cheap enough not to deserve a timer of its own.
         public static void Tick()
         {
-            if (!loginApplyArmed) return;
-
-            settleTicks--;
+            if (phase == BarPhase.Idle) return;
 
             var entries = Guard(Entries);
             if (entries == null)
             {
-                if (settleTicks <= 0) loginApplyArmed = false;
+                // No bar to look at. Only the settle phase waits for one to appear, and it gives up
+                // at the timeout, so a client running without VVS stops checking.
+                if (phase == BarPhase.Settling && --settleTicks <= 0) phase = BarPhase.Idle;
                 return;
             }
 
             int signature = Signature(entries);
+
+            if (phase == BarPhase.Settling)
+            {
+                settleTicks--;
+
+                if (signature != barSignature)
+                {
+                    // Something is still registering. Reset the stability count and keep waiting.
+                    barSignature = signature;
+                    stableTicks = 0;
+                }
+                else
+                {
+                    stableTicks++;
+                }
+
+                if (stableTicks < SettleStableTicks && settleTicks > 0) return;
+
+                ApplyAndRecord();
+                phase = BarPhase.Watching;
+                watchTicks = WatchQuietTicks;
+                return;
+            }
+
+            // Watching. Settling only proves the bar held still for three seconds, which it does
+            // between plugins as easily as after the last one — so a plugin that finishes loading
+            // later (Chaos Helper does, and Virindi Window Tool when it recreates its view) still
+            // registers with a fresh group and lands at the far end. Waiting longer before applying
+            // would only make every icon jump late instead, so apply early and keep looking: re-apply
+            // whenever the bar's make-up changes, restarting the window each time, and stop once it
+            // has been quiet for the whole of one.
             if (signature != barSignature)
             {
-                // Something is still registering. Reset the stability count and keep waiting.
                 barSignature = signature;
-                stableTicks = 0;
-            }
-            else
-            {
-                stableTicks++;
+                ApplyAndRecord();
+                watchTicks = WatchQuietTicks;
+                return;
             }
 
-            if (stableTicks < SettleStableTicks && settleTicks > 0) return;
-
-            loginApplyArmed = false;
-            Apply();
-
-            // Record what we applied to, so the Decal tab doesn't immediately think it changed.
-            var after = Guard(Entries);
-            if (after != null) barSignature = Signature(after);
+            if (--watchTicks <= 0) phase = BarPhase.Idle;
         }
 
         // Re-applies the saved order when the bar's make-up has changed since we last looked.
@@ -262,7 +309,17 @@ namespace OracleOfDereth
             if (signature == barSignature) return;
 
             barSignature = signature;
+            ApplyAndRecord();
+        }
+
+        // Applies, then records what the bar looks like afterwards, so the next change is measured
+        // against the applied state and neither the watch nor the Decal tab immediately re-fires.
+        private static void ApplyAndRecord()
+        {
             Apply();
+
+            var after = Guard(Entries);
+            if (after != null) barSignature = Signature(after);
         }
 
         // Cheap fingerprint of what is on the bar. Keys are handed out incrementally, so a view
@@ -280,7 +337,8 @@ namespace OracleOfDereth
         public static void Shutdown()
         {
             barSignature = 0;
-            loginApplyArmed = false;
+            phase = BarPhase.Idle;
+            watchTicks = 0;
 
             // Drop the cached reflection handle too. It points at a type in VVS's assembly, and
             // holding it across a plugin reload keeps that Type alive for no reason — the lookup
@@ -288,13 +346,20 @@ namespace OracleOfDereth
             entriesField = null;
         }
 
-        // At a 1s timer: "unchanged for 3 seconds, and give up after 30".
+        // At a 1s timer: settle is "unchanged for 3 seconds, and give up after 30". The watch that
+        // follows then wants 10 seconds of quiet before it lets go, measured from the last change
+        // rather than from login — every plugin observed here is up within 10 seconds of the bar
+        // appearing, so a window that long past the final registration covers the lot.
         private const int SettleTimeoutTicks = 30;
         private const int SettleStableTicks = 3;
+        private const int WatchQuietTicks = 10;
 
-        private static bool loginApplyArmed;
+        private enum BarPhase { Idle, Settling, Watching }
+
+        private static BarPhase phase;
         private static int settleTicks;
         private static int stableTicks;
+        private static int watchTicks;
         private static int barSignature;
 
         #endregion
