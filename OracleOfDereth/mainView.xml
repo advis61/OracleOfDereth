@@ -270,9 +270,9 @@
 				<page label="Browse">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="QuestsText" left="5" top="5" width="368" height="20" text="Quest Flags"/>
-						<control progid="DecalControls.PushButton" name="QuestsClipboard" left="440" top="3" width="52" height="22" text="Copy"/>
-						<control progid="DecalControls.PushButton" name="QuestsRefreshAll" left="496" top="3" width="108" height="22" text="Refresh All (slow)"/>
-						<control progid="DecalControls.PushButton" name="QuestsHelp" left="608" top="3" width="24" height="22" text="?"/>
+						<control progid="DecalControls.PushButton" name="QuestsClipboard" left="396" top="3" width="52" height="22" text="Copy"/>
+						<control progid="DecalControls.PushButton" name="QuestsHelp" left="452" top="3" width="17" height="22" text="?"/>
+						<control progid="DecalControls.PushButton" name="QuestsRefreshAll" left="473" top="3" width="160" height="22" text="Refresh Account (slow)"/>
 
 						<control progid="DecalControls.StaticText" name="QuestsFilterLabel" left="5" top="33" width="38" height="16" text="Filter:"/>
 						<control progid="DecalControls.Edit" name="QuestsFilterText" left="46" top="31" width="220" height="20" text=""/>
