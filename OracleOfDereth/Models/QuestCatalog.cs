@@ -13,6 +13,8 @@ namespace OracleOfDereth
         public static List<Quest> Quests { get; private set; } = new List<Quest>();
         private static readonly HashSet<string> indexedFlags =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Quest> discoveredByFlag =
+            new Dictionary<string, Quest>(StringComparer.OrdinalIgnoreCase);
 
         public static bool Contains(string flag) =>
             !string.IsNullOrEmpty(flag) && indexedFlags.Contains(flag);
@@ -31,6 +33,7 @@ namespace OracleOfDereth
         {
             Quests.Clear();
             indexedFlags.Clear();
+            discoveredByFlag.Clear();
             CurrentSortType = Quest.SortType.FlagAscending;
 
             using (var reader = OpenCsv())
@@ -86,9 +89,7 @@ namespace OracleOfDereth
 
             if (indexedFlags.Contains(flag.Key))
             {
-                Quest discovered = Quests.FirstOrDefault(q => q.IsNew &&
-                    string.Equals(q.Flag, flag.Key, StringComparison.OrdinalIgnoreCase));
-                if (discovered != null)
+                if (discoveredByFlag.TryGetValue(flag.Key, out Quest discovered))
                 {
                     string name = CleanDescription(flag.Description);
                     if (name.Length > 0) discovered.Name = name;
@@ -97,22 +98,26 @@ namespace OracleOfDereth
                 return;
             }
 
-            Quests.Add(new Quest
+            var quest = new Quest
             {
                 Flag = flag.Key.ToLowerInvariant(),
                 Name = CleanDescription(flag.Description),
                 Repeatable = flag.RepeatTime != TimeSpan.Zero,
                 IsNew = true
-            });
+            };
+            Quests.Add(quest);
             indexedFlags.Add(flag.Key);
+            discoveredByFlag[flag.Key] = quest;
         }
 
         public static void AddHistorical(string flag)
         {
             if (string.IsNullOrEmpty(flag) || indexedFlags.Contains(flag)) return;
 
-            Quests.Add(new Quest { Flag = flag.ToLowerInvariant(), IsNew = true });
+            var quest = new Quest { Flag = flag.ToLowerInvariant(), IsNew = true };
+            Quests.Add(quest);
             indexedFlags.Add(flag);
+            discoveredByFlag[flag] = quest;
         }
 
         private static string CleanDescription(string description)

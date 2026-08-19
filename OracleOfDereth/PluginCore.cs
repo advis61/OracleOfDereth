@@ -195,6 +195,7 @@ namespace OracleOfDereth
                 UpdateChecker.Tick();
                 QuestFlagLookup.Tick();
                 QuestSubmit.Tick();
+                QuestHistory.Tick();
                 ItemList.TickAll();
                 VVSBar.Tick();
 

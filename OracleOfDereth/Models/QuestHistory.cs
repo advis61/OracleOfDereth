@@ -26,6 +26,7 @@ namespace OracleOfDereth
 
         private static string filePath;
         private static DateTime collectingAt;
+        private static DateTime changedAt;
         private static int expected;
         private static bool collecting;
         private static bool dirty;
@@ -51,6 +52,8 @@ namespace OracleOfDereth
         {
             Flags.Clear();
             EndBlock();
+            dirty = false;
+            changedAt = DateTime.MinValue;
 
             string root = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Personal),
@@ -127,6 +130,7 @@ namespace OracleOfDereth
             if (Collected.Add(flag) && Flags.Add(flag))
             {
                 dirty = true;
+                changedAt = DateTime.UtcNow;
                 QuestCatalog.AddHistorical(flag);
                 QuestState.HistoryChanged();
             }
@@ -137,10 +141,24 @@ namespace OracleOfDereth
 
         public static void AddStamp(string flag)
         {
-            if (string.IsNullOrWhiteSpace(flag) || !Flags.Add(flag.Trim())) return;
+            AddSeen(flag);
+            SaveIfDirty();
+        }
 
-            QuestCatalog.AddHistorical(flag.Trim());
-            Save();
+        // /myquests can contain thousands of lines, so merge in memory and save once it settles.
+        public static void AddSeen(string flag)
+        {
+            string value = (flag ?? "").Trim();
+            if (!StoredFlagRegex.IsMatch(value) || !Flags.Add(value)) return;
+
+            QuestCatalog.AddHistorical(value);
+            dirty = true;
+            changedAt = DateTime.UtcNow;
+        }
+
+        public static void Tick()
+        {
+            if (dirty && DateTime.UtcNow - changedAt >= TimeSpan.FromSeconds(2)) Save();
         }
 
         private static void OpenBlock()
@@ -148,7 +166,6 @@ namespace OracleOfDereth
             collecting = true;
             collectingAt = DateTime.UtcNow;
             expected = int.MaxValue;
-            dirty = false;
             headerSeen = false;
             footerSeen = false;
             Collected.Clear();
@@ -176,7 +193,6 @@ namespace OracleOfDereth
         {
             collecting = false;
             expected = int.MaxValue;
-            dirty = false;
             headerSeen = false;
             footerSeen = false;
             Collected.Clear();

@@ -224,6 +224,10 @@ internal static class Program
             if (!completedFilter.Matches(historicalQuest))
                 throw new InvalidOperationException("The Quests view did not include account history.");
 
+            QuestHistory.AddSeen("SeenInMyQuests");
+            if (!QuestHistory.Contains("seeninmyquests"))
+                throw new InvalidOperationException("A /myquests flag was not merged into history.");
+
             var verifiedFilter = new QuestFilter { Verified = true };
             if (verifiedFilter.Matches(new Quest { Flag = "new", IsNew = true, VerifiedConquest = true }) ||
                 verifiedFilter.Matches(new Quest { Flag = "completed", VerifiedConquest = false }))
