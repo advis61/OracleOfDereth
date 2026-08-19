@@ -198,14 +198,13 @@ internal static class Program
                 "TuskerTreasureMapFound"
             };
 
-            if (QuestHistory.Matches("---------------------------"))
+            if (QuestHistory.Capture("---------------------------"))
                 throw new InvalidOperationException("A /myqstlist separator was parsed as a quest flag.");
 
             foreach (string line in outOfOrder)
             {
-                if (!QuestHistory.Matches(line))
+                if (!QuestHistory.Capture(line))
                     throw new InvalidOperationException("Did not recognize /myqstlist line: " + line);
-                QuestHistory.NoteChat(line);
             }
 
             if (QuestHistory.Count != 8 ||

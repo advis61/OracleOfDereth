@@ -11,13 +11,11 @@ namespace OracleOfDereth
     public static class QuestCatalog
     {
         public static List<Quest> Quests { get; private set; } = new List<Quest>();
-        private static readonly HashSet<string> indexedFlags =
-            new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        private static readonly Dictionary<string, Quest> discoveredByFlag =
+        private static readonly Dictionary<string, Quest> questsByFlag =
             new Dictionary<string, Quest>(StringComparer.OrdinalIgnoreCase);
 
         public static bool Contains(string flag) =>
-            !string.IsNullOrEmpty(flag) && indexedFlags.Contains(flag);
+            !string.IsNullOrEmpty(flag) && questsByFlag.ContainsKey(flag);
         public static Quest.SortType CurrentSortType { get; private set; } = Quest.SortType.FlagAscending;
 
         private static readonly string[] FlagNames = { "questflag", "flag" };
@@ -32,8 +30,7 @@ namespace OracleOfDereth
         public static void Init()
         {
             Quests.Clear();
-            indexedFlags.Clear();
-            discoveredByFlag.Clear();
+            questsByFlag.Clear();
             CurrentSortType = Quest.SortType.FlagAscending;
 
             using (var reader = OpenCsv())
@@ -78,7 +75,7 @@ namespace OracleOfDereth
                         !string.Equals(quest.Server, Server.Name, StringComparison.OrdinalIgnoreCase)) continue;
 
                     Quests.Add(quest);
-                    indexedFlags.Add(flag);
+                    questsByFlag[flag] = quest;
                 }
             }
         }
@@ -87,9 +84,9 @@ namespace OracleOfDereth
         {
             if (flag == null || string.IsNullOrEmpty(flag.Key)) return;
 
-            if (indexedFlags.Contains(flag.Key))
+            if (questsByFlag.TryGetValue(flag.Key, out Quest discovered))
             {
-                if (discoveredByFlag.TryGetValue(flag.Key, out Quest discovered))
+                if (discovered.IsNew)
                 {
                     string name = CleanDescription(flag.Description);
                     if (name.Length > 0) discovered.Name = name;
@@ -106,18 +103,16 @@ namespace OracleOfDereth
                 IsNew = true
             };
             Quests.Add(quest);
-            indexedFlags.Add(flag.Key);
-            discoveredByFlag[flag.Key] = quest;
+            questsByFlag[flag.Key] = quest;
         }
 
         public static void AddHistorical(string flag)
         {
-            if (string.IsNullOrEmpty(flag) || indexedFlags.Contains(flag)) return;
+            if (string.IsNullOrEmpty(flag) || questsByFlag.ContainsKey(flag)) return;
 
             var quest = new Quest { Flag = flag.ToLowerInvariant(), IsNew = true };
             Quests.Add(quest);
-            indexedFlags.Add(flag);
-            discoveredByFlag[flag] = quest;
+            questsByFlag[flag] = quest;
         }
 
         private static string CleanDescription(string description)

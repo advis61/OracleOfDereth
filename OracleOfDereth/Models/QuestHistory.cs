@@ -38,16 +38,6 @@ namespace OracleOfDereth
         public static int Count => Flags.Count;
         public static bool Contains(string flag) =>
             !string.IsNullOrEmpty(flag) && Flags.Contains(flag);
-        public static int CompletedCount()
-        {
-            int count = Flags.Count;
-            foreach (string flag in QuestFlag.QuestFlags.Keys)
-            {
-                if (!Flags.Contains(flag)) count++;
-            }
-            return count;
-        }
-
         public static void Init()
         {
             Flags.Clear();
@@ -94,16 +84,10 @@ namespace OracleOfDereth
             OpenBlock();
         }
 
-        public static bool Matches(string text)
+        public static bool Capture(string text)
         {
             if (text == null) return false;
-            if (HeaderRegex.IsMatch(text) || FooterRegex.IsMatch(text)) return true;
-            return Active() && FlagRegex.IsMatch(text);
-        }
 
-        // Returns whether this line belongs to a refresh issued by the plugin.
-        public static bool NoteChat(string text)
-        {
             Match header = HeaderRegex.Match(text);
             if (header.Success)
             {
@@ -111,14 +95,14 @@ namespace OracleOfDereth
                 if (int.TryParse(header.Groups[1].Value, out int count)) expected = count;
                 headerSeen = true;
                 CloseIfComplete();
-                return false;
+                return true;
             }
 
             if (FooterRegex.IsMatch(text))
             {
                 footerSeen = true;
                 CloseIfComplete();
-                return false;
+                return true;
             }
 
             if (!Active()) return false;
@@ -136,7 +120,7 @@ namespace OracleOfDereth
             }
 
             CloseIfComplete();
-            return false;
+            return true;
         }
 
         public static void AddStamp(string flag)

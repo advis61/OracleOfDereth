@@ -302,10 +302,7 @@ namespace OracleOfDereth
                 {
                     QuestFlag.Add(e.Text);
                 }
-                else if (QuestHistory.Matches(e.Text))
-                {
-                    Suppress(e, QuestHistory.NoteChat(e.Text));
-                }
+                else if (QuestHistory.Capture(e.Text)) { }
                 else if (QuestFlag.StampedRegex.IsMatch(e.Text))
                 {
                     // Read but never eaten: this is the game telling the player they just earned a
