@@ -26,11 +26,13 @@ namespace OracleOfDereth
         private static readonly Regex RelatedQuestsBlockRegex = new Regex(@"Related(?:\s|&#160;|&nbsp;)+Quests:.*?</td>\s*<td[^>]*>(.*?)</td>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
         private static LookupResult pending;
         private static int running;
+        private static int generation;
 
         private sealed class LookupResult
         {
             public readonly List<string> Messages = new List<string>();
             public string ClipboardText;
+            public int Generation;
         }
 
         public static void Execute()
@@ -58,7 +60,8 @@ namespace OracleOfDereth
                 return;
             }
 
-            new Thread(() => Run(type, name)) { IsBackground = true }.Start();
+            int requestGeneration = Volatile.Read(ref generation);
+            new Thread(() => Run(type, name, requestGeneration)) { IsBackground = true }.Start();
         }
 
         public static void Tick()
@@ -66,28 +69,34 @@ namespace OracleOfDereth
             LookupResult result = Interlocked.Exchange(ref pending, null);
             if (result == null) return;
 
-            bool copied = false;
-            if (!string.IsNullOrEmpty(result.ClipboardText))
+            try
             {
-                try
+                bool copied = false;
+                if (!string.IsNullOrEmpty(result.ClipboardText))
                 {
-                    System.Windows.Forms.Clipboard.SetText(result.ClipboardText);
-                    copied = true;
+                    try
+                    {
+                        System.Windows.Forms.Clipboard.SetText(result.ClipboardText);
+                        copied = true;
+                    }
+                    catch { }
                 }
-                catch { }
-            }
 
-            foreach (string message in result.Messages)
-            {
-                string suffix = copied && message == result.ClipboardText ? " (copied to clipboard)" : "";
-                Util.Chat(UseSelectedWiki(message) + suffix, Util.ColorCyan, ChatPrefix);
+                foreach (string message in result.Messages)
+                {
+                    string suffix = copied && message == result.ClipboardText ? " (copied to clipboard)" : "";
+                    Util.Chat(UseSelectedWiki(message) + suffix, Util.ColorCyan, ChatPrefix);
+                }
             }
-            Interlocked.Exchange(ref running, 0);
+            finally
+            {
+                Interlocked.Exchange(ref running, 0);
+            }
         }
 
-        private static void Run(int type, string name)
+        private static void Run(int type, string name, int requestGeneration)
         {
-            var result = new LookupResult();
+            var result = new LookupResult { Generation = requestGeneration };
             try
             {
                 AddWikiInfo(result, name);
@@ -99,8 +108,16 @@ namespace OracleOfDereth
             }
             finally
             {
-                Interlocked.Exchange(ref pending, result);
+                if (result.Generation == Volatile.Read(ref generation))
+                    Interlocked.Exchange(ref pending, result);
             }
+        }
+
+        public static void Shutdown()
+        {
+            Interlocked.Increment(ref generation);
+            Interlocked.Exchange(ref pending, null);
+            Interlocked.Exchange(ref running, 0);
         }
 
         private static string UseSelectedWiki(string message)

@@ -10,7 +10,6 @@ using System.Threading;
 namespace OracleOfDereth
 {
     // Exports uncurated quest flags, posts them to Discord, and records successful submissions.
-    // The synchronous request is bounded by TimeoutMs but still blocks the game thread.
     public static class QuestSubmit
     {
         private const string WebhookResource = ".Resources.webhook.txt";
@@ -19,6 +18,7 @@ namespace OracleOfDereth
         private const int TimeoutMs = 15000;
         private static SendResult pendingResult;
         private static int sending;
+        private static int generation;
 
         private sealed class SendResult
         {
@@ -28,6 +28,7 @@ namespace OracleOfDereth
             public string[] Flags;
             public Action<bool, string> Completed;
             public Exception Exception;
+            public int Generation;
         }
 
         // ---- diff ------------------------------------------------------------------------------
@@ -81,7 +82,8 @@ namespace OracleOfDereth
             {
                 Server = server,
                 Flags = flags,
-                Completed = completed
+                Completed = completed,
+                Generation = Volatile.Read(ref generation)
             };
 
             new Thread(() => Send(fileName, content, summary, result)) { IsBackground = true }.Start();
@@ -93,10 +95,16 @@ namespace OracleOfDereth
             SendResult result = Interlocked.Exchange(ref pendingResult, null);
             if (result == null) return;
 
-            if (result.Exception != null) Util.Log(result.Exception);
-            if (result.Success) MarkSent(result.Server, result.Flags);
-            result.Completed?.Invoke(result.Success, result.Reason);
-            Interlocked.Exchange(ref sending, 0);
+            try
+            {
+                if (result.Exception != null) Util.Log(result.Exception);
+                if (result.Success) MarkSent(result.Server, result.Flags);
+                result.Completed?.Invoke(result.Success, result.Reason);
+            }
+            finally
+            {
+                Interlocked.Exchange(ref sending, 0);
+            }
         }
 
         private static void Send(string fileName, string content, string summary, SendResult result)
@@ -136,8 +144,16 @@ namespace OracleOfDereth
             }
             finally
             {
-                Interlocked.Exchange(ref pendingResult, result);
+                if (result.Generation == Volatile.Read(ref generation))
+                    Interlocked.Exchange(ref pendingResult, result);
             }
+        }
+
+        public static void Shutdown()
+        {
+            Interlocked.Increment(ref generation);
+            Interlocked.Exchange(ref pendingResult, null);
+            Interlocked.Exchange(ref sending, 0);
         }
 
         // The export goes up as an attachment, not message text: Discord caps content at 2000

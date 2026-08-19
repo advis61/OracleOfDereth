@@ -238,6 +238,8 @@ namespace OracleOfDereth
 
                 // Dispose all tools
                 worldObjectIdentifier?.Dispose();
+                QuestFlagLookup.Shutdown();
+                QuestSubmit.Shutdown();
                 VVSBar.Shutdown();
 
                 // Dispose all views

@@ -12,6 +12,7 @@ namespace OracleOfDereth
         private const string ReleasesPageUrl = "https://github.com/advis61/OracleOfDereth/releases";
         private const string LastCheckedKey = "LastCheckedForUpdates";
         private const string DateFormat = "yyyy-MM-dd";
+        private const int TimeoutMs = 15000;
         private static readonly TimeSpan Delay = TimeSpan.FromSeconds(10);
         private static readonly Regex TagNameRegex = new Regex("\"tag_name\"\\s*:\\s*\"v?(\\d+(?:\\.\\d+){1,3})\"", RegexOptions.IgnoreCase);
         private static readonly Regex AssetUrlRegex = new Regex("\"browser_download_url\"\\s*:\\s*\"(https://[^\"]+\\.exe)\"", RegexOptions.IgnoreCase);
@@ -101,10 +102,14 @@ namespace OracleOfDereth
         {
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
-            using (var client = new WebClient())
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            request.UserAgent = "OracleOfDereth-Plugin";
+            request.Timeout = TimeoutMs;
+            request.ReadWriteTimeout = TimeoutMs;
+            using (var response = request.GetResponse())
+            using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
             {
-                client.Headers.Add("User-Agent", "OracleOfDereth-Plugin");
-                return client.DownloadString(url);
+                return reader.ReadToEnd();
             }
         }
     }
