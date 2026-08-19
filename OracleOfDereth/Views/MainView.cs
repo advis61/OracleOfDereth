@@ -314,22 +314,11 @@ namespace OracleOfDereth
             FlashButton(sender as HudButton);
         }
 
-        // ---- Refresh button feedback -----------------------------------------------------------
-        // A Refresh button fires a server command whose reply is now kept out of chat (see
-        // Setting.SuppressPluginRefreshChat), so without this a click has no visible effect at all
-        // — the list just quietly updates a moment later. Flashing the label is the acknowledgement.
-        //
-        // Every one of these buttons reads "Refresh" (all 21 in mainView.xml), so there's nothing
-        // per-button to remember except which one to put back. Only one can be mid-flash: a click
-        // is a single button, and the auto-refresh flashes belong to whichever tab is drawing.
-        // Flashing a second one just restores the first early rather than stranding its label.
+        // A short label flash acknowledges refresh commands whose chat replies are suppressed.
         private const string RefreshLabel = "Refresh";
         private const string RefreshingLabel = "Refreshing...";
 
-        // Restored on the first Update() tick at or after the deadline, and that tick is 1s — so
-        // the label actually sits for between half a second and a second and a half, depending on
-        // where the click lands in the tick. The deadline is what stops a click that lands just
-        // before a tick from flashing for no visible time at all.
+        // The deadline prevents a click immediately before Tick from producing an invisible flash.
         private static readonly TimeSpan ButtonFlashDuration = TimeSpan.FromMilliseconds(500);
 
         private HudButton FlashedButton;
@@ -362,14 +351,7 @@ namespace OracleOfDereth
             FlashedButton = null;
         }
 
-        // Only swap the image when it actually changes; assigning is comparatively expensive on
-        // the lists that paint thousands of rows a tick.
-        //
-        // The box itself is the record of what it's showing: an int converts implicitly to
-        // ACImage and PortalImageID reads that id straight back, so there's nothing to cache.
-        // A side dictionary keyed on the box would need every list that trims rows to remove
-        // its boxes, or it pins destroyed controls alive forever — see the Items renderer,
-        // which still carries one because it tracks two boxes per row.
+        // Read PortalImageID instead of caching controls, which could pin removed rows in memory.
         private void AssignImage(HudPictureBox row, int icon)
         {
             // A cleared box reads back as null rather than 0, which is the same "no image".

@@ -8,15 +8,8 @@ using System.Text;
 
 namespace OracleOfDereth
 {
-    // Sends quest flags the master list doesn't cover yet back for curation:
-    //
-    //   diff  flags held that quests.csv doesn't cover
-    //   up    export -> Discord webhook -> sent log
-    //
-    // The webhook post runs on the calling (main) thread, like QuestFlagLookup's. The client must
-    // only be touched on its own thread and the simplest way to honour that is never to leave it —
-    // no worker, no hand-off, no in-flight state. The timeout bounds the stall, and nothing here
-    // runs unless the player presses Send.
+    // Exports uncurated quest flags, posts them to Discord, and records successful submissions.
+    // The synchronous request is bounded by TimeoutMs but still blocks the game thread.
     public static class QuestSubmit
     {
         private const string WebhookResource = ".Resources.webhook.txt";

@@ -5,25 +5,10 @@ using VirindiViewService.HudBar;
 
 namespace OracleOfDereth
 {
-    // Reorders the Virindi View Service icon bar — the strip of plugin icons in the client — and
-    // remembers that order across sessions. The only place anything reaches into VVS internals.
-    //
-    // How the bar works, established by disassembling VirindiViewService.dll:
-    //
-    //  - cHudBarHud holds a SortedList<int, sHudInfo>. Each sHudInfo carries a `group` (shared by
-    //    every view one plugin owns) and a `zorder` (that view's place within its plugin). Icons
-    //    are drawn in (group, zorder) order.
-    //
-    //  - Nothing about that is persisted. vvs.s3db stores position, size and theme per view but has
-    //    no ordering column, and VVS regenerates the group values at every startup — which is why
-    //    no registry or database edit can move an icon, and why a saved order has to be re-applied
-    //    on each login.
-    //
-    //  - Reordering must NOT go through SetHudInfo. That makes VVS rebuild the bar, and the rebuild
-    //    disposes every HudPictureBox and re-clones every icon — including images it does not own,
-    //    which destroys plugin icons (Virindi Tank's warning glyph among them) and then throws on
-    //    the next clone. Instead we set the group values and move the existing controls ourselves
-    //    with HudFixedLayout.SetControlRect. See Reposition.
+    // Reverse-engineered from VirindiViewService.dll: cHudBarHud sorts sHudInfo by (group, zorder),
+    // and every view from one plugin shares a group. VVS regenerates groups at startup. SetHudInfo
+    // is unsafe here because its rebuild disposes images owned by other plugins, so this updates
+    // groups directly and repositions existing controls with HudFixedLayout.SetControlRect.
     public static class VVSBar
     {
         // Saved order, as plugin names joined by '|'. Names rather than group numbers, because the
@@ -219,14 +204,8 @@ namespace OracleOfDereth
 
         #region Login settle
 
-        // Applying at LoginComplete is too early: plugins are still bringing their views up, and one
-        // that registers afterwards lands wherever VVS puts it — Virindi Window Tool consistently
-        // ended up at the far end. So rather than guess at a delay, arm here and let Tick wait
-        // until the bar has actually stopped changing — and then keep watching it for a while, since
-        // "stopped changing" is a guess too and a slow plugin can register long after it looks true.
-        //
-        // Gated by the "Order Decal Plugins on Startup" setting: PluginCore doesn't call this at all
-        // when that is off, so nothing is armed and no timer is created.
+        // LoginComplete precedes some VVS registrations, so Tick waits for stability and watches
+        // briefly for late or recreated views.
         public static void ArmLoginApply()
         {
             phase = BarPhase.Settling;

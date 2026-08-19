@@ -122,17 +122,9 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        // Lifecycle notes (verified in-game via debug chat on a character switch):
-        //  - A fresh PluginCore instance is created on each login. The loader tears the old one down
-        //    on the NEXT login (not on logout) and re-runs Startup/Init, so didInit is False every
-        //    login and Init() runs top-to-bottom per character. Static stores therefore clear per
-        //    character (each model's Init() clears its collection; ItemList.Init() makes new
-        //    instances; ItemCache.Init() covers the one store that previously had no Init) — no
-        //    cross-character stale data, no logout handler needed for clearing.
-        //  - The instance SURVIVES logout until that next login, so the 1s timer keeps ticking at
-        //    character-select. That's why Tick() guards on LoginStatus and the native reads
-        //    (Fellowship.*, Util.CurrentLandblockId) null-check — while logged out those client
-        //    structures are gone, and an access violation there can't be caught on .NET 4.8.
+        // Verified in-game: the loader replaces PluginCore on the next login, not at logout. Init
+        // resets static stores. Tick must tolerate character select because native structures are
+        // already gone and their access violations are not catchable on .NET Framework 4.8.
         private void Init()
         {
             // CharacterFilter_Login will be called multiple times if the character was already in the world
