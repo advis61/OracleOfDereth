@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Reflection;
 using OracleOfDereth;
 
@@ -15,6 +16,7 @@ internal static class Program
         AssertJson("a\u0001b", "\"a\\u0001b\"");
         AssertNetworkStateReset();
         AssertSubmitCallbackCannotLeaveBusy();
+        AssertSettingsRecovery();
         Console.WriteLine("Regression tests passed.");
         return 0;
     }
@@ -53,9 +55,46 @@ internal static class Program
         QuestSubmit.Shutdown();
     }
 
+    private static void AssertSettingsRecovery()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "OracleOfDereth.Tests-" + Guid.NewGuid().ToString("N"));
+        string settings = Path.Combine(directory, "settings.xml");
+        Directory.CreateDirectory(directory);
+
+        try
+        {
+            SetStaticField(typeof(SettingsFile), "_filePath", settings);
+            InvokeStatic(typeof(SettingsFile), "Load");
+
+            const string special = "quotes \" ampersand & angle < unicode \u263a";
+            SettingsFile.PutSetting("Special", special);
+            if (SettingsFile.GetSetting("Special", "") != special)
+                throw new InvalidOperationException("Settings special-character round trip failed.");
+
+            File.WriteAllText(settings, "<broken");
+            InvokeStatic(typeof(SettingsFile), "Load");
+
+            if (SettingsFile.GetSetting("Special", "default") != "default")
+                throw new InvalidOperationException("Corrupt settings did not reset to defaults.");
+            if (!File.Exists(settings) || File.ReadAllText(settings).IndexOf("<Settings", StringComparison.Ordinal) < 0)
+                throw new InvalidOperationException("Fresh settings file was not created.");
+            if (Directory.GetFiles(directory, "settings.xml.corrupt-*").Length != 0)
+                throw new InvalidOperationException("Corrupt settings file was preserved.");
+        }
+        finally
+        {
+            if (Directory.Exists(directory)) Directory.Delete(directory, true);
+        }
+    }
+
     private static void SetStaticField(Type type, string name, object value)
     {
         type.GetField(name, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, value);
+    }
+
+    private static void InvokeStatic(Type type, string name)
+    {
+        type.GetMethod(name, BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
     }
 
     private static void AssertStaticInt(Type type, string name, int expected)

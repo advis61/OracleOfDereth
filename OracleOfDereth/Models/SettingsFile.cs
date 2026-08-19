@@ -17,28 +17,37 @@ namespace OracleOfDereth
 
         private static void Load()
         {
-            _doc = new XmlDocument();
+            _doc = NewDocument();
+            if (!File.Exists(_filePath))
+            {
+                Save();
+                return;
+            }
 
             try
             {
-                if (File.Exists(_filePath))
-                {
-                    _doc.Load(_filePath);
-                }
-                else
-                {
-                    _doc.AppendChild(_doc.CreateXmlDeclaration("1.0", "utf-8", null));
-                    _doc.AppendChild(_doc.CreateElement("Settings"));
-                    Save();
-                }
+                var loaded = new XmlDocument();
+                loaded.Load(_filePath);
+                if (loaded.DocumentElement == null || loaded.DocumentElement.Name != "Settings")
+                    throw new XmlException("Settings file has no Settings root element.");
+
+                _doc = loaded;
             }
             catch (Exception ex)
             {
                 Util.Log(ex);
-                _doc = new XmlDocument();
-                _doc.AppendChild(_doc.CreateXmlDeclaration("1.0", "utf-8", null));
-                _doc.AppendChild(_doc.CreateElement("Settings"));
+                try { File.Delete(_filePath); }
+                catch (Exception deleteException) { Util.Log(deleteException); }
+                Save();
             }
+        }
+
+        private static XmlDocument NewDocument()
+        {
+            var document = new XmlDocument();
+            document.AppendChild(document.CreateXmlDeclaration("1.0", "utf-8", null));
+            document.AppendChild(document.CreateElement("Settings"));
+            return document;
         }
 
         public static string GetSetting(string key, string defaultValue)
@@ -108,6 +117,7 @@ namespace OracleOfDereth
             catch (Exception ex)
             {
                 Util.Log(ex);
+                Util.Chat("Oracle of Dereth could not save settings. See errors.txt.", Util.ColorPink);
             }
         }
     }
