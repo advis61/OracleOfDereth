@@ -444,31 +444,29 @@ namespace OracleOfDereth
         // explicit nothing-to-send message rather than a silent no-op.
         public void SendQuestFlags()
         {
-            int held = QuestFlag.QuestFlags.Count;
+            int held = QuestHistory.Count;
             if (held == 0)
             {
-                Util.Chat("Send: no quest flags tracked yet - hit Refresh first.", Util.ColorPink);
+                Util.Chat("Send: no quest flags have been observed yet.", Util.ColorPink);
                 return;
             }
 
             QuestSubmit.Pending(out List<Quest> unknown, out List<Quest> unverified);
             List<Quest> send = unknown.Concat(unverified).OrderBy(q => q.Flag).ToList();
 
-            Util.Chat($"Send: {held} flags held. {unknown.Count} not in the master list, {unverified.Count} held but unverified.", Util.ColorPink);
+            Util.Chat($"Send: {held} flags tracked. {unknown.Count} not in the master list, {unverified.Count} unverified on {Server.Name}.", Util.ColorPink);
 
             if (send.Count == 0)
             {
-                Util.Chat("Nothing new to send - the master list already covers every flag you hold.", Util.ColorPink);
+                Util.Chat("Nothing new to send - every tracked flag is already covered.", Util.ColorPink);
                 return;
             }
 
             string path;
             try
             {
-                // Both groups in one file, as pure /myquests lines — no headers or blank
-                // separators, so it stays readable by anything that parses a real chat log. The
-                // labelled breakdown goes to the clipboard instead.
-                path = QuestExport.ToMyQuests(send);
+                // One import-ready CSV for new and known-but-unverified evidence.
+                path = QuestExport.ToSubmissionCsv(send);
             }
             catch (Exception ex)
             {
@@ -532,7 +530,7 @@ namespace OracleOfDereth
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine($"# {CoreManager.Current.CharacterFilter.Name} ({Server.Name}) {DateTime.Now:yyyy-MM-dd HH:mm} - {held} flags held");
+            sb.AppendLine($"# {CoreManager.Current.CharacterFilter.Name} ({Server.Name}) {DateTime.Now:yyyy-MM-dd HH:mm} - {held} flags tracked");
             sb.AppendLine();
             sb.AppendLine($"# Not in the master list ({unknown.Count}) - flag,name");
             foreach (Quest quest in unknown)
@@ -542,7 +540,7 @@ namespace OracleOfDereth
             }
 
             sb.AppendLine();
-            sb.AppendLine($"# Held but not marked Verified ({unverified.Count})");
+            sb.AppendLine($"# Not verified on {Server.Name} ({unverified.Count})");
             foreach (Quest quest in unverified) { sb.AppendLine(quest.Flag); }
 
             return sb.ToString();

@@ -32,10 +32,8 @@ namespace OracleOfDereth
         // Unlike anything derived from /myquests this is known for every quest, earned or not,
         // which is what lets the One Time / Repeatable filters cover the whole list.
         public bool Repeatable = false;
-        // From the CSV's "Verified Conquest" column: the flag has been confirmed by hand to exist
-        // on Conquest, as opposed to merely being inherited from the retail flag list. Blank for
-        // everything not yet checked, so absence means "unverified", not "absent".
-        public bool VerifiedConquest = false;
+        // Imported from the verification column for the current server.
+        public bool Verified = false;
 
         // True for a flag discovered in /myquests or /myqstlist rather than loaded from quests.csv.
         public bool IsNew = false;
@@ -67,7 +65,7 @@ namespace OracleOfDereth
         // Verified is server-specific catalog metadata, never inferred from quest state.
         public bool IsVerified()
         {
-            return !IsNew && VerifiedConquest && OracleOfDereth.Server.IsConquest;
+            return !IsNew && Verified;
         }
 
         // Having the flag at all is the whole test. /myquests only reports flags the character

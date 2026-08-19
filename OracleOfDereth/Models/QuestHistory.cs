@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace OracleOfDereth
 {
-    // Permanent per-server account quest history from /myqstlist, supplemented by stamp messages.
+    // Permanent per-server union of flags observed through /myquests, /myqstlist, or stamps.
     public static class QuestHistory
     {
         private static readonly HashSet<string> Flags =
@@ -55,20 +55,21 @@ namespace OracleOfDereth
             {
                 if (!File.Exists(filePath)) return;
 
-                bool removedInvalid = false;
-                foreach (string line in File.ReadAllLines(filePath).Skip(1))
+                string[] lines = File.ReadAllLines(filePath);
+                bool rewrite = lines.Length > 0 && Util.CsvParseLine(lines[0]).Length > 1;
+                foreach (string line in lines.Skip(1))
                 {
-                    string flag = line.Trim();
+                    string flag = Util.CsvParseLine(line).FirstOrDefault()?.Trim() ?? "";
                     if (!StoredFlagRegex.IsMatch(flag))
                     {
-                        removedInvalid = true;
+                        rewrite = true;
                         continue;
                     }
 
                     if (Flags.Add(flag)) QuestCatalog.AddHistorical(flag);
                 }
 
-                if (removedInvalid) Save();
+                if (rewrite) Save();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -111,11 +112,8 @@ namespace OracleOfDereth
             if (!entry.Success) return false;
 
             string flag = entry.Groups["flag"].Value;
-            if (Collected.Add(flag) && Flags.Add(flag))
+            if (Collected.Add(flag) && Add(flag))
             {
-                dirty = true;
-                changedAt = DateTime.UtcNow;
-                QuestCatalog.AddHistorical(flag);
                 QuestState.HistoryChanged();
             }
 
@@ -125,19 +123,14 @@ namespace OracleOfDereth
 
         public static void AddStamp(string flag)
         {
-            AddSeen(flag);
+            Add(flag);
             SaveIfDirty();
         }
 
         // /myquests can contain thousands of lines, so merge in memory and save once it settles.
         public static void AddSeen(string flag)
         {
-            string value = (flag ?? "").Trim();
-            if (!StoredFlagRegex.IsMatch(value) || !Flags.Add(value)) return;
-
-            QuestCatalog.AddHistorical(value);
-            dirty = true;
-            changedAt = DateTime.UtcNow;
+            Add(flag);
         }
 
         public static void Tick()
@@ -199,6 +192,17 @@ namespace OracleOfDereth
                 dirty = false;
             }
             catch (Exception ex) { Util.Log(ex); }
+        }
+
+        private static bool Add(string flag)
+        {
+            string value = (flag ?? "").Trim();
+            if (!StoredFlagRegex.IsMatch(value) || !Flags.Add(value)) return false;
+
+            QuestCatalog.AddHistorical(value);
+            dirty = true;
+            changedAt = DateTime.UtcNow;
+            return true;
         }
 
         private static string SafeName(string value)

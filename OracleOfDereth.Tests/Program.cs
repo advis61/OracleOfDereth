@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -228,16 +229,36 @@ internal static class Program
                 throw new InvalidOperationException("A /myquests flag was not merged into history.");
 
             var verifiedFilter = new QuestFilter { Verified = true };
-            if (verifiedFilter.Matches(new Quest { Flag = "new", IsNew = true, VerifiedConquest = true }) ||
-                verifiedFilter.Matches(new Quest { Flag = "completed", VerifiedConquest = false }))
+            var newQuest = new Quest { Flag = "new", IsNew = true, Verified = true };
+            if (verifiedFilter.Matches(newQuest) ||
+                verifiedFilter.Matches(new Quest { Flag = "completed" }))
             {
                 throw new InvalidOperationException("Verified filtering was not limited to verified catalog rows.");
             }
 
+            var verificationColumns = new Dictionary<string, int>
+            {
+                { "verifiedconquest", 1 },
+                { "verifiedlevistras", 2 }
+            };
+            int levistrasColumn = (int)typeof(QuestCatalog)
+                .GetMethod("VerificationColumn", BindingFlags.NonPublic | BindingFlags.Static)
+                .Invoke(null, new object[] { verificationColumns, "Levistras" });
+            if (levistrasColumn != 2)
+                throw new InvalidOperationException("The current server's verification column was not selected.");
+
+            var historyOnly = new Quest { Flag = "PathwardenComplete", IsNew = true };
+            if (!QuestSubmit.IsPending(historyOnly, "Levistras"))
+                throw new InvalidOperationException("History-only evidence was not eligible for submission.");
+            historyOnly.IsNew = false;
+            historyOnly.Verified = true;
+            if (QuestSubmit.IsPending(historyOnly, "Levistras"))
+                throw new InvalidOperationException("Verified history remained eligible for submission.");
+
             QuestHistory.AddStamp("StampedAfterRefresh");
             if (!QuestHistory.Contains("stampedafterrefresh") ||
                 !File.ReadAllLines(history).Any(line =>
-                    string.Equals(line, "StampedAfterRefresh", StringComparison.OrdinalIgnoreCase)))
+                    string.Equals(Util.CsvParseLine(line).FirstOrDefault(), "StampedAfterRefresh", StringComparison.OrdinalIgnoreCase)))
             {
                 throw new InvalidOperationException(
                     "Stamped quest was not added to account history. Contains=" +

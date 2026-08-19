@@ -20,7 +20,6 @@ namespace OracleOfDereth
 
         private static readonly string[] FlagNames = { "questflag", "flag" };
         private static readonly string[] ServerNames = { "server", "world" };
-        private static readonly string[] VerifiedNames = { "verifiedconquest", "verified" };
         private static readonly string[] NameNames = { "quest", "questname", "name", "title" };
         private static readonly string[] UrlNames = { "url", "link", "wiki" };
         private static readonly string[] InfoNames = { "info", "notes", "description" };
@@ -43,7 +42,7 @@ namespace OracleOfDereth
                 if (flagCol < 0) throw new InvalidDataException("CSV has no quest flag column.");
 
                 int serverCol = ColumnIndex(columns, ServerNames);
-                int verifiedCol = ColumnIndex(columns, VerifiedNames);
+                int verifiedCol = VerificationColumn(columns, Server.Name);
                 int nameCol = ColumnIndex(columns, NameNames);
                 int urlCol = ColumnIndex(columns, UrlNames);
                 int infoCol = ColumnIndex(columns, InfoNames);
@@ -63,7 +62,7 @@ namespace OracleOfDereth
                     {
                         Flag = flag,
                         Server = Field(fields, serverCol),
-                        VerifiedConquest = IsTrue(Field(fields, verifiedCol)),
+                        Verified = IsTrue(Field(fields, verifiedCol)),
                         Name = Field(fields, nameCol),
                         Url = Field(fields, urlCol),
                         Info = Field(fields, infoCol),
@@ -171,6 +170,13 @@ namespace OracleOfDereth
             }
 
             return columns;
+        }
+
+        private static int VerificationColumn(Dictionary<string, int> columns, string server)
+        {
+            string serverColumn = "verified" + NormalizeHeader(server);
+            if (columns.TryGetValue(serverColumn, out int index)) return index;
+            return columns.TryGetValue("verified", out index) ? index : -1;
         }
 
         private static string NormalizeHeader(string header)

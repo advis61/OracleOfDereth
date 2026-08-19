@@ -33,12 +33,12 @@ namespace OracleOfDereth
 
         // ---- diff ------------------------------------------------------------------------------
 
-        // The one definition of "worth reporting", so the button's visibility and the export can't
-        // disagree. VerifiedConquest alone covers both cases: a flag discovered from /myquests has
-        // no CSV row, so it's false by construction.
+        // Report every locally observed flag not verified for this server.
         public static bool IsPending(Quest quest, string server)
         {
-            return !quest.VerifiedConquest && quest.IsComplete() && !WasSent(server, quest.Flag);
+            return QuestHistory.Contains(quest.Flag) &&
+                !quest.IsVerified() &&
+                !WasSent(server, quest.Flag);
         }
 
         public static int PendingCount()
@@ -172,7 +172,9 @@ namespace OracleOfDereth
             Part("{\"content\":" + Util.JsonString(summary) + ",\"allowed_mentions\":{\"parse\":[]}}\r\n");
             Part($"--{boundary}\r\n");
             Part($"Content-Disposition: form-data; name=\"files[0]\"; filename=\"{fileName}\"\r\n");
-            Part("Content-Type: text/plain\r\n\r\n");
+            Part(fileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase)
+                ? "Content-Type: text/csv\r\n\r\n"
+                : "Content-Type: text/plain\r\n\r\n");
             Part(content);
             Part($"\r\n--{boundary}--\r\n");
 
