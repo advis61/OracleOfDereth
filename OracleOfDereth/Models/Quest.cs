@@ -1,33 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace OracleOfDereth
 {
-    // Every known quest flag, loaded from quests.csv — the raw database behind the "Flags" tab,
-    // as opposed to the curated lists (FlagQuest, JohnQuest, FacilityQuest, ...) that each cover
-    // one questline. There's no bitmask here and most rows have no curated name, so completion is
-    // simply "the character has this flag at all", the same test FlagQuest uses. Ready/Solves come
-    // from the tracked QuestFlag, the same way JohnQuest reads them.
-    //
-    // Rows naming a Server are kept only on that world; a blank Server means the quest exists
-    // everywhere. That differs from CustomQuest, which drops every row that isn't an exact match.
+    // One row in QuestCatalog. Metadata comes from quests.csv when known; runtime discoveries
+    // are thinner IsNew rows until they are curated into that file.
     public class Quest
     {
-        // Collection of Quests loaded from quests.csv (current server only), plus any flag the
-        // server reported that the CSV didn't know about — see MergeQuestFlags().
-        public static List<Quest> Quests = new List<Quest>();
-
-        // Every flag in Quests, for O(1) "do we already have this one?" during the merge.
-        private static readonly HashSet<string> KnownFlags = new HashSet<string>();
-
-        // quests.csv is already flag-ascending, so that's the order the tab opens in — nothing
-        // is sorted until a header is clicked.
-        public static SortType CurrentSortType = SortType.FlagAscending;
-
         public enum SortType
         {
             CompleteAscending,
@@ -59,246 +37,8 @@ namespace OracleOfDereth
         // everything not yet checked, so absence means "unverified", not "absent".
         public bool VerifiedConquest = false;
 
-        // True for a flag discovered in /myquests rather than loaded from quests.csv. The game
-        // grows new quest flags over time, so the curated list is always a little behind.
+        // True for a flag discovered in /myquests or /myqstlist rather than loaded from quests.csv.
         public bool IsNew = false;
-
-        public static void Init()
-        {
-            Quests.Clear();
-            KnownFlags.Clear();
-            LoadQuestsCSV();
-        }
-
-        // Fold anything the server reported but quests.csv doesn't list into the collection,
-        // tagged IsNew. QuestFlag is the source of truth for what a character actually has;
-        // this is the only way a brand-new flag ever shows up on the Flags tab.
-        //
-        // A discovered flag has no url, info or hint — but /myquests does carry the game's own
-        // description for it, which is the closest thing to a name we get for free, so that
-        // becomes Name. It can still be empty: the description is an optional part of the line.
-        // New rows are appended rather than sorted in, which keeps them together at the bottom
-        // of an unfiltered list.
-        public static void MergeQuestFlags()
-        {
-            foreach (KeyValuePair<string, QuestFlag> pair in QuestFlag.QuestFlags)
-            {
-                if (KnownFlags.Contains(pair.Key)) continue;
-
-                Quests.Add(new Quest
-                {
-                    Flag = pair.Key,
-                    Name = CleanDescription(pair.Value.Description),
-                    // No CSV row to read Repeatable from, but the server just told us: a flag
-                    // carrying a repeat timer is repeatable.
-                    Repeatable = pair.Value.RepeatTime != TimeSpan.Zero,
-                    IsNew = true
-                });
-                KnownFlags.Add(pair.Key);
-            }
-        }
-
-        // The description in a /myquests line is wrapped in double quotes, and for a flag whose
-        // description is itself empty or quoted the quote characters survive the parse — uberbellas2
-        // arrives as a bare ". They're never part of the real name, so drop both quote forms; a
-        // description that was nothing but quotes cleans down to empty, same as no description.
-        private static string CleanDescription(string description)
-        {
-            if (string.IsNullOrEmpty(description)) return "";
-
-            return new string(description.Where(c => c != '"' && c != '\'').ToArray()).Trim();
-        }
-
-        // Columns are located by header name, not position, so the CSV can be reordered, renamed
-        // within the aliases below, or grown new columns without touching this code. Only the flag
-        // column is required; anything else missing just leaves its field empty, which is a
-        // thinner row rather than a failed import.
-        private static readonly string[] FlagNames = { "questflag", "flag" };
-        private static readonly string[] ServerNames = { "server", "world" };
-        private static readonly string[] VerifiedNames = { "verifiedconquest", "verified" };
-        private static readonly string[] NameNames = { "quest", "questname", "name", "title" };
-        private static readonly string[] UrlNames = { "url", "link", "wiki" };
-        private static readonly string[] InfoNames = { "info", "notes", "description" };
-        private static readonly string[] HintNames = { "hint", "hints", "directions", "walkthrough" };
-        private static readonly string[] RepeatNames = { "repeatable", "repeat" };
-
-        public static void LoadQuestsCSV()
-        {
-            var quests = new List<Quest>();
-
-            using (var reader = OpenQuestsCSV())
-            {
-                string headerLine = reader.ReadLine();
-                if (headerLine == null) throw new InvalidDataException("CSV file is empty.");
-
-                Dictionary<string, int> columns = MapColumns(headerLine);
-
-                int flagCol = ColumnIndex(columns, FlagNames);
-                if (flagCol < 0) throw new InvalidDataException("CSV has no quest flag column.");
-
-                int serverCol = ColumnIndex(columns, ServerNames);
-                int verifiedCol = ColumnIndex(columns, VerifiedNames);
-                int nameCol = ColumnIndex(columns, NameNames);
-                int urlCol = ColumnIndex(columns, UrlNames);
-                int infoCol = ColumnIndex(columns, InfoNames);
-                int hintCol = ColumnIndex(columns, HintNames);
-                int repeatCol = ColumnIndex(columns, RepeatNames);
-
-                while (!reader.EndOfStream)
-                {
-                    string line = reader.ReadLine();
-                    if (string.IsNullOrWhiteSpace(line)) continue;
-
-                    string[] fields = Util.CsvParseLine(line);
-
-                    // Short rows are read as far as they go rather than dropped — a row that lost
-                    // its trailing columns still carries a usable flag.
-                    string flag = Field(fields, flagCol).ToLower();
-                    if (flag.Length == 0) continue;
-
-                    var quest = new Quest
-                    {
-                        Flag = flag,
-                        Server = Field(fields, serverCol),
-                        VerifiedConquest = IsTrue(Field(fields, verifiedCol)),
-                        Name = Field(fields, nameCol),
-                        Url = Field(fields, urlCol),
-                        Info = Field(fields, infoCol),
-                        Hint = Field(fields, hintCol),
-                        Repeatable = IsTrue(Field(fields, repeatCol))
-                    };
-
-                    // A blank Server means every world; otherwise keep only this character's. The
-                    // static Server helper is qualified because the instance property shadows it here.
-                    if (quest.Server.Length > 0 &&
-                        !string.Equals(quest.Server, OracleOfDereth.Server.Name, StringComparison.OrdinalIgnoreCase)) continue;
-
-                    quests.Add(quest);
-                }
-            }
-
-            Quests.AddRange(quests);
-
-            foreach (Quest quest in quests) { KnownFlags.Add(quest.Flag); }
-        }
-
-        // Header name -> position. First occurrence wins, so a duplicated column doesn't shadow
-        // the original.
-        private static Dictionary<string, int> MapColumns(string headerLine)
-        {
-            var columns = new Dictionary<string, int>();
-            string[] headers = Util.CsvParseLine(headerLine);
-
-            for (int i = 0; i < headers.Length; i++)
-            {
-                string key = NormalizeHeader(headers[i]);
-                if (key.Length > 0 && !columns.ContainsKey(key)) { columns[key] = i; }
-            }
-
-            return columns;
-        }
-
-        // Everything but letters and digits is dropped, so "Verified Conquest", "verified_conquest"
-        // and "VerifiedConquest" are one column. Also disposes of a UTF-8 BOM, which would
-        // otherwise attach itself to the first header only and quietly break that one column.
-        private static string NormalizeHeader(string header)
-        {
-            var sb = new StringBuilder();
-
-            foreach (char c in header ?? "")
-            {
-                if (char.IsLetterOrDigit(c)) { sb.Append(char.ToLowerInvariant(c)); }
-            }
-
-            return sb.ToString();
-        }
-
-        private static int ColumnIndex(Dictionary<string, int> columns, string[] names)
-        {
-            foreach (string name in names)
-            {
-                if (columns.TryGetValue(name, out int index)) { return index; }
-            }
-
-            return -1;
-        }
-
-        private static string Field(string[] fields, int index)
-        {
-            return index >= 0 && index < fields.Length ? fields[index].Trim() : "";
-        }
-
-        // One truthiness rule for every boolean column. Repeatable has always used TRUE/FALSE and
-        // Verified Conquest the word "Verified", so both spellings are accepted along with what
-        // hand-editing a CSV tends to produce. Anything unrecognised is false.
-        private static bool IsTrue(string value)
-        {
-            switch (value.ToLowerInvariant())
-            {
-                case "true":
-                case "yes":
-                case "y":
-                case "1":
-                case "x":
-                case "verified":
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private static StreamReader OpenQuestsCSV()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-
-            // Match the full resource path, not just "quests.csv" — johnquests.csv, customquests.csv,
-            // augquests.csv, creditquests.csv, facilityquests.csv and flagquests.csv all end with it.
-            string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith(".Resources.quests.csv", StringComparison.OrdinalIgnoreCase));
-            if (resourceName == null) throw new FileNotFoundException("Embedded resource quests.csv not found.");
-
-            return new StreamReader(assembly.GetManifestResourceStream(resourceName));
-        }
-
-        // Reorders the collection in place, the same way JohnQuest and Title do. Every sort falls
-        // back to Flag: it's the only column guaranteed unique and non-empty, so rows that tie on
-        // the clicked column keep a stable, predictable order instead of shuffling between clicks.
-        public static void Sort(SortType sortType)
-        {
-            CurrentSortType = sortType;
-            switch (sortType)
-            {
-                case SortType.CompleteAscending:
-                    Quests = Quests.OrderBy(q => q.IsComplete()).ThenBy(q => q.Flag).ToList();
-                    break;
-                case SortType.CompleteDescending:
-                    Quests = Quests.OrderByDescending(q => q.IsComplete()).ThenBy(q => q.Flag).ToList();
-                    break;
-                case SortType.FlagAscending:
-                    Quests = Quests.OrderBy(q => q.Flag).ToList();
-                    break;
-                case SortType.FlagDescending:
-                    Quests = Quests.OrderByDescending(q => q.Flag).ToList();
-                    break;
-                case SortType.NameAscending:
-                    Quests = Quests.OrderBy(q => q.DisplayName()).ThenBy(q => q.Flag).ToList();
-                    break;
-                case SortType.NameDescending:
-                    Quests = Quests.OrderByDescending(q => q.DisplayName()).ThenBy(q => q.Flag).ToList();
-                    break;
-                case SortType.ReadyAscending:
-                    Quests = Quests.OrderBy(q => q.Ready()).ThenBy(q => q.NextAvailableTime()).ThenBy(q => q.Flag).ToList();
-                    break;
-                case SortType.ReadyDescending:
-                    Quests = Quests.OrderByDescending(q => q.NextAvailableTime()).ThenBy(q => q.Flag).ToList();
-                    break;
-                case SortType.SolvesAscending:
-                    Quests = Quests.OrderBy(q => q.Solves()).ThenBy(q => q.Flag).ToList();
-                    break;
-                case SortType.SolvesDescending:
-                    Quests = Quests.OrderByDescending(q => q.Solves()).ThenBy(q => q.Flag).ToList();
-                    break;
-            }
-        }
 
         public override string ToString()
         {
@@ -324,21 +64,10 @@ namespace OracleOfDereth
             return !IsRepeatable();
         }
 
-        // Is this flag known to really exist on the world you're playing? The CSV's Verified
-        // Conquest column is the whole answer, and it only counts on Conquest — it was populated
-        // from real /myquests dumps off that server, so it says nothing about anywhere else.
-        //
-        // The point is to separate the flags confirmed real from the long tail of the master list
-        // that was machine-built from the ACE database and may name quests no live server has.
-        //
-        // This deliberately ignores whether the character holds the flag. Holding it does prove
-        // it exists — on any world, not just Conquest — so `|| IsComplete()` is a one-line change
-        // if that turns out to be the more useful reading. The tradeoff: with it, Verified is a
-        // superset of Completed and can never hide anything you've done, which makes the box on
-        // its own fairly weak; without it, Verified is purely a statement about the master list.
+        // Verified is server-specific catalog metadata, never inferred from quest state.
         public bool IsVerified()
         {
-            return VerifiedConquest && OracleOfDereth.Server.IsConquest;
+            return !IsNew && VerifiedConquest && OracleOfDereth.Server.IsConquest;
         }
 
         // Having the flag at all is the whole test. /myquests only reports flags the character
@@ -352,6 +81,12 @@ namespace OracleOfDereth
         public bool IsComplete()
         {
             return QuestFlag.QuestFlags.ContainsKey(Flag);
+        }
+
+        // Only the Quests tab combines the current /myquests flags with durable quest history.
+        public bool IsCompleteInQuestView()
+        {
+            return IsComplete() || QuestHistory.Contains(Flag);
         }
 
         // The Name column's text, and the single definition of it. Plenty of rows carry no
@@ -375,6 +110,12 @@ namespace OracleOfDereth
             if (IsOneTime()) { return "completed"; }
 
             return questFlag.NextAvailable();
+        }
+
+        public string StatusInQuestView()
+        {
+            if (!IsComplete() && QuestHistory.Contains(Flag) && IsOneTime()) return "completed";
+            return Status();
         }
 
         // The Solves column. Blank unless the quest is repeatable: a one-time stamp sits at 1
@@ -446,9 +187,7 @@ namespace OracleOfDereth
         // the one you're logged into, as opposed to the everywhere-rows with a blank Server.
         public bool Server = false;
 
-        // A third status pair, on Quest.IsVerified(). Unverified is the one worth having:
-        // it's the slice of the master list nothing has confirmed yet, which is exactly what
-        // needs curating.
+        // A third status pair based only on the catalog's verified metadata.
         public bool Verified = false;
         public bool Unverified = false;
 
@@ -481,13 +220,10 @@ namespace OracleOfDereth
         {
             if (Completed == Incomplete) return true;
 
-            return quest.IsComplete() ? Completed : Incomplete;
+            return quest.IsCompleteInQuestView() ? Completed : Incomplete;
         }
 
-        // Same whitelist behaviour again for verified / unverified. Independent of the completed
-        // pair, so the combinations all mean something: Incomplete + Verified is the worklist of
-        // real quests this character hasn't done, and Completed + Unverified surfaces flags the
-        // character actually holds that the CSV hasn't marked — i.e. gaps in the column.
+        // Same whitelist behaviour again for verified / unverified.
         private bool MatchesVerified(Quest quest)
         {
             if (Verified == Unverified) return true;

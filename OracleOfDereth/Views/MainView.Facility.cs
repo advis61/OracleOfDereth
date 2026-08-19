@@ -28,7 +28,7 @@ namespace OracleOfDereth
 
         public void UpdateFacility()
         {
-            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
             UpdateFacilityList();
         }
 

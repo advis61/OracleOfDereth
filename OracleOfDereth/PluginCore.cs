@@ -147,10 +147,11 @@ namespace OracleOfDereth
             JohnQuest.Init();
             SocietyQuest.Init();
             CustomQuest.Init();
-            Quest.Init();
+            QuestCatalog.Init();
             Marker.Init();
             Nearby.Init();
             QuestFlag.Init();
+            QuestHistory.Init();
             Recall.Init();
             Target.Init();
             Title.Init();
@@ -274,6 +275,7 @@ namespace OracleOfDereth
                 else if (cmd == "/od update") { UpdateChecker.Check(true); }
                 else if (cmd == "/od quests send") { mainView.SendQuestFlags(); }
                 else if (cmd == "/od quests send clear") { int n = QuestSubmit.SentCount; QuestSubmit.ClearSent(); Util.Chat($"Cleared {n} sent quest flags - they can all be sent again."); }
+                else if (cmd == "/myqstlist") { QuestHistory.ManualRefresh(); return; }
                 else { return; }
 
                 e.Eat = true;            
@@ -298,6 +300,10 @@ namespace OracleOfDereth
                 else if (QuestFlag.MyQuestRegex.IsMatch(e.Text))
                 {
                     QuestFlag.Add(e.Text);
+                }
+                else if (QuestHistory.Matches(e.Text))
+                {
+                    Suppress(e, QuestHistory.NoteChat(e.Text));
                 }
                 else if (QuestFlag.StampedRegex.IsMatch(e.Text))
                 {

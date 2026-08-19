@@ -37,11 +37,8 @@ namespace OracleOfDereth
         // Collection of Quest Flags data objects — every flag /myquests reports, unfiltered.
         // There used to be a whitelist built from the quest CSVs, but the Flags tab wants the
         // whole picture, and a character's flag list is small enough to just keep in full.
-        public static Dictionary<string, QuestFlag> QuestFlags = new Dictionary<string, QuestFlag>();
-
-        // MyQuests tracking
-        public static bool QuestsChanged = false;
-        public static bool MyQuestsRan = false;
+        public static Dictionary<string, QuestFlag> QuestFlags =
+            new Dictionary<string, QuestFlag>(StringComparer.OrdinalIgnoreCase);
 
         // Properties
         public string Key = "";
@@ -54,28 +51,22 @@ namespace OracleOfDereth
         public static void Init()
         {
             QuestFlags.Clear();
-
-            QuestsChanged = false;
-            MyQuestsRan = false;
+            QuestState.Init();
         }
 
         public static void Refresh() {
-            Init();
-
-            MyQuestsRan = true;
+            QuestFlags.Clear();
+            QuestState.BeginRefresh();
             Util.Command("/myquests");
         }
 
         public static bool Add(string line)
         {
-            MyQuestsRan = true;
-            QuestsChanged = true;
-
             QuestFlag questFlag = FromMyQuestsLine(line);
             if (questFlag == null) { return false; }
 
-            // Store this quest flag in the QuestFlags dictionary
             QuestFlags[questFlag.Key] = questFlag;
+            QuestState.FlagChanged(questFlag, true);
 
             return true;
         }
@@ -87,7 +78,7 @@ namespace OracleOfDereth
         // until the next Refresh() fills in the real figures. Completion, which is what the tabs
         // key off, is right immediately either way.
         //
-        // MyQuestsRan is deliberately not set: one stamp is not the full list, and claiming
+        // A stamp does not mark /myquests as requested: one stamp is not the full list, and doing
         // otherwise would stop the quest tabs pulling it on first view.
         public static bool Stamped(string line)
         {
@@ -105,7 +96,8 @@ namespace OracleOfDereth
             questFlag.Solves += 1;
             questFlag.CompletedOn = DateTime.UtcNow;
 
-            QuestsChanged = true;
+            QuestHistory.AddStamp(key);
+            QuestState.FlagChanged(questFlag, false);
 
             return true;
         }

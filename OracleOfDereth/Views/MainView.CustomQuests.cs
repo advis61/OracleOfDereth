@@ -28,7 +28,7 @@ namespace OracleOfDereth
 
         public void UpdateCustomQuests()
         {
-            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
             UpdateCustomQuestsList();
         }
 

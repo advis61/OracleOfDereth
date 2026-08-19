@@ -32,7 +32,7 @@ namespace OracleOfDereth
 
         public void UpdateMarkers()
         {
-            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
             UpdateMarkersList();
         }
 

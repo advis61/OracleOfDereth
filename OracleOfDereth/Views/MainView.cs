@@ -415,7 +415,7 @@ namespace OracleOfDereth
         // The Tick
         public void Update()
         {
-            if (QuestFlag.QuestsChanged) { UpdateQuestFlags(); }
+            if (observedQuestRevision != QuestState.Revision) { UpdateQuestFlags(); }
 
             // Runs for every tab, so a flashed Refresh label restores even if you switch away.
             if (FlashedButton != null && DateTime.UtcNow >= FlashedUntil) { RestoreFlashedButton(); }
@@ -474,15 +474,10 @@ namespace OracleOfDereth
         }
 
         // Quest Flag Changes
+        private int observedQuestRevision;
+
         public void UpdateQuestFlags()
         {
-            // /myquests is the source of truth for what flags exist, so fold anything it
-            // reported that quests.csv doesn't list into the collection before anything reads
-            // it. No repaint from here: the Flags tab paints thousands of rows and does it on
-            // its own tick, only while it's the open tab — unlike the small lists below, which
-            // are cheap to redraw.
-            Quest.MergeQuestFlags();
-
             // Update anything that relies on quest flags
             UpdateJohnList();
             UpdateAugmentationQuestsList();
@@ -491,11 +486,12 @@ namespace OracleOfDereth
             UpdateLuminanceList();
             UpdateMarkersList();
 
-            // Display feedback
-            Util.Chat("Quest data updated.", Util.ColorPink);
+            if (QuestState.LastChangeWasFlag)
+            {
+                Util.Chat("Quest data updated.", Util.ColorPink);
+            }
 
-            // Quests are now unchanged
-            QuestFlag.QuestsChanged = false;
+            observedQuestRevision = QuestState.Revision;
         }
     }
 }

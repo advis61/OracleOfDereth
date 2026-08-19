@@ -35,11 +35,9 @@ namespace OracleOfDereth
 
         public HudStaticText QuestsText { get; private set; }
         public HudButton QuestsRefresh { get; private set; }
+        public HudButton QuestsRefreshAll { get; private set; }
         public HudButton QuestsSend { get; private set; }
         public HudButton QuestsClipboard { get; private set; }
-        public HudButton QuestsExportText { get; private set; }
-        public HudButton QuestsExportCsv { get; private set; }
-        public HudButton QuestsExportJson { get; private set; }
         public HudButton QuestsHelp { get; private set; }
         public HudTextBox QuestsFilterText { get; private set; }
         public HudButton QuestsFilterReset { get; private set; }
@@ -72,20 +70,14 @@ namespace OracleOfDereth
             QuestsRefresh = (HudButton)view["QuestsRefresh"];
             QuestsRefresh.Hit += QuestFlagsRefresh_Hit;
 
+            QuestsRefreshAll = (HudButton)view["QuestsRefreshAll"];
+            QuestsRefreshAll.Hit += QuestsRefreshAll_Hit;
+
             QuestsSend = (HudButton)view["QuestsSend"];
             QuestsSend.Hit += QuestsSend_Hit;
 
             QuestsClipboard = (HudButton)view["QuestsClipboard"];
             QuestsClipboard.Hit += QuestsClipboard_Hit;
-
-            QuestsExportText = (HudButton)view["QuestsExportText"];
-            QuestsExportText.Hit += QuestsExportText_Hit;
-
-            QuestsExportCsv = (HudButton)view["QuestsExportCsv"];
-            QuestsExportCsv.Hit += QuestsExportCsv_Hit;
-
-            QuestsExportJson = (HudButton)view["QuestsExportJson"];
-            QuestsExportJson.Hit += QuestsExportJson_Hit;
 
             QuestsHelp = (HudButton)view["QuestsHelp"];
             QuestsHelp.Hit += QuestsHelp_Hit;
@@ -170,17 +162,15 @@ namespace OracleOfDereth
             QuestsFilterKillTask.Change -= QuestsFilter_Change;
             QuestsFilterNew.Change -= QuestsFilter_Change;
             QuestsClipboard.Hit -= QuestsClipboard_Hit;
-            QuestsExportText.Hit -= QuestsExportText_Hit;
-            QuestsExportCsv.Hit -= QuestsExportCsv_Hit;
-            QuestsExportJson.Hit -= QuestsExportJson_Hit;
             QuestsHelp.Hit -= QuestsHelp_Hit;
             QuestsRefresh.Hit -= QuestFlagsRefresh_Hit;
+            QuestsRefreshAll.Hit -= QuestsRefreshAll_Hit;
             QuestsSend.Hit -= QuestsSend_Hit;
         }
 
         public void UpdateQuests()
         {
-            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
 
             // Repaint every tick like the other tabs, so the Ready column's countdowns actually
             // count down — SetText makes that cheap by writing only the cells that changed. The
@@ -222,7 +212,7 @@ namespace OracleOfDereth
             // With nothing filtering, use the collection as-is. The Where(...).ToList() otherwise
             // allocates a 4,000-entry list and runs a delegate per row on every single repaint,
             // only to reproduce the list we already have. Read-only either way.
-            List<Quest> quests = filter.IsActive ? Quest.Quests.Where(filter.Matches).ToList() : Quest.Quests;
+            List<Quest> quests = filter.IsActive ? QuestCatalog.Quests.Where(filter.Matches).ToList() : QuestCatalog.Quests;
             int completed = 0;
 
             for (int x = 0; x < quests.Count; x++)
@@ -243,13 +233,13 @@ namespace OracleOfDereth
                 // Update
                 Quest quest = quests[x];
 
-                bool complete = quest.IsComplete();
+                bool complete = quest.IsCompleteInQuestView();
                 if (complete) { completed += 1; }
 
                 AssignImage((HudPictureBox)row[0], complete);
                 SetText(row, 1, quest.Flag);
                 SetText(row, 2, quest.DisplayName());
-                SetText(row, 3, quest.Status());
+                SetText(row, 3, quest.StatusInQuestView());
                 SetText(row, 4, quest.SolvesText());
 
                 // Flags the server reported that quests.csv doesn't list are tinted rather than
@@ -335,7 +325,7 @@ namespace OracleOfDereth
             string flag = questsSelectedFlag;
             if (flag.Length == 0) { return; }
 
-            Quest quest = Quest.Quests.FirstOrDefault(q => q.Flag == flag);
+            Quest quest = QuestCatalog.Quests.FirstOrDefault(q => q.Flag == flag);
             string name = quest != null ? quest.DisplayName() : "";
             string label = name.Length > 0 ? $"{flag} - {name}" : flag;
 
@@ -356,10 +346,10 @@ namespace OracleOfDereth
         // and Titles tabs. Quest.Sort reorders the collection, so the repaint picks it up.
         void QuestsListSortComplete_Click(object sender, EventArgs e)
         {
-            if (Quest.CurrentSortType == Quest.SortType.CompleteAscending) {
-                Quest.Sort(Quest.SortType.CompleteDescending);
+            if (QuestCatalog.CurrentSortType == Quest.SortType.CompleteAscending) {
+                QuestCatalog.Sort(Quest.SortType.CompleteDescending);
             } else {
-                Quest.Sort(Quest.SortType.CompleteAscending);
+                QuestCatalog.Sort(Quest.SortType.CompleteAscending);
             }
 
             UpdateQuestsList();
@@ -367,10 +357,10 @@ namespace OracleOfDereth
 
         void QuestsListSortFlag_Click(object sender, EventArgs e)
         {
-            if (Quest.CurrentSortType == Quest.SortType.FlagAscending) {
-                Quest.Sort(Quest.SortType.FlagDescending);
+            if (QuestCatalog.CurrentSortType == Quest.SortType.FlagAscending) {
+                QuestCatalog.Sort(Quest.SortType.FlagDescending);
             } else {
-                Quest.Sort(Quest.SortType.FlagAscending);
+                QuestCatalog.Sort(Quest.SortType.FlagAscending);
             }
 
             UpdateQuestsList();
@@ -378,10 +368,10 @@ namespace OracleOfDereth
 
         void QuestsListSortName_Click(object sender, EventArgs e)
         {
-            if (Quest.CurrentSortType == Quest.SortType.NameAscending) {
-                Quest.Sort(Quest.SortType.NameDescending);
+            if (QuestCatalog.CurrentSortType == Quest.SortType.NameAscending) {
+                QuestCatalog.Sort(Quest.SortType.NameDescending);
             } else {
-                Quest.Sort(Quest.SortType.NameAscending);
+                QuestCatalog.Sort(Quest.SortType.NameAscending);
             }
 
             UpdateQuestsList();
@@ -389,10 +379,10 @@ namespace OracleOfDereth
 
         void QuestsListSortReady_Click(object sender, EventArgs e)
         {
-            if (Quest.CurrentSortType == Quest.SortType.ReadyAscending) {
-                Quest.Sort(Quest.SortType.ReadyDescending);
+            if (QuestCatalog.CurrentSortType == Quest.SortType.ReadyAscending) {
+                QuestCatalog.Sort(Quest.SortType.ReadyDescending);
             } else {
-                Quest.Sort(Quest.SortType.ReadyAscending);
+                QuestCatalog.Sort(Quest.SortType.ReadyAscending);
             }
 
             UpdateQuestsList();
@@ -402,42 +392,21 @@ namespace OracleOfDereth
         // solve count at all, so ascending would just show thousands of blanks.
         void QuestsListSortSolves_Click(object sender, EventArgs e)
         {
-            if (Quest.CurrentSortType == Quest.SortType.SolvesDescending) {
-                Quest.Sort(Quest.SortType.SolvesAscending);
+            if (QuestCatalog.CurrentSortType == Quest.SortType.SolvesDescending) {
+                QuestCatalog.Sort(Quest.SortType.SolvesAscending);
             } else {
-                Quest.Sort(Quest.SortType.SolvesDescending);
+                QuestCatalog.Sort(Quest.SortType.SolvesDescending);
             }
 
             UpdateQuestsList();
         }
 
-        // The rows currently on screen: the collection narrowed by the search box and the
-        // status/new checkboxes. Export and Copy act on this, not the full list, so what you
-        // save matches what you see.
-        private List<Quest> DisplayedQuests() => Quest.Quests.Where(QuestsFilter().Matches).ToList();
+        // The rows currently on screen: Copy uses the filtered list, not the full catalog.
+        private List<Quest> DisplayedQuests() => QuestCatalog.Quests.Where(QuestsFilter().Matches).ToList();
 
-        private void QuestsExportText_Hit(object sender, EventArgs e)
+        private void QuestsRefreshAll_Hit(object sender, EventArgs e)
         {
-            List<Quest> quests = DisplayedQuests();
-            string path = QuestExport.ToText(quests);
-            Util.ClipboardCopy(path);
-            Util.Chat($"Exported {quests.Count} quests to {path}");
-        }
-
-        private void QuestsExportCsv_Hit(object sender, EventArgs e)
-        {
-            List<Quest> quests = DisplayedQuests();
-            string path = QuestExport.ToCsv(quests);
-            Util.ClipboardCopy(path);
-            Util.Chat($"Exported {quests.Count} quests to {path}");
-        }
-
-        private void QuestsExportJson_Hit(object sender, EventArgs e)
-        {
-            List<Quest> quests = DisplayedQuests();
-            string path = QuestExport.ToJson(quests);
-            Util.ClipboardCopy(path);
-            Util.Chat($"Exported {quests.Count} quests to {path}");
+            QuestHistory.Refresh();
         }
 
         // Chat rather than Think so the help reads in pink: a /tell takes whatever colour the
@@ -577,7 +546,7 @@ namespace OracleOfDereth
         {
             string flag = ((HudStaticText)QuestsList[row][1]).Text;
 
-            Quest quest = Quest.Quests.FirstOrDefault(x => x.Flag == flag);
+            Quest quest = QuestCatalog.Quests.FirstOrDefault(x => x.Flag == flag);
             if (quest == null) { return; }
 
             // Picking the row is on top of what the column click already does, not instead of it:

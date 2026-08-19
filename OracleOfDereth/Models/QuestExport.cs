@@ -73,9 +73,7 @@ namespace OracleOfDereth
             foreach (Quest quest in quests)
             {
                 QuestFlag.QuestFlags.TryGetValue(quest.Flag, out QuestFlag questFlag);
-                if (questFlag == null) { continue; }
-
-                lines.Add(MyQuestsLine(questFlag));
+                if (questFlag != null) lines.Add(MyQuestsLine(questFlag));
             }
 
             File.WriteAllLines(path, lines);
@@ -119,7 +117,7 @@ namespace OracleOfDereth
             string solves = quest.SolvesText();
             if (solves.Length > 0) { solves = $" | {solves} solves"; }
 
-            return $"{quest.Flag} | {quest.DisplayName()} | {repeat} | {quest.Status()}{solves}";
+            return $"{quest.Flag} | {quest.DisplayName()} | {repeat} | {quest.StatusInQuestView()}{solves}";
         }
 
         // `suffix` is what distinguishes one export from another in a folder that collects them
@@ -149,8 +147,8 @@ namespace OracleOfDereth
                 Server.Name,
                 quest.Flag,
                 quest.DisplayName(),
-                quest.IsComplete() ? "Yes" : "No",
-                quest.Status(),
+                quest.IsCompleteInQuestView() ? "Yes" : "No",
+                quest.StatusInQuestView(),
                 // Raw count here, unlike the tab's Solves column — an export is data, so a
                 // one-time stamp's count is worth carrying even though the tab hides it.
                 questFlag == null ? "" : questFlag.Solves.ToString(),

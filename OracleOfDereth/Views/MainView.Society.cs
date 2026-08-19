@@ -36,7 +36,7 @@ namespace OracleOfDereth
 
         public void UpdateSociety()
         {
-            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
             UpdateSocietyStatus();
             UpdateSocietyList();
         }

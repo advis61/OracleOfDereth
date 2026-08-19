@@ -34,7 +34,7 @@ namespace OracleOfDereth
 
         public void UpdateAugmentations()
         {
-            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
             UpdateAugmentationQuestsList();
             UpdateAugmentationsList();
         }

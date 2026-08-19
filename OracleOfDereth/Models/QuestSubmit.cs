@@ -46,7 +46,7 @@ namespace OracleOfDereth
             string server = Server.Name;
             int count = 0;
 
-            foreach (Quest quest in Quest.Quests)
+            foreach (Quest quest in QuestCatalog.Quests)
             {
                 if (IsPending(quest, server)) { count++; }
             }
@@ -58,12 +58,10 @@ namespace OracleOfDereth
         // column filled in.
         public static void Pending(out List<Quest> unknown, out List<Quest> unverified)
         {
-            Quest.MergeQuestFlags();
-
             string server = Server.Name;
 
-            unknown = Quest.Quests.Where(q => q.IsNew && IsPending(q, server)).OrderBy(q => q.Flag).ToList();
-            unverified = Quest.Quests.Where(q => !q.IsNew && IsPending(q, server)).OrderBy(q => q.Flag).ToList();
+            unknown = QuestCatalog.Quests.Where(q => q.IsNew && IsPending(q, server)).OrderBy(q => q.Flag).ToList();
+            unverified = QuestCatalog.Quests.Where(q => !q.IsNew && IsPending(q, server)).OrderBy(q => q.Flag).ToList();
         }
 
         // ---- up --------------------------------------------------------------------------------

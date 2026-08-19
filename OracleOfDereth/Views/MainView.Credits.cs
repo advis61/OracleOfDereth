@@ -28,7 +28,7 @@ namespace OracleOfDereth
 
         public void UpdateCredits()
         {
-            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
             UpdateCreditsList();
         }
 

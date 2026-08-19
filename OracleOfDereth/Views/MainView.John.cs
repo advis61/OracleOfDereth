@@ -61,7 +61,7 @@ namespace OracleOfDereth
 
         public void UpdateJohn()
         {
-            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
             UpdateJohnList();
         }
 

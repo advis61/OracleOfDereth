@@ -114,7 +114,7 @@ namespace OracleOfDereth
         // order. Deliberately NOT the Browse tab's sort: the arrows on the Favorites tab are the
         // only thing that orders this list, and a sort applied over there must not reshuffle it.
         //
-        // One pass over Quest.Quests to collect the matches, then emitted in stored order — the
+        // One pass over QuestCatalog.Quests to collect the matches, then emitted in stored order — the
         // same cost as a Where() over that collection, rather than a scan per favourite. A stored
         // flag this server's list doesn't carry is skipped; it stays in the file.
         public static List<Quest> Quests()
@@ -125,7 +125,7 @@ namespace OracleOfDereth
             var wanted = new HashSet<string>(favorites, StringComparer.OrdinalIgnoreCase);
             var found = new Dictionary<string, Quest>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (Quest quest in Quest.Quests)
+            foreach (Quest quest in QuestCatalog.Quests)
             {
                 if (wanted.Contains(quest.Flag) && !found.ContainsKey(quest.Flag)) { found[quest.Flag] = quest; }
             }

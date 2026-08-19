@@ -80,7 +80,7 @@ namespace OracleOfDereth
 
         public void UpdateFavorites()
         {
-            if (QuestFlag.MyQuestsRan == false) { QuestFlag.Refresh(); }
+            if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
 
             // Repaint every tick so the Ready column counts down, but not into a closed window —
             // same deal as the Flags tab.
@@ -204,7 +204,7 @@ namespace OracleOfDereth
         {
             string flag = ((HudStaticText)FavoritesList[row][1]).Text;
 
-            Quest quest = Quest.Quests.FirstOrDefault(x => x.Flag == flag);
+            Quest quest = QuestCatalog.Quests.FirstOrDefault(x => x.Flag == flag);
             if (quest == null) { return; }
 
             favoritesSelectedFlag = favoritesSelectedFlag == flag ? "" : flag;
