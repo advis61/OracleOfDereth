@@ -24,6 +24,7 @@ namespace OracleOfDereth
         // from the worker thread is unsafe COM access that can silently no-op or crash.
         private static volatile string pendingMessage;
         private static volatile Exception pendingException;
+        private static volatile bool pendingChecked;
 
         public static void Arm()
         {
@@ -36,6 +37,11 @@ namespace OracleOfDereth
         {
             // Emit anything the background fetch produced — on the main thread.
             if (pendingException != null) { Util.Log(pendingException); pendingException = null; }
+            if (pendingChecked)
+            {
+                SettingsFile.PutSetting(LastCheckedKey, DateTime.Today.ToString(DateFormat));
+                pendingChecked = false;
+            }
             if (pendingMessage != null) { Util.Chat(pendingMessage, Util.ColorPink, ""); pendingMessage = null; }
 
             if (ran || armedAt == null) return;
@@ -80,7 +86,7 @@ namespace OracleOfDereth
                 return;
             }
 
-            SettingsFile.PutSetting(LastCheckedKey, DateTime.Today.ToString(DateFormat));
+            pendingChecked = true;
 
             if (remote > local)
             {

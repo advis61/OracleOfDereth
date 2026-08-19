@@ -8,15 +8,11 @@ namespace OracleOfDereth
     {
         private static XmlDocument _doc;
         private static string _filePath;
-        private static readonly object Sync = new object();
 
         public static void Init()
         {
-            lock (Sync)
-            {
-                _filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), @"Decal Plugins\Oracle of Dereth\settings.xml");
-                Load();
-            }
+            _filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), @"Decal Plugins\Oracle of Dereth\settings.xml");
+            Load();
         }
 
         private static void Load()
@@ -47,52 +43,46 @@ namespace OracleOfDereth
 
         public static string GetSetting(string key, string defaultValue)
         {
-            lock (Sync)
+            try
             {
-                try
+                XmlNode node = _doc.SelectSingleNode($"/Settings/{key}");
+                if (node != null && node.InnerText.Length > 0)
                 {
-                    XmlNode node = _doc.SelectSingleNode($"/Settings/{key}");
-                    if (node != null && node.InnerText.Length > 0)
-                    {
-                        return node.InnerText;
-                    }
+                    return node.InnerText;
                 }
-                catch (Exception ex)
-                {
-                    Util.Log(ex);
-                }
-
-                return defaultValue;
             }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
+            }
+
+            return defaultValue;
         }
 
         public static void PutSetting(string key, string value)
         {
-            lock (Sync)
+            try
             {
-                try
+                XmlNode root = _doc.SelectSingleNode("/Settings");
+                if (root == null)
                 {
-                    XmlNode root = _doc.SelectSingleNode("/Settings");
-                    if (root == null)
-                    {
-                        root = _doc.CreateElement("Settings");
-                        _doc.AppendChild(root);
-                    }
-
-                    XmlNode node = root.SelectSingleNode(key);
-                    if (node == null)
-                    {
-                        node = _doc.CreateElement(key);
-                        root.AppendChild(node);
-                    }
-
-                    node.InnerText = value;
-                    Save();
+                    root = _doc.CreateElement("Settings");
+                    _doc.AppendChild(root);
                 }
-                catch (Exception ex)
+
+                XmlNode node = root.SelectSingleNode(key);
+                if (node == null)
                 {
-                    Util.Log(ex);
+                    node = _doc.CreateElement(key);
+                    root.AppendChild(node);
                 }
+
+                node.InnerText = value;
+                Save();
+            }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
             }
         }
 
