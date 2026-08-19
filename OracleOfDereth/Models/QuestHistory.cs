@@ -19,8 +19,9 @@ namespace OracleOfDereth
             @"^\s*(?:\[[^\]]*\][\s:]*)*-{4}\s*End of Account Quests\s*-{4}\s*$",
             RegexOptions.IgnoreCase);
         private static readonly Regex FlagRegex = new Regex(
-            @"^\s*(?:\[[^\]]*\][\s:]*)*(?<flag>[A-Za-z0-9_]+)\s*$");
-        private static readonly Regex StoredFlagRegex = new Regex(@"^[A-Za-z0-9_]+$");
+            @"^\s*(?:\[[^\]]*\][\s:]*)*(?<flag>\S+)\s*$");
+        private static readonly Regex NumberedFlagRegex = new Regex(
+            @"^\s*(?:\[[^\]]*\][\s:]*)*\d+\.\s+(?<flag>\S+)(?:\s+\([^)]*\))?\s*$");
 
         private static readonly TimeSpan CollectWindow = TimeSpan.FromMinutes(2);
 
@@ -60,7 +61,7 @@ namespace OracleOfDereth
                 foreach (string line in lines.Skip(1))
                 {
                     string flag = Util.CsvParseLine(line).FirstOrDefault()?.Trim() ?? "";
-                    if (!StoredFlagRegex.IsMatch(flag))
+                    if (!IsValidFlag(flag))
                     {
                         rewrite = true;
                         continue;
@@ -108,10 +109,12 @@ namespace OracleOfDereth
 
             if (!Active()) return false;
 
-            Match entry = FlagRegex.Match(text);
+            Match entry = NumberedFlagRegex.Match(text);
+            if (!entry.Success) entry = FlagRegex.Match(text);
             if (!entry.Success) return false;
 
             string flag = entry.Groups["flag"].Value;
+            if (!IsValidFlag(flag)) return false;
             if (Collected.Add(flag) && Add(flag))
             {
                 QuestState.HistoryChanged();
@@ -188,7 +191,8 @@ namespace OracleOfDereth
                 Directory.CreateDirectory(directory);
                 File.WriteAllLines(
                     filePath,
-                    new[] { "Flag" }.Concat(Flags.OrderBy(f => f, StringComparer.OrdinalIgnoreCase)));
+                    new[] { "Flag" }.Concat(
+                        Flags.OrderBy(f => f, StringComparer.OrdinalIgnoreCase).Select(Util.CsvEscape)));
                 dirty = false;
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -197,12 +201,19 @@ namespace OracleOfDereth
         private static bool Add(string flag)
         {
             string value = (flag ?? "").Trim();
-            if (!StoredFlagRegex.IsMatch(value) || !Flags.Add(value)) return false;
+            if (!IsValidFlag(value) || !Flags.Add(value)) return false;
 
             QuestCatalog.AddHistorical(value);
             dirty = true;
             changedAt = DateTime.UtcNow;
             return true;
+        }
+
+        private static bool IsValidFlag(string flag)
+        {
+            return !string.IsNullOrWhiteSpace(flag) &&
+                !flag.Any(char.IsWhiteSpace) &&
+                !Regex.IsMatch(flag, @"^-+$");
         }
 
         private static string SafeName(string value)

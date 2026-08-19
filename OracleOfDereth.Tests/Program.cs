@@ -216,6 +216,17 @@ internal static class Program
                 throw new InvalidOperationException("Out-of-order /myqstlist block was not persisted.");
             }
 
+            QuestHistory.ManualRefresh();
+            QuestHistory.Capture("---- Account Quests (2) | XP Bonus: 0.1% ----");
+            QuestHistory.Capture("1. ArantahKill1@GiveFigurine (Raen)");
+            QuestHistory.Capture("2. BurFlagged(Permanent)");
+            QuestHistory.Capture("---- End of Account Quests ----");
+            if (!QuestHistory.Contains("ArantahKill1@GiveFigurine") ||
+                !QuestHistory.Contains("BurFlagged(Permanent)"))
+            {
+                throw new InvalidOperationException("Punctuated or numbered quest flags were rejected.");
+            }
+
             var historicalQuest = new Quest { Flag = "PathwardenComplete" };
             if (historicalQuest.IsComplete() || !historicalQuest.IsCompleteInQuestView())
                 throw new InvalidOperationException("Account history leaked outside the Quests view.");
