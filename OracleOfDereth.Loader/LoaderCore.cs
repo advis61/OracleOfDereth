@@ -105,6 +105,35 @@ namespace OracleOfDereth
                 Core.PluginInitComplete -= Core_PluginInitComplete;
                 Core.PluginTermComplete -= Core_PluginTermComplete;
                 Core.FilterInitComplete -= Core_FilterInitComplete;
+                Core.EchoFilter.ClientDispatch -= EchoFilter_ClientDispatch;
+                if (isSubscribedToRenderFrame)
+                {
+                    Core.RenderFrame -= Core_RenderFrame;
+                    isSubscribedToRenderFrame = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+            }
+
+            try
+            {
+                if (pluginWatcher != null)
+                {
+                    pluginWatcher.EnableRaisingEvents = false;
+                    pluginWatcher.Changed -= PluginWatcher_Changed;
+                    pluginWatcher.Dispose();
+                    pluginWatcher = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+            }
+
+            try
+            {
                 UnloadPluginAssembly();
             }
             catch (Exception ex)
@@ -192,15 +221,18 @@ namespace OracleOfDereth
                 {
                     MethodInfo shutdownMethod = pluginType.GetMethod("Shutdown", BindingFlags.NonPublic | BindingFlags.Instance);
                     shutdownMethod.Invoke(pluginInstance, null);
-                    pluginInstance = null;
-                    pluginType = null;
-                    pluginAssembly = null;
                 }
-                IsPluginLoaded = false;
             }
             catch (Exception ex)
             {
                 Log(ex);
+            }
+            finally
+            {
+                pluginInstance = null;
+                pluginType = null;
+                pluginAssembly = null;
+                IsPluginLoaded = false;
             }
         }
         #endregion

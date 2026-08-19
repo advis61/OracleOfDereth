@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace OracleOfDereth
@@ -23,6 +24,14 @@ namespace OracleOfDereth
         private static readonly Regex InqQuestRegex = new Regex(@"InqQuest:\s*(\S+)", RegexOptions.IgnoreCase);
         private static readonly Regex WikiLinkRegex = new Regex( @"<a\s+href=""/wiki/([^""#]+)""[^>]*>([^<]+)</a>", RegexOptions.IgnoreCase);
         private static readonly Regex RelatedQuestsBlockRegex = new Regex(@"Related(?:\s|&#160;|&nbsp;)+Quests:.*?</td>\s*<td[^>]*>(.*?)</td>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        private static LookupResult pending;
+        private static int running;
+
+        private sealed class LookupResult
+        {
+            public readonly List<string> Messages = new List<string>();
+            public string ClipboardText;
+        }
 
         public static void Execute()
         {
@@ -43,16 +52,69 @@ namespace OracleOfDereth
             }
 
             Util.Chat($"[{type}] {name}", Util.ColorCyan, ChatPrefix);
+            if (Interlocked.CompareExchange(ref running, 1, 0) != 0)
+            {
+                Util.Chat("A quest flag lookup is already running.", Util.ColorCyan, ChatPrefix);
+                return;
+            }
 
-            PrintWikiInfo(name);
-            PrintInqQuests(type, name);
+            new Thread(() => Run(type, name)) { IsBackground = true }.Start();
         }
 
-        private static void PrintWikiInfo(string name)
+        public static void Tick()
+        {
+            LookupResult result = Interlocked.Exchange(ref pending, null);
+            if (result == null) return;
+
+            bool copied = false;
+            if (!string.IsNullOrEmpty(result.ClipboardText))
+            {
+                try
+                {
+                    System.Windows.Forms.Clipboard.SetText(result.ClipboardText);
+                    copied = true;
+                }
+                catch { }
+            }
+
+            foreach (string message in result.Messages)
+            {
+                string suffix = copied && message == result.ClipboardText ? " (copied to clipboard)" : "";
+                Util.Chat(UseSelectedWiki(message) + suffix, Util.ColorCyan, ChatPrefix);
+            }
+            Interlocked.Exchange(ref running, 0);
+        }
+
+        private static void Run(int type, string name)
+        {
+            var result = new LookupResult();
+            try
+            {
+                AddWikiInfo(result, name);
+                AddInqQuests(result, type, name);
+            }
+            catch (Exception ex)
+            {
+                result.Messages.Add($"Lookup failed: {ex.Message}");
+            }
+            finally
+            {
+                Interlocked.Exchange(ref pending, result);
+            }
+        }
+
+        private static string UseSelectedWiki(string message)
+        {
+            int urlStart = message.IndexOf("https://acportalstorm.com/wiki/", StringComparison.OrdinalIgnoreCase);
+            if (urlStart < 0) return message;
+            return message.Substring(0, urlStart) + Util.WikiUrl(message.Substring(urlStart));
+        }
+
+        private static void AddWikiInfo(LookupResult result, string name)
         {
             string slug = Uri.EscapeDataString(name.Replace(' ', '_'));
             string wikiUrl = string.Format(WikiUrlTemplate, slug);
-            Util.Chat($"Wiki: {Util.WikiUrl(wikiUrl)}", Util.ColorCyan, ChatPrefix);
+            result.Messages.Add($"Wiki: {wikiUrl}");
 
             string html;
             try
@@ -61,25 +123,25 @@ namespace OracleOfDereth
             }
             catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
             {
-                Util.Chat($"(no wiki page at that URL)", Util.ColorCyan, ChatPrefix);
+                result.Messages.Add("(no wiki page at that URL)");
                 return;
             }
             catch (Exception ex)
             {
-                Util.Chat($"Wiki fetch failed: {ex.Message}", Util.ColorCyan, ChatPrefix);
+                result.Messages.Add($"Wiki fetch failed: {ex.Message}");
                 return;
             }
 
             var quests = ExtractRelatedQuests(html);
             if (quests.Count == 0)
             {
-                Util.Chat($"(page found, no Related Quests section)", Util.ColorCyan, ChatPrefix);
+                result.Messages.Add("(page found, no Related Quests section)");
                 return;
             }
 
             foreach (var quest in quests)
             {
-                Util.Chat($"Related quest: {Util.WikiUrl(quest.Url)}", Util.ColorCyan, ChatPrefix);
+                result.Messages.Add($"Related quest: {quest.Url}");
             }
         }
 
@@ -105,7 +167,7 @@ namespace OracleOfDereth
             return results;
         }
 
-        private static void PrintInqQuests(int type, string name)
+        private static void AddInqQuests(LookupResult result, int type, string name)
         {
             string esUrl = string.Format(EsUrlTemplate, type);
             string content;
@@ -116,23 +178,23 @@ namespace OracleOfDereth
             }
             catch (WebException ex) when ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
             {
-                Util.Chat($"No script for [{type}] {name} (not in Creature/Human/).", Util.ColorCyan, ChatPrefix);
+                result.Messages.Add($"No script for [{type}] {name} (not in Creature/Human/).");
                 return;
             }
             catch (Exception ex)
             {
-                Util.Chat($"Script fetch failed: {ex.Message}", Util.ColorCyan, ChatPrefix);
+                result.Messages.Add($"Script fetch failed: {ex.Message}");
                 return;
             }
 
             // Script was found — always surface the human-browseable .es URL.
-            Util.Chat($"Script: {string.Format(EsBrowseUrlTemplate, type)}", Util.ColorCyan, ChatPrefix);
+            result.Messages.Add($"Script: {string.Format(EsBrowseUrlTemplate, type)}");
 
             var flags = InqQuestRegex.Matches(content).Cast<Match>().Select(m => m.Groups[1].Value).Distinct().ToList();
 
             if (flags.Count == 0)
             {
-                Util.Chat($"No InqQuest entries in script.", Util.ColorCyan, ChatPrefix);
+                result.Messages.Add("No InqQuest entries in script.");
                 return;
             }
 
@@ -148,19 +210,11 @@ namespace OracleOfDereth
                 }
             }
 
-            bool copied = false;
-            try
-            {
-                System.Windows.Forms.Clipboard.SetText(flags[copyIndex]);
-                copied = true;
-            }
-            catch { }
-
-            Util.Chat($"InqQuest flags:", Util.ColorCyan, ChatPrefix);
+            result.ClipboardText = flags[copyIndex];
+            result.Messages.Add("InqQuest flags:");
             for (int i = 0; i < flags.Count; i++)
             {
-                string suffix = (i == copyIndex && copied) ? " (copied to clipboard)" : "";
-                Util.Chat($"{flags[i]}{suffix}", Util.ColorCyan, ChatPrefix);
+                result.Messages.Add(flags[i]);
             }
         }
 
@@ -170,10 +224,14 @@ namespace OracleOfDereth
             // disturbing other protocols another part of the app may have set.
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
-            using (var client = new WebClient())
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            request.UserAgent = "OracleOfDereth-Plugin";
+            request.Timeout = 15000;
+            request.ReadWriteTimeout = 15000;
+            using (var response = request.GetResponse())
+            using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
             {
-                client.Headers.Add("User-Agent", "OracleOfDereth-Plugin");
-                return client.DownloadString(url);
+                return reader.ReadToEnd();
             }
         }
     }

@@ -47,7 +47,7 @@ namespace OracleOfDereth
                 for (int c = 0; c < colCount; c++)
                 {
                     string comma = c < colCount - 1 ? "," : "";
-                    sb.AppendLine($"    {JsonEscape(Headers[c])}: {JsonEscape(row[c])}{comma}");
+                    sb.AppendLine($"    {Util.JsonString(Headers[c])}: {Util.JsonString(row[c])}{comma}");
                 }
 
                 sb.AppendLine("  }" + (i < items.Count - 1 ? "," : ""));
@@ -137,10 +137,5 @@ namespace OracleOfDereth
         // See the note in QuestExport: one escaping rule for every csv the plugin writes.
         private static string CsvEscape(string value) => Util.CsvEscape(value);
 
-        private static string JsonEscape(string value)
-        {
-            if (value == null) return "null";
-            return "\"" + value.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
-        }
     }
 }

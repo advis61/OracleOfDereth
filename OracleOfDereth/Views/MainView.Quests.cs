@@ -455,8 +455,6 @@ namespace OracleOfDereth
         //
         // Issues no server command: every quest tab runs QuestFlag.Refresh() on first view, and
         // Refresh sits one button to the right for a deliberate re-pull.
-        private const int SendPreviewRows = 20;
-
         private void QuestsSend_Hit(object sender, EventArgs e) => SendQuestFlags();
 
         // Also "/od quests send", which stays reachable when the button is hidden — hence the
@@ -498,9 +496,6 @@ namespace OracleOfDereth
 
             Util.ClipboardCopy(SendBreakdown(held, unknown, unverified));
             SendPost(path, send, unknown.Count, unverified.Count);
-
-            SendPreview("Not in the master list", unknown);
-            SendPreview("Held but not marked Verified", unverified);
         }
 
         // Posts the file just written rather than re-deriving its text, so what arrives is exactly
@@ -532,13 +527,21 @@ namespace OracleOfDereth
             string summary = $"**{character}** ({server}) - {send.Count} flags: {unknown} new, {unverified} unverified";
             string[] flags = send.Select(q => q.Flag).ToArray();
 
-            if (QuestSubmit.Send(Path.GetFileName(path), content, summary, server, flags, out string reason))
+            bool started = QuestSubmit.SendAsync(Path.GetFileName(path), content, summary, server, flags, (success, reason) =>
             {
-                Util.Chat($"Sent {send.Count} flags as {character} of {server}. Thanks! They won't be sent again.", Util.ColorPink);
-            }
-            else
+                if (success)
+                {
+                    Util.Chat($"Sent {send.Count} flags as {character} of {server}. Thanks! They won't be sent again.", Util.ColorPink);
+                }
+                else
+                {
+                    Util.Chat($"Send: not posted - {reason}. Saved to {path}, pass it along by hand.", Util.ColorPink);
+                }
+            }, out string startReason);
+
+            if (!started)
             {
-                Util.Chat($"Send: not posted - {reason}. Saved to {path}, pass it along by hand.", Util.ColorPink);
+                Util.Chat($"Send: not posted - {startReason}. Saved to {path}, pass it along by hand.", Util.ColorPink);
             }
         }
 
@@ -560,26 +563,6 @@ namespace OracleOfDereth
             foreach (Quest quest in unverified) { sb.AppendLine(quest.Flag); }
 
             return sb.ToString();
-        }
-
-        // Chat gets a preview; a mature character runs to hundreds of rows and the clipboard
-        // already has all of them.
-        private static void SendPreview(string heading, List<Quest> quests)
-        {
-            if (quests.Count == 0) { return; }
-
-            Util.Chat($"{heading}:", Util.ColorPink);
-
-            foreach (Quest quest in quests.Take(SendPreviewRows))
-            {
-                string name = quest.DisplayName();
-                Util.Chat(name.Length > 0 ? $"  {quest.Flag} - {name}" : $"  {quest.Flag}", Util.ColorPink);
-            }
-
-            if (quests.Count > SendPreviewRows)
-            {
-                Util.Chat($"  ...and {quests.Count - SendPreviewRows} more (clipboard has them all).", Util.ColorPink);
-            }
         }
 
         private void QuestsClipboard_Hit(object sender, EventArgs e)

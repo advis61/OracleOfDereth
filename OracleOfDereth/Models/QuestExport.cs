@@ -47,7 +47,7 @@ namespace OracleOfDereth
                 for (int c = 0; c < colCount; c++)
                 {
                     string comma = c < colCount - 1 ? "," : "";
-                    sb.AppendLine($"    {JsonEscape(Headers[c])}: {JsonEscape(row[c])}{comma}");
+                    sb.AppendLine($"    {Util.JsonString(Headers[c])}: {Util.JsonString(row[c])}{comma}");
                 }
 
                 sb.AppendLine("  }" + (i < quests.Count - 1 ? "," : ""));
@@ -167,10 +167,5 @@ namespace OracleOfDereth
         // Util.CsvParseLine every reader now uses — so an export can be read back in.
         private static string CsvEscape(string value) => Util.CsvEscape(value);
 
-        private static string JsonEscape(string value)
-        {
-            if (value == null) return "null";
-            return "\"" + value.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
-        }
     }
 }

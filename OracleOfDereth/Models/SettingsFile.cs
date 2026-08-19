@@ -8,11 +8,15 @@ namespace OracleOfDereth
     {
         private static XmlDocument _doc;
         private static string _filePath;
+        private static readonly object Sync = new object();
 
         public static void Init()
         {
-            _filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), @"Decal Plugins\Oracle of Dereth\settings.xml");
-            Load();
+            lock (Sync)
+            {
+                _filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), @"Decal Plugins\Oracle of Dereth\settings.xml");
+                Load();
+            }
         }
 
         private static void Load()
@@ -43,46 +47,52 @@ namespace OracleOfDereth
 
         public static string GetSetting(string key, string defaultValue)
         {
-            try
+            lock (Sync)
             {
-                XmlNode node = _doc.SelectSingleNode($"/Settings/{key}");
-                if (node != null && node.InnerText.Length > 0)
+                try
                 {
-                    return node.InnerText;
+                    XmlNode node = _doc.SelectSingleNode($"/Settings/{key}");
+                    if (node != null && node.InnerText.Length > 0)
+                    {
+                        return node.InnerText;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Util.Log(ex);
-            }
+                catch (Exception ex)
+                {
+                    Util.Log(ex);
+                }
 
-            return defaultValue;
+                return defaultValue;
+            }
         }
 
         public static void PutSetting(string key, string value)
         {
-            try
+            lock (Sync)
             {
-                XmlNode root = _doc.SelectSingleNode("/Settings");
-                if (root == null)
+                try
                 {
-                    root = _doc.CreateElement("Settings");
-                    _doc.AppendChild(root);
-                }
+                    XmlNode root = _doc.SelectSingleNode("/Settings");
+                    if (root == null)
+                    {
+                        root = _doc.CreateElement("Settings");
+                        _doc.AppendChild(root);
+                    }
 
-                XmlNode node = root.SelectSingleNode(key);
-                if (node == null)
+                    XmlNode node = root.SelectSingleNode(key);
+                    if (node == null)
+                    {
+                        node = _doc.CreateElement(key);
+                        root.AppendChild(node);
+                    }
+
+                    node.InnerText = value;
+                    Save();
+                }
+                catch (Exception ex)
                 {
-                    node = _doc.CreateElement(key);
-                    root.AppendChild(node);
+                    Util.Log(ex);
                 }
-
-                node.InnerText = value;
-                Save();
-            }
-            catch (Exception ex)
-            {
-                Util.Log(ex);
             }
         }
 
@@ -93,7 +103,17 @@ namespace OracleOfDereth
                 string dir = Path.GetDirectoryName(_filePath);
                 if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
-                _doc.Save(_filePath);
+                string tempPath = Path.Combine(dir, $"settings-{Guid.NewGuid():N}.tmp");
+                try
+                {
+                    _doc.Save(tempPath);
+                    if (File.Exists(_filePath)) File.Replace(tempPath, _filePath, null);
+                    else File.Move(tempPath, _filePath);
+                }
+                finally
+                {
+                    if (File.Exists(tempPath)) File.Delete(tempPath);
+                }
             }
             catch (Exception ex)
             {

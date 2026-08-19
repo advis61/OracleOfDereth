@@ -25,6 +25,31 @@ namespace OracleOfDereth
             return "\"" + field.Replace("\"", "\"\"") + "\"";
         }
 
+        public static string JsonString(string value)
+        {
+            if (value == null) return "null";
+
+            var output = new StringBuilder("\"");
+            foreach (char c in value)
+            {
+                switch (c)
+                {
+                    case '"': output.Append("\\\""); break;
+                    case '\\': output.Append("\\\\"); break;
+                    case '\b': output.Append("\\b"); break;
+                    case '\f': output.Append("\\f"); break;
+                    case '\n': output.Append("\\n"); break;
+                    case '\r': output.Append("\\r"); break;
+                    case '\t': output.Append("\\t"); break;
+                    default:
+                        if (c < ' ') output.Append("\\u").Append(((int)c).ToString("x4"));
+                        else output.Append(c);
+                        break;
+                }
+            }
+            return output.Append('"').ToString();
+        }
+
         public static string[] CsvParseLine(string line)
         {
             if (string.IsNullOrEmpty(line)) { return new string[0]; }

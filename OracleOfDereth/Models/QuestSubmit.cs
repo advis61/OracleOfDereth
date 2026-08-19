@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 
 namespace OracleOfDereth
 {
@@ -16,6 +17,18 @@ namespace OracleOfDereth
         private const string SentKey = "SentQuestFlags";
 
         private const int TimeoutMs = 15000;
+        private static SendResult pendingResult;
+        private static int sending;
+
+        private sealed class SendResult
+        {
+            public bool Success;
+            public string Reason;
+            public string Server;
+            public string[] Flags;
+            public Action<bool, string> Completed;
+            public Exception Exception;
+        }
 
         // ---- diff ------------------------------------------------------------------------------
 
@@ -58,11 +71,36 @@ namespace OracleOfDereth
 
         // Records the flags only on a 2xx — never on the strength of having tried, so a failure
         // leaves them pending for the next attempt.
-        public static bool Send(string fileName, string content, string summary, string server, string[] flags, out string reason)
+        public static bool SendAsync(string fileName, string content, string summary, string server, string[] flags, Action<bool, string> completed, out string reason)
         {
             reason = "";
             if (!CanSend) { reason = "posting isn't configured in this build"; return false; }
+            if (Interlocked.CompareExchange(ref sending, 1, 0) != 0) { reason = "a submission is already in progress"; return false; }
 
+            var result = new SendResult
+            {
+                Server = server,
+                Flags = flags,
+                Completed = completed
+            };
+
+            new Thread(() => Send(fileName, content, summary, result)) { IsBackground = true }.Start();
+            return true;
+        }
+
+        public static void Tick()
+        {
+            SendResult result = Interlocked.Exchange(ref pendingResult, null);
+            if (result == null) return;
+
+            if (result.Exception != null) Util.Log(result.Exception);
+            if (result.Success) MarkSent(result.Server, result.Flags);
+            result.Completed?.Invoke(result.Success, result.Reason);
+            Interlocked.Exchange(ref sending, 0);
+        }
+
+        private static void Send(string fileName, string content, string summary, SendResult result)
+        {
             try
             {
                 string boundary = "----OracleOfDereth" + DateTime.UtcNow.Ticks;
@@ -83,16 +121,22 @@ namespace OracleOfDereth
                 using (Stream stream = request.GetRequestStream()) { stream.Write(body, 0, body.Length); }
                 using (var response = (HttpWebResponse)request.GetResponse()) { status = (int)response.StatusCode; }
 
-                if (status < 200 || status >= 300) { reason = $"Discord answered {status}"; return false; }
+                if (status < 200 || status >= 300)
+                {
+                    result.Reason = $"Discord answered {status}";
+                    return;
+                }
 
-                MarkSent(server, flags);
-                return true;
+                result.Success = true;
             }
             catch (Exception ex)
             {
-                Util.Log(ex);
-                reason = "couldn't reach Discord - see errors.txt";
-                return false;
+                result.Exception = ex;
+                result.Reason = "couldn't reach Discord - see errors.txt";
+            }
+            finally
+            {
+                Interlocked.Exchange(ref pendingResult, result);
             }
         }
 
@@ -111,7 +155,7 @@ namespace OracleOfDereth
             Part($"--{boundary}\r\n");
             Part("Content-Disposition: form-data; name=\"payload_json\"\r\n");
             Part("Content-Type: application/json\r\n\r\n");
-            Part("{\"content\":" + JsonString(summary) + ",\"allowed_mentions\":{\"parse\":[]}}\r\n");
+            Part("{\"content\":" + Util.JsonString(summary) + ",\"allowed_mentions\":{\"parse\":[]}}\r\n");
             Part($"--{boundary}\r\n");
             Part($"Content-Disposition: form-data; name=\"files[0]\"; filename=\"{fileName}\"\r\n");
             Part("Content-Type: text/plain\r\n\r\n");
@@ -119,25 +163,6 @@ namespace OracleOfDereth
             Part($"\r\n--{boundary}--\r\n");
 
             return stream.ToArray();
-        }
-
-        // The summary carries a character name, which is user-controlled enough to escape properly.
-        private static string JsonString(string value)
-        {
-            var sb = new StringBuilder("\"");
-
-            foreach (char c in value ?? "")
-            {
-                if (c == '"') { sb.Append("\\\""); }
-                else if (c == '\\') { sb.Append("\\\\"); }
-                else if (c == '\n') { sb.Append("\\n"); }
-                else if (c == '\r') { sb.Append("\\r"); }
-                else if (c == '\t') { sb.Append("\\t"); }
-                else if (c < ' ') { sb.Append("\\u").Append(((int)c).ToString("x4")); }
-                else { sb.Append(c); }
-            }
-
-            return sb.Append("\"").ToString();
         }
 
         // Resources\webhook.txt is embedded at build time and gitignored. It must NOT be committed:

@@ -192,6 +192,8 @@ namespace OracleOfDereth
                 Fellowship.AutoOpenFellow();
                 Nearby.Tick(); // reconcile tracked objects vs the world (drops any missed by ReleaseObject)
                 UpdateChecker.Tick();
+                QuestFlagLookup.Tick();
+                QuestSubmit.Tick();
                 ItemList.TickAll();
                 VVSBar.Tick();
 
