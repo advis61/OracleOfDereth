@@ -51,43 +51,29 @@ namespace OracleOfDereth
             var entries = Guard(Entries);
             if (bar == null || entries == null) return false;
 
-            PinThemeFirst(entries);
-
             PluginRow plugin = FindPlugin(PluginsInBarOrder(entries), name);
-            if (plugin == null || plugin.Group == VvsOwnGroup) return false;
+            if (plugin == null) return false;
 
             List<int> groups = PluginGroups(entries);
             int target = groups.IndexOf(plugin.Group) + direction;
             if (target < 0 || target >= groups.Count) return false;
 
             int otherGroup = groups[target];
-
-            try
+            bool moved = ChangeOrder(bar, entries, true, delegate
             {
-                // The entries are VVS's own objects, so setting group here IS the change.
-                int moved = 0;
+                PinThemeFirst(entries);
                 foreach (var pair in entries)
                 {
                     sHudInfo info = pair.Value;
                     if (info == null) continue;
 
-                    if (info.group == plugin.Group) { info.group = otherGroup; moved++; }
-                    else if (info.group == otherGroup) { info.group = plugin.Group; moved++; }
+                    if (info.group == plugin.Group) info.group = otherGroup;
+                    else if (info.group == otherGroup) info.group = plugin.Group;
                 }
+            });
 
-                Reposition(bar, entries);
-                barSignature = Signature(entries);
-                return moved > 0;
-            }
-            catch (Exception ex)
-            {
-                // The groups are written before anything moves on screen, so the new order IS
-                // applied — only the repositioning failed. Reporting this as a failed move would
-                // discard a change that really happened.
-                Util.Chat("VVS bar: order changed, but the icons could not be repositioned.", Util.ColorPink);
-                Util.Log(ex);
-                return true;
-            }
+            if (moved) barSignature = Signature(entries);
+            return moved;
         }
 
         #endregion
@@ -101,10 +87,11 @@ namespace OracleOfDereth
             var entries = Guard(Entries);
             if (entries == null) return;
 
+            List<PluginRow> present = PluginsInBarOrder(entries);
             var names = new List<string>();
-            foreach (PluginRow row in PluginsInBarOrder(entries))
+            foreach (PluginRow row in present)
             {
-                if (!string.IsNullOrEmpty(row.Name)) names.Add(row.Name);
+                if (!string.IsNullOrEmpty(row.EntryName)) names.Add(row.EntryName);
             }
 
             // Carry forward anything in the saved order that isn't on the bar right now — disabled,
@@ -115,24 +102,14 @@ namespace OracleOfDereth
             string[] previous = SettingsFile.GetSetting(OrderSettingKey, "").Split(Separator);
             for (int i = 0; i < previous.Length; i++)
             {
-                string name = CleanName(previous[i]);
-                if (name.Length == 0 || Contains(names, name)) continue;
+                string name = previous[i].Trim();
+                if (name.Length == 0 || FindPlugin(present, name) != null) continue;
 
                 names.Insert(i < names.Count ? i : names.Count, name);
             }
 
             SettingsFile.PutSetting(OrderSettingKey, string.Join(Separator.ToString(), names.ToArray()));
         }
-
-        private static bool Contains(List<string> names, string name)
-        {
-            foreach (string n in names)
-            {
-                if (string.Equals(n, name, StringComparison.OrdinalIgnoreCase)) return true;
-            }
-            return false;
-        }
-
 
         // Puts the saved plugins at the front of the bar in the saved order; anything not in the
         // list keeps its own group and follows on behind, in its natural order.
@@ -147,8 +124,6 @@ namespace OracleOfDereth
             var bar = Guard(Bar);
             var entries = Guard(Entries);
             if (bar == null || entries == null) return;
-
-            PinThemeFirst(entries);
 
             List<PluginRow> present = PluginsInBarOrder(entries);
 
@@ -178,8 +153,9 @@ namespace OracleOfDereth
                 if (row.Group <= topOfBlock) return;
             }
 
-            try
+            ChangeOrder(bar, entries, false, delegate
             {
+                PinThemeFirst(entries);
                 var target = new Dictionary<int, int>(); // old group -> new group
                 for (int i = 0; i < ordered.Count; i++) target[ordered[i].Group] = baseGroup + i;
 
@@ -192,12 +168,7 @@ namespace OracleOfDereth
                     if (target.TryGetValue(info.group, out fresh)) info.group = fresh;
                 }
 
-                Reposition(bar, entries);
-            }
-            catch (Exception ex)
-            {
-                Util.Log(ex);
-            }
+            });
         }
 
         #endregion
@@ -221,6 +192,11 @@ namespace OracleOfDereth
         public static void Tick()
         {
             if (phase == BarPhase.Idle) return;
+            if (!Setting.OrderDecalPlugins.IsYes)
+            {
+                phase = BarPhase.Idle;
+                return;
+            }
 
             var entries = Guard(Entries);
             if (entries == null)
@@ -281,6 +257,8 @@ namespace OracleOfDereth
         // tab's repaint, so it costs a hash of the bar's keys only while that tab is open.
         public static void ReapplyIfChanged()
         {
+            if (!Setting.OrderDecalPlugins.IsYes) return;
+
             var entries = Guard(Entries);
             if (entries == null) return;
 
@@ -301,12 +279,20 @@ namespace OracleOfDereth
             if (after != null) barSignature = Signature(after);
         }
 
-        // Cheap fingerprint of what is on the bar. Keys are handed out incrementally, so a view
-        // being recreated always shows up as a new key.
+        // Includes identity and order. Some plugins reuse an entry while changing its group,
+        // name or z-order, which a key-only fingerprint would miss.
         private static int Signature(SortedList<int, sHudInfo> entries)
         {
             int hash = 17;
-            foreach (var pair in entries) { hash = hash * 31 + pair.Key; }
+            foreach (var pair in entries)
+            {
+                sHudInfo info = pair.Value;
+                hash = hash * 31 + pair.Key;
+                if (info == null) continue;
+                hash = hash * 31 + info.group;
+                hash = hash * 31 + info.zorder;
+                hash = hash * 31 + StringComparer.OrdinalIgnoreCase.GetHashCode(info.EntryName ?? "");
+            }
             return hash;
         }
 
@@ -349,6 +335,7 @@ namespace OracleOfDereth
         private sealed class PluginRow
         {
             public int Group;
+            public string EntryName;
             public string Name;
         }
 
@@ -366,14 +353,33 @@ namespace OracleOfDereth
                 KeyValuePair<int, string> current;
                 if (!best.TryGetValue(info.group, out current) || info.zorder < current.Key)
                 {
-                    // Cleaned here, once, so the display, the saved order and the matching all use
-                    // the same stable name.
-                    best[info.group] = new KeyValuePair<int, string>(info.zorder, CleanName(info.EntryName));
+                    best[info.group] = new KeyValuePair<int, string>(info.zorder, info.EntryName ?? "");
                 }
             }
 
             var rows = new List<PluginRow>();
-            foreach (var kv in best) rows.Add(new PluginRow { Group = kv.Key, Name = kv.Value.Value });
+            foreach (var kv in best)
+            {
+                rows.Add(new PluginRow
+                {
+                    Group = kv.Key,
+                    EntryName = kv.Value.Value,
+                    Name = CleanName(kv.Value.Value)
+                });
+            }
+
+            // Keep concise stable labels normally, but show exact titles when cleaning would make
+            // two different plugins indistinguishable in the list.
+            foreach (PluginRow row in rows)
+            {
+                int matches = 0;
+                foreach (PluginRow other in rows)
+                {
+                    if (string.Equals(row.Name, other.Name, StringComparison.OrdinalIgnoreCase)) matches++;
+                }
+                if (matches > 1) row.Name = row.EntryName;
+            }
+
             rows.Sort(delegate (PluginRow a, PluginRow b) { return a.Group.CompareTo(b.Group); });
             return rows;
         }
@@ -388,7 +394,7 @@ namespace OracleOfDereth
             foreach (var pair in entries)
             {
                 sHudInfo info = pair.Value;
-                if (info == null || info.group == VvsOwnGroup) continue;
+                if (info == null || IsTheme(info)) continue;
                 if (!groups.Contains(info.group)) groups.Add(info.group);
             }
 
@@ -415,28 +421,30 @@ namespace OracleOfDereth
             }
         }
 
-        // Exact name first. Rows are already cleaned, so that hits for anything saved since; the
-        // second pass cleans the incoming name too, which is what lets an order saved before this
-        // — holding "Virindi Global Inventory (44 to read)" or "UtilityBelt - v0.2.7" — still find
-        // its plugin instead of silently dropping it.
+        // Exact names distinguish plugins that clean to the same label. The unique cleaned-name
+        // fallback keeps old settings and dynamic titles such as inventory counters working.
         private static PluginRow FindPlugin(List<PluginRow> rows, string name)
         {
             if (string.IsNullOrEmpty(name)) return null;
 
             foreach (PluginRow row in rows)
             {
-                if (string.Equals(row.Name, name, StringComparison.OrdinalIgnoreCase)) return row;
+                if (string.Equals(row.EntryName, name, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(row.Name, name, StringComparison.OrdinalIgnoreCase)) return row;
             }
 
             string wanted = CleanName(name);
             if (wanted.Length < 3) return null;
 
+            PluginRow match = null;
             foreach (PluginRow row in rows)
             {
-                if (string.Equals(row.Name, wanted, StringComparison.OrdinalIgnoreCase)) return row;
+                if (!string.Equals(CleanName(row.EntryName), wanted, StringComparison.OrdinalIgnoreCase)) continue;
+                if (match != null) return null;
+                match = row;
             }
 
-            return null;
+            return match;
         }
 
         // Reduces a bar entry to the plugin's stable name:
@@ -494,6 +502,72 @@ namespace OracleOfDereth
 
         #region Moving the icons
 
+        // Group edits and icon movement are one operation. Restore both if VVS's reflected layout
+        // does not have the shape we expect.
+        private static bool ChangeOrder(cHudBarHud bar, SortedList<int, sHudInfo> entries, bool notify, Action change)
+        {
+            var groups = new Dictionary<int, int>();
+            foreach (var pair in entries)
+            {
+                if (pair.Value != null) groups[pair.Key] = pair.Value.group;
+            }
+
+            Dictionary<VirindiViewService.Controls.HudControl, System.Drawing.Rectangle> rectangles;
+            try { rectangles = ControlRectangles(bar); }
+            catch (Exception ex)
+            {
+                if (notify) Util.Chat("VVS bar: the order could not be changed.", Util.ColorPink);
+                Util.Log(ex);
+                return false;
+            }
+            if (rectangles == null || rectangles.Count == 0) return false;
+
+            try
+            {
+                change();
+                if (!Reposition(bar, entries))
+                    throw new InvalidOperationException("VVS icon controls did not match the bar entries.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                foreach (var pair in entries)
+                {
+                    int group;
+                    if (pair.Value != null && groups.TryGetValue(pair.Key, out group)) pair.Value.group = group;
+                }
+
+                try
+                {
+                    var layout = FieldByType<VirindiViewService.Controls.HudFixedLayout>(bar);
+                    if (layout != null)
+                    {
+                        foreach (var rectangle in rectangles) layout.SetControlRect(rectangle.Key, rectangle.Value);
+                    }
+                }
+                catch (Exception rollbackException) { Util.Log(rollbackException); }
+
+                if (notify) Util.Chat("VVS bar: the order could not be changed.", Util.ColorPink);
+                Util.Log(ex);
+                return false;
+            }
+        }
+
+        private static Dictionary<VirindiViewService.Controls.HudControl, System.Drawing.Rectangle> ControlRectangles(cHudBarHud bar)
+        {
+            var layout = FieldByType<VirindiViewService.Controls.HudFixedLayout>(bar);
+            System.Collections.IDictionary map = ControlMap(bar);
+            if (layout == null || map == null) return null;
+
+            var rectangles = new Dictionary<VirindiViewService.Controls.HudControl, System.Drawing.Rectangle>();
+            foreach (System.Collections.DictionaryEntry entry in map)
+            {
+                var control = entry.Key as VirindiViewService.Controls.HudControl;
+                if (control != null && entry.Value is int) rectangles[control] = layout.GetControlRect(control);
+            }
+            return rectangles;
+        }
+
         // Moves the icons on screen to match the current group order, by rewriting the rectangles of
         // the controls the bar already has.
         //
@@ -515,7 +589,9 @@ namespace OracleOfDereth
                 var control = e.Key as VirindiViewService.Controls.HudControl;
                 if (control == null || !(e.Value is int)) continue;
 
-                byKey[(int)e.Value] = control;
+                int key = (int)e.Value;
+                if (!entries.ContainsKey(key)) continue;
+                byKey[key] = control;
                 slots.Add(layout.GetControlRect(control));
             }
 
@@ -527,9 +603,9 @@ namespace OracleOfDereth
             // The positions the bar already uses, in visual order.
             slots.Sort(delegate (System.Drawing.Rectangle x, System.Drawing.Rectangle y)
             {
-                int primary = horizontal ? x.X.CompareTo(y.X) : x.Y.CompareTo(y.Y);
+                int primary = horizontal ? x.Y.CompareTo(y.Y) : x.X.CompareTo(y.X);
                 if (primary != 0) return primary;
-                return horizontal ? x.Y.CompareTo(y.Y) : x.X.CompareTo(y.X);
+                return horizontal ? x.X.CompareTo(y.X) : x.Y.CompareTo(y.Y);
             });
 
             var wanted = new List<KeyValuePair<int, sHudInfo>>(entries);
@@ -546,7 +622,7 @@ namespace OracleOfDereth
                 slot++;
             }
 
-            return slot > 0;
+            return slot == slots.Count;
         }
 
         // The bar's icon-control -> hud key map, found by shape rather than by its obfuscated name.
