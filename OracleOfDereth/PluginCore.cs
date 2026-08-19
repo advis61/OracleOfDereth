@@ -275,7 +275,7 @@ namespace OracleOfDereth
                 else if (cmd == "/od questflag") { QuestFlagLookup.Execute(); }
                 else if (cmd == "/od update") { UpdateChecker.Check(true); }
                 else if (cmd == "/od quests send") { mainView.SendQuestFlags(); }
-                else if (cmd == "/od quests send clear") { int n = QuestSubmit.SentCount; QuestSubmit.ClearSent(); Util.Chat($"Cleared {n} sent quest flags - they can all be sent again."); }
+                else if (cmd == "/od quests send clear") { mainView.ClearSentQuestFlags(); }
                 else if (cmd == "/myqstlist") { QuestHistory.ManualRefresh(); return; }
                 else { return; }
 

@@ -201,8 +201,7 @@ namespace OracleOfDereth
 
         private void UpdateQuestsList()
         {
-            // Nothing to report means nothing to click.
-            QuestsSend.Visible = QuestSubmit.PendingCount() > 0;
+            UpdateQuestSendButton();
 
             // Only offered once a row is picked, so it's never ambiguous what it would add.
             QuestsFavorite.Visible = questsSelectedFlag.Length > 0;
@@ -278,6 +277,21 @@ namespace OracleOfDereth
             } else {
                 QuestsText.Text = $"Quest Flags: {completed} of {quests.Count} completed";
             }
+        }
+
+        public int UpdateQuestSendButton()
+        {
+            int pending = QuestSubmit.PendingCount();
+            QuestsSend.Visible = pending > 0;
+            return pending;
+        }
+
+        public void ClearSentQuestFlags()
+        {
+            int cleared = QuestSubmit.SentCount;
+            QuestSubmit.ClearSent();
+            int pending = UpdateQuestSendButton();
+            Util.Chat($"Cleared {cleared} sent quest flags. {pending} ready to send.");
         }
 
         private Color? TintColor(int tint)
