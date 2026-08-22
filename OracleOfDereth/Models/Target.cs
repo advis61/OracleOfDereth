@@ -182,7 +182,7 @@ namespace OracleOfDereth
             return false;
         }
 
-        public WorldObject? Item()
+        public WorldObject Item()
         {
             if(Id == 0) { return null; }
 

@@ -290,7 +290,6 @@ namespace MyClasses.MetaViewWrappers.DecalControls
                 Decal.Interop.Core.tagRECT rct = Ly.get_Position();
                 return new System.Drawing.Rectangle(rct.left, rct.top, rct.right - rct.left, rct.bottom - rct.top);
 #else
-#warning DECAL_INTEROP not defined, MetaViewWrappers.DecalControls.Control.LayoutPosition will not be available.
                 return new System.Drawing.Rectangle();
 #endif
             }
@@ -702,11 +701,11 @@ namespace MyClasses.MetaViewWrappers.DecalControls
         {
             get
             {
-                return ((Decal.Adapter.Wrappers.SliderWrapper)myControl).SliderPostition;
+                return ((Decal.Adapter.Wrappers.SliderWrapper)myControl).Position;
             }
             set
             {
-                ((Decal.Adapter.Wrappers.SliderWrapper)myControl).SliderPostition = value;
+                ((Decal.Adapter.Wrappers.SliderWrapper)myControl).Position = value;
             }
         }
 
