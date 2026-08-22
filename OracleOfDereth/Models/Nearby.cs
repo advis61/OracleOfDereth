@@ -44,7 +44,17 @@ namespace OracleOfDereth
             Nearbys.Clear();
             ObjectIds.Clear(); // drop the previous character's tracked object identities
             LoadNearbysCSV();
+
+            // Hot reload can start after the landscape's CreateObject events have already fired.
+            foreach (WorldObject item in CoreManager.Current.WorldFilter.GetLandscape())
+            {
+                if (item.Id != 0) ObjectIds.Add(item.Id);
+            }
         }
+
+        // A portal transition starts a new nearby-object set. WorldFilter can retain wrappers
+        // from the previous landblock, so waiting for those wrappers to disappear is unreliable.
+        public static void ClearObjects() { ObjectIds.Clear(); }
 
         public static List<WorldObject> All() {
             return Objects.Where(o => o.ObjectClass != ObjectClass.Player).ToList();

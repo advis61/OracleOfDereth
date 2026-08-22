@@ -44,7 +44,8 @@ namespace OracleOfDereth
             var items = new List<NearbyItem>();
             int myId = CoreManager.Current.CharacterFilter.Id;
 
-            foreach (WorldObject worldObject in CoreManager.Current.WorldFilter.GetLandscape()) {
+            foreach (WorldObject worldObject in Nearby.Objects) {
+                if (worldObject.Container != 0) continue;
                 if (worldObject.Name == null || worldObject.Name.Length == 0) continue;
                 if (worldObject.Icon == 8384) continue; // Bugged item
                 if (worldObject.Id == myId && !Fellowship.IsInFellowship()) continue;

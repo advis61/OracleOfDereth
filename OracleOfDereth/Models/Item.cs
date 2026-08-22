@@ -131,7 +131,7 @@ namespace OracleOfDereth
             else if (info.IsArmorClothing || info.IsJewelry) col4 = info.GetSpellsString();
             else if (info.IsRare) col4 = info.GetSpellsString();
             else if (info.IsSalvage) col4 = info.GetSalvageDescriptionString();
-            else if (info.wo.ObjectClass == ObjectClass.BaseCooking || info.wo.ObjectClass == ObjectClass.CraftedCooking) col4 = info.GetFullDescription();
+            else col4 = info.GetFullDescription();
 
             // Append the wield requirement and tinks (e.g. "Tinks 5") to whatever the column
             // shows. Only skill-based wield reqs ("Two Handed Combat 420") in general; a plain

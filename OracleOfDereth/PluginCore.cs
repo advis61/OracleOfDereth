@@ -414,6 +414,7 @@ namespace OracleOfDereth
             try
             {
                 ItemCache.Clear();
+                if (e.Type.ToString() == "EnterPortal") { Nearby.ClearObjects(); }
                 Fellowship.NoteZoned();
             }
             catch (Exception ex) { Util.Log(ex); }
