@@ -15,46 +15,31 @@ namespace OracleOfDereth
         private static readonly TimeSpan Delay = TimeSpan.FromSeconds(10);
 
         private static DateTime? armedAt;
-        private static bool ran;
         private static int running;
-        private static volatile bool pendingChecked;
-        private static volatile bool pendingReload;
+        private static volatile bool pendingSuccess;
         private static volatile string pendingMessage;
         private static volatile Exception pendingException;
 
         public static void Init()
         {
-            if (Setting.AutoUpdateQuestList.IsYes) Arm();
-        }
-
-        public static void Arm()
-        {
-            if (ran) return;
-            if (SettingsFile.GetSetting(LastCheckedKey, "") == DateTime.Today.ToString(DateFormat))
-            {
-                ran = true;
-                return;
-            }
-            armedAt = DateTime.UtcNow;
+            if (Setting.AutoUpdateQuestList.IsYes &&
+                SettingsFile.GetSetting(LastCheckedKey, "") != DateTime.Today.ToString(DateFormat))
+                armedAt = DateTime.UtcNow;
         }
 
         public static void Tick()
         {
             if (pendingException != null) { Util.Log(pendingException); pendingException = null; }
-            if (pendingChecked)
+            if (pendingSuccess)
             {
+                pendingSuccess = false;
                 SettingsFile.PutSetting(LastCheckedKey, DateTime.Today.ToString(DateFormat));
-                pendingChecked = false;
-            }
-            if (pendingReload)
-            {
                 QuestCatalog.Reload();
-                pendingReload = false;
             }
             if (pendingMessage != null) { Util.Chat(pendingMessage, Util.ColorPink, ""); pendingMessage = null; }
 
-            if (ran || armedAt == null || DateTime.UtcNow - armedAt.Value < Delay) return;
-            ran = true;
+            if (armedAt == null || DateTime.UtcNow - armedAt.Value < Delay) return;
+            armedAt = null;
             Start(false);
         }
 
@@ -87,11 +72,10 @@ namespace OracleOfDereth
                 if (changed)
                     QuestHistory.WriteFile(QuestCatalog.FilePath, downloaded);
 
-                pendingReload = true;
                 pendingMessage = changed
                     ? "Oracle of Dereth quest list updated and reloaded."
                     : verbose ? "Oracle of Dereth quest list reloaded; it was already up to date." : null;
-                pendingChecked = true;
+                pendingSuccess = true;
             }
             catch (Exception ex)
             {
