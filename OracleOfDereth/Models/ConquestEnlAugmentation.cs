@@ -134,6 +134,11 @@ namespace OracleOfDereth
         private static readonly Regex ChromeRegex = new Regex(
             @"^\s*(?:\[[^\]]*\]\s*)?Enlightenment Augmentations:\s*$");
 
+        // The plain dashed rule printed with the block is too generic to claim unless the plugin
+        // is actively waiting for its own response.
+        private static readonly Regex SeparatorRegex = new Regex(
+            @"^\s*(?:\[[^\]]*\]\s*)?-{3,}\s*$");
+
         // When we last issued "/enl augs" (UtcNow). Drives the throttle below.
         private static DateTime LastRefresh = DateTime.MinValue;
 
@@ -188,7 +193,8 @@ namespace OracleOfDereth
         {
             return text != null
                 && Server.IsConquest
-                && (LineRegex.IsMatch(text) || ChromeRegex.IsMatch(text));
+                && (LineRegex.IsMatch(text) || ChromeRegex.IsMatch(text)
+                    || (Request.Awaiting && SeparatorRegex.IsMatch(text)));
         }
 
         // Forwarded from PluginCore's chat handler: capture one line of the block. Returns true
