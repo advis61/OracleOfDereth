@@ -86,11 +86,22 @@ namespace OracleOfDereth
 
         // The last item we price-checked and how many notes (MMDs) its price needs. Add uses
         // these to decide payment without re-checking. PayNotes is the amount to drag in once the
-        // added item lands; PendingSplitCount is the stack split we're waiting on.
+        // added item lands; PendingSplit is the stack split we're waiting on.
         private static int LastCheckId = 0;
         private static int LastCheckNotes = 0;
         private static int PayNotes = 0;
-        private static int PendingSplitCount = 0;
+        private static readonly TimeSpan SplitTimeout = TimeSpan.FromSeconds(5);
+
+        private sealed class SplitRequest
+        {
+            public int Count;
+            public int SourceId;
+            public int SourceCount;
+            public int CandidateId;
+            public DateTime Expires;
+        }
+
+        private static SplitRequest PendingSplit;
 
         // When the last check was sent, to debounce repeat clicks on the same item (re-selecting
         // a row shouldn't fire a fresh "check" tell at the bot every time).
@@ -202,9 +213,15 @@ namespace OracleOfDereth
             PointsList = m.Groups[2].Value.Trim();
 
             Match v = NoteValueRegex.Match(PointsList);
-            PointsPerMmd = (v.Success && double.TryParse(v.Groups[1].Value, NumberStyles.Any, CultureInfo.InvariantCulture, out double d))
-                ? (int)Math.Round(d)
-                : 0;
+            PointsPerMmd = 0;
+            if (v.Success &&
+                double.TryParse(v.Groups[1].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out double d) &&
+                !double.IsNaN(d) && !double.IsInfinity(d) &&
+                d >= 1 && d <= int.MaxValue)
+            {
+                double rounded = Math.Round(d);
+                if (rounded >= 1 && rounded <= int.MaxValue) PointsPerMmd = (int)rounded;
+            }
 
             // The one-time line shown on opening a bot trade: what the bot takes as payment.
             TradeStatus = PointsList.Length > 0 ? $"Points: {PointsList}" : "";
@@ -223,7 +240,15 @@ namespace OracleOfDereth
             PricedItem = m.Groups[2].Value;
             PricePoints = m.Groups[3].Value;
 
-            ParsePoints(PricePoints, out double price);
+            if (!ParsePoints(PricePoints, out double price) || !TryMmdsFor(price, out int mmdsNeeded))
+            {
+                LastCheckNotes = 0;
+                CanCheckout = false;
+                MmdShortfall = 0;
+                TradeStatus = $"{PricedItem}: invalid or out-of-range price quote";
+                OnChanged?.Invoke();
+                return;
+            }
 
             // Without a known MMD rate we can't say how many notes the price is — don't guess.
             // (CanCheckout false also hides the Add button, so the player can't buy blind.)
@@ -237,7 +262,7 @@ namespace OracleOfDereth
                 return;
             }
 
-            EvaluateAffordability(MmdsFor(price));
+            EvaluateAffordability(mmdsNeeded);
             OnChanged?.Invoke();
         }
 
@@ -296,12 +321,12 @@ namespace OracleOfDereth
             if (wo == null || !IsOpen) return;
 
             // The split-stack we were waiting on for an auto-payment -> trade it in.
-            if (PendingSplitCount > 0 && wo.Name == PaymentItemName && StackCount(wo) == PendingSplitCount)
+            if (PendingSplit != null && DateTime.UtcNow <= PendingSplit.Expires &&
+                PendingSplit.CandidateId == 0 && wo.Id != PendingSplit.SourceId &&
+                wo.Name == PaymentItemName && StackCount(wo) == PendingSplit.Count)
             {
-                PendingSplitCount = 0;
-                MyItems.Add(wo.Id);   // it's ours — keep it out of the partner's item list
-                CoreManager.Current.Actions.TradeAdd(wo.Id);
-                return;
+                PendingSplit.CandidateId = wo.Id;
+                if (TryCompleteSplit()) return;
             }
 
             // Trade notes arriving in inventory (e.g. from a bank withdrawal) change our funds, so
@@ -311,19 +336,72 @@ namespace OracleOfDereth
             if (wo.Name == PaymentItemName) RecheckFunds();
         }
 
+        // WorldObject properties can settle just after CreateObject. Retry briefly, then fail
+        // closed so an unrelated note stack created later cannot satisfy stale split state.
+        public static void Tick()
+        {
+            if (PendingSplit == null) return;
+            if (DateTime.UtcNow > PendingSplit.Expires)
+            {
+                ClearPendingSplit();
+                TradeStatus = "Could not verify the split payment stack; add the remaining notes manually.";
+                OnChanged?.Invoke();
+                return;
+            }
+
+            TryCompleteSplit();
+        }
+
+        private static bool TryCompleteSplit()
+        {
+            if (PendingSplit == null || PendingSplit.CandidateId == 0) return false;
+
+            WorldObject source = CoreManager.Current.WorldFilter[PendingSplit.SourceId];
+            WorldObject candidate = CoreManager.Current.WorldFilter[PendingSplit.CandidateId];
+            if (source == null || candidate == null) return false;
+            if (candidate.Name != PaymentItemName || !ItemList.IsInInventory(candidate)) return false;
+            if (StackCount(candidate) != PendingSplit.Count) return false;
+            if (StackCount(source) != PendingSplit.SourceCount - PendingSplit.Count) return false;
+
+            int candidateId = candidate.Id;
+            ClearPendingSplit();
+            MyItems.Add(candidateId);
+            CoreManager.Current.Actions.TradeAdd(candidateId);
+            TradeStatus = "All done! Please click the in-game Trade button to complete your transaction.";
+            OnChanged?.Invoke();
+            return true;
+        }
+
         // MMDs (trade notes) needed to cover `points` at the current rate; rate unknown → 1:1.
         public static int MmdsFor(double points)
         {
-            if (points <= 0) return 0;
+            return TryMmdsFor(points, out int mmds) ? mmds : 0;
+        }
+
+        private static bool TryMmdsFor(double points, out int mmds)
+        {
+            mmds = 0;
+            if (double.IsNaN(points) || double.IsInfinity(points) || points < 0) return false;
+
             int rate = PointsPerMmd > 0 ? PointsPerMmd : 1;
-            return (int)Math.Ceiling(points / rate);
+            double required = Math.Ceiling(points / rate);
+            if (double.IsNaN(required) || double.IsInfinity(required) || required < 0 || required > int.MaxValue)
+                return false;
+
+            mmds = (int)required;
+            return true;
         }
 
         // "<points> points (<n> MMD)" — the MMD part is dropped when the rate is unknown.
         public static string PointsLabel(double points)
         {
+            if (double.IsNaN(points) || double.IsInfinity(points) || points < 0) return "invalid price";
             string s = $"{points:0.##} points";
-            if (PointsPerMmd > 0) s += $" ({MmdsFor(points)} MMD)";
+            if (PointsPerMmd > 0)
+            {
+                if (!TryMmdsFor(points, out int mmds)) return "price out of range";
+                s += $" ({mmds} MMD)";
+            }
             return s;
         }
 
@@ -331,7 +409,7 @@ namespace OracleOfDereth
         public static string PriceLabel()
         {
             if (PricePoints.Length == 0) return "";
-            ParsePoints(PricePoints, out double p);
+            if (!ParsePoints(PricePoints, out double p)) return $"{PricedItem}: invalid price";
             return $"{PricedItem}: {PointsLabel(p)}";
         }
 
@@ -388,17 +466,30 @@ namespace OracleOfDereth
             Util.Chat($"Paying {notes} {PaymentItemName} for {PricedItem}.", Util.ColorPink);
 
             // Notes are now in the trade window — guide the player through the final in-game step.
-            TradeStatus = "All done! Please click the in-game Trade button to complete your transaction.";
+            TradeStatus = PendingSplit != null
+                ? "Waiting for the split payment stack..."
+                : "All done! Please click the in-game Trade button to complete your transaction.";
             OnChanged?.Invoke();
         }
 
         // Split `count` off a stack; OnObjectCreated trades the new stack once it appears.
         private static void SplitAndAdd(WorldObject note, int count)
         {
-            PendingSplitCount = count;
+            PendingSplit = new SplitRequest
+            {
+                Count = count,
+                SourceId = note.Id,
+                SourceCount = StackCount(note),
+                Expires = DateTime.UtcNow + SplitTimeout
+            };
             CoreManager.Current.Actions.SelectItem(note.Id);
             CoreManager.Current.Actions.SelectedStackCount = count;
             CoreManager.Current.Actions.MoveItem(note.Id, CoreManager.Current.CharacterFilter.Id, 0, false);
+        }
+
+        private static void ClearPendingSplit()
+        {
+            PendingSplit = null;
         }
 
         private static void SnapshotInventory()
@@ -427,7 +518,10 @@ namespace OracleOfDereth
         // Parse a points value that may carry thousands separators ("1,250" -> 1250).
         private static bool ParsePoints(string text, out double value)
         {
-            return double.TryParse((text ?? "").Replace(",", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out value);
+            if (!double.TryParse((text ?? "").Replace(",", ""), NumberStyles.AllowDecimalPoint,
+                CultureInfo.InvariantCulture, out value)) return false;
+
+            return !double.IsNaN(value) && !double.IsInfinity(value) && value >= 0;
         }
 
         // Reset the session to "no trade open" — reads clearer than a bare Set("", false) at the
@@ -450,7 +544,7 @@ namespace OracleOfDereth
             LastCheckNotes = 0;
             LastCheckTime = DateTime.MinValue;
             PayNotes = 0;
-            PendingSplitCount = 0;
+            ClearPendingSplit();
             OnChanged?.Invoke();
         }
 
