@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace OracleOfDereth
@@ -9,10 +10,8 @@ namespace OracleOfDereth
     // on every login and rows come and go as quests.csv changes, so the flag is the only stable
     // handle to a row.
     //
-    // Persisted in settings.xml, which is per-install rather than per-character: a shortlist of
-    // quests worth doing is the player's, not one character's, and every character on the account
-    // gets the same list. A favourited flag that this server's list doesn't carry stays in the
-    // file and simply doesn't resolve to a row until you're back on a server that has it.
+    // Persisted beside quest history as one ordered CSV per server. The row order is the custom
+    // order shown by the # column.
     public static class QuestFavorite
     {
         private const string SettingKey = "FavoriteQuestFlags";
@@ -22,21 +21,28 @@ namespace OracleOfDereth
         // SettingsFile.Init at startup. Flags are stored lower-cased, matching Quest.Flag, so a
         // favourite always compares equal to its row.
         private static List<string> flags;
+        private static string filePath;
 
         private static List<string> Flags()
         {
             if (flags != null) { return flags; }
 
             flags = new List<string>();
+            filePath = QuestHistory.ServerPath("-favorites");
 
             try
             {
-                foreach (string entry in SettingsFile.GetSetting(SettingKey, "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                QuestHistory.RecoverFile(filePath);
+                if (File.Exists(filePath))
                 {
-                    string flag = entry.Trim().ToLower();
-                    // Guard the duplicate here rather than trusting the file: two entries for one
-                    // flag would render two rows that the arrows could never separate.
-                    if (flag.Length > 0 && !flags.Contains(flag)) { flags.Add(flag); }
+                    foreach (string line in File.ReadAllLines(filePath).Skip(1)) AddLoaded(Util.CsvParseLine(line).FirstOrDefault());
+                }
+                else
+                {
+                    foreach (string entry in SettingsFile.GetSetting(SettingKey, "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                        AddLoaded(entry);
+
+                    if (flags.Count > 0 && Save()) SettingsFile.PutSetting(SettingKey, "");
                 }
             }
             catch (Exception ex) { Util.Log(ex); }
@@ -45,6 +51,12 @@ namespace OracleOfDereth
         }
 
         public static int Count => Flags().Count;
+
+        public static int Position(string flag)
+        {
+            if (string.IsNullOrWhiteSpace(flag)) return 0;
+            return Flags().IndexOf(flag.Trim().ToLowerInvariant()) + 1;
+        }
 
         public static bool Contains(string flag)
         {
@@ -77,7 +89,7 @@ namespace OracleOfDereth
 
         public static void Clear()
         {
-            flags = new List<string>();
+            Flags().Clear();
             Save();
         }
 
@@ -105,9 +117,24 @@ namespace OracleOfDereth
             return true;
         }
 
-        private static void Save()
+        private static bool Save()
         {
-            SettingsFile.PutSetting(SettingKey, string.Join(",", Flags().ToArray()));
+            try
+            {
+                QuestHistory.WriteFile(filePath, new[] { "Flag" }.Concat(Flags().Select(Util.CsvEscape)));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
+                return false;
+            }
+        }
+
+        private static void AddLoaded(string value)
+        {
+            string flag = (value ?? "").Trim().ToLowerInvariant();
+            if (flag.Length > 0 && !flags.Contains(flag)) flags.Add(flag);
         }
 
         // The favourites that this server's quest list actually carries, in the player's own

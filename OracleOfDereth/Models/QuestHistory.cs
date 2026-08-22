@@ -48,16 +48,11 @@ namespace OracleOfDereth
             changedAt = DateTime.MinValue;
             accountRefreshRequested = false;
 
-            string root = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.Personal),
-                @"Decal Plugins\Oracle of Dereth\quest-history");
-            string server = SafeName(Server.Name).ToLowerInvariant();
-            filePath = Path.Combine(root, server + ".csv");
+            filePath = ServerPath("");
 
             try
             {
-                string backupPath = filePath + ".bak";
-                if (!File.Exists(filePath) && File.Exists(backupPath)) File.Move(backupPath, filePath);
+                RecoverFile(filePath);
                 accountRefreshRequested = File.Exists(filePath);
                 if (!File.Exists(filePath)) return;
 
@@ -200,44 +195,58 @@ namespace OracleOfDereth
 
         private static void Save()
         {
-            string tempPath = null;
-            string backupPath = null;
             try
             {
-                string directory = Path.GetDirectoryName(filePath);
-                Directory.CreateDirectory(directory);
-                tempPath = Path.Combine(directory, $"quest-history-{Guid.NewGuid():N}.tmp");
-                File.WriteAllLines(
-                    tempPath,
+                WriteFile(
+                    filePath,
                     new[] { "Flag" }.Concat(
                         Flags.OrderBy(f => f, StringComparer.OrdinalIgnoreCase).Select(Util.CsvEscape)));
-                if (File.Exists(filePath))
-                {
-                    backupPath = filePath + ".bak";
-                    if (File.Exists(backupPath)) File.Delete(backupPath);
-                    File.Move(filePath, backupPath);
-                }
-                File.Move(tempPath, filePath);
                 dirty = false;
             }
-            catch (Exception ex)
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        internal static string ServerPath(string suffix)
+        {
+            string root = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                @"Decal Plugins\Oracle of Dereth\quest-history");
+            string server = SafeName(Server.Name).ToLowerInvariant();
+            return Path.Combine(root, server + suffix + ".csv");
+        }
+
+        internal static void RecoverFile(string path)
+        {
+            string backup = path + ".bak";
+            if (!File.Exists(path) && File.Exists(backup)) File.Move(backup, path);
+        }
+
+        internal static void WriteFile(string path, IEnumerable<string> lines)
+        {
+            string directory = Path.GetDirectoryName(path);
+            string temp = Path.Combine(directory, $"quest-data-{Guid.NewGuid():N}.tmp");
+            string backup = path + ".bak";
+
+            Directory.CreateDirectory(directory);
+            try
             {
-                try
+                File.WriteAllLines(temp, lines);
+                if (File.Exists(path))
                 {
-                    if (!File.Exists(filePath) && backupPath != null && File.Exists(backupPath))
-                        File.Move(backupPath, filePath);
+                    if (File.Exists(backup)) File.Delete(backup);
+                    File.Move(path, backup);
                 }
-                catch (Exception restoreException) { Util.Log(restoreException); }
-                Util.Log(ex);
+                File.Move(temp, path);
+                if (File.Exists(backup)) File.Delete(backup);
+            }
+            catch
+            {
+                if (!File.Exists(path) && File.Exists(backup)) File.Move(backup, path);
+                throw;
             }
             finally
             {
-                try
-                {
-                    if (tempPath != null && File.Exists(tempPath)) File.Delete(tempPath);
-                    if (!dirty && backupPath != null && File.Exists(backupPath)) File.Delete(backupPath);
-                }
-                catch (Exception ex) { Util.Log(ex); }
+                if (File.Exists(temp)) File.Delete(temp);
             }
         }
 

@@ -11,12 +11,29 @@ namespace OracleOfDereth
         // The shortlist the player built on the Flags tab. Same columns and the same click
         // behaviour as that tab, minus the filters — the searching happens over there, and what
         // lands here is already the short list.
-        private static readonly List<int> FavoritesRowColumns = new List<int> { 1, 2, 3, 4 };
+        private static readonly List<int> FavoritesRowColumns = new List<int> { 2, 3, 4, 5 };
 
         private readonly List<int> favoritesRowTinted = new List<int>();
 
         // The picked row, by flag rather than index — same reason as the Flags tab.
         private string favoritesSelectedFlag = "";
+
+        private enum FavoritesSortType
+        {
+            Custom,
+            CompleteAscending,
+            CompleteDescending,
+            FlagAscending,
+            FlagDescending,
+            NameAscending,
+            NameDescending,
+            ReadyAscending,
+            ReadyDescending,
+            SolvesAscending,
+            SolvesDescending
+        }
+
+        private FavoritesSortType favoritesSort = FavoritesSortType.Custom;
 
         public HudStaticText FavoritesText { get; private set; }
         public HudButton FavoritesRemove { get; private set; }
@@ -29,6 +46,9 @@ namespace OracleOfDereth
         public HudPictureBox FavoritesUpIcon { get; private set; }
         public HudPictureBox FavoritesDownIcon { get; private set; }
 
+        public HudFixedLayout FavoritesListComplete { get; private set; }
+        public HudPictureBox FavoritesListCompleteIcon { get; private set; }
+        public HudStaticText FavoritesListPosition { get; private set; }
         public HudStaticText FavoritesListFlag { get; private set; }
         public HudStaticText FavoritesListName { get; private set; }
         public HudStaticText FavoritesListReady { get; private set; }
@@ -59,10 +79,22 @@ namespace OracleOfDereth
             FavoritesDown.AddControl(FavoritesDownIcon, new Rectangle(0, 0, 16, 16));
             FavoritesDownIcon.Hit += FavoritesDown_Hit;
 
+            FavoritesListCompleteIcon = new HudPictureBox();
+            FavoritesListCompleteIcon.Image = IconSort;
+            FavoritesListComplete = (HudFixedLayout)view["FavoritesListComplete"];
+            FavoritesListComplete.AddControl(FavoritesListCompleteIcon, new Rectangle(0, 0, 16, 16));
+            FavoritesListCompleteIcon.Hit += FavoritesListComplete_Hit;
+
+            FavoritesListPosition = (HudStaticText)view["FavoritesListPosition"];
+            FavoritesListPosition.Hit += FavoritesListPosition_Hit;
             FavoritesListFlag = (HudStaticText)view["FavoritesListFlag"];
+            FavoritesListFlag.Hit += FavoritesListFlag_Hit;
             FavoritesListName = (HudStaticText)view["FavoritesListName"];
+            FavoritesListName.Hit += FavoritesListName_Hit;
             FavoritesListReady = (HudStaticText)view["FavoritesListReady"];
+            FavoritesListReady.Hit += FavoritesListReady_Hit;
             FavoritesListSolves = (HudStaticText)view["FavoritesListSolves"];
+            FavoritesListSolves.Hit += FavoritesListSolves_Hit;
 
             FavoritesList = (HudList)view["FavoritesList"];
             FavoritesList.Click += FavoritesList_Click;
@@ -75,6 +107,12 @@ namespace OracleOfDereth
             FavoritesRefresh.Hit -= QuestFlagsRefresh_Hit;
             FavoritesUpIcon.Hit -= FavoritesUp_Hit;
             FavoritesDownIcon.Hit -= FavoritesDown_Hit;
+            FavoritesListCompleteIcon.Hit -= FavoritesListComplete_Hit;
+            FavoritesListPosition.Hit -= FavoritesListPosition_Hit;
+            FavoritesListFlag.Hit -= FavoritesListFlag_Hit;
+            FavoritesListName.Hit -= FavoritesListName_Hit;
+            FavoritesListReady.Hit -= FavoritesListReady_Hit;
+            FavoritesListSolves.Hit -= FavoritesListSolves_Hit;
             FavoritesList.Click -= FavoritesList_Click;
         }
 
@@ -91,7 +129,7 @@ namespace OracleOfDereth
 
         private void UpdateFavoritesList()
         {
-            List<Quest> quests = QuestFavorite.Quests();
+            List<Quest> quests = SortedFavorites();
 
             // Reordering and removing both act on the picked row, so all three appear together.
             bool picked = favoritesSelectedFlag.Length > 0;
@@ -108,8 +146,9 @@ namespace OracleOfDereth
                 if (x >= FavoritesList.RowCount) {
                     row = FavoritesList.AddRow();
 
-                    ((HudStaticText)row[3]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                    ((HudStaticText)row[1]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
                     ((HudStaticText)row[4]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
+                    ((HudStaticText)row[5]).TextAlignment = VirindiViewService.WriteTextFormats.Right;
                 } else {
                     row = FavoritesList[x];
                 }
@@ -122,10 +161,11 @@ namespace OracleOfDereth
                 if (done) { completed += 1; }
 
                 AssignImage((HudPictureBox)row[0], done);
-                SetText(row, 1, quest.Flag);
-                SetText(row, 2, quest.DisplayName());
-                SetText(row, 3, quest.Status());
-                SetText(row, 4, quest.SolvesText());
+                SetText(row, 1, QuestFavorite.Position(quest.Flag).ToString());
+                SetText(row, 2, quest.Flag);
+                SetText(row, 3, quest.DisplayName());
+                SetText(row, 4, quest.Status());
+                SetText(row, 5, quest.SolvesText());
 
                 int tint = quest.Flag == favoritesSelectedFlag ? TintRowSelected
                          : quest.IsNew ? TintNew
@@ -180,11 +220,13 @@ namespace OracleOfDereth
         // with repeated clicks instead of being re-picked each time.
         private void FavoritesUp_Hit(object sender, EventArgs e)
         {
+            favoritesSort = FavoritesSortType.Custom;
             if (QuestFavorite.MoveUp(favoritesSelectedFlag)) { UpdateFavoritesList(); }
         }
 
         private void FavoritesDown_Hit(object sender, EventArgs e)
         {
+            favoritesSort = FavoritesSortType.Custom;
             if (QuestFavorite.MoveDown(favoritesSelectedFlag)) { UpdateFavoritesList(); }
         }
 
@@ -202,7 +244,7 @@ namespace OracleOfDereth
         // Same column actions as the Flags tab, so a favourite behaves like the row it came from.
         private void FavoritesList_Click(object sender, int row, int col)
         {
-            string flag = ((HudStaticText)FavoritesList[row][1]).Text;
+            string flag = ((HudStaticText)FavoritesList[row][2]).Text;
 
             Quest quest = QuestCatalog.Quests.FirstOrDefault(x => x.Flag == flag);
             if (quest == null) { return; }
@@ -224,7 +266,7 @@ namespace OracleOfDereth
                 }
             }
 
-            if (col == 1 || col == 2)
+            if (col == 2 || col == 3)
             {
                 string details = quest.Details();
                 if (details.Length > 0)
@@ -233,7 +275,7 @@ namespace OracleOfDereth
                 }
             }
 
-            if (col >= 3)
+            if (col >= 4)
             {
                 if (questFlag == null)
                 {
@@ -244,6 +286,82 @@ namespace OracleOfDereth
                     Util.Chat($"{questFlag.ToString()}", Util.ColorPink);
                 }
             }
+        }
+
+        private List<Quest> SortedFavorites()
+        {
+            List<Quest> quests = QuestFavorite.Quests();
+            switch (favoritesSort)
+            {
+                case FavoritesSortType.CompleteAscending:
+                    return quests.OrderBy(FavoriteIsDone).ThenBy(q => q.Flag).ToList();
+                case FavoritesSortType.CompleteDescending:
+                    return quests.OrderByDescending(FavoriteIsDone).ThenBy(q => q.Flag).ToList();
+                case FavoritesSortType.FlagAscending:
+                    return quests.OrderBy(q => q.Flag).ToList();
+                case FavoritesSortType.FlagDescending:
+                    return quests.OrderByDescending(q => q.Flag).ToList();
+                case FavoritesSortType.NameAscending:
+                    return quests.OrderBy(q => q.DisplayName()).ThenBy(q => q.Flag).ToList();
+                case FavoritesSortType.NameDescending:
+                    return quests.OrderByDescending(q => q.DisplayName()).ThenBy(q => q.Flag).ToList();
+                case FavoritesSortType.ReadyAscending:
+                    return quests.OrderBy(q => q.Ready()).ThenBy(q => q.NextAvailableTime()).ThenBy(q => q.Flag).ToList();
+                case FavoritesSortType.ReadyDescending:
+                    return quests.OrderByDescending(q => q.NextAvailableTime()).ThenBy(q => q.Flag).ToList();
+                case FavoritesSortType.SolvesAscending:
+                    return quests.OrderBy(q => q.Solves()).ThenBy(q => q.Flag).ToList();
+                case FavoritesSortType.SolvesDescending:
+                    return quests.OrderByDescending(q => q.Solves()).ThenBy(q => q.Flag).ToList();
+                default:
+                    return quests;
+            }
+        }
+
+        private void FavoritesListPosition_Hit(object sender, EventArgs e)
+        {
+            favoritesSort = FavoritesSortType.Custom;
+            UpdateFavoritesList();
+        }
+
+        private void FavoritesListComplete_Hit(object sender, EventArgs e)
+        {
+            favoritesSort = favoritesSort == FavoritesSortType.CompleteAscending
+                ? FavoritesSortType.CompleteDescending
+                : FavoritesSortType.CompleteAscending;
+            UpdateFavoritesList();
+        }
+
+        private void FavoritesListFlag_Hit(object sender, EventArgs e)
+        {
+            favoritesSort = favoritesSort == FavoritesSortType.FlagAscending
+                ? FavoritesSortType.FlagDescending
+                : FavoritesSortType.FlagAscending;
+            UpdateFavoritesList();
+        }
+
+        private void FavoritesListName_Hit(object sender, EventArgs e)
+        {
+            favoritesSort = favoritesSort == FavoritesSortType.NameAscending
+                ? FavoritesSortType.NameDescending
+                : FavoritesSortType.NameAscending;
+            UpdateFavoritesList();
+        }
+
+        private void FavoritesListReady_Hit(object sender, EventArgs e)
+        {
+            favoritesSort = favoritesSort == FavoritesSortType.ReadyAscending
+                ? FavoritesSortType.ReadyDescending
+                : FavoritesSortType.ReadyAscending;
+            UpdateFavoritesList();
+        }
+
+        private void FavoritesListSolves_Hit(object sender, EventArgs e)
+        {
+            favoritesSort = favoritesSort == FavoritesSortType.SolvesDescending
+                ? FavoritesSortType.SolvesAscending
+                : FavoritesSortType.SolvesDescending;
+            UpdateFavoritesList();
         }
     }
 }
