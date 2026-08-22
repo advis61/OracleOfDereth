@@ -39,6 +39,7 @@ namespace OracleOfDereth
         // whole picture, and a character's flag list is small enough to just keep in full.
         public static Dictionary<string, QuestFlag> QuestFlags =
             new Dictionary<string, QuestFlag>(StringComparer.OrdinalIgnoreCase);
+        private static Dictionary<string, QuestFlag> pendingRefresh;
 
         // Properties
         public string Key = "";
@@ -51,11 +52,12 @@ namespace OracleOfDereth
         public static void Init()
         {
             QuestFlags.Clear();
+            pendingRefresh = null;
             QuestState.Init();
         }
 
         public static void Refresh() {
-            QuestFlags.Clear();
+            pendingRefresh = new Dictionary<string, QuestFlag>(StringComparer.OrdinalIgnoreCase);
             QuestState.BeginRefresh();
             Util.Command("/myquests");
         }
@@ -65,11 +67,32 @@ namespace OracleOfDereth
             QuestFlag questFlag = FromMyQuestsLine(line);
             if (questFlag == null) { return false; }
 
-            QuestFlags[questFlag.Key] = questFlag;
+            if (pendingRefresh != null)
+            {
+                pendingRefresh[questFlag.Key] = questFlag;
+                QuestState.RefreshFlagReceived();
+            }
+            else
+            {
+                QuestFlags[questFlag.Key] = questFlag;
+                QuestState.FlagChanged(questFlag, true);
+            }
             QuestHistory.AddSeen(questFlag.Key);
-            QuestState.FlagChanged(questFlag, true);
 
             return true;
+        }
+
+        internal static void CompleteRefresh(bool replace)
+        {
+            if (pendingRefresh == null) return;
+
+            if (replace)
+            {
+                QuestFlags = pendingRefresh;
+                foreach (QuestFlag flag in QuestFlags.Values) QuestCatalog.Add(flag);
+            }
+
+            pendingRefresh = null;
         }
 
         // Record a stamp without a "/myquests" round trip, so the tabs show the flag as complete

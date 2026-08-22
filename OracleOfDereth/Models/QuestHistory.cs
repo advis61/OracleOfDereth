@@ -54,6 +54,8 @@ namespace OracleOfDereth
 
             try
             {
+                string backupPath = filePath + ".bak";
+                if (!File.Exists(filePath) && File.Exists(backupPath)) File.Move(backupPath, filePath);
                 if (!File.Exists(filePath)) return;
 
                 string[] lines = File.ReadAllLines(filePath);
@@ -185,17 +187,45 @@ namespace OracleOfDereth
 
         private static void Save()
         {
+            string tempPath = null;
+            string backupPath = null;
             try
             {
                 string directory = Path.GetDirectoryName(filePath);
                 Directory.CreateDirectory(directory);
+                tempPath = Path.Combine(directory, $"quest-history-{Guid.NewGuid():N}.tmp");
                 File.WriteAllLines(
-                    filePath,
+                    tempPath,
                     new[] { "Flag" }.Concat(
                         Flags.OrderBy(f => f, StringComparer.OrdinalIgnoreCase).Select(Util.CsvEscape)));
+                if (File.Exists(filePath))
+                {
+                    backupPath = filePath + ".bak";
+                    if (File.Exists(backupPath)) File.Delete(backupPath);
+                    File.Move(filePath, backupPath);
+                }
+                File.Move(tempPath, filePath);
                 dirty = false;
             }
-            catch (Exception ex) { Util.Log(ex); }
+            catch (Exception ex)
+            {
+                try
+                {
+                    if (!File.Exists(filePath) && backupPath != null && File.Exists(backupPath))
+                        File.Move(backupPath, filePath);
+                }
+                catch (Exception restoreException) { Util.Log(restoreException); }
+                Util.Log(ex);
+            }
+            finally
+            {
+                try
+                {
+                    if (tempPath != null && File.Exists(tempPath)) File.Delete(tempPath);
+                    if (!dirty && backupPath != null && File.Exists(backupPath)) File.Delete(backupPath);
+                }
+                catch (Exception ex) { Util.Log(ex); }
+            }
         }
 
         private static bool Add(string flag)

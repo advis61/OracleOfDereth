@@ -174,6 +174,30 @@ internal static class Program
         SetStaticField(typeof(QuestState), "lastFlagAt", DateTime.UtcNow - TimeSpan.FromSeconds(3));
         if (QuestState.RefreshStatus != QuestRefreshStatus.Loaded)
             throw new InvalidOperationException("Quest refresh did not settle after its quiet period.");
+
+        QuestFlag.QuestFlags = new Dictionary<string, QuestFlag>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "old", new QuestFlag { Key = "old" } }
+        };
+        var replacement = new Dictionary<string, QuestFlag>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "new", new QuestFlag { Key = "new" } }
+        };
+        SetStaticField(typeof(QuestFlag), "pendingRefresh", replacement);
+        QuestState.BeginRefresh();
+        QuestState.RefreshFlagReceived();
+        SetStaticField(typeof(QuestState), "lastFlagAt", DateTime.UtcNow - TimeSpan.FromSeconds(3));
+        QuestState.Tick();
+        if (!QuestFlag.QuestFlags.ContainsKey("new") || QuestFlag.QuestFlags.ContainsKey("old"))
+            throw new InvalidOperationException("Successful quest refresh did not replace the live snapshot.");
+
+        SetStaticField(typeof(QuestFlag), "pendingRefresh",
+            new Dictionary<string, QuestFlag>(StringComparer.OrdinalIgnoreCase));
+        QuestState.BeginRefresh();
+        SetStaticField(typeof(QuestState), "requestedAt", DateTime.UtcNow - TimeSpan.FromSeconds(3));
+        QuestState.Tick();
+        if (!QuestFlag.QuestFlags.ContainsKey("new"))
+            throw new InvalidOperationException("Empty quest refresh discarded the previous live snapshot.");
     }
 
     private static void AssertMyQuestsParsing()

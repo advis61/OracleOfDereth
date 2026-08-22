@@ -17,6 +17,7 @@ namespace OracleOfDereth
         private static DateTime requestedAt;
         private static DateTime lastFlagAt;
         private static bool receivedFlag;
+        private static bool refreshCompleted;
 
         public static int Revision { get; private set; }
         public static bool HasRequestedRefresh { get; private set; }
@@ -42,6 +43,7 @@ namespace OracleOfDereth
             requestedAt = DateTime.MinValue;
             lastFlagAt = DateTime.MinValue;
             receivedFlag = false;
+            refreshCompleted = false;
             LastChangeWasFlag = false;
         }
 
@@ -51,7 +53,25 @@ namespace OracleOfDereth
             requestedAt = DateTime.UtcNow;
             lastFlagAt = DateTime.MinValue;
             receivedFlag = false;
+            refreshCompleted = false;
             LastChangeWasFlag = false;
+            Revision++;
+        }
+
+        public static void RefreshFlagReceived()
+        {
+            HasRequestedRefresh = true;
+            lastFlagAt = DateTime.UtcNow;
+            receivedFlag = true;
+        }
+
+        public static void Tick()
+        {
+            if (!HasRequestedRefresh || refreshCompleted || RefreshStatus == QuestRefreshStatus.Loading) return;
+
+            QuestFlag.CompleteRefresh(receivedFlag);
+            refreshCompleted = true;
+            if (receivedFlag) LastChangeWasFlag = true;
             Revision++;
         }
 
