@@ -207,15 +207,14 @@ namespace OracleOfDereth
         {
             UpdateQuestSendButton();
 
-            // Only offered once a row is picked, so it's never ambiguous what it would add.
-            QuestsFavorite.Visible = questsSelectedFlag.Length > 0;
-
             QuestFilter filter = QuestsFilter();
 
             // With nothing filtering, use the collection as-is. The Where(...).ToList() otherwise
             // allocates a 4,000-entry list and runs a delegate per row on every single repaint,
             // only to reproduce the list we already have. Read-only either way.
             List<Quest> quests = filter.IsActive ? QuestCatalog.Quests.Where(filter.Matches).ToList() : QuestCatalog.Quests;
+            QuestsFavorite.Visible = questsSelectedFlag.Length > 0 &&
+                quests.Any(q => q.Flag == questsSelectedFlag);
             int completed = 0;
 
             for (int x = 0; x < quests.Count; x++)

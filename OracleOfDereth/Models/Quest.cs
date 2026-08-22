@@ -94,7 +94,9 @@ namespace OracleOfDereth
         // come through here so they can't drift apart.
         public string DisplayName()
         {
-            return Name.Length > 0 ? Name : Info;
+            if (Name.Length > 0) return Name;
+            if (Info.Length > 0) return Info;
+            return "Unknown quest";
         }
 
         // The Ready column's text, and the single definition of it: a flag never earned reads
