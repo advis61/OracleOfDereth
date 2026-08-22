@@ -33,6 +33,7 @@ namespace OracleOfDereth
         private static bool dirty;
         private static bool headerSeen;
         private static bool footerSeen;
+        private static bool accountRefreshRequested;
         private static readonly HashSet<string> Collected =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -45,6 +46,7 @@ namespace OracleOfDereth
             EndBlock();
             dirty = false;
             changedAt = DateTime.MinValue;
+            accountRefreshRequested = false;
 
             string root = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Personal),
@@ -56,6 +58,7 @@ namespace OracleOfDereth
             {
                 string backupPath = filePath + ".bak";
                 if (!File.Exists(filePath) && File.Exists(backupPath)) File.Move(backupPath, filePath);
+                accountRefreshRequested = File.Exists(filePath);
                 if (!File.Exists(filePath)) return;
 
                 string[] lines = File.ReadAllLines(filePath);
@@ -79,12 +82,22 @@ namespace OracleOfDereth
 
         public static void Refresh()
         {
+            accountRefreshRequested = true;
             Util.Command("/myqstlist");
+        }
+
+        public static bool RefreshIfMissing()
+        {
+            if (accountRefreshRequested || File.Exists(filePath)) return false;
+
+            Refresh();
+            return true;
         }
 
         // Called when the player types /myqstlist. Their output remains visible.
         public static void ManualRefresh()
         {
+            accountRefreshRequested = true;
             OpenBlock();
         }
 

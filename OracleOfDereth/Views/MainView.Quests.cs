@@ -171,6 +171,10 @@ namespace OracleOfDereth
         public void UpdateQuests()
         {
             if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
+            if (QuestState.RefreshStatus == QuestRefreshStatus.Loaded && QuestHistory.RefreshIfMissing())
+            {
+                FlashButton(QuestsRefreshAll);
+            }
 
             // Repaint every tick like the other tabs, so the Ready column's countdowns actually
             // count down — SetText makes that cheap by writing only the cells that changed. The
