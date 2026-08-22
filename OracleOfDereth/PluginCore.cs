@@ -211,7 +211,7 @@ namespace OracleOfDereth
         /// </summary>
         protected override void Shutdown()
         {
-            try
+            ShutdownComponent(() =>
             {
                 CoreManager.Current.CommandLineText -= Current_CommandLineText;
                 CoreManager.Current.ChatBoxMessage -= Current_ChatBoxMessage;
@@ -230,8 +230,10 @@ namespace OracleOfDereth
                 CoreManager.Current.WorldFilter.ResetTrade -= WorldFilter_ResetTrade;
                 if (worldObjectIdentifier != null)
                     worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
+            });
 
-                // Shutdown timer
+            ShutdownComponent(() =>
+            {
                 if (timer != null)
                 {
                     timer.Stop();
@@ -239,19 +241,22 @@ namespace OracleOfDereth
                     timer.Dispose();
                     timer = null;
                 }
+            });
 
-                // Dispose all tools
-                worldObjectIdentifier?.Dispose();
-                QuestFlagLookup.Shutdown();
-                QuestSubmit.Shutdown();
-                VVSBar.Shutdown();
+            ShutdownComponent(() => worldObjectIdentifier?.Dispose());
+            ShutdownComponent(QuestFlagLookup.Shutdown);
+            ShutdownComponent(QuestSubmit.Shutdown);
+            ShutdownComponent(VVSBar.Shutdown);
 
-                // Dispose all views
-                tradeView?.Dispose();
-                targetView?.Dispose();
-                mainView?.Dispose();
+            ShutdownComponent(() => tradeView?.Dispose());
+            ShutdownComponent(() => targetView?.Dispose());
+            ShutdownComponent(() => mainView?.Dispose());
+        }
 
-            } catch (Exception ex) { Util.Log(ex); }
+        private static void ShutdownComponent(Action shutdown)
+        {
+            try { shutdown(); }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         public unsafe void Current_CommandLineText(object sender, ChatParserInterceptEventArgs e)

@@ -226,40 +226,43 @@ namespace OracleOfDereth
 
             try
             {
-                view.Resize -= MainView_Resized;
-                MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
-                CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
-                StatusViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
-                QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
-                ServerViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
-                TopViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
-                AboutViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                DisposeComponent(() =>
+                {
+                    view.Resize -= MainView_Resized;
+                    MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                    CharacterViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                    StatusViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                    QuestsViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                    ServerViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                    TopViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                    AboutViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
+                });
 
-                DisposeItems();
-                DisposeNearby();
-                DisposeFellowship();
-                DisposeQuests();
-                DisposeFavorites();
-                DisposeJohn();
-                DisposeMarkers();
-                DisposeFlags();
-                DisposeFacility();
-                DisposeTitles();
-                DisposeCustomQuests();
-                DisposeConquestAugmentations();
-                DisposeConquestExperience();
-                DisposeConquestBank();
-                DisposeConquestFship();
-                DisposeTop();
-                DisposeAugmentations();
-                DisposeCantrips();
-                DisposeCredits();
-                DisposeRecalls();
-                DisposeLuminance();
-                DisposeSociety();
-                DisposeSettings();
-                DisposeDecal();
-                DisposeButtonFlashes();
+                DisposeComponent(DisposeItems);
+                DisposeComponent(DisposeNearby);
+                DisposeComponent(DisposeFellowship);
+                DisposeComponent(DisposeQuests);
+                DisposeComponent(DisposeFavorites);
+                DisposeComponent(DisposeJohn);
+                DisposeComponent(DisposeMarkers);
+                DisposeComponent(DisposeFlags);
+                DisposeComponent(DisposeFacility);
+                DisposeComponent(DisposeTitles);
+                DisposeComponent(DisposeCustomQuests);
+                DisposeComponent(DisposeConquestAugmentations);
+                DisposeComponent(DisposeConquestExperience);
+                DisposeComponent(DisposeConquestBank);
+                DisposeComponent(DisposeConquestFship);
+                DisposeComponent(DisposeTop);
+                DisposeComponent(DisposeAugmentations);
+                DisposeComponent(DisposeCantrips);
+                DisposeComponent(DisposeCredits);
+                DisposeComponent(DisposeRecalls);
+                DisposeComponent(DisposeLuminance);
+                DisposeComponent(DisposeSociety);
+                DisposeComponent(DisposeSettings);
+                DisposeComponent(DisposeDecal);
+                DisposeComponent(DisposeButtonFlashes);
             }
             finally
             {
@@ -267,6 +270,12 @@ namespace OracleOfDereth
                 // unsubscribe cleanly.
                 view?.Dispose();
             }
+        }
+
+        private static void DisposeComponent(Action dispose)
+        {
+            try { dispose(); }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         public bool IsItemsTabActive() { return view.Visible && CurrentTab() == 1_04; }
