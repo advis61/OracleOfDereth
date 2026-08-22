@@ -83,6 +83,22 @@ namespace OracleOfDereth
             }
         }
 
+        public static void Reload()
+        {
+            List<Quest> discovered = Quests.Where(q => q.IsNew).ToList();
+            Quest.SortType sortType = CurrentSortType;
+            Init();
+
+            foreach (Quest quest in discovered)
+            {
+                if (questsByFlag.ContainsKey(quest.Flag)) continue;
+                Quests.Add(quest);
+                questsByFlag[quest.Flag] = quest;
+            }
+
+            Sort(sortType);
+        }
+
         public static void Add(QuestFlag flag)
         {
             if (flag == null || string.IsNullOrEmpty(flag.Key)) return;

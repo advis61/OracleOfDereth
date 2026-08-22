@@ -16,7 +16,9 @@ namespace OracleOfDereth
 
         private static DateTime? armedAt;
         private static bool ran;
+        private static int running;
         private static volatile bool pendingChecked;
+        private static volatile bool pendingReload;
         private static volatile string pendingMessage;
         private static volatile Exception pendingException;
 
@@ -44,14 +46,32 @@ namespace OracleOfDereth
                 SettingsFile.PutSetting(LastCheckedKey, DateTime.Today.ToString(DateFormat));
                 pendingChecked = false;
             }
+            if (pendingReload)
+            {
+                QuestCatalog.Reload();
+                pendingReload = false;
+            }
             if (pendingMessage != null) { Util.Chat(pendingMessage, Util.ColorPink, ""); pendingMessage = null; }
 
             if (ran || armedAt == null || DateTime.UtcNow - armedAt.Value < Delay) return;
             ran = true;
-            new Thread(Run) { IsBackground = true }.Start();
+            Start(false);
         }
 
-        private static void Run()
+        public static void UpdateNow()
+        {
+            if (!Start(true))
+                Util.Chat("Oracle of Dereth is already checking the quest list.", Util.ColorPink, "");
+        }
+
+        private static bool Start(bool verbose)
+        {
+            if (Interlocked.CompareExchange(ref running, 1, 0) != 0) return false;
+            new Thread(() => Run(verbose)) { IsBackground = true }.Start();
+            return true;
+        }
+
+        private static void Run(bool verbose)
         {
             try
             {
@@ -63,14 +83,22 @@ namespace OracleOfDereth
                     ? File.ReadAllLines(QuestCatalog.FilePath)
                     : Array.Empty<string>();
 
-                if (!downloaded.SequenceEqual(current, StringComparer.Ordinal))
-                {
+                bool changed = !downloaded.SequenceEqual(current, StringComparer.Ordinal);
+                if (changed)
                     QuestHistory.WriteFile(QuestCatalog.FilePath, downloaded);
-                    pendingMessage = "Oracle of Dereth quest list updated. It will be used the next time the plugin loads.";
-                }
+
+                pendingReload = true;
+                pendingMessage = changed
+                    ? "Oracle of Dereth quest list updated and reloaded."
+                    : verbose ? "Oracle of Dereth quest list reloaded; it was already up to date." : null;
                 pendingChecked = true;
             }
-            catch (Exception ex) { pendingException = ex; }
+            catch (Exception ex)
+            {
+                pendingException = ex;
+                if (verbose) pendingMessage = "Oracle of Dereth quest list update failed. See errors.txt for details.";
+            }
+            finally { Interlocked.Exchange(ref running, 0); }
         }
 
         private static string Fetch()

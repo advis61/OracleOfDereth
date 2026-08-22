@@ -284,6 +284,7 @@ namespace OracleOfDereth
                 else if (cmd == "/od checkbank") { Bank.Check(); }
                 else if (cmd == "/od questflag") { QuestFlagLookup.Execute(); }
                 else if (cmd == "/od update") { UpdateChecker.Check(true); }
+                else if (cmd == "/od quests update") { QuestCatalogUpdater.UpdateNow(); }
                 else if (cmd == "/od quests send") { mainView.SendQuestFlags(); }
                 else if (cmd == "/od quests send clear") { mainView.ClearSentQuestFlags(); }
                 else if (cmd == "/myqstlist") { QuestHistory.ManualRefresh(); return; }
