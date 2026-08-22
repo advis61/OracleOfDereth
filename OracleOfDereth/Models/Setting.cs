@@ -30,6 +30,7 @@ namespace OracleOfDereth
         public static List<Setting> All = new List<Setting>();
 
         public static Setting AnnouncePlayers;
+        public static Setting AutoUpdateQuestList;
         public static Setting BuffsRemaining;
         public static Setting CheckForUpdates;
         public static Setting CopyQuestDirections;
@@ -51,6 +52,7 @@ namespace OracleOfDereth
             List<string> YesNo = new List<string> { "Yes", "No" };
 
             AnnouncePlayers = Register("Announce Nearby Players", "AnnouncePlayers", YesNo, "Yes");
+            AutoUpdateQuestList = Register("Automatically Update Quest List", "AutoUpdateQuestList", YesNo, "Yes");
             CheckForUpdates = Register("Check For Updates On Login", "CheckForUpdates", YesNo, "Yes");
             BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
             CopyQuestUrl = Register("Copy Quest URL to Clipboard", "CopyQuestUrl", YesNo, "Yes");

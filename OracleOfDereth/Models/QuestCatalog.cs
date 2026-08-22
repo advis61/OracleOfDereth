@@ -26,6 +26,10 @@ namespace OracleOfDereth
         private static readonly string[] HintNames = { "hint", "hints", "directions", "walkthrough" };
         private static readonly string[] RepeatNames = { "repeatable", "repeat" };
 
+        public static string FilePath => Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+            @"Decal Plugins\Oracle of Dereth\quests.csv");
+
         public static void Init()
         {
             Quests.Clear();
@@ -218,6 +222,78 @@ namespace OracleOfDereth
         }
 
         private static StreamReader OpenCsv()
+        {
+            try
+            {
+                QuestHistory.RecoverFile(FilePath);
+                if (!File.Exists(FilePath))
+                {
+                    using (var embedded = OpenEmbeddedCsv())
+                        QuestHistory.WriteFile(FilePath, ReadLines(embedded));
+                }
+
+                string[] lines = File.ReadAllLines(FilePath);
+                if (Validate(lines, out string error))
+                    return new StreamReader(FilePath);
+
+                Util.Log(new InvalidDataException("Local quests.csv is invalid: " + error));
+            }
+            catch (Exception ex) { Util.Log(ex); }
+
+            return OpenEmbeddedCsv();
+        }
+
+        internal static bool Validate(IEnumerable<string> lines, out string error)
+        {
+            string[] all = lines?.ToArray() ?? Array.Empty<string>();
+            if (all.Length == 0)
+            {
+                error = "the file is empty";
+                return false;
+            }
+
+            Dictionary<string, int> columns = MapColumns(all[0]);
+            int flagCol = ColumnIndex(columns, FlagNames);
+            if (flagCol < 0)
+            {
+                error = "the quest flag column is missing";
+                return false;
+            }
+
+            var flags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (string line in all.Skip(1))
+            {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                string flag = Field(Util.CsvParseLine(line), flagCol);
+                if (flag.Length == 0)
+                {
+                    error = "a row has no quest flag";
+                    return false;
+                }
+                if (!flags.Add(flag))
+                {
+                    error = "duplicate quest flag: " + flag;
+                    return false;
+                }
+            }
+
+            if (flags.Count == 0)
+            {
+                error = "the file has no quests";
+                return false;
+            }
+
+            error = "";
+            return true;
+        }
+
+        private static IEnumerable<string> ReadLines(TextReader reader)
+        {
+            string line;
+            while ((line = reader.ReadLine()) != null) yield return line;
+        }
+
+        private static StreamReader OpenEmbeddedCsv()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string resourceName = assembly.GetManifestResourceNames().FirstOrDefault(

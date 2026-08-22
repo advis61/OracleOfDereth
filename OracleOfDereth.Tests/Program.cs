@@ -24,8 +24,27 @@ internal static class Program
         AssertQuestState();
         AssertMyQuestsParsing();
         AssertQuestHistory();
+        AssertQuestCatalogValidation();
         Console.WriteLine("Regression tests passed.");
         return 0;
+    }
+
+    private static void AssertQuestCatalogValidation()
+    {
+        MethodInfo validate = typeof(QuestCatalog).GetMethod("Validate", BindingFlags.NonPublic | BindingFlags.Static);
+
+        AssertValid(new[] { "Quest Flag,Quest Name", "one,First", "two,Second" }, true);
+        AssertValid(new[] { "Quest Name", "First" }, false);
+        AssertValid(new[] { "Quest Flag,Quest Name", "one,First", "ONE,Duplicate" }, false);
+        AssertValid(new[] { "Quest Flag,Quest Name", ",Missing" }, false);
+
+        void AssertValid(string[] lines, bool expected)
+        {
+            object[] args = { lines, null };
+            bool actual = (bool)validate.Invoke(null, args);
+            if (actual != expected)
+                throw new InvalidOperationException("Quest catalog validation returned " + actual + ": " + args[1]);
+        }
     }
 
     private static void AssertJson(string input, string expected)

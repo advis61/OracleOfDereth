@@ -148,6 +148,7 @@ namespace OracleOfDereth
             SocietyQuest.Init();
             CustomQuest.Init();
             QuestCatalog.Init();
+            QuestCatalogUpdater.Init();
             Marker.Init();
             Nearby.Init();
             QuestFlag.Init();
@@ -193,6 +194,7 @@ namespace OracleOfDereth
                 Fellowship.AutoOpenFellow();
                 Nearby.Tick(); // reconcile tracked objects vs the world (drops any missed by ReleaseObject)
                 UpdateChecker.Tick();
+                QuestCatalogUpdater.Tick();
                 QuestFlagLookup.Tick();
                 QuestSubmit.Tick();
                 QuestState.Tick();
