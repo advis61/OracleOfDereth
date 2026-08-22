@@ -88,8 +88,9 @@ namespace OracleOfDereth
             Count = count;
         }
 
-        // Rebuilt from scratch each time the block's header arrives, so a reprint replaces the
-        // previous rows instead of appending to them. Held in DisplayOrder, not arrival order.
+        // Rebuilt from scratch when Refresh sends the command, before any response lines can
+        // arrive. Conquest can deliver the header in the middle of the rows, so the header must
+        // not clear this list. Held in DisplayOrder, not arrival order.
         public static List<ConquestEnlAugmentation> All { get; private set; } = new List<ConquestEnlAugmentation>();
 
         // Where a newly-parsed row belongs. Walks past everything ranked at or above it, so rows
@@ -162,6 +163,7 @@ namespace OracleOfDereth
             if (!Server.IsConquest) return false;
 
             LastRefresh = DateTime.UtcNow;
+            All = new List<ConquestEnlAugmentation>();
             Request.Sent();
             Util.Command("/enl augs");
 
@@ -198,11 +200,14 @@ namespace OracleOfDereth
 
             Match m = LineRegex.Match(text);
 
-            // Only reached behind Matches, so a line that isn't an aug is the block's header: the
-            // rows that follow are a fresh printing, so drop what's there and collect them anew.
+            // Only reached behind Matches, so a line that isn't an aug is the block's header.
+            // Refresh already cleared the collection before sending the command. Do not clear it
+            // here: Conquest may deliver some rows before this header.
             if (!m.Success)
             {
-                All = new List<ConquestEnlAugmentation>();
+                // A command typed by the player has no Refresh call to begin its collection, so
+                // its normally-leading header still replaces the old rows.
+                if (!Request.Awaiting) { All = new List<ConquestEnlAugmentation>(); }
                 return Request.Awaiting;
             }
 
