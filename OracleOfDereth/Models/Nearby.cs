@@ -48,7 +48,7 @@ namespace OracleOfDereth
             // Hot reload can start after the landscape's CreateObject events have already fired.
             foreach (WorldObject item in CoreManager.Current.WorldFilter.GetLandscape())
             {
-                if (item.Id != 0) ObjectIds.Add(item.Id);
+                if (item.Id != 0 && !ObjectIds.Contains(item.Id)) ObjectIds.Add(item.Id);
             }
         }
 
