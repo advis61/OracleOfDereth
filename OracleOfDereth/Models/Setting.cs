@@ -41,6 +41,7 @@ namespace OracleOfDereth
         public static Setting SuppressPluginRefreshChat;
         public static Setting SummonScore;
         public static Setting WeaponScore;
+        public static Setting ShowWeaponScoreWorkmanship;
         public static Setting WikiSource;
 
         public static void Init()
@@ -57,7 +58,8 @@ namespace OracleOfDereth
             OrderDecalPlugins = Register("Order Decal Plugins on Startup", "OrderDecalPlugins", YesNo, "Yes");
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "NearbyWcid", YesNo, "No");
-            WeaponScore = Register("Show Weapons Score", "WeaponScore", YesNo, "Yes");
+            WeaponScore = Register("Show Weapon Score", "WeaponScore", YesNo, "Yes");
+            ShowWeaponScoreWorkmanship = Register("Show Weapon Score Workmanship", "WeaponScoreWorkmanship", YesNo, "Yes");
             ShowTradeWindow = Register("Use Trade Window", "TradeWindow", YesNo, "Yes");
             VoidTargetWindow = Register("Use Void Target Window", "VoidTargetWindow", YesNo, "Yes");
             SuppressPluginRefreshChat = Register("Suppress Plugin Refresh Chat", "SuppressPluginRefreshChat", YesNo, "Yes");

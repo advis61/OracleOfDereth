@@ -574,9 +574,9 @@ namespace OracleOfDereth
         }
 
         // The OD value alongside the attack / melee-defense mods, e.g. "OD +5 | 18% | 20%".
-        // Either segment is dropped when empty. GetWeaponOveragesString wraps this in brackets
-        // for the full description; the item columns show it bare.
-        public string GetWeaponODModsString()
+        // Empty segments are dropped. Item columns request workmanship and show this bare;
+        // GetWeaponOveragesString wraps it in brackets for identification output.
+        public string GetWeaponODModsString(bool includeWorkmanship = false)
         {
             string od = GetODString();
             string mods = GetWeaponModsString();
@@ -584,23 +584,11 @@ namespace OracleOfDereth
             var parts = new List<string>();
             if (od.Length > 0) parts.Add(od);
             if (mods.Length > 0) parts.Add(mods);
-            return string.Join(" | ", parts);
-        }
-
-        // The column form of the above, with the workmanship tagged on the end, e.g.
-        // "OD +5 | 18% | 20% | w6". Only the item columns use this — the full description
-        // reports workmanship on its own (GetWorkmanshipString), so it stays out of
-        // GetWeaponODModsString to avoid printing it twice.
-        public string GetWeaponODModsWorkString()
-        {
-            var parts = new List<string>();
-
-            string odMods = GetWeaponODModsString();
-            if (odMods.Length > 0) parts.Add(odMods);
-
-            int work = GetWorkmanshipValue();
-            if (work > 0) parts.Add("w" + work);
-
+            if (includeWorkmanship)
+            {
+                int work = GetWorkmanshipValue();
+                if (work > 0) parts.Add("w" + work);
+            }
             return string.Join(" | ", parts);
         }
 
@@ -1183,7 +1171,7 @@ namespace OracleOfDereth
             ItemInfo info = new ItemInfo(item);
             if (!info.IsWeapon) return false;
 
-            string odString = info.GetWeaponOveragesString();
+            string odString = info.GetWeaponOveragesString(Setting.ShowWeaponScoreWorkmanship.IsYes);
             if (odString == null) return false;
 
             Util.Chat(info.GetName() + " " + odString, Util.ColorCyan, "");
@@ -1231,9 +1219,9 @@ namespace OracleOfDereth
             if (value.Length > 0) parts.Add(value);
         }
 
-        private string GetWeaponOveragesString()
+        private string GetWeaponOveragesString(bool includeWorkmanship = false)
         {
-            string overages = GetWeaponODModsString();
+            string overages = GetWeaponODModsString(includeWorkmanship);
             return overages.Length == 0 ? "" : "[" + overages + "]";
         }
 

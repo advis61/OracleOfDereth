@@ -36,6 +36,12 @@ namespace OracleOfDereth
             Trade?.IdentReceived(changed);
         }
 
+        public static void RefreshAll()
+        {
+            Inventory?.Refresh();
+            Trade?.Refresh();
+        }
+
         // Collection of Items
         public List<Item> Items = new List<Item>();
         public SortType CurrentSortType = SortType.NameAscending;
@@ -489,6 +495,18 @@ namespace OracleOfDereth
         {
             _lastRefresh = DateTime.UtcNow;
             OnItemsListChanged?.Invoke();
+        }
+
+        private void Refresh()
+        {
+            foreach (Item item in Items.Where(t => t.IsIdentified))
+            {
+                WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
+                if (wo != null) item.Populate(wo);
+            }
+
+            Sort(CurrentSortType);
+            RefreshList();
         }
 
         // Repaint, at most once per RefreshInterval, so a bulk identify doesn't
