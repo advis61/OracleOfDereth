@@ -32,7 +32,7 @@ namespace OracleOfDereth
         //
         // This is the server talking to the player, not a reply the plugin asked for, so it is
         // never suppressed — see PluginCore, which reads it and lets it print.
-        public static readonly Regex StampedRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?You['’]ve stamped (?<key>[^\s!]+)!");
+        public static readonly Regex StampedRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?You['’]ve stamped (?<key>[^\s!]+)(?: on first completion)?!");
 
         // Collection of Quest Flags data objects — every flag /myquests reports, unfiltered.
         // There used to be a whitelist built from the quest CSVs, but the Flags tab wants the

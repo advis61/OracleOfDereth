@@ -339,6 +339,21 @@ internal static class Program
             if (QuestSubmit.IsPending(historyOnly, "Levistras"))
                 throw new InvalidOperationException("Verified history remained eligible for submission.");
 
+            foreach (var fixture in new[]
+            {
+                new { Line = "You've stamped StampNormalFixture!", Flag = "stampnormalfixture" },
+                new { Line = "You've stamped StampFirstFixture on first completion!", Flag = "stampfirstfixture" }
+            })
+            {
+                if (!QuestFlag.Stamped(fixture.Line) ||
+                    !QuestFlag.QuestFlags.ContainsKey(fixture.Flag) ||
+                    !QuestHistory.Contains(fixture.Flag) ||
+                    !QuestCatalog.Quests.Any(q => q.Flag == fixture.Flag && q.IsNew))
+                {
+                    throw new InvalidOperationException("Failed to capture quest stamp fixture: " + fixture.Line);
+                }
+            }
+
             QuestHistory.AddStamp("StampedAfterRefresh");
             if (!QuestHistory.Contains("stampedafterrefresh") ||
                 !File.ReadAllLines(history).Any(line =>
