@@ -27,7 +27,7 @@ namespace OracleOfDereth
             if(Setting.SummonScore.IsNo) { return false; }
 
             Summon summon = new() { Item = item };
-            if (summon.IsSummon() == false) { return false; }
+            if (!summon.IsSummon()) { return false; }
 
             Util.Chat(summon.ToString(), Util.ColorCyan, "");
             return true;

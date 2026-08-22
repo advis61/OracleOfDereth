@@ -71,7 +71,7 @@ namespace OracleOfDereth
 
         public static void SpellCast(int id, int spellId)
         {
-            if(TargetSpellIds.Contains(spellId) == false) { return; }
+            if (!TargetSpellIds.Contains(spellId)) { return; }
 
             Target target = new() { Id = id };
 
@@ -96,10 +96,10 @@ namespace OracleOfDereth
             string targetName = match.Groups[2].Value;
 
             // Find the correct previous cast
-            TargetSpell targetSpell = TargetSpells.Where(s => s.TargetName == targetName && s.SpellName == spellName && !s.IsStarted() && !s.IsCasting()).FirstOrDefault();
+            TargetSpell targetSpell = TargetSpells.FirstOrDefault(s => s.TargetName == targetName && s.SpellName == spellName && !s.IsStarted() && !s.IsCasting());
 
             if(targetSpell == null) {
-                targetSpell = TargetSpells.Where(s => s.TargetName == targetName && s.SpellName == spellName && !s.IsStarted()).FirstOrDefault();
+                targetSpell = TargetSpells.FirstOrDefault(s => s.TargetName == targetName && s.SpellName == spellName && !s.IsStarted());
             }
 
             if (targetSpell == null) { return; }
@@ -220,7 +220,7 @@ namespace OracleOfDereth
         {
             if (Item() == null) return "";
 
-            TargetSpell targetSpell = TargetSpells.Where(s => s.TargetId == Id && spellIds.Contains(s.SpellId) && s.IsActive()).FirstOrDefault();
+            TargetSpell targetSpell = TargetSpells.FirstOrDefault(s => s.TargetId == Id && spellIds.Contains(s.SpellId) && s.IsActive());
             if(targetSpell == null) { return ""; }
 
             int seconds = targetSpell.SecondsRemaining();
@@ -237,7 +237,7 @@ namespace OracleOfDereth
         {
             if(Item() == null) { return Color.White; }
 
-            TargetSpell targetSpell = TargetSpells.Where(s => s.TargetId == Id && spellIds.Contains(s.SpellId) && s.IsActive()).FirstOrDefault();
+            TargetSpell targetSpell = TargetSpells.FirstOrDefault(s => s.TargetId == Id && spellIds.Contains(s.SpellId) && s.IsActive());
             if (targetSpell == null) { return Color.White; }
 
             if (targetSpell.Destruction) { return DestructionColor; }

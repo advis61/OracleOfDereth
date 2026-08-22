@@ -1255,7 +1255,7 @@ namespace OracleOfDereth
         private const int Key_MeleeDefenseBonus = 29;
         private const int Key_ManaCBonus = 144;
 
-        private bool IsEquipped => intValues.ContainsKey(10) && intValues[10] > 0;
+        private bool IsEquipped => intValues.TryGetValue(10, out int location) && location > 0;
 
         private int GetBuffedIntValue(int key, int defaultValue = 0)
         {
@@ -1352,11 +1352,11 @@ namespace OracleOfDereth
 
             double variance = doubleValues[167772171];
             int maxDamage = GetBuffedIntValue(Key_MaxDamage);
-            int tinks = intValues.ContainsKey(Key_Tinks) ? intValues[Key_Tinks] : 0;
+            intValues.TryGetValue(Key_Tinks, out int tinks);
             int numberOfTinksLeft = Math.Max(10 - Math.Max(tinks, 0), 0);
 
-            if (!intValues.ContainsKey(Key_Imbued) || intValues[Key_Imbued] == 0) numberOfTinksLeft--;
-            if (!intValues.ContainsKey(Key_Material) || intValues[Key_Material] == 0) numberOfTinksLeft = 0;
+            if (!intValues.TryGetValue(Key_Imbued, out int imbued) || imbued == 0) numberOfTinksLeft--;
+            if (!intValues.TryGetValue(Key_Material, out int material) || material == 0) numberOfTinksLeft = 0;
 
             for (int i = 1; i <= numberOfTinksLeft; i++)
             {
@@ -1453,7 +1453,7 @@ namespace OracleOfDereth
             if (AssumeFullBuffs) buffedDmg -= 24;
             if (buffedDmg <= 10) buffedDmg += 24;
 
-            int elemBonus = intValues.ContainsKey(Key_ElementalDmgBonus) ? intValues[Key_ElementalDmgBonus] : 0;
+            intValues.TryGetValue(Key_ElementalDmgBonus, out int elemBonus);
             double calcMissileDmg = (1 + (dmgMod + (4 * remainingTinks)) / 100) * (elemBonus + buffedDmg + arrowMax) / maxTinkedMissileMod;
 
             return (int)Math.Round(calcMissileDmg - (maxElemBonus + 24 + arrowMax));
@@ -1488,12 +1488,12 @@ namespace OracleOfDereth
 
         private int GetWeaponSkill()
         {
-            if (intValues.ContainsKey(Key_WeaponSkill) && intValues[Key_WeaponSkill] != 0) return intValues[Key_WeaponSkill];
+            if (intValues.TryGetValue(Key_WeaponSkill, out int weaponSkill) && weaponSkill != 0) return weaponSkill;
 
             int wieldAttr = wo.Values(LongValueKey.WieldReqAttribute, 0);
             if (wieldAttr >= 34) return wieldAttr;
 
-            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            intValues.TryGetValue(353, out int mastery);
 
             if (wo.ObjectClass == ObjectClass.MeleeWeapon)
             {
@@ -1516,10 +1516,10 @@ namespace OracleOfDereth
 
         private int GetMastery()
         {
-            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            intValues.TryGetValue(353, out int mastery);
             if (mastery != 0) return mastery;
 
-            int skill = intValues.ContainsKey(Key_WeaponSkill) ? intValues[Key_WeaponSkill] : 0;
+            intValues.TryGetValue(Key_WeaponSkill, out int skill);
             if (skill == 0) skill = wo.Values(LongValueKey.WieldReqAttribute, 0);
             if (skill == 41 || skill == 0x29) return 11;
             return 0;
@@ -1527,8 +1527,8 @@ namespace OracleOfDereth
 
         private bool IsMultiStrike()
         {
-            int combatUse = intValues.ContainsKey(Key_CombatUse) ? intValues[Key_CombatUse] : 0;
-            int mastery = intValues.ContainsKey(353) ? intValues[353] : 0;
+            intValues.TryGetValue(Key_CombatUse, out int combatUse);
+            intValues.TryGetValue(353, out int mastery);
             return combatUse == 160 || combatUse == 166 || combatUse == 486 || (combatUse == 4 && mastery == 11 && !IsTwoHandedSpear());
         }
 

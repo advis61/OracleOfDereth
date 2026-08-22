@@ -23,7 +23,18 @@ namespace OracleOfDereth
     {
         // Collection
         public static Dictionary<string, Nearby> Nearbys = new Dictionary<string, Nearby>(); // The list we match against
-        public static List<WorldObject> Objects = new List<WorldObject>(); // The nearby WorldObjects we Track
+
+        // Track identities, not WorldObject wrappers. CreateObject can be raised more than once
+        // for the same object, while wrappers can become stale after zoning or a missed release.
+        // Keeping only ids makes duplicate creates harmless and avoids retaining those wrappers
+        // indefinitely. Nearby collections are small, so a list keeps the implementation simple.
+        private static readonly List<int> ObjectIds = new List<int>();
+
+        // Preserve the old read API for callers, but resolve fresh wrappers from WorldFilter.
+        public static List<WorldObject> Objects => ObjectIds
+            .Select(id => CoreManager.Current.WorldFilter[id])
+            .Where(item => item != null)
+            .ToList();
 
         // Properties
         public string Landblock = "";
@@ -31,7 +42,7 @@ namespace OracleOfDereth
         public static void Init()
         {
             Nearbys.Clear();
-            Objects.Clear();   // drop the previous character's tracked objects (Tick reconciles anyway, but not until the first tick)
+            ObjectIds.Clear(); // drop the previous character's tracked object identities
             LoadNearbysCSV();
         }
 
@@ -88,8 +99,8 @@ namespace OracleOfDereth
                 return; 
             }
 
-            // Add all items
-            Objects.Add(item);
+            // Add all non-player objects once, keyed by their stable world id.
+            if (item.Id != 0 && !ObjectIds.Contains(item.Id)) ObjectIds.Add(item.Id);
 
             // Announcing other objects disabled
             //Nearby nearby = Nearbys[item.Name.ToLower()];
@@ -98,16 +109,16 @@ namespace OracleOfDereth
 
         public static void Remove(WorldObject item)
         {
-            Objects.Remove(item);
+            if (item != null) ObjectIds.Remove(item.Id);
         }
 
-        // Drop tracked objects the client no longer knows about. ReleaseObject isn't guaranteed to
-        // fire on every despawn (zone/portal/recall transitions can miss it), so without this
-        // per-tick sweep Objects would accumulate stale WorldObject wrappers over a long session.
+        // Drop tracked ids the client no longer knows about. ReleaseObject isn't guaranteed to
+        // fire on every despawn (zone/portal/recall transitions can miss it), so this reconciles
+        // the set without retaining stale WorldObject wrappers.
         // Mirrors FellowshipTracker's RemoveGonePlayers reconciliation.
         public static void Tick()
         {
-            Objects.RemoveAll(o => CoreManager.Current.WorldFilter[o.Id] == null);
+            ObjectIds.RemoveAll(id => CoreManager.Current.WorldFilter[id] == null);
         }
 
         public static void Announce(WorldObject item)

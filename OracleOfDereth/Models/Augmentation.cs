@@ -169,7 +169,7 @@ namespace OracleOfDereth
         private int InateAttributesTimes() { return InateAttributeIds.Sum(id => CoreManager.Current.CharacterFilter.GetCharProperty(id)); }
         private int InateResistancesTimes() { return InateResistanceIds.Sum(id => CoreManager.Current.CharacterFilter.GetCharProperty(id)); }
         private int LuminanceSpecializationTimes() { return Math.Max(CoreManager.Current.CharacterFilter.GetCharProperty(Math.Abs(Id)) - 5, 0); }
-        private int AsheronsBenedictionTimes() { return CoreManager.Current.WorldFilter.GetByNameSubstring("Asheron's Lesser Benediction").ToList().Count(); }
+        private int AsheronsBenedictionTimes() { return CoreManager.Current.WorldFilter.GetByNameSubstring("Asheron's Lesser Benediction").Count(); }
 
         public int Times()
         {

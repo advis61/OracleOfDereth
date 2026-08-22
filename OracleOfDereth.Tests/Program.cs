@@ -18,6 +18,8 @@ internal static class Program
         AssertJson("a\u0001b", "\"a\\u0001b\"");
         AssertNetworkStateReset();
         AssertSubmitCallbackCannotLeaveBusy();
+        AssertTradePriceBounds();
+        AssertTradeSplitExpiresClosed();
         AssertSettingsRecovery();
         AssertQuestState();
         AssertMyQuestsParsing();
@@ -58,6 +60,53 @@ internal static class Program
 
         AssertStaticInt(typeof(QuestSubmit), "sending", 0);
         QuestSubmit.Shutdown();
+    }
+
+    private static void AssertTradePriceBounds()
+    {
+        Trade.PointsPerMmd = 250;
+        if (Trade.MmdsFor(251) != 2 || Trade.MmdsFor(0) != 0)
+            throw new InvalidOperationException("Valid trade prices were converted incorrectly.");
+
+        if (Trade.MmdsFor(double.NaN) != 0 ||
+            Trade.MmdsFor(double.PositiveInfinity) != 0 ||
+            Trade.MmdsFor(-1) != 0 ||
+            Trade.MmdsFor((double)int.MaxValue * 251) != 0)
+        {
+            throw new InvalidOperationException("Invalid or overflowing trade prices were accepted.");
+        }
+
+        MethodInfo parse = typeof(Trade).GetMethod("ParsePoints", BindingFlags.NonPublic | BindingFlags.Static);
+        object[] valid = { "1,250.5", 0d };
+        if (!(bool)parse.Invoke(null, valid) || (double)valid[1] != 1250.5)
+            throw new InvalidOperationException("A valid formatted trade price was rejected.");
+
+        foreach (string malformed in new[] { "", "1.2.3", "NaN", "Infinity", "-1", "1e9" })
+        {
+            object[] args = { malformed, 0d };
+            if ((bool)parse.Invoke(null, args))
+                throw new InvalidOperationException("Malformed trade price was accepted: " + malformed);
+        }
+    }
+
+    private static void AssertTradeSplitExpiresClosed()
+    {
+        Type requestType = typeof(Trade).GetNestedType("SplitRequest", BindingFlags.NonPublic);
+        object request = Activator.CreateInstance(requestType);
+        SetField(request, "Count", 5);
+        SetField(request, "SourceId", 100);
+        SetField(request, "SourceCount", 10);
+        SetField(request, "CandidateId", 200);
+        SetField(request, "Expires", DateTime.UtcNow - TimeSpan.FromSeconds(1));
+        SetStaticField(typeof(Trade), "PendingSplit", request);
+
+        Trade.Tick();
+
+        FieldInfo pending = typeof(Trade).GetField("PendingSplit", BindingFlags.NonPublic | BindingFlags.Static);
+        if (pending.GetValue(null) != null)
+            throw new InvalidOperationException("Expired trade split state was not cleared.");
+        if (Trade.TradeStatus.IndexOf("manually", StringComparison.OrdinalIgnoreCase) < 0)
+            throw new InvalidOperationException("Expired trade split did not fail closed.");
     }
 
     private static void AssertSettingsRecovery()
@@ -286,6 +335,11 @@ internal static class Program
     private static void SetStaticField(Type type, string name, object value)
     {
         type.GetField(name, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, value);
+    }
+
+    private static void SetField(object target, string name, object value)
+    {
+        target.GetType().GetField(name, BindingFlags.Public | BindingFlags.Instance).SetValue(target, value);
     }
 
     private static void InvokeStatic(Type type, string name)

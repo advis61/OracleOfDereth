@@ -275,7 +275,7 @@ namespace OracleOfDereth
         {
             var status = new Dictionary<string, string>();
 
-            if (IsInFellowship() == false) { return status.ToList(); }
+            if (!IsInFellowship()) { return status.ToList(); }
 
             status.Add("Leader", LeaderName());
             status.Add("Open", IsOpen().ToString());
@@ -330,7 +330,7 @@ namespace OracleOfDereth
         public unsafe static Dictionary<int, string> Fellows()
         {
             var fellows = new Dictionary<int, string>();
-            if (IsInFellowship() == false) { return fellows; }
+            if (!IsInFellowship()) { return fellows; }
 
             for (int x = 0; x < FellowCount(); x++)
             {
@@ -347,7 +347,7 @@ namespace OracleOfDereth
 
         public unsafe static string Name()
         {
-            if (IsInFellowship() == false) { return ""; }
+            if (!IsInFellowship()) { return ""; }
             return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._name.ToString();
         }
 
@@ -370,7 +370,7 @@ namespace OracleOfDereth
 
         public unsafe static string LeaderName()
         {
-            if (IsInFellowship() == false) { return ""; }
+            if (!IsInFellowship()) { return ""; }
 
             for (int x = 0; x < FellowCount(); x++)
             {

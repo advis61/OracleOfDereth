@@ -192,26 +192,26 @@ namespace OracleOfDereth
 
         public bool IsMinor()
         {
-            return CoreManager.Current.CharacterFilter.Enchantments.Where(x => x.SpellId == Minor).Count() > 0;
+            return CoreManager.Current.CharacterFilter.Enchantments.Any(x => x.SpellId == Minor);
         }
         public bool IsModerate()
         {
-            return CoreManager.Current.CharacterFilter.Enchantments.Where(x => x.SpellId == Moderate).Count() > 0;
+            return CoreManager.Current.CharacterFilter.Enchantments.Any(x => x.SpellId == Moderate);
         }
 
         public bool IsMajor()
         {
-            return CoreManager.Current.CharacterFilter.Enchantments.Where(x => x.SpellId == Major).Count() > 0;
+            return CoreManager.Current.CharacterFilter.Enchantments.Any(x => x.SpellId == Major);
         }
 
         public bool IsEpic()
         {
-            return CoreManager.Current.CharacterFilter.Enchantments.Where(x => x.SpellId == Epic).Count() > 0;
+            return CoreManager.Current.CharacterFilter.Enchantments.Any(x => x.SpellId == Epic);
         }
 
         public bool IsLegendary()
         {
-            return CoreManager.Current.CharacterFilter.Enchantments.Where(x => x.SpellId == Legendary).Count() > 0;
+            return CoreManager.Current.CharacterFilter.Enchantments.Any(x => x.SpellId == Legendary);
         }
 
         public int Icon()
@@ -253,7 +253,7 @@ namespace OracleOfDereth
         {
             if (spellId <= 0) { return ""; }
 
-            int sources = GearSources.ContainsKey(spellId) ? GearSources[spellId] : 0;
+            GearSources.TryGetValue(spellId, out int sources);
 
             return sources >= 2 ? $" ({sources})" : "";
         }
@@ -291,7 +291,8 @@ namespace OracleOfDereth
                         int spellId = item.Spell(i);
                         if (spellId <= 0) { continue; }
 
-                        counts[spellId] = counts.ContainsKey(spellId) ? counts[spellId] + 1 : 1;
+                        counts.TryGetValue(spellId, out int count);
+                        counts[spellId] = count + 1;
                     }
                 }
             }
