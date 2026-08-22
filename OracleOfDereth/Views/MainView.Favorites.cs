@@ -21,6 +21,8 @@ namespace OracleOfDereth
         private enum FavoritesSortType
         {
             Custom,
+            PositionAscending,
+            PositionDescending,
             CompleteAscending,
             CompleteDescending,
             FlagAscending,
@@ -220,13 +222,13 @@ namespace OracleOfDereth
         // with repeated clicks instead of being re-picked each time.
         private void FavoritesUp_Hit(object sender, EventArgs e)
         {
-            favoritesSort = FavoritesSortType.Custom;
+            favoritesSort = FavoritesSortType.PositionAscending;
             if (QuestFavorite.MoveUp(favoritesSelectedFlag)) { UpdateFavoritesList(); }
         }
 
         private void FavoritesDown_Hit(object sender, EventArgs e)
         {
-            favoritesSort = FavoritesSortType.Custom;
+            favoritesSort = FavoritesSortType.PositionAscending;
             if (QuestFavorite.MoveDown(favoritesSelectedFlag)) { UpdateFavoritesList(); }
         }
 
@@ -293,6 +295,10 @@ namespace OracleOfDereth
             List<Quest> quests = QuestFavorite.Quests();
             switch (favoritesSort)
             {
+                case FavoritesSortType.PositionAscending:
+                    return quests.OrderBy(q => QuestFavorite.Position(q.Flag)).ToList();
+                case FavoritesSortType.PositionDescending:
+                    return quests.OrderByDescending(q => QuestFavorite.Position(q.Flag)).ToList();
                 case FavoritesSortType.CompleteAscending:
                     return quests.OrderBy(FavoriteIsDone).ThenBy(q => q.Flag).ToList();
                 case FavoritesSortType.CompleteDescending:
@@ -320,7 +326,9 @@ namespace OracleOfDereth
 
         private void FavoritesListPosition_Hit(object sender, EventArgs e)
         {
-            favoritesSort = FavoritesSortType.Custom;
+            favoritesSort = favoritesSort == FavoritesSortType.PositionAscending
+                ? FavoritesSortType.PositionDescending
+                : FavoritesSortType.PositionAscending;
             UpdateFavoritesList();
         }
 
