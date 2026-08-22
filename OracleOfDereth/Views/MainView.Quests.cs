@@ -421,6 +421,7 @@ namespace OracleOfDereth
         private void QuestsRefreshAll_Hit(object sender, EventArgs e)
         {
             QuestHistory.Refresh();
+            FlashButton(sender as HudButton);
         }
 
         // Chat rather than Think so the help reads in pink: a /tell takes whatever colour the

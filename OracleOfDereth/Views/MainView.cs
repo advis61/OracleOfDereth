@@ -329,13 +329,13 @@ namespace OracleOfDereth
         }
 
         // A short label flash acknowledges refresh commands whose chat replies are suppressed.
-        private const string RefreshLabel = "Refresh";
         private const string RefreshingLabel = "Refreshing...";
 
         // The deadline prevents a click immediately before Tick from producing an invisible flash.
         private static readonly TimeSpan ButtonFlashDuration = TimeSpan.FromMilliseconds(500);
 
         private HudButton FlashedButton;
+        private string FlashedButtonLabel;
         private DateTime FlashedUntil;
 
         private void FlashButton(HudButton button)
@@ -344,6 +344,7 @@ namespace OracleOfDereth
 
             RestoreFlashedButton();
 
+            FlashedButtonLabel = button.Text;
             button.Text = RefreshingLabel;
             FlashedButton = button;
             FlashedUntil = DateTime.UtcNow + ButtonFlashDuration;
@@ -355,14 +356,16 @@ namespace OracleOfDereth
         {
             if (FlashedButton == null) { return; }
 
-            FlashedButton.Text = RefreshLabel;
+            FlashedButton.Text = FlashedButtonLabel;
             FlashedButton = null;
+            FlashedButtonLabel = null;
         }
 
         // Just drop the reference — the control is going away with the view.
         private void DisposeButtonFlashes()
         {
             FlashedButton = null;
+            FlashedButtonLabel = null;
         }
 
         // Read PortalImageID instead of caching controls, which could pin removed rows in memory.
