@@ -42,7 +42,8 @@ namespace OracleOfDereth
         }
 
         // Rebuilt in full on each "/fship list" (the recruiting set changes constantly), in the
-        // server's print order. The header line clears it to begin a fresh block.
+        // server's print order. Refresh clears it before response lines can arrive because the
+        // server may deliver the header after some rows.
         public static readonly List<ConquestFship> All = new List<ConquestFship>();
 
         // Column sort, applied as a display-time view (see Sorted) rather than reordering All,
@@ -104,6 +105,7 @@ namespace OracleOfDereth
             if (!Server.IsConquest) return false;
 
             LastRefresh = DateTime.UtcNow;
+            All.Clear();
             Request.Sent();
             Util.Command("/fship list");
 
@@ -131,15 +133,21 @@ namespace OracleOfDereth
                 && (HeaderRegex.IsMatch(text) || LineRegex.IsMatch(text));
         }
 
-        // Forwarded from PluginCore's chat handler: the header clears the set to begin a fresh
-        // block; each subsequent fellowship line is parsed and appended. Returns true when the
-        // line answers a "/fship list" the plugin issued, which is what makes it eligible for
-        // suppression.
+        // Forwarded from PluginCore's chat handler: each fellowship line is parsed and appended.
+        // A plugin refresh already cleared the set before sending the command, so a late header
+        // must not discard rows that arrived first. Returns true when the line answers a request
+        // the plugin issued, which is what makes it eligible for suppression.
         public static bool NoteChat(string text)
         {
             if (text == null) return false;
 
-            if (HeaderRegex.IsMatch(text)) { All.Clear(); return Request.Awaiting; }
+            if (HeaderRegex.IsMatch(text))
+            {
+                // A player-typed command has no Refresh call, so its normally-leading header
+                // still starts a fresh collection.
+                if (!Request.Awaiting) { All.Clear(); }
+                return Request.Awaiting;
+            }
 
             Match m = LineRegex.Match(text);
             if (!m.Success) return false;
