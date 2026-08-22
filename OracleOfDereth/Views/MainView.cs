@@ -222,7 +222,9 @@ namespace OracleOfDereth
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposing) return;
+
+            try
             {
                 view.Resize -= MainView_Resized;
                 MainViewNotebook.OpenTabChange -= Notebook_OpenTabChange;
@@ -258,8 +260,11 @@ namespace OracleOfDereth
                 DisposeSettings();
                 DisposeDecal();
                 DisposeButtonFlashes();
-
-                // Other cleanup
+            }
+            finally
+            {
+                // Always release the HUD, even if a partially initialized control cannot
+                // unsubscribe cleanly.
                 view?.Dispose();
             }
         }

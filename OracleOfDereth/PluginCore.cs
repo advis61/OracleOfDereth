@@ -228,7 +228,8 @@ namespace OracleOfDereth
                 CoreManager.Current.WorldFilter.EndTrade -= WorldFilter_EndTrade;
                 CoreManager.Current.WorldFilter.AddTradeItem -= WorldFilter_AddTradeItem;
                 CoreManager.Current.WorldFilter.ResetTrade -= WorldFilter_ResetTrade;
-                worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
+                if (worldObjectIdentifier != null)
+                    worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
 
                 // Shutdown timer
                 if (timer != null)
@@ -246,9 +247,9 @@ namespace OracleOfDereth
                 VVSBar.Shutdown();
 
                 // Dispose all views
-                mainView?.Dispose();
-                targetView?.Dispose();
                 tradeView?.Dispose();
+                targetView?.Dispose();
+                mainView?.Dispose();
 
             } catch (Exception ex) { Util.Log(ex); }
         }
