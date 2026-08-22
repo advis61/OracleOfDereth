@@ -166,6 +166,9 @@ internal static class Program
         if (QuestCatalog.Quests.Count != 1 || !QuestCatalog.Quests[0].IsNew || QuestCatalog.Quests[0].Name != "First description")
             throw new InvalidOperationException("Live quest flag was not merged into the catalog.");
 
+        if (new Quest().DisplayName() != "Unknown quest")
+            throw new InvalidOperationException("Nameless quest did not receive its fallback label.");
+
         flag.Description = "Better description";
         QuestState.FlagChanged(flag, true);
         if (QuestCatalog.Quests.Count != 1 || QuestCatalog.Quests[0].Name != "Better description")

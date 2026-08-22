@@ -585,7 +585,7 @@ namespace OracleOfDereth
                 }
                 else
                 {
-                    Util.Think($"{quest.Flag}: No Url");
+                    Util.Think($"{quest.Flag}: No url available");
                 }
             }
 
@@ -596,6 +596,10 @@ namespace OracleOfDereth
                 if (details.Length > 0)
                 {
                     Util.ThinkQuestDirections($"{quest.Flag}: {details}", quest.Hint);
+                }
+                else
+                {
+                    Util.Think($"{quest.Flag}: No hint available");
                 }
             }
 
