@@ -33,10 +33,12 @@ internal static class Program
     {
         MethodInfo validate = typeof(QuestCatalog).GetMethod("Validate", BindingFlags.NonPublic | BindingFlags.Static);
 
-        AssertValid(new[] { "Quest Flag,Quest Name", "one,First", "two,Second" }, true);
-        AssertValid(new[] { "Quest Name", "First" }, false);
-        AssertValid(new[] { "Quest Flag,Quest Name", "one,First", "ONE,Duplicate" }, false);
-        AssertValid(new[] { "Quest Flag,Quest Name", ",Missing" }, false);
+        AssertValid(new[] { "Quest Flag,Quest Name,Repeatable,Future Column", "one,First,TRUE,anything", "two,Second,FALSE,else" }, true);
+        AssertValid(new[] { "Quest Name,Repeatable", "First,TRUE" }, false);
+        AssertValid(new[] { "Quest Flag,Repeatable", "one,TRUE" }, false);
+        AssertValid(new[] { "Quest Flag,Quest Name", "one,First" }, false);
+        AssertValid(new[] { "Quest Flag,Quest Name,Repeatable", "one,First,TRUE", "ONE,Duplicate,FALSE" }, false);
+        AssertValid(new[] { "Quest Flag,Quest Name,Repeatable", ",Missing,TRUE" }, false);
 
         void AssertValid(string[] lines, bool expected)
         {

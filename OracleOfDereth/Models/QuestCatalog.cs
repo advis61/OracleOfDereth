@@ -275,6 +275,16 @@ namespace OracleOfDereth
                 error = "the quest flag column is missing";
                 return false;
             }
+            if (ColumnIndex(columns, NameNames) < 0)
+            {
+                error = "the quest name column is missing";
+                return false;
+            }
+            if (ColumnIndex(columns, RepeatNames) < 0)
+            {
+                error = "the repeatable column is missing";
+                return false;
+            }
 
             var flags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (string line in all.Skip(1))
