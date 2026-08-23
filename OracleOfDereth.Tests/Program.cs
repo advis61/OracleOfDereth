@@ -243,6 +243,9 @@ internal static class Program
             "stipendtimer_monthly - 3 solves (1764555457)\"Monthly timer for receiving up to 4 stipends.\" -1 2332800",
             "stipendtimer_monthly", 3, -1, 2332800,
             "Monthly timer for receiving up to 4 stipends.", true);
+        AssertMyQuest(
+            "belindakilltasksstart - 1 solves (1672683021) \"Player has started Belindas Kill Tasks\" 1 0",
+            "belindakilltasksstart", 1, 1, 0, "Player has started Belindas Kill Tasks", true);
 
         AssertMyQuest(
             "notimestamp - 1 solves ()\"No completion timestamp\" 1 0",
