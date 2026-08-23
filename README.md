@@ -2,7 +2,7 @@
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/1.19.0/OracleOfDerethInstaller-1.19.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/2.0.0/OracleOfDerethInstaller-2.0.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
