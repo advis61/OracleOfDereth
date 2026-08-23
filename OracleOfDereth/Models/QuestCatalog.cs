@@ -283,11 +283,14 @@ namespace OracleOfDereth
 
         public static string SourceDescription()
         {
-            if (UsingBundledList) return "Quest list source: bundled Resources/quests.csv.";
+            string source = UsingBundledList
+                ? "bundled Resources/quests.csv"
+                : "live filesystem quests.csv";
+            string lastChecked = QuestCatalogUpdater.LastChecked();
 
-            return File.Exists(FilePath)
-                ? $"Quest list source: live filesystem quests.csv. Last updated: {File.GetLastWriteTime(FilePath):yyyy-MM-dd HH:mm}."
-                : "Quest list source: live filesystem quests.csv.";
+            return lastChecked.Length > 0
+                ? $"Quest list source: {source}. Last checked: {lastChecked}."
+                : $"Quest list source: {source}. Never checked for updates.";
         }
 
         internal static bool Validate(IEnumerable<string> lines, out string error)

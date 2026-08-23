@@ -49,6 +49,8 @@ namespace OracleOfDereth
                 Util.Chat("Oracle of Dereth is already checking the quest list.", Util.ColorPink, "");
         }
 
+        public static string LastChecked() => SettingsFile.GetSetting(LastCheckedKey, "");
+
         private static bool Start(bool verbose)
         {
             if (Interlocked.CompareExchange(ref running, 1, 0) != 0) return false;
