@@ -484,6 +484,40 @@ namespace OracleOfDereth
             SendPost(path, send, unknown.Count, unverified.Count);
         }
 
+        // Hidden smoke test for the real export and Discord submission path.
+        public void SendTestQuestFlag()
+        {
+            var send = new List<Quest>
+            {
+                new Quest
+                {
+                    Flag = "testquestflag1",
+                    Name = "Test Quest 1",
+                    IsNew = true
+                },
+                new Quest
+                {
+                    Flag = "testquestflag2",
+                    Name = "Test Quest 2",
+                    IsNew = true
+                }
+            };
+
+            string path;
+            try
+            {
+                path = QuestExport.ToSubmissionCsv(send);
+            }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
+                Util.Chat($"Send test: could not write the export file - {ex.Message}", Util.ColorRed);
+                return;
+            }
+
+            SendPost(path, send, 2, 0);
+        }
+
         // Posts the file just written rather than re-deriving its text, so what arrives is exactly
         // what's on disk and the manual fallback can't disagree with it. Names what leaves the
         // machine — this ships to other players, and a button called Send shouldn't be vague.
