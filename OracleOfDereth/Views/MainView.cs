@@ -89,7 +89,7 @@ namespace OracleOfDereth
             { 5_00, 350 }, // About
             { 5_01, 430 }, // Decal (plugin bar order)
             { 5_02, 350 }, // Settings
-            { 5_03, 540 }, // Help
+            { 5_03, 590 }, // Help
         };
 
         private Dictionary<int, int> MainViewHeights = new Dictionary<int, int>

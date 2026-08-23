@@ -17,6 +17,8 @@ namespace OracleOfDereth
         public static bool Contains(string flag) =>
             !string.IsNullOrEmpty(flag) && questsByFlag.ContainsKey(flag);
         public static Quest.SortType CurrentSortType { get; private set; } = Quest.SortType.FlagAscending;
+        public static bool UsingBundledList { get; private set; }
+        private static bool openBundledOnce;
 
         private static readonly string[] FlagNames = { "questflag", "flag" };
         private static readonly string[] ServerNames = { "server", "world" };
@@ -97,6 +99,15 @@ namespace OracleOfDereth
             }
 
             Sort(sortType);
+        }
+
+        public static void Reset()
+        {
+            File.Delete(FilePath);
+            File.Delete(FilePath + ".bak");
+            openBundledOnce = true;
+            Reload();
+            Util.Chat("Quest list reset to the bundled catalog. The local quests.csv and its recovery backup were deleted.", Util.ColorPink, "");
         }
 
         public static void Add(QuestFlag flag)
@@ -239,6 +250,13 @@ namespace OracleOfDereth
 
         private static StreamReader OpenCsv()
         {
+            if (openBundledOnce)
+            {
+                openBundledOnce = false;
+                UsingBundledList = true;
+                return OpenEmbeddedCsv();
+            }
+
             try
             {
                 QuestHistory.RecoverFile(FilePath);
@@ -250,13 +268,26 @@ namespace OracleOfDereth
 
                 string[] lines = File.ReadAllLines(FilePath);
                 if (Validate(lines, out string error))
+                {
+                    UsingBundledList = false;
                     return new StreamReader(FilePath);
+                }
 
                 Util.Log(new InvalidDataException("Local quests.csv is invalid: " + error));
             }
             catch (Exception ex) { Util.Log(ex); }
 
+            UsingBundledList = true;
             return OpenEmbeddedCsv();
+        }
+
+        public static string SourceDescription()
+        {
+            if (UsingBundledList) return "Quest list source: bundled Resources/quests.csv.";
+
+            return File.Exists(FilePath)
+                ? $"Quest list source: live filesystem quests.csv. Last updated: {File.GetLastWriteTime(FilePath):yyyy-MM-dd HH:mm}."
+                : "Quest list source: live filesystem quests.csv.";
         }
 
         internal static bool Validate(IEnumerable<string> lines, out string error)

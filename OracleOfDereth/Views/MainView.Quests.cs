@@ -434,6 +434,7 @@ namespace OracleOfDereth
         {
             Util.Chat("Quest flags are sourced from the ACE database and ILT Mega Book v2.0. Some may be unobtainable. Verified flags have been confirmed by players on this server.", Util.ColorPink);
             Util.Chat("New flags are ones you've discovered that aren't in the master list yet. Click Send to share them and contribute to this server.", Util.ColorPink);
+            Util.Chat(QuestCatalog.SourceDescription(), Util.ColorPink);
         }
 
         // ---- Send ------------------------------------------------------------------------------
