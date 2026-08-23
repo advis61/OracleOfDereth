@@ -132,6 +132,15 @@ Decal plugins
 ![Decal Plugins](./docs/Decal.png)
 
 
+## Quest Catalog
+
+Oracle of Dereth uses a curator-maintained [master quest list](https://github.com/advis61/OracleOfDereth/blob/master/OracleOfDereth/Resources/quests.csv) to connect your character's quest flags with known quests. The Verified filter displays quest flags that were discovered by other players on your server.
+
+The plugin checks for a new master list once per day, downloads it in the background and reloads it automatically. This can be disabled with the `Automatically Update Quest List` setting. A bundled copy is always available if the downloaded list is missing or invalid or if you're playing Asheron's Call without internet.
+
+The plugin also discovers flags reported by `/myquests` and `/myqstlist` that are new or not yet verified for the current server. Click `Send` to contribute your quest flags to Oracle of Dereth on Discord for review.
+
+
 ## Quest Directions and Wiki URLs
 
 Click on a row's quest name to think the directions to yourself. Or the completed/uncompleted icon to think the wiki URL.
