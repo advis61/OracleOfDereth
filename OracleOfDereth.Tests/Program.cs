@@ -23,7 +23,7 @@ internal static class Program
         AssertSettingsRecovery();
         AssertQuestState();
         AssertMyQuestsParsing();
-        AssertQuestHistory();
+        AssertQuestAccountFlag();
         AssertQuestCatalogValidation();
         Console.WriteLine("Regression tests passed.");
         return 0;
@@ -283,17 +283,17 @@ internal static class Program
         }
     }
 
-    private static void AssertQuestHistory()
+    private static void AssertQuestAccountFlag()
     {
-        QuestHistory.Init();
+        QuestAccountFlag.Init();
         QuestFlag.QuestFlags.Clear();
-        QuestHistory.ManualRefresh();
+        QuestAccountFlag.ManualRefresh();
 
         string[] outOfOrder =
         {
             "19:54:40 ---- End of Account Quests ----",
-            "19:54:38 ---- Account Quests (8 unique, 12 QB) | XP Bonus: 0.2% ----",
             "19:54:38 AcademeyExitTokenGiven",
+            "19:54:38 ---- Account Quests (8 unique, 12 QB) | XP Bonus: 0.2% ----",
             "19:54:38 BurunTreasureMapFound",
             "19:54:38 CallingStoneGiven",
             "19:54:38 DrudgeTreasureMapFound",
@@ -303,27 +303,27 @@ internal static class Program
             "19:54:38 TuskerTreasureMapFound"
         };
 
-        if (QuestHistory.Capture("---------------------------"))
+        if (QuestAccountFlag.Capture("---------------------------"))
             throw new InvalidOperationException("A /myqstlist separator was parsed as a quest flag.");
 
         foreach (string line in outOfOrder)
         {
-            if (!QuestHistory.Capture(line))
+            if (!QuestAccountFlag.Capture(line))
                 throw new InvalidOperationException("Did not recognize /myqstlist line: " + line);
         }
 
-        if (QuestHistory.Count != 8 || !QuestHistory.Contains("pathwardencomplete"))
+        if (QuestAccountFlag.Count != 8 || !QuestAccountFlag.Contains("pathwardencomplete"))
             throw new InvalidOperationException("The complete /myqstlist block was not loaded into memory.");
 
-        QuestHistory.ManualRefresh();
-        QuestHistory.Capture("[7:54 PM] ---- Account Quests (2) | XP Bonus: 0.1% ----");
-        QuestHistory.Capture("[7:54 PM] 1. ArantahKill1@GiveFigurine (Raen)");
-        QuestHistory.Capture("[7:54 PM] 2. BurFlagged(Permanent)");
-        QuestHistory.Capture("[7:54 PM] ---- End of Account Quests ----");
-        if (QuestHistory.Count != 2 ||
-            !QuestHistory.Contains("arantahkill1@givefigurine") ||
-            !QuestHistory.Contains("BURFLAGGED(PERMANENT)") ||
-            QuestHistory.Contains("pathwardencomplete"))
+        QuestAccountFlag.ManualRefresh();
+        QuestAccountFlag.Capture("[7:54 PM] ---- Account Quests (2) | XP Bonus: 0.1% ----");
+        QuestAccountFlag.Capture("[7:54 PM] 1. ArantahKill1@GiveFigurine (Raen)");
+        QuestAccountFlag.Capture("[7:54 PM] 2. BurFlagged(Permanent)");
+        QuestAccountFlag.Capture("[7:54 PM] ---- End of Account Quests ----");
+        if (QuestAccountFlag.Count != 2 ||
+            !QuestAccountFlag.Contains("arantahkill1@givefigurine") ||
+            !QuestAccountFlag.Contains("BURFLAGGED(PERMANENT)") ||
+            QuestAccountFlag.Contains("pathwardencomplete"))
         {
             throw new InvalidOperationException("A completed /myqstlist refresh did not replace and normalize the account list.");
         }
@@ -339,9 +339,9 @@ internal static class Program
 
         QuestFlag.QuestFlags["seeninmyquests"] = new QuestFlag { Key = "seeninmyquests" };
         var characterQuest = new Quest { Flag = "seeninmyquests" };
-        if (QuestHistory.Contains("seeninmyquests") ||
-            !QuestHistory.Observed("seeninmyquests") ||
-            QuestHistory.ObservedCount != 3 ||
+        if (QuestAccountFlag.Contains("seeninmyquests") ||
+            !QuestState.Observed("seeninmyquests") ||
+            QuestState.ObservedCount != 3 ||
             characterQuest.IsCompleteInQuestView("Conquest") ||
             !characterQuest.IsCompleteInQuestView("Levistras"))
         {
@@ -385,19 +385,27 @@ internal static class Program
         {
             if (!QuestFlag.Stamped(fixture.Line) ||
                 !QuestFlag.QuestFlags.ContainsKey(fixture.Flag) ||
-                QuestHistory.Contains(fixture.Flag) ||
-                !QuestHistory.Observed(fixture.Flag) ||
+                !QuestAccountFlag.Contains(fixture.Flag) ||
+                !QuestState.Observed(fixture.Flag) ||
                 !QuestCatalog.Quests.Any(q => q.Flag == fixture.Flag && q.IsNew))
             {
                 throw new InvalidOperationException("Failed to capture quest stamp fixture: " + fixture.Line);
             }
         }
 
-        QuestHistory.ManualRefresh();
-        QuestHistory.Capture("---- Account Quests (2) | XP Bonus: 0.1% ----");
-        QuestHistory.Capture("OnlyOneRow");
-        QuestHistory.Capture("---- End of Account Quests ----");
-        if (QuestHistory.Count != 1 || !QuestHistory.Contains("onlyonerow"))
+        int beforeCooldown = QuestAccountFlag.Count;
+        QuestAccountFlag.ManualRefresh();
+        if (QuestAccountFlag.Capture("You can use /myqstlist again in 49s") ||
+            QuestAccountFlag.Count != beforeCooldown)
+        {
+            throw new InvalidOperationException("A rejected /myqstlist command cleared the previous account list.");
+        }
+
+        QuestAccountFlag.ManualRefresh();
+        QuestAccountFlag.Capture("---- Account Quests (2) | XP Bonus: 0.1% ----");
+        QuestAccountFlag.Capture("OnlyOneRow");
+        QuestAccountFlag.Capture("---- End of Account Quests ----");
+        if (QuestAccountFlag.Count != 1 || !QuestAccountFlag.Contains("onlyonerow"))
             throw new InvalidOperationException("An incomplete /myqstlist response was not reflected in the live account list.");
 
     }

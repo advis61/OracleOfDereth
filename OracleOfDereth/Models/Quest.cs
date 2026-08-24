@@ -81,11 +81,17 @@ namespace OracleOfDereth
             return QuestFlag.QuestFlags.ContainsKey(Flag);
         }
 
-        // Only the Quests tab combines the current /myquests flags with durable quest history.
+        // Conquest's account-wide completion icon comes from /myqstlist. Other servers use the
+        // character's /myquests flags. Ready and Solves always use /myquests separately below.
         public bool IsCompleteInQuestView()
         {
-            return IsComplete() || QuestHistory.Contains(Flag);
+            return IsCompleteInQuestView(OracleOfDereth.Server.Name);
         }
+
+        public bool IsCompleteInQuestView(string world) =>
+            string.Equals(world, OracleOfDereth.Server.Conquest, StringComparison.OrdinalIgnoreCase)
+                ? QuestAccountFlag.Contains(Flag)
+                : IsComplete();
 
         // The Name column's text, and the single definition of it. Plenty of rows carry no
         // curated quest name — most Conquest-only flags, and anything whose questline the wiki
@@ -114,7 +120,6 @@ namespace OracleOfDereth
 
         public string StatusInQuestView()
         {
-            if (!IsComplete() && QuestHistory.Contains(Flag) && IsOneTime()) return "completed";
             return Status();
         }
 

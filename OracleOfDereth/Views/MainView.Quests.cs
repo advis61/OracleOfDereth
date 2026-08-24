@@ -35,7 +35,6 @@ namespace OracleOfDereth
 
         public HudStaticText QuestsText { get; private set; }
         public HudButton QuestsRefresh { get; private set; }
-        public HudButton QuestsRefreshAll { get; private set; }
         public HudButton QuestsSend { get; private set; }
         public HudButton QuestsClipboard { get; private set; }
         public HudButton QuestsHelp { get; private set; }
@@ -68,10 +67,7 @@ namespace OracleOfDereth
             QuestsText.FontHeight = 10;
 
             QuestsRefresh = (HudButton)view["QuestsRefresh"];
-            QuestsRefresh.Hit += QuestFlagsRefresh_Hit;
-
-            QuestsRefreshAll = (HudButton)view["QuestsRefreshAll"];
-            QuestsRefreshAll.Hit += QuestsRefreshAll_Hit;
+            QuestsRefresh.Hit += QuestsRefresh_Hit;
 
             QuestsSend = (HudButton)view["QuestsSend"];
             QuestsSend.Hit += QuestsSend_Hit;
@@ -163,8 +159,7 @@ namespace OracleOfDereth
             QuestsFilterNew.Change -= QuestsFilter_Change;
             QuestsClipboard.Hit -= QuestsClipboard_Hit;
             QuestsHelp.Hit -= QuestsHelp_Hit;
-            QuestsRefresh.Hit -= QuestFlagsRefresh_Hit;
-            QuestsRefreshAll.Hit -= QuestsRefreshAll_Hit;
+            QuestsRefresh.Hit -= QuestsRefresh_Hit;
             QuestsSend.Hit -= QuestsSend_Hit;
         }
 
@@ -172,10 +167,10 @@ namespace OracleOfDereth
         {
             if (Server.IsConquest)
             {
-                if (!QuestHistory.HasRequestedRefresh)
+                if (!QuestAccountFlag.HasRequestedRefresh)
                 {
-                    QuestHistory.Refresh();
-                    FlashButton(QuestsRefreshAll);
+                    QuestAccountFlag.Refresh();
+                    FlashButton(QuestsRefresh);
                 }
             }
             else if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
@@ -425,9 +420,10 @@ namespace OracleOfDereth
         // The rows currently on screen: Copy uses the filtered list, not the full catalog.
         private List<Quest> DisplayedQuests() => QuestCatalog.Quests.Where(QuestsFilter().Matches).ToList();
 
-        private void QuestsRefreshAll_Hit(object sender, EventArgs e)
+        private void QuestsRefresh_Hit(object sender, EventArgs e)
         {
-            QuestHistory.Refresh();
+            if (Server.IsConquest) QuestAccountFlag.Refresh();
+            else QuestFlag.Refresh();
             FlashButton(sender as HudButton);
         }
 
@@ -452,7 +448,7 @@ namespace OracleOfDereth
         // explicit nothing-to-send message rather than a silent no-op.
         public void SendQuestFlags()
         {
-            int held = QuestHistory.ObservedCount;
+            int held = QuestState.ObservedCount;
             if (held == 0)
             {
                 Util.Chat("Send: no quest flags have been observed yet.", Util.ColorPink);

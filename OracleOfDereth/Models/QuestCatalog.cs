@@ -87,7 +87,7 @@ namespace OracleOfDereth
 
         public static void Reload()
         {
-            List<Quest> discovered = Quests.Where(q => q.IsNew).ToList();
+            List<Quest> discovered = Quests.Where(q => q.IsNew && QuestState.Observed(q.Flag)).ToList();
             Quest.SortType sortType = CurrentSortType;
             Init();
 
@@ -143,6 +143,15 @@ namespace OracleOfDereth
             var quest = new Quest { Flag = flag.ToLowerInvariant(), IsNew = true };
             Quests.Add(quest);
             questsByFlag[flag] = quest;
+        }
+
+        public static void RemoveUnobservedDiscoveries()
+        {
+            foreach (Quest quest in Quests.Where(q => q.IsNew && !QuestState.Observed(q.Flag)).ToList())
+            {
+                Quests.Remove(quest);
+                questsByFlag.Remove(quest.Flag);
+            }
         }
 
         private static string CleanDescription(string description)
@@ -259,11 +268,11 @@ namespace OracleOfDereth
 
             try
             {
-                QuestHistory.RecoverFile(FilePath);
+                QuestDataFile.Recover(FilePath);
                 if (!File.Exists(FilePath))
                 {
                     using (var embedded = OpenEmbeddedCsv())
-                        QuestHistory.WriteFile(FilePath, ReadLines(embedded));
+                        QuestDataFile.Write(FilePath, ReadLines(embedded));
                 }
 
                 string[] lines = File.ReadAllLines(FilePath);

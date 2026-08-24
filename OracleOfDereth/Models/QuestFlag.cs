@@ -94,22 +94,14 @@ namespace OracleOfDereth
             pendingRefresh = null;
         }
 
-        // Record a stamp without a "/myquests" round trip, so the tabs show the flag as complete
-        // straight away. The message carries only the flag name, so everything else is kept from
-        // the existing entry where there is one and left at its default where there isn't — a
-        // brand-new flag therefore has no repeat timer, and a repeatable will read as one-time
-        // until the next Refresh() fills in the real figures. Completion, which is what the tabs
-        // key off, is right immediately either way.
-        //
-        // A stamp does not mark /myquests as requested: one stamp is not the full list, and doing
-        // otherwise would stop the quest tabs pulling it on first view.
+        // A stamp is enough evidence for both live collections. Record it immediately without
+        // pretending either full-list refresh occurred.
         public static bool Stamped(string line)
         {
             Match match = StampedRegex.Match(line);
             if (!match.Success) { return false; }
 
-            string key = match.Groups["key"].Value.ToLower();
-
+            string key = match.Groups["key"].Value.ToLowerInvariant();
             if (!QuestFlags.TryGetValue(key, out QuestFlag questFlag))
             {
                 questFlag = new QuestFlag { Key = key };
@@ -118,9 +110,8 @@ namespace OracleOfDereth
 
             questFlag.Solves += 1;
             questFlag.CompletedOn = DateTime.UtcNow;
-
             QuestState.FlagChanged(questFlag, false);
-
+            QuestAccountFlag.Add(key);
             return true;
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace OracleOfDereth
 {
@@ -22,6 +23,11 @@ namespace OracleOfDereth
         public static int Revision { get; private set; }
         public static bool HasRequestedRefresh { get; private set; }
         public static bool LastChangeWasFlag { get; private set; }
+        public static bool Observed(string flag) =>
+            QuestAccountFlag.Contains(flag) ||
+            (!string.IsNullOrEmpty(flag) && QuestFlag.QuestFlags.ContainsKey(flag));
+        public static int ObservedCount =>
+            QuestAccountFlag.Count + QuestFlag.QuestFlags.Keys.Count(flag => !QuestAccountFlag.Contains(flag));
 
         public static QuestRefreshStatus RefreshStatus
         {

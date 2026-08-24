@@ -152,7 +152,7 @@ namespace OracleOfDereth
             Marker.Init();
             Nearby.Init();
             QuestFlag.Init();
-            QuestHistory.Init();
+            QuestAccountFlag.Init();
             Recall.Init();
             Target.Init();
             Title.Init();
@@ -198,7 +198,7 @@ namespace OracleOfDereth
                 QuestFlagLookup.Tick();
                 QuestSubmit.Tick();
                 QuestState.Tick();
-                QuestHistory.Tick();
+                QuestAccountFlag.Tick();
                 ItemList.TickAll();
                 Trade.Tick();
                 VVSBar.Tick();
@@ -289,7 +289,7 @@ namespace OracleOfDereth
                 else if (cmd == "/od quests send test") { mainView.SendTestQuestFlag(); }
                 else if (cmd == "/od quests send") { mainView.SendQuestFlags(); }
                 else if (cmd == "/od quests send clear") { mainView.ClearSentQuestFlags(); }
-                else if (cmd == "/myqstlist") { QuestHistory.ManualRefresh(); return; }
+                else if (cmd == "/myqstlist") { QuestAccountFlag.ManualRefresh(); return; }
                 else { return; }
 
                 e.Eat = true;            
@@ -315,7 +315,7 @@ namespace OracleOfDereth
                 {
                     QuestFlag.Add(e.Text);
                 }
-                else if (QuestHistory.Capture(e.Text)) { }
+                else if (QuestAccountFlag.Capture(e.Text)) { }
                 else if (QuestFlag.StampedRegex.IsMatch(e.Text))
                 {
                     // Read but never eaten: this is the game telling the player they just earned a

@@ -36,7 +36,7 @@ namespace OracleOfDereth
         // Report every locally observed flag not verified for this server.
         public static bool IsPending(Quest quest, string server)
         {
-            return QuestHistory.Observed(quest.Flag) &&
+            return QuestState.Observed(quest.Flag) &&
                 !quest.IsVerified() &&
                 !WasSent(server, quest.Flag);
         }
