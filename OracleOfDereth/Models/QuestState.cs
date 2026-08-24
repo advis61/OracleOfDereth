@@ -95,9 +95,9 @@ namespace OracleOfDereth
             Revision++;
         }
 
-        public static void HistoryChanged()
+        public static void HistoryChanged(bool announce = true)
         {
-            LastChangeWasFlag = true;
+            LastChangeWasFlag = announce;
             Revision++;
         }
     }

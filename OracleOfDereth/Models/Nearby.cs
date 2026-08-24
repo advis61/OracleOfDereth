@@ -103,14 +103,14 @@ namespace OracleOfDereth
 
         public static void Add(WorldObject item)
         {
-            // We track players differently via Fellow
-            if(item.ObjectClass == ObjectClass.Player && Setting.AnnouncePlayers.IsYes) { 
-                Announce(item);
-                return; 
-            }
-
-            // Add all non-player objects once, keyed by their stable world id.
+            // Add every nearby object once, keyed by its stable world id. Players must remain in
+            // this collection even when announcements are enabled so the Nearby tab can list them.
             if (item.Id != 0 && !ObjectIds.Contains(item.Id)) ObjectIds.Add(item.Id);
+
+            if (item.ObjectClass == ObjectClass.Player && Setting.AnnouncePlayers.IsYes)
+            {
+                Announce(item);
+            }
 
             // Announcing other objects disabled
             //Nearby nearby = Nearbys[item.Name.ToLower()];

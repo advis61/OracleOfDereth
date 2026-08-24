@@ -101,11 +101,10 @@ namespace OracleOfDereth
                         QuestCatalog.AddHistorical(bufferedFlag);
                     }
                     QuestCatalog.RemoveUnobservedDiscoveries();
-                    QuestState.HistoryChanged();
+                    QuestState.HistoryChanged(false);
                 }
                 if (int.TryParse(header.Groups[1].Value, out int count)) expected = count;
                 headerSeen = true;
-                Report($"Account quest refresh started: expecting {expected} flags.", Util.ColorPink);
                 CloseIfComplete();
                 return true;
             }
@@ -179,8 +178,8 @@ namespace OracleOfDereth
             if (!headerSeen || !footerSeen || Flags.Count < expected) return;
 
             QuestCatalog.RemoveUnobservedDiscoveries();
-            QuestState.HistoryChanged();
-            Report($"Account quests refreshed: captured {Flags.Count} of {expected} flags.", Util.ColorPink);
+            QuestState.HistoryChanged(false);
+            Report($"Quest data updated. Captured {Flags.Count} account flags.", Util.ColorPink);
             EndBlock();
         }
 
