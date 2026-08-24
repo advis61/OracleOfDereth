@@ -289,6 +289,7 @@ namespace OracleOfDereth
                 else if (cmd == "/od quests send test") { mainView.SendTestQuestFlag(); }
                 else if (cmd == "/od quests send") { mainView.SendQuestFlags(); }
                 else if (cmd == "/od quests send clear") { mainView.ClearSentQuestFlags(); }
+                else if (cmd == "/myquests") { QuestFlag.ManualRefresh(); return; }
                 else if (cmd == "/myqstlist") { QuestAccountFlag.ManualRefresh(); return; }
                 else { return; }
 
@@ -314,8 +315,12 @@ namespace OracleOfDereth
                 else if (QuestFlag.MyQuestRegex.IsMatch(e.Text))
                 {
                     QuestFlag.Add(e.Text);
+                    Suppress(e, QuestFlag.SuppressChat);
                 }
-                else if (QuestAccountFlag.Capture(e.Text)) { }
+                else if (QuestAccountFlag.Capture(e.Text))
+                {
+                    Suppress(e, QuestAccountFlag.SuppressChat);
+                }
                 else if (QuestFlag.StampedRegex.IsMatch(e.Text))
                 {
                     // Read but never eaten: this is the game telling the player they just earned a

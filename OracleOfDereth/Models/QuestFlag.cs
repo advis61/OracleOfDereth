@@ -40,6 +40,8 @@ namespace OracleOfDereth
         public static Dictionary<string, QuestFlag> QuestFlags =
             new Dictionary<string, QuestFlag>(StringComparer.OrdinalIgnoreCase);
         private static Dictionary<string, QuestFlag> pendingRefresh;
+        private static readonly ChatRequest Request = new ChatRequest();
+        public static bool SuppressChat => Request.Awaiting;
 
         // Properties
         public string Key = "";
@@ -53,14 +55,18 @@ namespace OracleOfDereth
         {
             QuestFlags.Clear();
             pendingRefresh = null;
+            Request.Clear();
             QuestState.Init();
         }
 
         public static void Refresh() {
             pendingRefresh = new Dictionary<string, QuestFlag>(StringComparer.OrdinalIgnoreCase);
             QuestState.BeginRefresh();
+            Request.Sent();
             Util.Command("/myquests");
         }
+
+        public static void ManualRefresh() { Request.Clear(); }
 
         public static bool Add(string line)
         {
