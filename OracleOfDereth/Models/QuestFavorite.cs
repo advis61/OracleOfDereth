@@ -10,7 +10,7 @@ namespace OracleOfDereth
     // on every login and rows come and go as quests.csv changes, so the flag is the only stable
     // handle to a row.
     //
-    // Persisted beside quest history as one ordered CSV per server. The row order is the custom
+    // Persisted as one ordered CSV per server. The row order is the custom
     // order shown by the # column.
     public static class QuestFavorite
     {
@@ -28,11 +28,11 @@ namespace OracleOfDereth
             if (flags != null) { return flags; }
 
             flags = new List<string>();
-            filePath = QuestHistory.ServerPath("-favorites");
+            filePath = QuestDataFile.ServerPath("-favorites");
 
             try
             {
-                QuestHistory.RecoverFile(filePath);
+                QuestDataFile.Recover(filePath);
                 if (File.Exists(filePath))
                 {
                     foreach (string line in File.ReadAllLines(filePath).Skip(1)) AddLoaded(Util.CsvParseLine(line).FirstOrDefault());
@@ -121,7 +121,7 @@ namespace OracleOfDereth
         {
             try
             {
-                QuestHistory.WriteFile(filePath, new[] { "Flag" }.Concat(Flags().Select(Util.CsvEscape)));
+                QuestDataFile.Write(filePath, new[] { "Flag" }.Concat(Flags().Select(Util.CsvEscape)));
                 return true;
             }
             catch (Exception ex)

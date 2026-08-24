@@ -122,7 +122,6 @@ namespace OracleOfDereth {
             lasti = i;
             lastj = j;
 
-            QuestFlag.Refresh();
         }
         public static int GetMarkerInfo(string flag)
         {

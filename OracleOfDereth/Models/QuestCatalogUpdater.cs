@@ -72,7 +72,7 @@ namespace OracleOfDereth
 
                 bool changed = !downloaded.SequenceEqual(current, StringComparer.Ordinal);
                 if (changed)
-                    QuestHistory.WriteFile(QuestCatalog.FilePath, downloaded);
+                    QuestDataFile.Write(QuestCatalog.FilePath, downloaded);
 
                 pendingMessage = changed
                     ? "Oracle of Dereth quest list updated and reloaded."

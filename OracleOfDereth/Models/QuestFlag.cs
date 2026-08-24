@@ -20,7 +20,7 @@ namespace OracleOfDereth
         // parsers carry, so a pasted 'Someone says, "somequest - 1 solves (0)"' can't inject a
         // flag. It also matters for speed: unanchored, this was retried at every position of every
         // chat line in the game, and it runs third in PluginCore's chain.
-        public static readonly Regex MyQuestRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?(?<key>\S+) \- (?<solves>\d+) solves \((?<completedOn>\d{0,11})\)\s*""?((?<description>.*)"" (?<maxSolves>.*) (?<repeatTime>\d{0,11}))?.*$");
+        public static readonly Regex MyQuestRegex = new Regex(Util.ChatPrefixPattern + @"(?<key>\S+) \- (?<solves>\d+) solves \((?<completedOn>\d{0,11})\)\s*""?((?<description>.*)"" (?<maxSolves>.*) (?<repeatTime>\d{0,11}))?.*$", RegexOptions.IgnoreCase);
         public static readonly Regex KillTaskRegex = new Regex(@"(killtask|killcount|slayerquest|totalgolem.*dead|(kills$))");
 
         // The game's own confirmation that a flag was just set, e.g. "You've stamped moufreward!".
@@ -32,7 +32,7 @@ namespace OracleOfDereth
         //
         // This is the server talking to the player, not a reply the plugin asked for, so it is
         // never suppressed — see PluginCore, which reads it and lets it print.
-        public static readonly Regex StampedRegex = new Regex(@"^\s*(?:\[[^\]]*\]\s*)?You['’]ve stamped (?<key>[^\s!]+)(?: on first completion)?!");
+        public static readonly Regex StampedRegex = new Regex(Util.ChatPrefixPattern + @"You['’]ve stamped (?<key>[^\s!]+)(?: on first completion)?!", RegexOptions.IgnoreCase);
 
         // Collection of Quest Flags data objects — every flag /myquests reports, unfiltered.
         // There used to be a whitelist built from the quest CSVs, but the Flags tab wants the
@@ -77,8 +77,6 @@ namespace OracleOfDereth
                 QuestFlags[questFlag.Key] = questFlag;
                 QuestState.FlagChanged(questFlag, true);
             }
-            QuestHistory.AddSeen(questFlag.Key);
-
             return true;
         }
 
@@ -90,6 +88,7 @@ namespace OracleOfDereth
             {
                 QuestFlags = pendingRefresh;
                 foreach (QuestFlag flag in QuestFlags.Values) QuestCatalog.Add(flag);
+                QuestCatalog.RemoveUnobservedDiscoveries();
             }
 
             pendingRefresh = null;
@@ -120,7 +119,6 @@ namespace OracleOfDereth
             questFlag.Solves += 1;
             questFlag.CompletedOn = DateTime.UtcNow;
 
-            QuestHistory.AddStamp(key);
             QuestState.FlagChanged(questFlag, false);
 
             return true;

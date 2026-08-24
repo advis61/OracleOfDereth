@@ -9,8 +9,8 @@ namespace OracleOfDereth
         Loaded
     }
 
-    // Coordinates live /myquests state with the quest catalog. Views observe Revision; they do
-    // not own merging or clear a shared dirty flag.
+    // Coordinates live quest captures with the quest catalog. Views observe Revision rather than
+    // owning shared refresh state.
     public static class QuestState
     {
         private static readonly TimeSpan QuietPeriod = TimeSpan.FromSeconds(2);

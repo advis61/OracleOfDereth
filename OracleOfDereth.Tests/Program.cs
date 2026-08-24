@@ -246,6 +246,15 @@ internal static class Program
         AssertMyQuest(
             "belindakilltasksstart - 1 solves (1672683021) \"Player has started Belindas Kill Tasks\" 1 0",
             "belindakilltasksstart", 1, 1, 0, "Player has started Belindas Kill Tasks", true);
+        AssertMyQuest(
+            "19:54:38 timestampedflag - 2 solves (1672683021)\"Plain timestamp prefix\" 3 60",
+            "timestampedflag", 2, 3, 60, "Plain timestamp prefix", true);
+        foreach (string prefix in new[] { "19:54 ", "7:54 PM ", "7:54:38 PM ", "[19:54:38] ", "[7:54 PM] " })
+        {
+            AssertMyQuest(
+                prefix + "alltimestamps - 1 solves (1672683021)\"Timestamp format\" 1 0",
+                "alltimestamps", 1, 1, 0, "Timestamp format", true);
+        }
 
         AssertMyQuest(
             "notimestamp - 1 solves ()\"No completion timestamp\" 1 0",
@@ -276,126 +285,121 @@ internal static class Program
 
     private static void AssertQuestHistory()
     {
-        string directory = Path.Combine(Path.GetTempPath(), "OracleOfDereth.HistoryTests-" + Guid.NewGuid().ToString("N"));
-        string history = Path.Combine(directory, "Character.csv");
-        Directory.CreateDirectory(directory);
+        QuestHistory.Init();
+        QuestFlag.QuestFlags.Clear();
+        QuestHistory.ManualRefresh();
 
-        try
+        string[] outOfOrder =
         {
-            SetStaticField(typeof(QuestHistory), "filePath", history);
-            QuestHistory.ManualRefresh();
+            "19:54:40 ---- End of Account Quests ----",
+            "19:54:38 ---- Account Quests (8 unique, 12 QB) | XP Bonus: 0.2% ----",
+            "19:54:38 AcademeyExitTokenGiven",
+            "19:54:38 BurunTreasureMapFound",
+            "19:54:38 CallingStoneGiven",
+            "19:54:38 DrudgeTreasureMapFound",
+            "19:54:38 PathwardenComplete",
+            "19:54:38 PathwardenFound1111",
+            "19:54:38 PrayedAtTheTempleOfMules",
+            "19:54:38 TuskerTreasureMapFound"
+        };
 
-            string[] outOfOrder =
+        if (QuestHistory.Capture("---------------------------"))
+            throw new InvalidOperationException("A /myqstlist separator was parsed as a quest flag.");
+
+        foreach (string line in outOfOrder)
+        {
+            if (!QuestHistory.Capture(line))
+                throw new InvalidOperationException("Did not recognize /myqstlist line: " + line);
+        }
+
+        if (QuestHistory.Count != 8 || !QuestHistory.Contains("pathwardencomplete"))
+            throw new InvalidOperationException("The complete /myqstlist block was not loaded into memory.");
+
+        QuestHistory.ManualRefresh();
+        QuestHistory.Capture("[7:54 PM] ---- Account Quests (2) | XP Bonus: 0.1% ----");
+        QuestHistory.Capture("[7:54 PM] 1. ArantahKill1@GiveFigurine (Raen)");
+        QuestHistory.Capture("[7:54 PM] 2. BurFlagged(Permanent)");
+        QuestHistory.Capture("[7:54 PM] ---- End of Account Quests ----");
+        if (QuestHistory.Count != 2 ||
+            !QuestHistory.Contains("arantahkill1@givefigurine") ||
+            !QuestHistory.Contains("BURFLAGGED(PERMANENT)") ||
+            QuestHistory.Contains("pathwardencomplete"))
+        {
+            throw new InvalidOperationException("A completed /myqstlist refresh did not replace and normalize the account list.");
+        }
+
+        var accountQuest = new Quest { Flag = "ArantahKill1@GiveFigurine" };
+        if (accountQuest.IsComplete() ||
+            !accountQuest.IsCompleteInQuestView("Conquest") ||
+            accountQuest.IsCompleteInQuestView("Levistras") ||
+            accountQuest.StatusInQuestView() != "ready")
+        {
+            throw new InvalidOperationException("Server-specific completion icons affected character status data.");
+        }
+
+        QuestFlag.QuestFlags["seeninmyquests"] = new QuestFlag { Key = "seeninmyquests" };
+        var characterQuest = new Quest { Flag = "seeninmyquests" };
+        if (QuestHistory.Contains("seeninmyquests") ||
+            !QuestHistory.Observed("seeninmyquests") ||
+            QuestHistory.ObservedCount != 3 ||
+            characterQuest.IsCompleteInQuestView("Conquest") ||
+            !characterQuest.IsCompleteInQuestView("Levistras"))
+        {
+            throw new InvalidOperationException("The account and character completion sources were not kept separate.");
+        }
+
+        var verifiedFilter = new QuestFilter { Verified = true };
+        var newQuest = new Quest { Flag = "new", IsNew = true, Verified = true };
+        if (verifiedFilter.Matches(newQuest) ||
+            verifiedFilter.Matches(new Quest { Flag = "completed" }))
+        {
+            throw new InvalidOperationException("Verified filtering was not limited to verified catalog rows.");
+        }
+
+        var verificationColumns = new Dictionary<string, int>
+        {
+            { "verifiedconquest", 1 },
+            { "verifiedlevistras", 2 }
+        };
+        int levistrasColumn = (int)typeof(QuestCatalog)
+            .GetMethod("VerificationColumn", BindingFlags.NonPublic | BindingFlags.Static)
+            .Invoke(null, new object[] { verificationColumns, "Levistras" });
+        if (levistrasColumn != 2)
+            throw new InvalidOperationException("The current server's verification column was not selected.");
+
+        var observedQuest = new Quest { Flag = "seeninmyquests", IsNew = true };
+        if (!QuestSubmit.IsPending(observedQuest, "Levistras"))
+            throw new InvalidOperationException("Character-list evidence was not eligible for submission.");
+        observedQuest.IsNew = false;
+        observedQuest.Verified = true;
+        if (QuestSubmit.IsPending(observedQuest, "Levistras"))
+            throw new InvalidOperationException("Verified observed evidence remained eligible for submission.");
+
+        foreach (var fixture in new[]
+        {
+            new { Line = "You've stamped StampNormalFixture!", Flag = "stampnormalfixture" },
+            new { Line = "You've stamped StampFirstFixture on first completion!", Flag = "stampfirstfixture" },
+            new { Line = "19:54:38 You've stamped StampTimestampFixture!", Flag = "stamptimestampfixture" },
+            new { Line = "[7:54 PM] You've stamped StampBracketFixture!", Flag = "stampbracketfixture" }
+        })
+        {
+            if (!QuestFlag.Stamped(fixture.Line) ||
+                !QuestFlag.QuestFlags.ContainsKey(fixture.Flag) ||
+                QuestHistory.Contains(fixture.Flag) ||
+                !QuestHistory.Observed(fixture.Flag) ||
+                !QuestCatalog.Quests.Any(q => q.Flag == fixture.Flag && q.IsNew))
             {
-                "---- End of Account Quests ----",
-                "---- Account Quests (8) | XP Bonus: 0.2% ----",
-                "AcademeyExitTokenGiven",
-                "BurunTreasureMapFound",
-                "CallingStoneGiven",
-                "DrudgeTreasureMapFound",
-                "PathwardenComplete",
-                "PathwardenFound1111",
-                "PrayedAtTheTempleOfMules",
-                "TuskerTreasureMapFound"
-            };
-
-            if (QuestHistory.Capture("---------------------------"))
-                throw new InvalidOperationException("A /myqstlist separator was parsed as a quest flag.");
-
-            foreach (string line in outOfOrder)
-            {
-                if (!QuestHistory.Capture(line))
-                    throw new InvalidOperationException("Did not recognize /myqstlist line: " + line);
-            }
-
-            if (QuestHistory.Count != 8 ||
-                !QuestHistory.Contains("pathwardencomplete") ||
-                !File.Exists(history) ||
-                File.ReadAllLines(history).Length != 9)
-            {
-                throw new InvalidOperationException("Out-of-order /myqstlist block was not persisted.");
-            }
-
-            QuestHistory.ManualRefresh();
-            QuestHistory.Capture("---- Account Quests (2) | XP Bonus: 0.1% ----");
-            QuestHistory.Capture("1. ArantahKill1@GiveFigurine (Raen)");
-            QuestHistory.Capture("2. BurFlagged(Permanent)");
-            QuestHistory.Capture("---- End of Account Quests ----");
-            if (!QuestHistory.Contains("ArantahKill1@GiveFigurine") ||
-                !QuestHistory.Contains("BurFlagged(Permanent)"))
-            {
-                throw new InvalidOperationException("Punctuated or numbered quest flags were rejected.");
-            }
-
-            var historicalQuest = new Quest { Flag = "PathwardenComplete" };
-            if (historicalQuest.IsComplete() || !historicalQuest.IsCompleteInQuestView())
-                throw new InvalidOperationException("Account history leaked outside the Quests view.");
-
-            var completedFilter = new QuestFilter { Completed = true };
-            if (!completedFilter.Matches(historicalQuest))
-                throw new InvalidOperationException("The Quests view did not include account history.");
-
-            QuestHistory.AddSeen("SeenInMyQuests");
-            if (!QuestHistory.Contains("seeninmyquests"))
-                throw new InvalidOperationException("A /myquests flag was not merged into history.");
-
-            var verifiedFilter = new QuestFilter { Verified = true };
-            var newQuest = new Quest { Flag = "new", IsNew = true, Verified = true };
-            if (verifiedFilter.Matches(newQuest) ||
-                verifiedFilter.Matches(new Quest { Flag = "completed" }))
-            {
-                throw new InvalidOperationException("Verified filtering was not limited to verified catalog rows.");
-            }
-
-            var verificationColumns = new Dictionary<string, int>
-            {
-                { "verifiedconquest", 1 },
-                { "verifiedlevistras", 2 }
-            };
-            int levistrasColumn = (int)typeof(QuestCatalog)
-                .GetMethod("VerificationColumn", BindingFlags.NonPublic | BindingFlags.Static)
-                .Invoke(null, new object[] { verificationColumns, "Levistras" });
-            if (levistrasColumn != 2)
-                throw new InvalidOperationException("The current server's verification column was not selected.");
-
-            var historyOnly = new Quest { Flag = "PathwardenComplete", IsNew = true };
-            if (!QuestSubmit.IsPending(historyOnly, "Levistras"))
-                throw new InvalidOperationException("History-only evidence was not eligible for submission.");
-            historyOnly.IsNew = false;
-            historyOnly.Verified = true;
-            if (QuestSubmit.IsPending(historyOnly, "Levistras"))
-                throw new InvalidOperationException("Verified history remained eligible for submission.");
-
-            foreach (var fixture in new[]
-            {
-                new { Line = "You've stamped StampNormalFixture!", Flag = "stampnormalfixture" },
-                new { Line = "You've stamped StampFirstFixture on first completion!", Flag = "stampfirstfixture" }
-            })
-            {
-                if (!QuestFlag.Stamped(fixture.Line) ||
-                    !QuestFlag.QuestFlags.ContainsKey(fixture.Flag) ||
-                    !QuestHistory.Contains(fixture.Flag) ||
-                    !QuestCatalog.Quests.Any(q => q.Flag == fixture.Flag && q.IsNew))
-                {
-                    throw new InvalidOperationException("Failed to capture quest stamp fixture: " + fixture.Line);
-                }
-            }
-
-            QuestHistory.AddStamp("StampedAfterRefresh");
-            if (!QuestHistory.Contains("stampedafterrefresh") ||
-                !File.ReadAllLines(history).Any(line =>
-                    string.Equals(Util.CsvParseLine(line).FirstOrDefault(), "StampedAfterRefresh", StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new InvalidOperationException(
-                    "Stamped quest was not added to account history. Contains=" +
-                    QuestHistory.Contains("stampedafterrefresh") + " File=" +
-                    string.Join("|", File.ReadAllLines(history)));
+                throw new InvalidOperationException("Failed to capture quest stamp fixture: " + fixture.Line);
             }
         }
-        finally
-        {
-            if (Directory.Exists(directory)) Directory.Delete(directory, true);
-        }
+
+        QuestHistory.ManualRefresh();
+        QuestHistory.Capture("---- Account Quests (2) | XP Bonus: 0.1% ----");
+        QuestHistory.Capture("OnlyOneRow");
+        QuestHistory.Capture("---- End of Account Quests ----");
+        if (QuestHistory.Count != 1 || !QuestHistory.Contains("onlyonerow"))
+            throw new InvalidOperationException("An incomplete /myqstlist response was not reflected in the live account list.");
+
     }
 
     private static void SetStaticField(Type type, string name, object value)

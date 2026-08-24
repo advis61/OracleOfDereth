@@ -13,6 +13,10 @@ namespace OracleOfDereth
 {
     public static class Util
     {
+        // Optional chat/log prefixes shared by the quest parsers: no timestamp, 12/24-hour time
+        // with optional seconds, AM/PM, or bracketed Decal-style prefixes.
+        public const string ChatPrefixPattern = @"^\s*(?:(?:\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?\s+)|(?:\[[^\]]+\][\s:]*))*";
+
         public static string CsvEscape(string field)
         {
             if (string.IsNullOrEmpty(field)) { return ""; }

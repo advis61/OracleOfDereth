@@ -170,11 +170,15 @@ namespace OracleOfDereth
 
         public void UpdateQuests()
         {
-            if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
-            if (QuestState.RefreshStatus == QuestRefreshStatus.Loaded && QuestHistory.RefreshIfMissing())
+            if (Server.IsConquest)
             {
-                FlashButton(QuestsRefreshAll);
+                if (!QuestHistory.HasRequestedRefresh)
+                {
+                    QuestHistory.Refresh();
+                    FlashButton(QuestsRefreshAll);
+                }
             }
+            else if (!QuestState.HasRequestedRefresh) { QuestFlag.Refresh(); }
 
             // Repaint every tick like the other tabs, so the Ready column's countdowns actually
             // count down — SetText makes that cheap by writing only the cells that changed. The
@@ -441,15 +445,14 @@ namespace OracleOfDereth
         // Exports the flags the master list doesn't cover yet, posts them to the submission
         // channel, and leaves the file behind either way so it can be passed along by hand.
         //
-        // Issues no server command: every quest tab runs QuestFlag.Refresh() on first view, and
-        // Refresh sits one button to the right for a deliberate re-pull.
+        // Issues no server command: quest data is refreshed separately with the tab's buttons.
         private void QuestsSend_Hit(object sender, EventArgs e) => SendQuestFlags();
 
         // Also "/od quests send", which stays reachable when the button is hidden — hence the
         // explicit nothing-to-send message rather than a silent no-op.
         public void SendQuestFlags()
         {
-            int held = QuestHistory.Count;
+            int held = QuestHistory.ObservedCount;
             if (held == 0)
             {
                 Util.Chat("Send: no quest flags have been observed yet.", Util.ColorPink);
