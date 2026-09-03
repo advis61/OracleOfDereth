@@ -91,7 +91,7 @@ namespace OracleOfDereth
             }
 
             QuestCatalog.Add(flag);
-            LastChangeWasFlag = true;
+            LastChangeWasFlag = fromRefresh;
             Revision++;
         }
 

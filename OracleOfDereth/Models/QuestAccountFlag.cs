@@ -33,6 +33,7 @@ namespace OracleOfDereth
         private static bool headerSeen;
         private static bool footerSeen;
         private static bool accountRefreshQueued;
+        private static bool announceOnComplete;
         private static readonly ChatRequest Request = new ChatRequest();
         private static readonly HashSet<string> BeforeHeader =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -50,7 +51,7 @@ namespace OracleOfDereth
             if (!Flags.Add(flag)) return false;
 
             QuestCatalog.AddHistorical(flag);
-            QuestState.HistoryChanged();
+            QuestState.HistoryChanged(false);
             return true;
         }
 
@@ -81,7 +82,7 @@ namespace OracleOfDereth
             HasRequestedRefresh = true;
             accountRefreshQueued = false;
             Request.Clear();
-            OpenBlock();
+            OpenBlock(false);
         }
 
         public static bool Capture(string text)
@@ -91,7 +92,7 @@ namespace OracleOfDereth
             Match header = HeaderRegex.Match(text);
             if (header.Success)
             {
-                if (!Active()) OpenBlock();
+                if (!Active()) OpenBlock(Request.Awaiting);
                 if (!headerSeen)
                 {
                     Flags.Clear();
@@ -147,9 +148,10 @@ namespace OracleOfDereth
 
         }
 
-        private static void OpenBlock()
+        private static void OpenBlock(bool announce)
         {
             collecting = true;
+            announceOnComplete = announce;
             collectingAt = DateTime.UtcNow;
             expected = int.MaxValue;
             headerSeen = false;
@@ -159,7 +161,7 @@ namespace OracleOfDereth
 
         private static void StartAccountRefresh()
         {
-            OpenBlock();
+            OpenBlock(true);
             Request.Sent();
             Util.Command("/myqstlist");
         }
@@ -179,13 +181,15 @@ namespace OracleOfDereth
 
             QuestCatalog.RemoveUnobservedDiscoveries();
             QuestState.HistoryChanged(false);
-            Report($"Quest data updated. Captured {Flags.Count} account flags.", Util.ColorPink);
+            if (announceOnComplete)
+                Report($"Quest data updated. Found {Flags.Count} account flags.", Util.ColorPink);
             EndBlock();
         }
 
         private static void EndBlock()
         {
             collecting = false;
+            announceOnComplete = false;
             expected = int.MaxValue;
             headerSeen = false;
             footerSeen = false;

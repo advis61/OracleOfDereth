@@ -69,7 +69,8 @@ namespace OracleOfDereth
         // the counts, which is why they're claimed solely while a reply we asked for is arriving.
         // A bare rule is far too generic a shape to touch at any other time.
         private static readonly Regex ChromeRegex = new Regex(
-            @"^\s*(?:\[[^\]]*\]\s*)?(?:-{3,}|Advanced Augmentation Levels:)\s*$");
+            @"^\s*(?:\[[^\]]*\]\s*)?(?:-{3,}|Advanced Augmentation Levels:|Use /aug info for per-level effect details\.)\s*$",
+            RegexOptions.IgnoreCase);
 
         // When we last issued "/augs" (UtcNow). Drives the throttle below. Set on login too (see
         // PluginCore), so the tab won't immediately re-pull if you open it right after logging in.

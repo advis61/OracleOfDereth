@@ -505,7 +505,7 @@ namespace OracleOfDereth
 
             if (QuestState.LastChangeWasFlag)
             {
-                Util.Chat($"Quest data updated. Captured {QuestFlag.QuestFlags.Count} flags.", Util.ColorPink);
+                Util.Chat($"Quest data updated. Found {QuestFlag.QuestFlags.Count} flags.", Util.ColorPink);
             }
 
             observedQuestRevision = QuestState.Revision;

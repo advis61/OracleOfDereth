@@ -81,7 +81,7 @@ namespace OracleOfDereth
             else
             {
                 QuestFlags[questFlag.Key] = questFlag;
-                QuestState.FlagChanged(questFlag, true);
+                QuestState.FlagChanged(questFlag, false);
             }
             return true;
         }
