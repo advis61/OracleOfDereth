@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>10</LangVersion>
+    <RootNamespace>OracleOfDereth.Curator</RootNamespace>
+    <AssemblyName>OracleOfDereth.Curator</AssemblyName>
+  </PropertyGroup>
+</Project>

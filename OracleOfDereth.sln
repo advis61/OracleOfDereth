@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OracleOfDereth", "OracleOfD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OracleOfDereth.Tests", "OracleOfDereth.Tests\OracleOfDereth.Tests.csproj", "{53E3CA40-D805-4355-A213-72F411756F42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OracleOfDereth.Curator", "OracleOfDereth.Curator\OracleOfDereth.Curator.csproj", "{B38DE833-8B37-4B58-A1C1-0B90F8397871}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{53E3CA40-D805-4355-A213-72F411756F42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53E3CA40-D805-4355-A213-72F411756F42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53E3CA40-D805-4355-A213-72F411756F42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B38DE833-8B37-4B58-A1C1-0B90F8397871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B38DE833-8B37-4B58-A1C1-0B90F8397871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B38DE833-8B37-4B58-A1C1-0B90F8397871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B38DE833-8B37-4B58-A1C1-0B90F8397871}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
