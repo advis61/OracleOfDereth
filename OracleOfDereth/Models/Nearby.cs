@@ -24,14 +24,20 @@ namespace OracleOfDereth
         // Collection
         public static Dictionary<string, Nearby> Nearbys = new Dictionary<string, Nearby>(); // The list we match against
 
-        // Track identities, not WorldObject wrappers. CreateObject can be raised more than once
-        // for the same object, while wrappers can become stale after zoning or a missed release.
-        // Keeping only ids makes duplicate creates harmless and avoids retaining those wrappers
-        // indefinitely. Nearby collections are small, so a list keeps the implementation simple.
-        private static readonly List<int> ObjectIds = new List<int>();
+        private sealed class TrackedObject
+        {
+            public string Name;
+            public ObjectClass Class;
+            public int MissedScans;
+        }
+
+        private static readonly Dictionary<int, TrackedObject> Tracked = new Dictionary<int, TrackedObject>();
+        private static readonly TimeSpan ScanInterval = TimeSpan.FromSeconds(2);
+        private const int MaxMissedScans = 3;
+        private static DateTime lastScanAt = DateTime.MinValue;
 
         // Preserve the old read API for callers, but resolve fresh wrappers from WorldFilter.
-        public static List<WorldObject> Objects => ObjectIds
+        public static List<WorldObject> Objects => Tracked.Keys
             .Select(id => CoreManager.Current.WorldFilter[id])
             .Where(item => item != null)
             .ToList();
@@ -42,19 +48,19 @@ namespace OracleOfDereth
         public static void Init()
         {
             Nearbys.Clear();
-            ObjectIds.Clear(); // drop the previous character's tracked object identities
+            Tracked.Clear();
+            lastScanAt = DateTime.MinValue;
             LoadNearbysCSV();
-
-            // Hot reload can start after the landscape's CreateObject events have already fired.
-            foreach (WorldObject item in CoreManager.Current.WorldFilter.GetLandscape())
-            {
-                if (item.Id != 0 && !ObjectIds.Contains(item.Id)) ObjectIds.Add(item.Id);
-            }
+            Reconcile(); // catches objects whose CreateObject event preceded plugin startup
         }
 
         // A portal transition starts a new nearby-object set. WorldFilter can retain wrappers
         // from the previous landblock, so waiting for those wrappers to disappear is unreliable.
-        public static void ClearObjects() { ObjectIds.Clear(); }
+        public static void ClearObjects()
+        {
+            Tracked.Clear();
+            lastScanAt = DateTime.MinValue;
+        }
 
         public static List<WorldObject> All() {
             return Objects.Where(o => o.ObjectClass != ObjectClass.Player).ToList();
@@ -103,9 +109,8 @@ namespace OracleOfDereth
 
         public static void Add(WorldObject item)
         {
-            // Add every nearby object once, keyed by its stable world id. Players must remain in
-            // this collection even when announcements are enabled so the Nearby tab can list them.
-            if (item.Id != 0 && !ObjectIds.Contains(item.Id)) ObjectIds.Add(item.Id);
+            if (item == null || item.Id == 0) return;
+            Track(item);
 
             if (item.ObjectClass == ObjectClass.Player && Setting.AnnouncePlayers.IsYes)
             {
@@ -119,16 +124,42 @@ namespace OracleOfDereth
 
         public static void Remove(WorldObject item)
         {
-            if (item != null) ObjectIds.Remove(item.Id);
+            if (item != null) Tracked.Remove(item.Id);
         }
 
-        // Drop tracked ids the client no longer knows about. ReleaseObject isn't guaranteed to
-        // fire on every despawn (zone/portal/recall transitions can miss it), so this reconciles
-        // the set without retaining stale WorldObject wrappers.
-        // Mirrors FellowshipTracker's RemoveGonePlayers reconciliation.
         public static void Tick()
         {
-            ObjectIds.RemoveAll(id => CoreManager.Current.WorldFilter[id] == null);
+            if (DateTime.UtcNow - lastScanAt < ScanInterval) return;
+            Reconcile();
+        }
+
+        private static void Reconcile()
+        {
+            lastScanAt = DateTime.UtcNow;
+            var seen = new HashSet<int>();
+
+            foreach (WorldObject item in CoreManager.Current.WorldFilter.GetLandscape())
+            {
+                if (item == null || item.Id == 0) continue;
+                seen.Add(item.Id);
+                Track(item);
+            }
+
+            foreach (int id in Tracked.Keys.ToList())
+            {
+                if (seen.Contains(id)) continue;
+                if (++Tracked[id].MissedScans >= MaxMissedScans) Tracked.Remove(id);
+            }
+        }
+
+        private static void Track(WorldObject item)
+        {
+            if (!Tracked.TryGetValue(item.Id, out TrackedObject tracked) ||
+                tracked.Name != item.Name || tracked.Class != item.ObjectClass)
+            {
+                Tracked[item.Id] = new TrackedObject { Name = item.Name, Class = item.ObjectClass };
+            }
+            else tracked.MissedScans = 0;
         }
 
         public static void Announce(WorldObject item)
