@@ -10,6 +10,10 @@ namespace OracleOfDereth
     {
         public HudList NearbyList { get; private set; }
         public HudCombo NearbySort { get; private set; }
+        public HudCheckBox NearbyExpandAll { get; private set; }
+        public HudCheckBox NearbyFilterPlayers { get; private set; }
+        public HudCheckBox NearbyFilterMonsters { get; private set; }
+        public HudCheckBox NearbyFilterOther { get; private set; }
 
         private readonly List<int> NearbyListColumns = new List<int> { 1, 2, 3 };
         public static Dictionary<string, bool> NearbyListExpanded = new Dictionary<string, bool>();
@@ -24,6 +28,16 @@ namespace OracleOfDereth
             NearbySort.AddItem("Sort by Name", "Sort by Distance"); // 2
             NearbySort.Change += NearbySort_Change;
 
+            NearbyExpandAll = (HudCheckBox)view["NearbyExpandAll"];
+            NearbyExpandAll.Change += NearbyExpandAll_Change;
+
+            NearbyFilterPlayers = (HudCheckBox)view["NearbyFilterPlayers"];
+            NearbyFilterMonsters = (HudCheckBox)view["NearbyFilterMonsters"];
+            NearbyFilterOther = (HudCheckBox)view["NearbyFilterOther"];
+            NearbyFilterPlayers.Change += NearbyFilter_Change;
+            NearbyFilterMonsters.Change += NearbyFilter_Change;
+            NearbyFilterOther.Change += NearbyFilter_Change;
+
             NearbyList = (HudList)view["NearbyList"];
             NearbyList.Click += NearbyList_Click;
             NearbyList.ClearRows();
@@ -32,6 +46,10 @@ namespace OracleOfDereth
         private void DisposeNearby()
         {
             NearbySort.Change -= NearbySort_Change;
+            NearbyExpandAll.Change -= NearbyExpandAll_Change;
+            NearbyFilterPlayers.Change -= NearbyFilter_Change;
+            NearbyFilterMonsters.Change -= NearbyFilter_Change;
+            NearbyFilterOther.Change -= NearbyFilter_Change;
             NearbyList.Click -= NearbyList_Click;
         }
 
@@ -46,10 +64,23 @@ namespace OracleOfDereth
             UpdateNearbyList();
         }
 
+        private void NearbyFilter_Change(object sender, EventArgs e)
+        {
+            UpdateNearbyList();
+        }
+
+        private void NearbyExpandAll_Change(object sender, EventArgs e)
+        {
+            UpdateNearbyList();
+        }
+
         private void UpdateNearbyList()
         {
             int index = 0;
-            List<NearbyItem> items = NearbyItem.NearbyItems();
+            List<NearbyItem> items = NearbyItem.NearbyItems()
+                .Where(item => NearbyItem.MatchesFilter(item.IsPlayer(), item.IsMonster(),
+                    NearbyFilterPlayers.Checked, NearbyFilterMonsters.Checked, NearbyFilterOther.Checked))
+                .ToList();
 
             index = NearbyListAdd(items, index);
 
@@ -68,6 +99,7 @@ namespace OracleOfDereth
             foreach (var group in grouped)
             {
                 NearbyListExpanded.TryGetValue(group.Key, out bool expanded);
+                expanded |= NearbyExpandAll.Checked;
                 bool isGrouped = (group.Count() > 1 || group.First().ForceGroup());
 
                 if (isGrouped)

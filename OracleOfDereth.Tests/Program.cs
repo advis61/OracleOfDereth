@@ -21,6 +21,7 @@ internal static class Program
         AssertTradePriceBounds();
         AssertTradeSplitExpiresClosed();
         AssertBankTransferTranslation();
+        AssertNearbyFilters();
         AssertSettingsRecovery();
         AssertQuestState();
         AssertMyQuestsParsing();
@@ -29,6 +30,15 @@ internal static class Program
         AssertConquestAugmentationEffects();
         Console.WriteLine("Regression tests passed.");
         return 0;
+    }
+
+    private static void AssertNearbyFilters()
+    {
+        if (!NearbyItem.MatchesFilter(true, false, false, false, false) ||
+            !NearbyItem.MatchesFilter(true, false, true, false, false) ||
+            NearbyItem.MatchesFilter(false, true, true, false, false) ||
+            !NearbyItem.MatchesFilter(false, false, false, false, true))
+            throw new InvalidOperationException("Nearby category filters did not match correctly.");
     }
 
     private static void AssertBankTransferTranslation()

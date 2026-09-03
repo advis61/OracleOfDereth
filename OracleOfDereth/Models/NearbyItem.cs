@@ -78,6 +78,14 @@ namespace OracleOfDereth
         public bool IsCorpse() { return (Item.Behavior & 0x00002000) != 0; }
         public double Distance() { return Util.GetDistanceFromPlayer(Item); }
 
+        public static bool MatchesFilter(bool isPlayer, bool isMonster, bool players, bool monsters, bool other)
+        {
+            if (!players && !monsters && !other) return true;
+            if (isPlayer) return players;
+            if (isMonster) return monsters;
+            return other;
+        }
+
         public string FellowshipName()
         {
             if (!IsPlayer()) return "";

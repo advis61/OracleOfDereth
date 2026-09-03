@@ -51,8 +51,12 @@
 				</page>
 				<page label="Nearby">
 					<control progid="DecalControls.FixedLayout" clipped="">
-						<control progid="DecalControls.Choice" name="NearbySort" left="140" top="0" width="130" height="18"/>
-						<control progid="DecalControls.List" name="NearbyList" left="0" top="16" width="640" height="2000">
+						<control progid="DecalControls.Choice" name="NearbySort" left="5" top="0" width="130" height="18"/>
+						<control progid="DecalControls.CheckBox" name="NearbyExpandAll" left="145" top="1" width="100" height="18" text="Expand All" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="NearbyFilterPlayers" left="5" top="22" width="85" height="18" text="Players" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="NearbyFilterMonsters" left="95" top="22" width="95" height="18" text="Monsters" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="NearbyFilterOther" left="195" top="22" width="75" height="18" text="Other" checked="false"/>
+						<control progid="DecalControls.List" name="NearbyList" left="0" top="43" width="640" height="2000">
 							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="218" />
 							<column progid="DecalControls.TextColumn" name="Distance" fixedwidth="40" />
