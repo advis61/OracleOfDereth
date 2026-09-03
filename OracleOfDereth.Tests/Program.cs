@@ -25,8 +25,26 @@ internal static class Program
         AssertMyQuestsParsing();
         AssertQuestAccountFlag();
         AssertQuestCatalogValidation();
+        AssertConquestAugmentationEffects();
         Console.WriteLine("Regression tests passed.");
         return 0;
+    }
+
+    private static void AssertConquestAugmentationEffects()
+    {
+        AssertEffect("War", 2, "+4% war magic potency");
+        AssertEffect("Void", 2, "+3% void magic potency");
+        AssertEffect("Item", 10, "+10% attack/melee, +5 blood/spirit, +10 AL");
+        AssertEffect("Life", 10, "+3% prot, +3% vuln, +1 regen, +1 surge rating");
+        AssertEffect("Specialization", 5, "now 75");
+
+        void AssertEffect(string name, int count, string expected)
+        {
+            ConquestAugmentation aug = ConquestAugmentation.Get(name);
+            aug.Count = count;
+            if (!aug.Effect().Contains(expected))
+                throw new InvalidOperationException($"{name} effect did not contain '{expected}': {aug.Effect()}");
+        }
     }
 
     private static void AssertQuestCatalogValidation()

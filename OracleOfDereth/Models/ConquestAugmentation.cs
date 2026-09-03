@@ -246,7 +246,7 @@ namespace OracleOfDereth
                 : (LinearCap * LinearRate)
                   + (MaxBonus - LinearCap * LinearRate) * (1.0 - Math.Pow(1.0 - Tuning, Count - LinearCap));
 
-            return Math.Min(bonus, MaxBonus) / BaseProtection * 100.0;
+            return Math.Min(bonus, MaxBonus) * 100.0;
         }
 
         // Extra damage your vulnerabilities amplify, as a percentage over an unaugmented vuln.
@@ -260,9 +260,7 @@ namespace OracleOfDereth
         // one is not self-targeted and applies to whatever you're fighting.
         private double VulnPercent()
         {
-            if (Count <= 0) return 0.0;
-
-            return Count * 0.01 / BaseVuln * 100.0;
+            return ResistPercent();
         }
 
         // Extra health/stamina/mana regeneration, as a percentage over having the top self buff up
@@ -275,7 +273,7 @@ namespace OracleOfDereth
         {
             if (Count <= 0) return 0.0;
 
-            return Count * 0.10 / BaseRegen * 100.0;
+            return Count * 0.10;
         }
 
         // Short, human-readable description of this aug's effect at its current Count. Numbers come
@@ -311,9 +309,9 @@ namespace OracleOfDereth
                 // a flat count and needs no baseline. The rending bonus is left off — it needs no
                 // spell cast and only pays out on a rending weapon, so it doesn't belong on the
                 // same line.
-                case "Life":           return $"+{ResistPercent():0.#}% prot, +{VulnPercent():0.#}% vuln, +{RegenPercent():0}% regen, +{Count / 10} surge rating";
+                case "Life":           return $"+{ResistPercent():0.##}% prot, +{VulnPercent():0.##}% vuln, +{RegenPercent():0.##} regen, +{Count / 10} surge rating";
                 case "War":            return $"+{Count * 2}% war magic potency";
-                case "Void":           return $"+{Count * 2}% void magic potency";
+                case "Void":           return $"+{Count * 1.5:0.##}% void magic potency";
                 // DamageEvent: a flat +Count onto BaseDamage, plus 1.5% crit damage per aug
                 // (luminanceAugmentCritDamageMultiplier, hardcoded 0.015). Both are dropped in PvP
                 // when pvp_disable_custom_augs is set. The PvP-only evasion reduction is omitted.
