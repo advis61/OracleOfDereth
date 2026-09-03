@@ -20,6 +20,7 @@ internal static class Program
         AssertSubmitCallbackCannotLeaveBusy();
         AssertTradePriceBounds();
         AssertTradeSplitExpiresClosed();
+        AssertBankTransferTranslation();
         AssertSettingsRecovery();
         AssertQuestState();
         AssertMyQuestsParsing();
@@ -28,6 +29,17 @@ internal static class Program
         AssertConquestAugmentationEffects();
         Console.WriteLine("Regression tests passed.");
         return 0;
+    }
+
+    private static void AssertBankTransferTranslation()
+    {
+        Bank.Currency mmd = Bank.Transferable.First(c => c.Label.StartsWith("MMD Notes"));
+        if (!Bank.TryTransferAmount(mmd, "10", out string translated) || translated != "2500000")
+            throw new InvalidOperationException("MMD transfer was not translated to Pyreals.");
+        if (!Bank.TryTransferAmount(mmd, "1000", out _) || Bank.TryTransferAmount(mmd, "1001", out _))
+            throw new InvalidOperationException("MMD transfer cap was not enforced.");
+        if (Bank.TryTransferAmount(mmd, long.MaxValue.ToString(), out _))
+            throw new InvalidOperationException("Overflowing MMD transfer was accepted.");
     }
 
     private static void AssertConquestAugmentationEffects()

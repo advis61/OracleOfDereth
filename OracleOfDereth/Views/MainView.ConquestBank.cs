@@ -223,13 +223,22 @@ namespace OracleOfDereth
                 return;
             }
 
-            string label = Bank.Transferable[Math.Max(0, ConquestBankTransferType.Current)].Label;
-            // Comma-group the amount for the prompt only; the command still sends the raw digits.
+            Bank.Currency currency = Bank.Transferable[Math.Max(0, ConquestBankTransferType.Current)];
+            string label = currency.Label;
+            if (!Bank.TryTransferAmount(currency, amount, out string translated))
+            {
+                SetBankStatus(ConquestBankTransferStatus, $"\"{amount}\" is too large to transfer.", Color.Red);
+                return;
+            }
+            // Show both denominations for translated currencies.
             string amountDisplay = long.TryParse(amount, out long n) ? n.ToString("N0") : amount;
+            if (currency.TransferMultiplier > 1 && long.TryParse(translated, out long pyreals))
+                amountDisplay += $" {label.Split('(')[0].Trim()} ({pyreals:N0} Pyreals)";
+            else amountDisplay += " " + label;
             bankTransferArmed = true;
             ConquestBankTransferConfirm.Visible = true;
             ConquestBankTransferCancel.Visible = true;
-            SetBankStatus(ConquestBankTransferStatus, $"Really transfer {amountDisplay} {label} to {target}?", Color.Orange);
+            SetBankStatus(ConquestBankTransferStatus, $"Really transfer {amountDisplay} to {target}?", Color.Orange);
         }
 
         // Do It: send the transfer using the current form values, then clear every form.

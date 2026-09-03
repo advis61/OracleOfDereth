@@ -86,7 +86,15 @@ namespace OracleOfDereth
         {
             public string Label { get; }
             public string Token { get; }
-            public Currency(string label, string token) { Label = label; Token = token; }
+            public long TransferMultiplier { get; }
+            public long MaxTransferAmount { get; }
+            public Currency(string label, string token, long transferMultiplier = 1, long maxTransferAmount = long.MaxValue)
+            {
+                Label = label;
+                Token = token;
+                TransferMultiplier = transferMultiplier;
+                MaxTransferAmount = maxTransferAmount;
+            }
         }
 
         // Everything the player can withdraw. Luminance is excluded — the server spends it directly
@@ -133,6 +141,7 @@ namespace OracleOfDereth
         {
             new Currency("Legendary Keys", "k"),
             new Currency("Luminance", "l"),
+            new Currency("MMD Notes (250k)", "p", 250_000, 1_000),
             new Currency("Pyreals", "p"),
         };
 
@@ -149,13 +158,24 @@ namespace OracleOfDereth
             Util.Command($"/bank withdraw {currency.Token} {amount}");
         }
 
-        // Transfer a whole-number amount of a currency to another character
-        // ("/bank transfer <token> <amount> "<target>""). The target is quoted because character
-        // names contain a space (first + last), which the server otherwise reads as extra args.
+        // Transfer a whole-number amount of a currency to another character. Quotes keep a
+        // multi-word character name together as the command's final parameter.
         public static void Transfer(Currency currency, string amount, string target)
         {
             if (currency == null || string.IsNullOrEmpty(amount) || string.IsNullOrEmpty(target)) return;
-            Util.Command($"/bank transfer {currency.Token} {amount} \"{target}\"");
+            if (!TryTransferAmount(currency, amount, out string translated)) return;
+            Util.Command($"/bank transfer {currency.Token} {translated} \"{target}\"");
+        }
+
+        public static bool TryTransferAmount(Currency currency, string amount, out string translated)
+        {
+            translated = "";
+            if (currency == null || !long.TryParse((amount ?? "").Replace(",", ""), out long value) ||
+                value <= 0 || value > currency.MaxTransferAmount)
+                return false;
+            try { translated = checked(value * currency.TransferMultiplier).ToString(); }
+            catch (OverflowException) { return false; }
+            return true;
         }
 
         // ---- Auto-deposit ------------------------------------------------------------------------
