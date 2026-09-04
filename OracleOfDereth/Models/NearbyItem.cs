@@ -47,7 +47,7 @@ namespace OracleOfDereth
 
             foreach (WorldObject worldObject in Nearby.Objects) {
                 if (worldObject.Container != 0) continue;
-                if (worldObject.Name == null || worldObject.Name.Length == 0) continue;
+                if (string.IsNullOrWhiteSpace(worldObject.Name)) continue;
                 if (worldObject.Icon == 8384) continue; // Bugged item
                 if (worldObject.Id == myId && !Fellowship.IsInFellowship()) continue;
                 if (worldObject.Behavior == 148) continue; // Cannot be picked up, cannot be selected, is not an NPC. Enemy spell projectiles.
