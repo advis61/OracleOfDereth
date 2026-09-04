@@ -248,6 +248,7 @@ namespace OracleOfDereth
             });
 
             ShutdownComponent(() => worldObjectIdentifier?.Dispose());
+            ShutdownComponent(Screenshot.Cancel);
             ShutdownComponent(UpdateChecker.Shutdown);
             ShutdownComponent(QuestCatalogUpdater.Shutdown);
             ShutdownComponent(QuestFlagLookup.Shutdown);
@@ -276,6 +277,8 @@ namespace OracleOfDereth
                 else if (cmd == "/od exception") { throw new InvalidOperationException("An error occurred."); }
                 else if (cmd == "/od targetdebug") { TargetDebug.Run(); }
                 else if (cmd == "/od vtank") { VTank.Debug(); }
+                else if (cmd == "/od screenshot") { Screenshot.Take(); }
+                else if (cmd == "/od vistashot") { Screenshot.TakeVista(); }
                 else if (cmd == "/od deletesummons" || cmd.StartsWith("/od deletesummons ")) { WorldObjectVisibility.Command(cmd); }
                 else if (cmd == "/od deletepets" || cmd.StartsWith("/od deletepets ")) { WorldObjectVisibility.Command(cmd); }
                 else if (cmd == "/od landblock") { Util.Chat($"Current landblock: {Util.CurrentLandblockHex()} (block 0x{Util.CurrentLandblock():X4})"); }
@@ -432,6 +435,7 @@ namespace OracleOfDereth
         {
             try
             {
+                Screenshot.Cancel();
                 ItemCache.Clear();
                 if (e.Type.ToString() == "EnterPortal") { Nearby.ClearObjects(); }
                 Fellowship.NoteZoned();

@@ -130,7 +130,7 @@ namespace OracleOfDereth
             { 5_00, 270 }, // About
             { 5_01, 545 }, // Decal (plugin bar order) — one row of chrome, like Favorites
             { 5_02, 400 }, // Settings
-            { 5_03, 540 }, // Help
+            { 5_03, 580 }, // Help
         };
 
         public MainView()

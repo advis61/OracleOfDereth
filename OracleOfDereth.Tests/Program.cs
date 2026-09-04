@@ -9,6 +9,7 @@ internal static class Program
 {
     private static int Main()
     {
+        AssertScreenshotBounds();
         AssertSummonOwnership();
         AssertJson(null, "null");
         AssertJson("", "\"\"");
@@ -449,6 +450,29 @@ internal static class Program
         if (QuestAccountFlag.Count != 1 || !QuestAccountFlag.Contains("onlyonerow"))
             throw new InvalidOperationException("An incomplete /myqstlist response was not reflected in the live account list.");
 
+    }
+
+    private static void AssertScreenshotBounds()
+    {
+        var visibleBounds = typeof(Screenshot).GetMethod("VisibleBounds", BindingFlags.Static | BindingFlags.NonPublic);
+        var desktop = new System.Drawing.Rectangle(-1920, 0, 3840, 1080);
+        foreach (var fixture in new[]
+        {
+            new { Window = new System.Drawing.Rectangle(0, 0, 1920, 1080), Expected = new System.Drawing.Rectangle(0, 0, 1920, 1080) },
+            new { Window = new System.Drawing.Rectangle(-1920, 0, 1920, 1080), Expected = new System.Drawing.Rectangle(-1920, 0, 1920, 1080) },
+            new { Window = new System.Drawing.Rectangle(0, -1, 1921, 1082), Expected = new System.Drawing.Rectangle(0, 0, 1920, 1080) },
+            new { Window = new System.Drawing.Rectangle(-100, 50, 200, 100), Expected = new System.Drawing.Rectangle(-100, 50, 200, 100) }
+        })
+        {
+            var actual = (System.Drawing.Rectangle)visibleBounds.Invoke(null, new object[] { fixture.Window, desktop });
+            if (actual != fixture.Expected) throw new InvalidOperationException("Screenshot clipped the wrong screen region.");
+        }
+        try
+        {
+            visibleBounds.Invoke(null, new object[] { new System.Drawing.Rectangle(3000, 0, 100, 100), desktop });
+            throw new Exception("A completely off-screen screenshot was accepted.");
+        }
+        catch (TargetInvocationException ex) when (ex.InnerException is InvalidOperationException) { }
     }
 
     private static void AssertSummonOwnership()

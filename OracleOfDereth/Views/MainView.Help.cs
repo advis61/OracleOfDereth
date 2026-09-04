@@ -29,7 +29,9 @@ namespace OracleOfDereth
             ("/od quests reset",          "Delete the downloaded list and reload the bundled list"),
             ("/od quests send",           "Send your new quest flags to Oracle of Dereth"),
             ("/od quests send clear",     "Forget which quest flags you've sent"),
+            ("/od screenshot",            "Save a screenshot with the interface visible"),
             ("/od update",                "Checks for available updates"),
+            ("/od vistashot",             "Save a screenshot with the interface hidden"),
         };
 
         private void InitHelp()
