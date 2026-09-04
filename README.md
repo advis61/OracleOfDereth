@@ -1,4 +1,4 @@
-﻿![Downloads Count](https://img.shields.io/github/downloads/advis61/OracleOfDereth/total)
+![Downloads Count](https://img.shields.io/github/downloads/advis61/OracleOfDereth/total)
 
 # Oracle Of Dereth
 
@@ -154,6 +154,16 @@ Hold CTRL + click to output to /cg
 Hold ALT + click to output to /a
 
 Hold SHIFT + click to output to /f
+
+
+## Delete other players' summons and pets
+
+Deletes from your game world other players' summons and pets.
+
+Enable `Delete Other Players' Summons` in Settings, or use `/od deletesummons on`.
+
+Enable `Delete Other Players' Pets` in Settings, or use `/od deletepets on`.
+
 
 ## Details
 
