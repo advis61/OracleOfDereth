@@ -10,7 +10,7 @@ namespace OracleOfDereth
     {
         public HudList NearbyList { get; private set; }
         public HudCombo NearbySort { get; private set; }
-        public HudCheckBox NearbyExpandAll { get; private set; }
+        public HudCheckBox NearbySimpleList { get; private set; }
         public HudCheckBox NearbyFilterPlayers { get; private set; }
         public HudCheckBox NearbyFilterMonsters { get; private set; }
         public HudCheckBox NearbyFilterOther { get; private set; }
@@ -35,8 +35,8 @@ namespace OracleOfDereth
             NearbyItem.Sort(savedSort);
             NearbySort.Change += NearbySort_Change;
 
-            NearbyExpandAll = (HudCheckBox)view["NearbyExpandAll"];
-            NearbyExpandAll.Change += NearbyExpandAll_Change;
+            NearbySimpleList = (HudCheckBox)view["NearbySimpleList"];
+            NearbySimpleList.Change += NearbySimpleList_Change;
 
             NearbyFilterPlayers = (HudCheckBox)view["NearbyFilterPlayers"];
             NearbyFilterMonsters = (HudCheckBox)view["NearbyFilterMonsters"];
@@ -53,7 +53,7 @@ namespace OracleOfDereth
         private void DisposeNearby()
         {
             NearbySort.Change -= NearbySort_Change;
-            NearbyExpandAll.Change -= NearbyExpandAll_Change;
+            NearbySimpleList.Change -= NearbySimpleList_Change;
             NearbyFilterPlayers.Change -= NearbyFilter_Change;
             NearbyFilterMonsters.Change -= NearbyFilter_Change;
             NearbyFilterOther.Change -= NearbyFilter_Change;
@@ -78,7 +78,7 @@ namespace OracleOfDereth
             UpdateNearbyList();
         }
 
-        private void NearbyExpandAll_Change(object sender, EventArgs e)
+        private void NearbySimpleList_Change(object sender, EventArgs e)
         {
             UpdateNearbyList();
         }
@@ -103,7 +103,8 @@ namespace OracleOfDereth
             HudList.HudListRowAccessor row;
             int targetId = Target.GetCurrent().Id;
 
-            List<IGrouping<string, NearbyItem>> grouped = items.GroupBy(i => i.GroupKey()).ToList();
+            List<IGrouping<string, NearbyItem>> grouped = items
+                .GroupBy(i => NearbySimpleList.Checked ? i.Item.Id.ToString() : i.GroupKey()).ToList();
 
             foreach (var group in grouped)
             {
@@ -111,8 +112,7 @@ namespace OracleOfDereth
                     ? group.OrderBy(i => i.Distance()).ThenBy(i => i.Item.Name).ToList()
                     : group.OrderBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
                 NearbyListExpanded.TryGetValue(group.Key, out bool expanded);
-                expanded |= NearbyExpandAll.Checked;
-                bool isGrouped = (group.Count() > 1 || group.First().ForceGroup());
+                bool isGrouped = !NearbySimpleList.Checked && (group.Count() > 1 || group.First().ForceGroup());
 
                 if (isGrouped)
                 {

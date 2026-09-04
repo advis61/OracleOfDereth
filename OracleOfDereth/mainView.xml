@@ -52,7 +52,7 @@
 				<page label="Nearby">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.Choice" name="NearbySort" left="5" top="0" width="130" height="18"/>
-						<control progid="DecalControls.CheckBox" name="NearbyExpandAll" left="145" top="1" width="100" height="18" text="Expand All" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="NearbySimpleList" left="145" top="1" width="100" height="18" text="Expand All" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="NearbyFilterPlayers" left="5" top="22" width="85" height="18" text="Players" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="NearbyFilterMonsters" left="95" top="22" width="95" height="18" text="Monsters" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="NearbyFilterOther" left="195" top="22" width="75" height="18" text="Other" checked="false"/>
