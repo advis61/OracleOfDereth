@@ -103,8 +103,11 @@ namespace OracleOfDereth
             else score += 300;
 
             string name = Item.Name.ToLowerInvariant();
-            if (name.Contains("lever") || name.Contains("switch") || name.Contains("button")) score += 900;
-            if (name.Contains("key")) score += 650;
+            if (new[] { "lever", "switch", "button", "pedestal", "altar" }.Any(name.Contains)) score += 900;
+            if (new[] { "key", "gate", "door", "chest", "cache", "crystal", "orb", "idol", "fragment" }.Any(name.Contains)) score += 650;
+
+            if (!IsPlayer() && !IsMonster() && !IsCorpse() && age > 60)
+                score -= Math.Min(500, (age - 60) * 2);
 
             return score + (200 / (1 + Math.Max(0, Distance())));
         }

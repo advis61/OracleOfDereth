@@ -99,6 +99,9 @@ namespace OracleOfDereth
 
             foreach (var group in grouped)
             {
+                List<NearbyItem> groupItems = NearbyItem.CurrentSortType == NearbyItem.SortType.Distance
+                    ? group.OrderBy(i => i.Distance()).ThenBy(i => i.Item.Name).ToList()
+                    : group.OrderBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
                 NearbyListExpanded.TryGetValue(group.Key, out bool expanded);
                 expanded |= NearbyExpandAll.Checked;
                 bool isGrouped = (group.Count() > 1 || group.First().ForceGroup());
@@ -108,7 +111,7 @@ namespace OracleOfDereth
                     if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
                     index++;
 
-                    NearbyItem item = group.First();
+                    NearbyItem item = groupItems.First();
 
                     AssignImage((HudPictureBox)row[0], item.Item.Icon);
                     AssignSelected(row, (item.Item.Id == targetId && !expanded), NearbyListColumns);
@@ -124,7 +127,7 @@ namespace OracleOfDereth
                 // Maybe render items
                 if (expanded || !isGrouped)
                 {
-                    foreach (NearbyItem item in group)
+                    foreach (NearbyItem item in groupItems)
                     {
                         if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
                         index++;
