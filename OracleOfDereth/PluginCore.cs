@@ -375,6 +375,10 @@ namespace OracleOfDereth
                 {
                     Trade.NoteBotTell(e.Text);
                 }
+                else if (ChatFilter.ShouldSuppress(e.Text))
+                {
+                    e.Eat = true;
+                }
             }
             catch (Exception ex) { Util.Log(ex); }
         }
