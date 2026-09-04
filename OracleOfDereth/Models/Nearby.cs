@@ -29,6 +29,7 @@ namespace OracleOfDereth
             public string Name;
             public ObjectClass Class;
             public int MissedScans;
+            public DateTime FirstSeenAt;
         }
 
         private static readonly Dictionary<int, TrackedObject> Tracked = new Dictionary<int, TrackedObject>();
@@ -157,9 +158,21 @@ namespace OracleOfDereth
             if (!Tracked.TryGetValue(item.Id, out TrackedObject tracked) ||
                 tracked.Name != item.Name || tracked.Class != item.ObjectClass)
             {
-                Tracked[item.Id] = new TrackedObject { Name = item.Name, Class = item.ObjectClass };
+                Tracked[item.Id] = new TrackedObject
+                {
+                    Name = item.Name,
+                    Class = item.ObjectClass,
+                    FirstSeenAt = DateTime.UtcNow
+                };
             }
             else tracked.MissedScans = 0;
+        }
+
+        public static TimeSpan Age(int id)
+        {
+            return Tracked.TryGetValue(id, out TrackedObject item)
+                ? DateTime.UtcNow - item.FirstSeenAt
+                : TimeSpan.MaxValue;
         }
 
         public static void Announce(WorldObject item)

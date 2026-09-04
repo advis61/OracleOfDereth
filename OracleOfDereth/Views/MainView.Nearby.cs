@@ -24,8 +24,9 @@ namespace OracleOfDereth
         {
             NearbySort = (HudCombo)view["NearbySort"];
             NearbySort.AddItem("Sort by Default", "Sort by Default"); // 0
-            NearbySort.AddItem("Sort by Distance", "Sort by Name"); // 1
-            NearbySort.AddItem("Sort by Name", "Sort by Distance"); // 2
+            NearbySort.AddItem("Sort by Distance", "Sort by Distance"); // 1
+            NearbySort.AddItem("Sort by Name", "Sort by Name"); // 2
+            NearbySort.AddItem("Sort by Relevance", "Sort by Relevance"); // 3
             NearbySort.Change += NearbySort_Change;
 
             NearbyExpandAll = (HudCheckBox)view["NearbyExpandAll"];

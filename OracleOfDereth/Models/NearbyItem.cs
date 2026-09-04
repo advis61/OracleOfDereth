@@ -29,7 +29,8 @@ namespace OracleOfDereth
         {
             Default, // 0
             Distance, // 1
-            Name // 2
+            Name, // 2
+            Relevance // 3
         }
 
         public static void Init() { }
@@ -58,6 +59,11 @@ namespace OracleOfDereth
 
             switch (CurrentSortType)
             {
+                case SortType.Relevance:
+                    var groupCounts = items.GroupBy(i => i.GroupKey(), StringComparer.OrdinalIgnoreCase)
+                        .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
+                    return items.OrderByDescending(i => i.Relevance(groupCounts[i.GroupKey()] == 1))
+                        .ThenBy(i => i.Distance()).ThenBy(i => i.Item.Name).ToList();
                 case SortType.Name:
                     return items.OrderBy(i => i.FellowshipName()).ThenBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
                 case SortType.Distance:
@@ -77,6 +83,31 @@ namespace OracleOfDereth
         public bool IsMarker() { return Item.Name == "Exploration Marker"; }
         public bool IsCorpse() { return (Item.Behavior & 0x00002000) != 0; }
         public double Distance() { return Util.GetDistanceFromPlayer(Item); }
+
+        private double Relevance(bool uniqueName)
+        {
+            double score = 0;
+            double age = Nearby.Age(Item.Id).TotalSeconds;
+
+            if (age <= 5) score += 1000;
+            else if (age <= 15) score += 600;
+            else if (age <= 30) score += 250;
+
+            if (uniqueName && !IsPlayer()) score += IsMonster() ? 350 : 500;
+
+            if (IsPlayer()) score -= 200;
+            else if (IsMarker()) score += 450;
+            else if (IsNpc() || IsVendor()) score += 180;
+            else if (IsPortal()) score += 120;
+            else if (IsCorpse()) score -= 100;
+            else score += 300;
+
+            string name = Item.Name.ToLowerInvariant();
+            if (name.Contains("lever") || name.Contains("switch") || name.Contains("button")) score += 900;
+            if (name.Contains("key")) score += 650;
+
+            return score + (200 / (1 + Math.Max(0, Distance())));
+        }
 
         public static bool MatchesFilter(bool isPlayer, bool isMonster, bool players, bool monsters, bool other)
         {
