@@ -550,7 +550,8 @@ namespace OracleOfDereth
             {
                 if (success)
                 {
-                    Util.Chat($"Sent {send.Count} flags as {character} of {server}. Thanks! They won't be sent again.", Util.ColorPink);
+                    Util.Chat($"Sent {send.Count} flags to Oracle of Dereth global headquarters. Thank you, citizen!", Util.ColorPink);
+                    Util.Chat("They'll be reviewed and merged into the master list for the benefit of everyone on our server.", Util.ColorPink);
                 }
                 else
                 {
