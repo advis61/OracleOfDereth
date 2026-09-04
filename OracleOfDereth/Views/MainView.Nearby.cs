@@ -21,6 +21,7 @@ namespace OracleOfDereth
 
         private void InitNearby()
         {
+            NearbyListExpanded.Clear();
             NearbySort = (HudCombo)view["NearbySort"];
             NearbySort.AddItem("Sort by Default", "Sort by Default"); // 0
             NearbySort.AddItem("Sort by Distance", "Sort by Distance"); // 1

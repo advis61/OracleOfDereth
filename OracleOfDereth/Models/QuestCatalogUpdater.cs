@@ -19,6 +19,8 @@ namespace OracleOfDereth
 
         private static DateTime? armedAt;
         private static int running;
+        private static int generation;
+        private static readonly object lifecycleLock = new object();
         private static volatile bool pendingSuccess;
         private static volatile bool pendingChanged;
         private static volatile string pendingVersion;
@@ -87,11 +89,12 @@ namespace OracleOfDereth
         private static bool Start(bool verbose)
         {
             if (Interlocked.CompareExchange(ref running, 1, 0) != 0) return false;
-            new Thread(() => Run(verbose)) { IsBackground = true }.Start();
+            int requestGeneration = Volatile.Read(ref generation);
+            new Thread(() => Run(verbose, requestGeneration)) { IsBackground = true }.Start();
             return true;
         }
 
-        private static void Run(bool verbose)
+        private static void Run(bool verbose, int requestGeneration)
         {
             try
             {
@@ -103,24 +106,50 @@ namespace OracleOfDereth
                     ? File.ReadAllLines(QuestCatalog.FilePath)
                     : Array.Empty<string>();
 
-                bool changed = !downloaded.SequenceEqual(current, StringComparer.Ordinal);
-                if (changed)
-                    QuestDataFile.Write(QuestCatalog.FilePath, downloaded);
+                lock (lifecycleLock)
+                {
+                    if (requestGeneration != generation) return;
 
-                pendingVersion = ContentVersion(string.Join("\n", downloaded));
-                pendingChanged = changed;
+                    bool changed = !downloaded.SequenceEqual(current, StringComparer.Ordinal);
+                    if (changed)
+                        QuestDataFile.Write(QuestCatalog.FilePath, downloaded);
 
-                pendingMessage = changed
-                    ? "Oracle of Dereth quest list updated and reloaded."
-                    : verbose ? "Oracle of Dereth quest list reloaded; it was already up to date." : null;
-                pendingSuccess = true;
+                    pendingVersion = ContentVersion(string.Join("\n", downloaded));
+                    pendingChanged = changed;
+                    pendingMessage = changed
+                        ? "Oracle of Dereth quest list updated and reloaded."
+                        : verbose ? "Oracle of Dereth quest list reloaded; it was already up to date." : null;
+                    pendingSuccess = true;
+                }
             }
             catch (Exception ex)
             {
-                pendingException = ex;
-                if (verbose) pendingMessage = "Oracle of Dereth quest list update failed. See errors.txt for details.";
+                if (requestGeneration == Volatile.Read(ref generation))
+                {
+                    pendingException = ex;
+                    if (verbose) pendingMessage = "Oracle of Dereth quest list update failed. See errors.txt for details.";
+                }
             }
-            finally { Interlocked.Exchange(ref running, 0); }
+            finally
+            {
+                if (requestGeneration == Volatile.Read(ref generation))
+                    Interlocked.Exchange(ref running, 0);
+            }
+        }
+
+        public static void Shutdown()
+        {
+            lock (lifecycleLock)
+            {
+                Interlocked.Increment(ref generation);
+                armedAt = null;
+                pendingSuccess = false;
+                pendingChanged = false;
+                pendingVersion = null;
+                pendingMessage = null;
+                pendingException = null;
+            }
+            Interlocked.Exchange(ref running, 0);
         }
 
         private static string Fetch()

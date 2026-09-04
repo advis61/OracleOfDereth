@@ -247,6 +247,8 @@ namespace OracleOfDereth
             });
 
             ShutdownComponent(() => worldObjectIdentifier?.Dispose());
+            ShutdownComponent(UpdateChecker.Shutdown);
+            ShutdownComponent(QuestCatalogUpdater.Shutdown);
             ShutdownComponent(QuestFlagLookup.Shutdown);
             ShutdownComponent(QuestSubmit.Shutdown);
             ShutdownComponent(VVSBar.Shutdown);
