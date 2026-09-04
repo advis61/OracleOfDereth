@@ -164,6 +164,12 @@ Enable `Delete Other Players' Summons` in Settings, or use `/od deletesummons on
 
 Enable `Delete Other Players' Pets` in Settings, or use `/od deletepets on`.
 
+## Screenshots
+
+Take a screenshot with `/od screenshot` and the filepath will be copied to the windows clipboard.
+
+Use `/od vistashot` to take a screenshot with all UI hidden.
+
 
 ## Details
 

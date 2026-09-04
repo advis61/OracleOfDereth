@@ -20,6 +20,11 @@ namespace OracleOfDereth
         private static FieldInfo hudRendering;
         private static bool restoreHuds;
         private static bool hudWasRendering;
+        private static object imguiManager;
+        private static FieldInfo imguiRendering;
+        private static object goArrow;
+        private static FieldInfo goArrowAlpha;
+        private static int arrowAlpha;
         private static readonly List<(UIElementType Element, IntPtr Address, Point Position, uint Clamp)> clientPanels = new();
         // Same movable panels as UtilityBelt's Client tool. Smartbox is the 3D scene,
         // so it must stay put. Side-by-side vitals is missing from Decal's older enum.
@@ -82,6 +87,69 @@ namespace OracleOfDereth
             hudWasRendering = (bool)hudRendering.GetValue(null);
             restoreHuds = true;
             hudRendering.SetValue(null, false);
+            HideImGui();
+            HideGoArrow();
+        }
+
+        private static void HideGoArrow()
+        {
+            var plugins = typeof(CoreManager).GetField("myPlugins", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(core) as Dictionary<string, PluginBase>;
+            if (plugins == null) return;
+            foreach (var plugin in plugins.Values)
+            {
+                if (plugin.GetType().FullName != "GoArrow.PluginCore") continue;
+                var arrow = plugin.GetType().GetField("mArrowHud", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(plugin);
+                if (arrow == null) return;
+                var alpha = arrow.GetType().GetField("mAlpha", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (alpha?.FieldType != typeof(int))
+                    throw new InvalidOperationException("This GoArrow version does not support screenshot hiding.");
+
+                // The legacy Decal HUD repaints independently of VVS. Suppress its alpha
+                // during repaints too, without firing GoArrow's setting change events.
+                arrowAlpha = (int)alpha.GetValue(arrow);
+                goArrowAlpha = alpha;
+                goArrow = arrow;
+                SetGoArrowAlpha(0);
+                return;
+            }
+        }
+
+        private static void SetGoArrowAlpha(int alpha)
+        {
+            goArrowAlpha.SetValue(goArrow, alpha);
+            var hud = goArrow.GetType().GetField("mHud", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(goArrow)
+                as Decal.Adapter.Wrappers.Hud;
+            if (hud != null) hud.Alpha = alpha;
+        }
+
+        private static void HideImGui()
+        {
+            // Optional: use the loaded service, without requiring UtilityBelt to be installed.
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assembly.GetName().Name != "UtilityBelt.Service") continue;
+                var service = assembly.GetType("UtilityBelt.Service.UBService");
+                var manager = service?.GetField("Huds", BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
+                if (manager == null) return;
+
+                // Service 3.0.11: DoRender returns immediately when didInit is false.
+                // Pause drawing only; keep window visibility and saved layouts intact.
+                var type = manager.GetType();
+                var field = type.GetField("didInit", BindingFlags.NonPublic | BindingFlags.Instance);
+                var render = type.GetMethod("DoRender", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                byte[] il = render?.GetMethodBody()?.GetILAsByteArray();
+                if (field?.FieldType != typeof(bool) || il == null || il.Length < 17 ||
+                    il[0] != 0x02 || il[1] != 0x7b || BitConverter.ToInt32(il, 2) != field.MetadataToken ||
+                    il[6] != 0x2c || il[7] != 8 || il[16] != 0x2a)
+                    throw new InvalidOperationException("This UtilityBelt version does not support screenshot hiding.");
+
+                if (!(bool)field.GetValue(manager)) return;
+                imguiRendering = field;
+                imguiManager = manager;
+                field.SetValue(manager, false);
+                return;
+            }
         }
 
         private static void OnFrame(object sender, EventArgs e) => frames++;
@@ -101,14 +169,15 @@ namespace OracleOfDereth
                 if (core.CharacterFilter.LoginStatus < 1) throw new InvalidOperationException("The character logged out.");
                 using var dpi = new PhysicalPixels();
                 Rectangle bounds = CaptureBounds();
-                string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Oracle of Dereth");
+                string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Asheron's Call");
                 Directory.CreateDirectory(directory);
-                path = Path.Combine(directory, "AC-" + DateTime.Now.ToString("yyyyMMdd-HHmmss-fff") + ".png");
+                path = NextScreenshotPath(directory);
                 using (var bitmap = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format24bppRgb))
                 {
                     using (var graphics = Graphics.FromImage(bitmap))
                         graphics.CopyFromScreen(bounds.Location, Point.Empty, bounds.Size);
-                    bitmap.Save(path, ImageFormat.Png);
+                    using var file = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
+                    bitmap.Save(file, ImageFormat.Jpeg);
                 }
             }
             catch (Exception ex) { error = ex; }
@@ -131,6 +200,17 @@ namespace OracleOfDereth
             }
         }
 
+        internal static string NextScreenshotPath(string directory)
+        {
+            int next = 0;
+            foreach (string file in Directory.EnumerateFiles(directory, "ScreenShot*.jpg"))
+            {
+                string number = Path.GetFileNameWithoutExtension(file).Substring("ScreenShot".Length);
+                if (int.TryParse(number, out int index) && index >= next) next = checked(index + 1);
+            }
+            return Path.Combine(directory, "ScreenShot" + next.ToString("D5") + ".jpg");
+        }
+
         // Also called on portal transitions and plugin shutdown, so a pending capture cannot
         // leave the interface hidden. Restore each system even if the other restore fails.
         public static void Cancel()
@@ -145,6 +225,14 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
             finally
             {
+                try { if (goArrow != null) SetGoArrowAlpha(arrowAlpha); }
+                catch (Exception ex) { Util.Log(ex); }
+                goArrow = null;
+                goArrowAlpha = null;
+                try { if (imguiManager != null) imguiRendering.SetValue(imguiManager, true); }
+                catch (Exception ex) { Util.Log(ex); }
+                imguiManager = null;
+                imguiRendering = null;
                 try { if (restoreHuds) hudRendering.SetValue(null, hudWasRendering); }
                 catch (Exception ex) { Util.Log(ex); }
                 restoreHuds = false;

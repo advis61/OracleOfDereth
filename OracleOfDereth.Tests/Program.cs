@@ -10,6 +10,7 @@ internal static class Program
     private static int Main()
     {
         AssertScreenshotBounds();
+        AssertScreenshotPaths();
         AssertSummonOwnership();
         AssertJson(null, "null");
         AssertJson("", "\"\"");
@@ -450,6 +451,28 @@ internal static class Program
         if (QuestAccountFlag.Count != 1 || !QuestAccountFlag.Contains("onlyonerow"))
             throw new InvalidOperationException("An incomplete /myqstlist response was not reflected in the live account list.");
 
+    }
+
+    private static void AssertScreenshotPaths()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "od-screenshot-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(directory);
+        var nextPath = typeof(Screenshot).GetMethod("NextScreenshotPath", BindingFlags.Static | BindingFlags.NonPublic);
+        string existing = Path.Combine(directory, "ScreenShot00227.jpg");
+        try
+        {
+            if ((string)nextPath.Invoke(null, new object[] { directory }) != Path.Combine(directory, "ScreenShot00000.jpg"))
+                throw new Exception("Unexpected first screenshot filename.");
+            File.WriteAllText(existing, "existing screenshot");
+            if ((string)nextPath.Invoke(null, new object[] { directory }) != Path.Combine(directory, "ScreenShot00228.jpg") ||
+                File.ReadAllText(existing) != "existing screenshot")
+                throw new Exception("Screenshot numbering did not preserve existing client screenshots.");
+        }
+        finally
+        {
+            File.Delete(existing);
+            Directory.Delete(directory);
+        }
     }
 
     private static void AssertScreenshotBounds()
