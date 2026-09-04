@@ -25,6 +25,8 @@ namespace OracleOfDereth
         private static object goArrow;
         private static FieldInfo goArrowAlpha;
         private static int arrowAlpha;
+        private static object skunkRender;
+        private static PropertyInfo skunkEnabled;
         private static readonly List<(UIElementType Element, IntPtr Address, Point Position, uint Clamp)> clientPanels = new();
         // Same movable panels as UtilityBelt's Client tool. Smartbox is the 3D scene,
         // so it must stay put. Side-by-side vitals is missing from Decal's older enum.
@@ -89,6 +91,34 @@ namespace OracleOfDereth
             hudRendering.SetValue(null, false);
             HideImGui();
             HideGoArrow();
+            HideSkunkVision();
+        }
+
+        private static void HideSkunkVision()
+        {
+            var plugins = typeof(CoreManager).GetField("myPlugins", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(core) as Dictionary<string, PluginBase>;
+            if (plugins == null) return;
+            foreach (var plugin in plugins.Values)
+            {
+                if (plugin.GetType().FullName != "SkunkVision_CSharp.Plugin") continue;
+                var wrapper = plugin.GetType().GetField("Render", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    ?.GetValue(plugin);
+                if (wrapper == null) return;
+                var hook = wrapper.GetType().GetField("iRenderHook", BindingFlags.NonPublic | BindingFlags.Instance);
+                var render = hook?.GetValue(wrapper);
+                if (render == null) return;
+                var enabled = hook.FieldType.Assembly.GetType("RenderHookLib.ISVRenderHook")?.GetProperty("fEnabled");
+                if (enabled?.PropertyType != typeof(bool) || !enabled.CanRead || !enabled.CanWrite)
+                    throw new InvalidOperationException("This SkunkVision version does not support screenshot hiding.");
+
+                // Pause the render hook without changing lighting/slope/water settings.
+                if (!(bool)enabled.GetValue(render, null)) return;
+                skunkEnabled = enabled;
+                skunkRender = render;
+                enabled.SetValue(render, false, null);
+                return;
+            }
         }
 
         private static void HideGoArrow()
@@ -227,6 +257,10 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
             finally
             {
+                try { if (skunkRender != null) skunkEnabled.SetValue(skunkRender, true, null); }
+                catch (Exception ex) { Util.Log(ex); }
+                skunkRender = null;
+                skunkEnabled = null;
                 try { if (goArrow != null) SetGoArrowAlpha(arrowAlpha); }
                 catch (Exception ex) { Util.Log(ex); }
                 goArrow = null;
