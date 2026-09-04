@@ -54,23 +54,24 @@ namespace OracleOfDereth
 
             List<string> YesNo = new List<string> { "Yes", "No" };
 
+            // Registration order is the display order; keep these alphabetical by label.
             AnnouncePlayers = Register("Announce Nearby Players", "AnnouncePlayers", YesNo, "Yes");
-            AutoUpdateQuestList = Register("Automatically Update Quest List", "AutoUpdateQuestList", YesNo, "Yes");
-            CheckForUpdates = Register("Check For Updates On Login", "CheckForUpdates", YesNo, "Yes");
-            BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
-            CopyQuestUrl = Register("Copy Quest URL to Clipboard", "CopyQuestUrl", YesNo, "Yes");
+            AutoUpdateQuestList = Register("Check For Quest Updates", "AutoUpdateQuestList", YesNo, "Yes");
+            CheckForUpdates = Register("Check For Updates", "CheckForUpdates", YesNo, "Yes");
             CopyQuestDirections = Register("Copy Quest Directions to Clipboard", "CopyQuestDirections", YesNo, "Yes");
-            OrderDecalPlugins = Register("Order Decal Plugins on Startup", "OrderDecalPlugins", YesNo, "Yes");
-            SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
-            DeleteOtherSummons = Register("Delete Other Players' Summons", "DeleteOtherSummons", YesNo, "No");
+            CopyQuestUrl = Register("Copy Quest URL to Clipboard", "CopyQuestUrl", YesNo, "Yes");
             DeleteOtherPets = Register("Delete Other Players' Pets", "DeleteOtherPets", YesNo, "No");
+            DeleteOtherSummons = Register("Delete Other Players' Summons", "DeleteOtherSummons", YesNo, "No");
+            OrderDecalPlugins = Register("Order Decal Plugins on Startup", "OrderDecalPlugins", YesNo, "Yes");
+            BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
+            SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "NearbyWcid", YesNo, "No");
             WeaponScore = Register("Show Weapon Score", "WeaponScore", YesNo, "Yes");
             ShowWeaponScoreWorkmanship = Register("Show Weapon Score Workmanship", "WeaponScoreWorkmanship", YesNo, "Yes");
+            SuppressPeriodicHealingChat = Register("Suppress Periodic Healing Chat", "SuppressPeriodicHealingChat", YesNo, "Yes");
+            SuppressPluginRefreshChat = Register("Suppress Plugin Refresh Chat", "SuppressPluginRefreshChat", YesNo, "Yes");
             ShowTradeWindow = Register("Use Trade Window", "TradeWindow", YesNo, "Yes");
             VoidTargetWindow = Register("Use Void Target Window", "VoidTargetWindow", YesNo, "Yes");
-            SuppressPluginRefreshChat = Register("Suppress Plugin Refresh Chat", "SuppressPluginRefreshChat", YesNo, "Yes");
-            SuppressPeriodicHealingChat = Register("Suppress Periodic Healing Chat", "SuppressPeriodicHealingChat", YesNo, "Yes");
             WikiSource = Register("Wiki Source", "WikiSource", new List<string> { "Levistras", "ACPedia", "Fandom" }, "Levistras");
         }
 

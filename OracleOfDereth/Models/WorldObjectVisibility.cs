@@ -10,21 +10,6 @@ namespace OracleOfDereth
     // WorldFilter: native deletion can synchronously release objects and invalidate wrappers.
     public static class WorldObjectVisibility
     {
-        private static bool inPortal;
-        private static bool failed;
-
-        public static void Init()
-        {
-            inPortal = false;
-            failed = false;
-        }
-
-        public static void PortalModeChanged(string mode)
-        {
-            if (mode == "EnterPortal") inPortal = true;
-            else if (mode == "ExitPortal") inPortal = false;
-        }
-
         public static void Command(string command)
         {
             bool pets = command == "/od deletepets" || command.StartsWith("/od deletepets ");
@@ -35,7 +20,6 @@ namespace OracleOfDereth
             if (command == prefix + " on" || command == prefix + " off")
             {
                 setting.Value = command == prefix + " on" ? "Yes" : "No";
-                ResetFailure();
             }
             else if (command != prefix)
             {
@@ -43,25 +27,19 @@ namespace OracleOfDereth
                 return;
             }
 
-            Util.Chat($"{setting.Name}: {setting.Value}.{(failed ? " Paused after an error." : "")}", Util.ColorPink);
+            Util.Chat($"{setting.Name}: {setting.Value}.", Util.ColorPink);
 
             if (command == prefix + " off")
                 Util.Chat($"Deletion stopped for {(pets ? "pets" : "summons")}. Already deleted creatures return only when the game reloads them.", Util.ColorPink);
         }
-
-        public static void ResetFailure() => failed = false;
 
         public static void Tick()
         {
             bool summons = Setting.DeleteOtherSummons?.IsYes == true;
             bool pets = Setting.DeleteOtherPets?.IsYes == true;
 
-            if (!summons && !pets)
-            {
-                failed = false;
-                return;
-            }
-            if (inPortal || failed || IntPtr.Size != 4) return;
+            if (!summons && !pets) return;
+            if (IntPtr.Size != 4) return;
 
             var core = CoreManager.Current;
             if (core == null || core.CharacterFilter.LoginStatus < 1) return;
@@ -76,9 +54,7 @@ namespace OracleOfDereth
             }
             catch (Exception ex)
             {
-                failed = true;
                 Util.Log(ex);
-                Util.Chat("Pet and summon deletion stopped after an error. Toggle either setting off and on to retry.", Util.ColorPink);
             }
         }
 

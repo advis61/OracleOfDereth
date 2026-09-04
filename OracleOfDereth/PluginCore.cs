@@ -134,7 +134,6 @@ namespace OracleOfDereth
             // Initialize Settings
             SettingsFile.Init();
             Setting.Init();
-            WorldObjectVisibility.Init();
 
             // Initialize Collection
             Augmentation.Init();
@@ -433,7 +432,6 @@ namespace OracleOfDereth
         {
             try
             {
-                WorldObjectVisibility.PortalModeChanged(e.Type.ToString());
                 ItemCache.Clear();
                 if (e.Type.ToString() == "EnterPortal") { Nearby.ClearObjects(); }
                 Fellowship.NoteZoned();
