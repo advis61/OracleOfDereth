@@ -58,6 +58,7 @@ namespace OracleOfDereth
 
             Setting setting = Setting.All[row];
             setting.CycleValue();
+            if (setting == Setting.DeleteOtherSummons || setting == Setting.DeleteOtherPets) WorldObjectVisibility.ResetFailure();
             if (setting == Setting.ShowWeaponScoreWorkmanship) ItemList.RefreshAll();
             UpdateSettingsList();
 

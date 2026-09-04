@@ -9,6 +9,7 @@ internal static class Program
 {
     private static int Main()
     {
+        AssertSummonOwnership();
         AssertJson(null, "null");
         AssertJson("", "\"\"");
         string quoteSlash = "quote " + (char)34 + " slash " + (char)92;
@@ -447,6 +448,32 @@ internal static class Program
         QuestAccountFlag.Capture("---- End of Account Quests ----");
         if (QuestAccountFlag.Count != 1 || !QuestAccountFlag.Contains("onlyonerow"))
             throw new InvalidOperationException("An incomplete /myqstlist response was not reflected in the live account list.");
+
+    }
+
+    private static void AssertSummonOwnership()
+    {
+        var shouldDelete = typeof(WorldObjectVisibility).GetMethod("ShouldDeletePet", BindingFlags.Static | BindingFlags.NonPublic);
+        const uint player = 0x50000001;
+        foreach (var fixture in new[]
+        {
+            new { Owner = 0u, Player = player, Delete = false }, // ordinary monster / unknown owner
+            new { Owner = player, Player = player, Delete = false }, // own summon
+            new { Owner = player + 1, Player = player, Delete = true }, // other player's summon
+            new { Owner = player, Player = 0u, Delete = false }, // logging out
+            new { Owner = 0xF0000001u, Player = 0xF0000001u, Delete = false },
+            new { Owner = 0xF0000002u, Player = 0xF0000001u, Delete = true }
+        })
+        {
+            if ((bool)shouldDelete.Invoke(null, new object[] { fixture.Owner, fixture.Player }) != fixture.Delete)
+                throw new InvalidOperationException("Summon deletion did not preserve the correct owner.");
+        }
+        Setting.Init();
+        if (Setting.DeleteOtherSummons.DefaultValue != "No" || !Setting.All.Contains(Setting.DeleteOtherSummons))
+            throw new InvalidOperationException("Summon deletion must be opt-in and exposed in Settings.");
+        if (Setting.DeleteOtherPets.DefaultValue != "No" || !Setting.All.Contains(Setting.DeleteOtherPets) ||
+            Setting.DeleteOtherPets.Key == Setting.DeleteOtherSummons.Key)
+            throw new InvalidOperationException("Pet deletion must have its own opt-in setting.");
 
     }
 

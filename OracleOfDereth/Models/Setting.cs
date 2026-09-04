@@ -42,6 +42,8 @@ namespace OracleOfDereth
         public static Setting SuppressPluginRefreshChat;
         public static Setting SuppressPeriodicHealingChat;
         public static Setting SummonScore;
+        public static Setting DeleteOtherSummons;
+        public static Setting DeleteOtherPets;
         public static Setting WeaponScore;
         public static Setting ShowWeaponScoreWorkmanship;
         public static Setting WikiSource;
@@ -60,6 +62,8 @@ namespace OracleOfDereth
             CopyQuestDirections = Register("Copy Quest Directions to Clipboard", "CopyQuestDirections", YesNo, "Yes");
             OrderDecalPlugins = Register("Order Decal Plugins on Startup", "OrderDecalPlugins", YesNo, "Yes");
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
+            DeleteOtherSummons = Register("Delete Other Players' Summons", "DeleteOtherSummons", YesNo, "No");
+            DeleteOtherPets = Register("Delete Other Players' Pets", "DeleteOtherPets", YesNo, "No");
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "NearbyWcid", YesNo, "No");
             WeaponScore = Register("Show Weapon Score", "WeaponScore", YesNo, "Yes");
             ShowWeaponScoreWorkmanship = Register("Show Weapon Score Workmanship", "WeaponScoreWorkmanship", YesNo, "Yes");

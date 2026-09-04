@@ -721,12 +721,12 @@
 				<page label="Help">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="HelpVersion" left="5" top="5" width="540" height="20" />
-						<control progid="DecalControls.List" name="HelpList" left="0" top="30" width="590" height="310">
+						<control progid="DecalControls.List" name="HelpList" left="0" top="30" width="590" height="350">
 							<column progid="DecalControls.TextColumn" name="Command" fixedwidth="220" />
 							<column progid="DecalControls.TextColumn" name="Description" fixedwidth="330" />
 						</control>
-						<control progid="DecalControls.StaticText" name="HelpStatusHeader" left="5" top="347" width="540" height="20" text="Status" />
-						<control progid="DecalControls.List" name="HelpStatusList" left="0" top="368" width="590" height="100">
+						<control progid="DecalControls.StaticText" name="HelpStatusHeader" left="5" top="387" width="540" height="20" text="Status" />
+						<control progid="DecalControls.List" name="HelpStatusList" left="0" top="408" width="590" height="100">
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="220" />
 							<column progid="DecalControls.TextColumn" name="Value" fixedwidth="330" />
 						</control>

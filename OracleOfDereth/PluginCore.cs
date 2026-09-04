@@ -1,4 +1,4 @@
-﻿using Decal.Adapter;
+using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using OracleOfDereth.Models;
 using System;
@@ -134,6 +134,7 @@ namespace OracleOfDereth
             // Initialize Settings
             SettingsFile.Init();
             Setting.Init();
+            WorldObjectVisibility.Init();
 
             // Initialize Collection
             Augmentation.Init();
@@ -202,6 +203,7 @@ namespace OracleOfDereth
                 ItemList.TickAll();
                 Trade.Tick();
                 VVSBar.Tick();
+                WorldObjectVisibility.Tick();
 
                 mainView.Update();
                 targetView.Update();
@@ -275,6 +277,8 @@ namespace OracleOfDereth
                 else if (cmd == "/od exception") { throw new InvalidOperationException("An error occurred."); }
                 else if (cmd == "/od targetdebug") { TargetDebug.Run(); }
                 else if (cmd == "/od vtank") { VTank.Debug(); }
+                else if (cmd == "/od deletesummons" || cmd.StartsWith("/od deletesummons ")) { WorldObjectVisibility.Command(cmd); }
+                else if (cmd == "/od deletepets" || cmd.StartsWith("/od deletepets ")) { WorldObjectVisibility.Command(cmd); }
                 else if (cmd == "/od landblock") { Util.Chat($"Current landblock: {Util.CurrentLandblockHex()} (block 0x{Util.CurrentLandblock():X4})"); }
                 else if (cmd == "/od logout") { CoreManager.Current.Actions.Logout(); }
                 else if (cmd == "/od fellow open") { Fellowship.Open(); }
@@ -429,6 +433,7 @@ namespace OracleOfDereth
         {
             try
             {
+                WorldObjectVisibility.PortalModeChanged(e.Type.ToString());
                 ItemCache.Clear();
                 if (e.Type.ToString() == "EnterPortal") { Nearby.ClearObjects(); }
                 Fellowship.NoteZoned();
