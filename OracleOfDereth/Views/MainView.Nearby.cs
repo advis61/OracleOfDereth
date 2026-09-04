@@ -16,6 +16,7 @@ namespace OracleOfDereth
         public HudCheckBox NearbyFilterOther { get; private set; }
 
         private readonly List<int> NearbyListColumns = new List<int> { 1, 2, 3 };
+        private const string NearbySortSetting = "NearbySort";
         public static Dictionary<string, bool> NearbyListExpanded = new Dictionary<string, bool>();
         private static string LastClickGroup = "";
         private static DateTime LastClickAt = DateTime.MinValue;
@@ -27,6 +28,13 @@ namespace OracleOfDereth
             NearbySort.AddItem("Sort by Distance", "Sort by Distance"); // 1
             NearbySort.AddItem("Sort by Name", "Sort by Name"); // 2
             NearbySort.AddItem("Sort by Relevance", "Sort by Relevance"); // 3
+            if (!Enum.TryParse(SettingsFile.GetSetting(NearbySortSetting, "Relevance"), true, out NearbyItem.SortType savedSort) ||
+                !Enum.IsDefined(typeof(NearbyItem.SortType), savedSort))
+            {
+                savedSort = NearbyItem.SortType.Relevance;
+            }
+            NearbySort.Current = (int)savedSort;
+            NearbyItem.Sort(savedSort);
             NearbySort.Change += NearbySort_Change;
 
             NearbyExpandAll = (HudCheckBox)view["NearbyExpandAll"];
@@ -61,7 +69,9 @@ namespace OracleOfDereth
 
         private void NearbySort_Change(object sender, EventArgs e)
         {
-            NearbyItem.Sort((NearbyItem.SortType)NearbySort.Current);
+            NearbyItem.SortType sort = (NearbyItem.SortType)NearbySort.Current;
+            NearbyItem.Sort(sort);
+            SettingsFile.PutSetting(NearbySortSetting, sort.ToString());
             UpdateNearbyList();
         }
 
