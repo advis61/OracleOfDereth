@@ -107,7 +107,22 @@ namespace OracleOfDereth
             File.Delete(FilePath + ".bak");
             openBundledOnce = true;
             Reload();
+            QuestCatalogUpdater.RecordCurrentVersion();
             Util.Chat("Quest list reset to the bundled catalog. The local quests.csv and its recovery backup were deleted.", Util.ColorPink, "");
+        }
+
+        public static string ContentVersion()
+        {
+            try
+            {
+                using (var reader = UsingBundledList ? OpenEmbeddedCsv() : new StreamReader(FilePath))
+                    return QuestCatalogUpdater.ContentVersion(reader.ReadToEnd());
+            }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
+                return "Unknown";
+            }
         }
 
         public static void Add(QuestFlag flag)

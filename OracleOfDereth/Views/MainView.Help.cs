@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using VirindiViewService.Controls;
@@ -8,6 +9,7 @@ namespace OracleOfDereth
     {
         public HudStaticText HelpVersion { get; private set; }
         public HudList HelpList { get; private set; }
+        public HudList HelpStatusList { get; private set; }
 
         private static readonly List<(string Command, string Description)> HelpCommands = new List<(string, string)>
         {
@@ -33,11 +35,30 @@ namespace OracleOfDereth
             HelpVersion = (HudStaticText)view["HelpVersion"];
             HelpList = (HudList)view["HelpList"];
             HelpList.ClearRows();
+            HelpStatusList = (HudList)view["HelpStatusList"];
+            HelpStatusList.ClearRows();
         }
 
         public void UpdateHelp()
         {
             HelpVersion.Text = $"Oracle of Dereth v{Assembly.GetExecutingAssembly().GetName().Version}";
+
+            string source = QuestCatalog.UsingBundledList ? "Bundled quests.csv" : "Downloaded quests.csv";
+            string installed = FormatTimestamp(QuestCatalogUpdater.InstalledAt());
+            string[,] status =
+            {
+                { "Master quest list version", QuestCatalogUpdater.Version() },
+                { "Installed", installed },
+                { "Last checked", QuestCatalogUpdater.LastChecked().Length > 0 ? FormatTimestamp(QuestCatalogUpdater.LastChecked()) : "Never" },
+                { "Source", source }
+            };
+
+            while (HelpStatusList.RowCount < status.GetLength(0)) HelpStatusList.AddRow();
+            for (int i = 0; i < status.GetLength(0); i++)
+            {
+                ((HudStaticText)HelpStatusList[i][0]).Text = status[i, 0];
+                ((HudStaticText)HelpStatusList[i][1]).Text = status[i, 1];
+            }
 
             // Static content; only build the rows once.
             if (HelpList.RowCount == HelpCommands.Count) return;
@@ -49,6 +70,13 @@ namespace OracleOfDereth
                 ((HudStaticText)row[0]).Text = cmd.Command;
                 ((HudStaticText)row[1]).Text = cmd.Description;
             }
+        }
+
+        private static string FormatTimestamp(string value)
+        {
+            return DateTime.TryParse(value, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime timestamp)
+                ? timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                : "Unknown";
         }
     }
 }
