@@ -133,15 +133,17 @@ namespace OracleOfDereth
                 var manager = service?.GetField("Huds", BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
                 if (manager == null) return;
 
-                // Service 3.0.11: DoRender returns immediately when didInit is false.
+                // DoRender returns immediately when didInit is false. Newer builds add
+                // DisableAllRendering to that guard, moving the return instruction.
                 // Pause drawing only; keep window visibility and saved layouts intact.
                 var type = manager.GetType();
                 var field = type.GetField("didInit", BindingFlags.NonPublic | BindingFlags.Instance);
                 var render = type.GetMethod("DoRender", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 byte[] il = render?.GetMethodBody()?.GetILAsByteArray();
-                if (field?.FieldType != typeof(bool) || il == null || il.Length < 17 ||
+                int returnOffset = il != null && il.Length >= 8 ? 8 + unchecked((sbyte)il[7]) : -1;
+                if (field?.FieldType != typeof(bool) || il == null || il.Length < 8 ||
                     il[0] != 0x02 || il[1] != 0x7b || BitConverter.ToInt32(il, 2) != field.MetadataToken ||
-                    il[6] != 0x2c || il[7] != 8 || il[16] != 0x2a)
+                    il[6] != 0x2c || returnOffset < 8 || returnOffset >= il.Length || il[returnOffset] != 0x2a)
                     throw new InvalidOperationException("This UtilityBelt version does not support screenshot hiding.");
 
                 if (!(bool)field.GetValue(manager)) return;
