@@ -125,7 +125,8 @@ namespace OracleOfDereth
 
         public static void Remove(WorldObject item)
         {
-            if (item != null) Tracked.Remove(item.Id);
+            if (item != null && Tracked.TryGetValue(item.Id, out TrackedObject tracked))
+                tracked.MissedScans = Math.Max(1, tracked.MissedScans);
         }
 
         public static void Tick()

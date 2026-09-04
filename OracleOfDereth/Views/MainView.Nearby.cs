@@ -18,8 +18,6 @@ namespace OracleOfDereth
         private readonly List<int> NearbyListColumns = new List<int> { 1, 2, 3 };
         private const string NearbySortSetting = "NearbySort";
         public static Dictionary<string, bool> NearbyListExpanded = new Dictionary<string, bool>();
-        private static string LastClickGroup = "";
-        private static DateTime LastClickAt = DateTime.MinValue;
 
         private void InitNearby()
         {
@@ -189,11 +187,7 @@ namespace OracleOfDereth
             string id = ((HudStaticText)NearbyList[row][3]).Text;
             if (id == null || id.Length < 1) { return; }
 
-            DateTime now = DateTime.Now;
-            bool doubleClick = (group == LastClickGroup) && ((int)(now - LastClickAt).TotalMilliseconds < 500);
-
-            // Toggle expand / collapse
-            if (group.Length > 0 && (col == 2 || doubleClick))
+            if (group.Length > 0)
             {
                 NearbyListExpanded.TryGetValue(group, out bool expanded);
                 NearbyListExpanded[group] = !expanded;
@@ -201,9 +195,6 @@ namespace OracleOfDereth
                 // Otherwise select item
                 CoreManager.Current.Actions.SelectItem(int.Parse(id));
             }
-
-            LastClickGroup = group;
-            LastClickAt = now;
 
             UpdateNearbyList();
         }
