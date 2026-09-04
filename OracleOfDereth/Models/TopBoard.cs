@@ -39,6 +39,7 @@ namespace OracleOfDereth
         // Read Sorted() to display them — the server splits a block across several chat messages
         // and they don't necessarily arrive in rank order.
         public readonly List<TopPlayer> Players = new List<TopPlayer>();
+        public TopPlayer PersonalRank { get; private set; }
 
         // The players in rank order. Applied at display time rather than on insert so a block
         // that's still arriving reads correctly too.
@@ -86,6 +87,7 @@ namespace OracleOfDereth
             foreach (TopBoard board in All)
             {
                 board.Players.Clear();
+                board.PersonalRank = null;
                 board.LastRefresh = DateTime.MinValue;
             }
 
@@ -146,8 +148,8 @@ namespace OracleOfDereth
         private static TopBoard Collecting;
         private static DateTime CollectingAt = DateTime.MinValue;
 
-        // How many players the header promised. Unknown until it arrives, which is why it can't
-        // be the only thing that ends a block.
+        // How many leaderboard rows the header promised. The server may append an out-of-band
+        // personal row after an ellipsis when the current player is outside that range.
         private static int CollectingExpected = int.MaxValue;
 
         // Whether this block has dropped the board's previous standings yet. Deferred to the
@@ -186,13 +188,17 @@ namespace OracleOfDereth
         private static readonly Regex EntryRegex = new Regex(
             @"^\s*(?:\[[^\]]*\][\s:]*)*(\d+):\s+([\d,]+)\s+-\s+(.+?)\s*$");
 
+        private static readonly Regex SeparatorRegex = new Regex(
+            @"^\s*(?:\[[^\]]*\][\s:]*)*\.\.\.\s*$");
+
         // True when this chat line is part of a "/top" block — lets PluginCore route only the
         // relevant lines here. Gated to Conquest.
         public static bool Matches(string text)
         {
             if (text == null || !Server.IsConquest) return false;
 
-            return HeaderRegex.IsMatch(text) || EntryRegex.IsMatch(text);
+            return HeaderRegex.IsMatch(text) || EntryRegex.IsMatch(text) ||
+                (Active() != null && SeparatorRegex.IsMatch(text));
         }
 
         // Forwarded from PluginCore's chat handler. Returns true when the line was part of a block
@@ -207,6 +213,9 @@ namespace OracleOfDereth
 
             Match entry = EntryRegex.Match(text);
             if (entry.Success) { return NoteEntry(entry); }
+
+            if (SeparatorRegex.IsMatch(text) && Active() != null)
+                return CollectingRequested;
 
             return false;
         }
@@ -231,6 +240,8 @@ namespace OracleOfDereth
             ClearOnce();
 
             CollectingExpected = int.TryParse(header.Groups[1].Value, out int count) ? count : int.MaxValue;
+            if (CollectingExpected != int.MaxValue)
+                Collecting.Players.RemoveAll(p => p.Rank > CollectingExpected);
 
             // Buffered rows belong to this block only if this header is what opened it. A block we
             // requested was already collecting its own rows directly, so anything still buffered
@@ -255,7 +266,7 @@ namespace OracleOfDereth
             bool ours = CollectingRequested;
 
             ClearOnce();
-            Add(player);
+            AddFromBlock(player);
             CloseIfComplete();
 
             return ours;
@@ -301,6 +312,7 @@ namespace OracleOfDereth
             if (CollectingCleared) return;
 
             Collecting.Players.Clear();
+            Collecting.PersonalRank = null;
             CollectingCleared = true;
         }
 
@@ -312,16 +324,27 @@ namespace OracleOfDereth
             Collecting.Players.Add(player);
         }
 
+        private static void AddFromBlock(TopPlayer player)
+        {
+            if (player.Name.EndsWith("(You)", StringComparison.OrdinalIgnoreCase))
+                Collecting.PersonalRank = player;
+            if (player.Rank <= CollectingExpected) Add(player);
+        }
+
         private static void CloseIfComplete()
         {
-            if (Collecting.Players.Count >= CollectingExpected) { EndBlock(); }
+            if (Collecting.Players.Count < CollectingExpected) return;
+
+            // Keep the block open until the server identifies the current player's rank, either
+            // within the advertised rows or in the additional row after the ellipsis.
+            if (Collecting.PersonalRank != null) EndBlock();
         }
 
         private static void AdoptOrphans()
         {
             if (DateTime.UtcNow - OrphansAt <= OrphanWindow)
             {
-                foreach (TopPlayer player in Orphans) { Add(player); }
+                foreach (TopPlayer player in Orphans) { AddFromBlock(player); }
             }
 
             Orphans.Clear();

@@ -40,6 +40,7 @@ namespace OracleOfDereth
         public static Setting ShowTradeWindow;
         public static Setting VoidTargetWindow;
         public static Setting SuppressPluginRefreshChat;
+        public static Setting SuppressPeriodicHealingChat;
         public static Setting SummonScore;
         public static Setting WeaponScore;
         public static Setting ShowWeaponScoreWorkmanship;
@@ -65,6 +66,7 @@ namespace OracleOfDereth
             ShowTradeWindow = Register("Use Trade Window", "TradeWindow", YesNo, "Yes");
             VoidTargetWindow = Register("Use Void Target Window", "VoidTargetWindow", YesNo, "Yes");
             SuppressPluginRefreshChat = Register("Suppress Plugin Refresh Chat", "SuppressPluginRefreshChat", YesNo, "Yes");
+            SuppressPeriodicHealingChat = Register("Suppress Periodic Healing Chat", "SuppressPeriodicHealingChat", YesNo, "Yes");
             WikiSource = Register("Wiki Source", "WikiSource", new List<string> { "Levistras", "ACPedia", "Fandom" }, "Levistras");
         }
 

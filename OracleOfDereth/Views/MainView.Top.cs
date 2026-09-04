@@ -99,7 +99,10 @@ namespace OracleOfDereth
             // Refresh button says so — the heading stays put.
             if (view.Visible && page.Board.RefreshIfStale()) { FlashButton(page.Refresh); }
 
-            SetText(page.Heading, page.HeadingText);
+            string heading = page.Board.PersonalRank == null
+                ? page.HeadingText
+                : $"{page.HeadingText} - You #{page.Board.PersonalRank.Rank}";
+            SetText(page.Heading, heading);
 
             UpdateTopList(page);
         }
