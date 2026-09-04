@@ -1,8 +1,10 @@
 ﻿# Oracle Of Dereth
 
+![Downloads Count](https://img.shields.io/github/downloads/advis61/OracleOfDereth/total)
+
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
-Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/2.0.0/OracleOfDerethInstaller-2.0.0.0.exe)
+Download the latest version: [Download Oracle of Dereth](https://github.com/advis61/OracleOfDereth/releases/download/2.1.0/OracleOfDerethInstaller-2.1.0.0.exe)
 
 To upgrade from a previous version, just download and re-run the .exe file.
 
