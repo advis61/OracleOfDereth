@@ -1,6 +1,6 @@
-﻿# Oracle Of Dereth
+﻿![Downloads Count](https://img.shields.io/github/downloads/advis61/OracleOfDereth/total)
 
-![Downloads Count](https://img.shields.io/github/downloads/advis61/OracleOfDereth/total)
+# Oracle Of Dereth
 
 An [Asheron's Call](https://emulator.ac/how-to-play/) [Decal](https://decaldev.com/) plugin.
 
