@@ -47,6 +47,8 @@ namespace OracleOfDereth
 
             foreach (WorldObject worldObject in Nearby.Objects) {
                 if (worldObject.Container != 0) continue;
+                // Match the ammo classification used by ItemInfo and ItemList.
+                if (worldObject.ObjectClass == ObjectClass.MissileWeapon && worldObject.Values(LongValueKey.StackMax, 0) > 0) continue;
                 if (string.IsNullOrWhiteSpace(worldObject.Name)) continue;
                 if (worldObject.Icon == 8384) continue; // Bugged item
                 if (worldObject.Id == myId && !Fellowship.IsInFellowship()) continue;
@@ -60,9 +62,9 @@ namespace OracleOfDereth
             switch (CurrentSortType)
             {
                 case SortType.Relevance:
-                    var groupCounts = items.GroupBy(i => i.GroupKey(), StringComparer.OrdinalIgnoreCase)
+                    var nameCounts = items.GroupBy(i => i.Item.Name, StringComparer.OrdinalIgnoreCase)
                         .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
-                    return items.OrderByDescending(i => i.Relevance(groupCounts[i.GroupKey()] == 1))
+                    return items.OrderByDescending(i => i.Relevance(nameCounts[i.Item.Name] == 1))
                         .ThenBy(i => i.Distance()).ThenBy(i => i.Item.Name).ToList();
                 case SortType.Name:
                     return items.OrderBy(i => i.FellowshipName()).ThenBy(i => i.Item.Name).ThenBy(i => i.Distance()).ToList();
@@ -99,12 +101,15 @@ namespace OracleOfDereth
             else if (IsMarker()) score += 450;
             else if (IsNpc() || IsVendor()) score += 180;
             else if (IsPortal()) score += 120;
-            else if (IsCorpse()) score -= 100;
+            else if (IsCorpse()) score -= uniqueName ? 300 : 600;
             else score += 300;
 
-            string name = Item.Name.ToLowerInvariant();
-            if (new[] { "lever", "switch", "button", "pedestal", "altar" }.Any(name.Contains)) score += 900;
-            if (new[] { "key", "gate", "door", "cache", "crystal", "orb", "idol", "fragment" }.Any(name.Contains)) score += 650;
+            if (!IsPlayer() && !IsMonster() && !IsCorpse())
+            {
+                string name = Item.Name.ToLowerInvariant();
+                if (new[] { "lever", "switch", "button", "pedestal", "altar" }.Any(name.Contains)) score += 900;
+                if (new[] { "key", "gate", "door", "cache", "crystal", "orb", "idol", "fragment" }.Any(name.Contains)) score += 650;
+            }
 
             if (!IsPlayer() && !IsMonster() && !IsCorpse() && age > 60)
                 score -= Math.Min(500, (age - 60) * 2);
