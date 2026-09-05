@@ -78,6 +78,11 @@
       <HintPath>..\deps\Decal.Interop.Core.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
+    <!-- Optional at runtime; supplied by the user's Virindi Hotkey System installation. -->
+    <Reference Include="VirindiHotkeySystem">
+      <HintPath>..\deps\VirindiHotkeySystem.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="VirindiViewService">
       <HintPath>..\deps\VirindiViewService.dll</HintPath>
       <Private>False</Private>

@@ -170,6 +170,8 @@ Take a screenshot with `/od screenshot` and the filepath will be copied to the w
 
 Use `/od vistashot` to take a screenshot with all UI hidden.
 
+You can also bind **OracleDereth → Vista Shot** in Virindi Hotkey System. No key is assigned by default.
+
 
 ## Details
 

@@ -171,6 +171,9 @@ namespace OracleOfDereth
             targetView = new TargetView();
             tradeView = new TradeView();
 
+            // Initialize Other
+            VHotkeys.Init();
+
             // Initialize 1second update timer
             timer = new WindowsTimer();
             timer.Tick += new EventHandler(Tick);
@@ -248,6 +251,7 @@ namespace OracleOfDereth
             });
 
             ShutdownComponent(() => worldObjectIdentifier?.Dispose());
+            ShutdownComponent(VHotkeys.Shutdown);
             ShutdownComponent(Screenshot.Cancel);
             ShutdownComponent(UpdateChecker.Shutdown);
             ShutdownComponent(QuestCatalogUpdater.Shutdown);
