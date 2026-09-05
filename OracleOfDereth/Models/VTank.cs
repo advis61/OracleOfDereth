@@ -101,8 +101,7 @@ namespace OracleOfDereth
 
             if (_macroEnabled == null)
             {
-                _macroEnabled = typeof(uTank2.PluginCore).GetProperty(
-                    "MacroEnabled", BindingFlags.NonPublic | BindingFlags.Instance);
+                _macroEnabled = typeof(uTank2.PluginCore).GetProperty("MacroEnabled", BindingFlags.NonPublic | BindingFlags.Instance);
             }
 
             // A rename or removal in some future VTank lands here rather than throwing.
@@ -120,8 +119,7 @@ namespace OracleOfDereth
             MethodInfo m;
             if (!_methods.TryGetValue(name, out m) || m == null)
             {
-                m = typeof(uTank2.PluginCore).GetMethod(
-                    name, BindingFlags.NonPublic | BindingFlags.Instance, null, System.Type.EmptyTypes, null);
+                m = typeof(uTank2.PluginCore).GetMethod(name, BindingFlags.NonPublic | BindingFlags.Instance, null, System.Type.EmptyTypes, null);
                 _methods[name] = m;
             }
 
@@ -140,17 +138,13 @@ namespace OracleOfDereth
             System.Type lookup = typeof(uTank2.PluginCore).Assembly.GetType(SettingLookupType);
             if (lookup == null) return false;
 
-            MethodInfo find = lookup.GetMethod(
-                SettingLookupMethod, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
-                null, new[] { typeof(string) }, null);
+            MethodInfo find = lookup.GetMethod(SettingLookupMethod, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static, null, new[] { typeof(string) }, null);
             if (find == null) return false;
 
             object setting = find.Invoke(null, new object[] { name });
             if (setting == null) return false;
 
-            MethodInfo read = setting.GetType().GetMethod(
-                SettingValueMethod, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
-                null, System.Type.EmptyTypes, null);
+            MethodInfo read = setting.GetType().GetMethod(SettingValueMethod, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, null, System.Type.EmptyTypes, null);
             if (read == null) return false;
 
             return read.Invoke(setting, null) is bool value && value;
