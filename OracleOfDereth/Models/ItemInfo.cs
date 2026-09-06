@@ -16,67 +16,56 @@ namespace OracleOfDereth
         // Constructor & Internal State
         // ============================================================
 
-        public readonly Item wo;
-
-        private readonly List<int> activeSpells = new List<int>();
-        private readonly List<int> innateSpells = new List<int>();
-        private readonly Dictionary<int, int> intValues = new Dictionary<int, int>();
-        private readonly Dictionary<int, double> doubleValues = new Dictionary<int, double>();
+        public readonly Item item;
 
         public ItemInfo(WorldObject worldObject) : this(new Item(worldObject)) { }
 
-        public ItemInfo(Item worldObject)
+        public ItemInfo(Item item)
         {
-            wo = worldObject ?? throw new ArgumentNullException(nameof(worldObject));
-
-            foreach (var key in wo.LongKeys) intValues[key] = wo.Values((LongValueKey)key);
-            foreach (var key in wo.DoubleKeys) doubleValues[key] = wo.Values((DoubleValueKey)key);
-
-            for (int i = 0; i < wo.ActiveSpellCount; i++) activeSpells.Add(wo.ActiveSpell(i));
-            for (int i = 0; i < wo.SpellCount; i++) innateSpells.Add(wo.Spell(i));
+            this.item = item ?? throw new ArgumentNullException(nameof(item));
         }
 
         // ============================================================
         // Type Detection
         // ============================================================
 
-        public bool IsWeapon => wo.ObjectClass == ObjectClass.MeleeWeapon || wo.ObjectClass == ObjectClass.MissileWeapon || wo.ObjectClass == ObjectClass.WandStaffOrb;
-        public bool IsArmorClothing => (wo.ObjectClass == ObjectClass.Armor || wo.ObjectClass == ObjectClass.Clothing) && !IsCloak;
-        public bool IsJewelry => wo.ObjectClass == ObjectClass.Jewelry;
-        public bool IsCloak => wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
-        public bool IsSummon => wo.ObjectClass == ObjectClass.Misc && wo.Values(LongValueKey.UsesTotal) == 50 && (wo.Name.EndsWith("Essence") || wo.Name.Contains("Essence ("));
-        public bool IsAetheria => wo.Name == "Aetheria";
-        public bool IsRare => wo.Values((LongValueKey)218103850, 0) == 23308;
-        public bool IsSalvage => wo.ObjectClass == ObjectClass.Salvage;
-        public bool IsHealingKit => wo.ObjectClass == ObjectClass.HealingKit;
-        public bool IsManaStone => wo.ObjectClass == ObjectClass.ManaStone;
+        public bool IsWeapon => item.ObjectClass == ObjectClass.MeleeWeapon || item.ObjectClass == ObjectClass.MissileWeapon || item.ObjectClass == ObjectClass.WandStaffOrb;
+        public bool IsArmorClothing => (item.ObjectClass == ObjectClass.Armor || item.ObjectClass == ObjectClass.Clothing) && !IsCloak;
+        public bool IsJewelry => item.ObjectClass == ObjectClass.Jewelry;
+        public bool IsCloak => item.ObjectClass == ObjectClass.Clothing && item.Values(LongValueKey.EquipableSlots, 0) == 0x8000000;
+        public bool IsSummon => item.ObjectClass == ObjectClass.Misc && item.Values(LongValueKey.UsesTotal) == 50 && (item.Name.EndsWith("Essence") || item.Name.Contains("Essence ("));
+        public bool IsAetheria => item.Name == "Aetheria";
+        public bool IsRare => item.Values((LongValueKey)218103850, 0) == 23308;
+        public bool IsSalvage => item.ObjectClass == ObjectClass.Salvage;
+        public bool IsHealingKit => item.ObjectClass == ObjectClass.HealingKit;
+        public bool IsManaStone => item.ObjectClass == ObjectClass.ManaStone;
         // Aetheria is also ObjectClass.Gem but is worn rather than used up, so it's not a "gem" here.
-        public bool IsGem => wo.ObjectClass == ObjectClass.Gem && !IsAetheria;
-        public bool IsFoolproof => wo.Name.EndsWith(" Foolproof");
+        public bool IsGem => item.ObjectClass == ObjectClass.Gem && !IsAetheria;
+        public bool IsFoolproof => item.Name.EndsWith(" Foolproof");
         // Only underwear shirts/pants count as "clothing" — the no-armor-level pieces in the
         // ChestWear (0x02) / UpperLegWear (0x40) slots, i.e. the ones that carry damage ratings
         // (matches the Underclothing block in GetSlotName). Every other ObjectClass.Clothing item
         // (different equip slots, or any armor level) classifies as Armor instead.
-        public bool IsClothing => wo.ObjectClass == ObjectClass.Clothing
+        public bool IsClothing => item.ObjectClass == ObjectClass.Clothing
             && !IsCloak
-            && wo.Values(LongValueKey.ArmorLevel, 0) == 0
-            && (wo.Values(LongValueKey.EquipableSlots, 0) & (0x02 | 0x40)) != 0;
-        public bool IsAmmo => (wo.ObjectClass == ObjectClass.MissileWeapon) && (wo.Values(LongValueKey.StackMax, 0) > 0);
+            && item.Values(LongValueKey.ArmorLevel, 0) == 0
+            && (item.Values(LongValueKey.EquipableSlots, 0) & (0x02 | 0x40)) != 0;
+        public bool IsAmmo => (item.ObjectClass == ObjectClass.MissileWeapon) && (item.Values(LongValueKey.StackMax, 0) > 0);
 
         // ============================================================
         // Identity: Name, Material, Slot, ObjectClass
         // ============================================================
 
-        public string GetObjectClassName() => wo.ObjectClass.ToString();
+        public string GetObjectClassName() => item.ObjectClass.ToString();
 
-        public string GetFullDescription() => wo.Values(StringValueKey.FullDescription, "");
+        public string GetFullDescription() => item.Values(StringValueKey.FullDescription, "");
 
         // Salvage isn't appraised (its tinker use is fixed per material), so look the description
         // up from a hardcoded table keyed by Material — which is available without an identify.
         public string GetSalvageDescriptionString()
         {
             if (!IsSalvage) return "";
-            if (SalvageDescriptionInfo.TryGetValue(wo.Values(LongValueKey.Material, 0), out string desc)) return desc;
+            if (SalvageDescriptionInfo.TryGetValue(item.Values(LongValueKey.Material, 0), out string desc)) return desc;
             return "";
         }
 
@@ -86,7 +75,7 @@ namespace OracleOfDereth
         public string GetSalvageTinkerSkillString()
         {
             if (!IsSalvage) return "";
-            if (SalvageTinkerSkillInfo.TryGetValue(wo.Values(LongValueKey.Material, 0), out string skill)) return skill;
+            if (SalvageTinkerSkillInfo.TryGetValue(item.Values(LongValueKey.Material, 0), out string skill)) return skill;
             return "Unknown Tink";
         }
 
@@ -99,10 +88,10 @@ namespace OracleOfDereth
 
             var parts = new List<string>();
 
-            int skill = wo.Values(LongValueKey.HealKitSkillBonus, 0);
+            int skill = item.Values(LongValueKey.HealKitSkillBonus, 0);
             if (skill != 0) parts.Add((skill > 0 ? "+" : "") + skill + " Skill");
 
-            double restore = wo.Values(DoubleValueKey.HealingKitRestoreBonus, 0);
+            double restore = item.Values(DoubleValueKey.HealingKitRestoreBonus, 0);
             if (restore > 0) parts.Add("+" + Math.Round(restore * 100) + "% Bonus");
 
             return string.Join(" | ", parts);
@@ -117,10 +106,10 @@ namespace OracleOfDereth
 
             var parts = new List<string>();
 
-            double efficiency = wo.Values(DoubleValueKey.ManaTransferEfficiency, 0);
+            double efficiency = item.Values(DoubleValueKey.ManaTransferEfficiency, 0);
             if (efficiency > 0) parts.Add((efficiency * 100).ToString("0.#") + "% Efficient");
 
-            double destruct = wo.Values(DoubleValueKey.ManaStoneChanceDestruct, 0);
+            double destruct = item.Values(DoubleValueKey.ManaStoneChanceDestruct, 0);
             if (destruct > 0) parts.Add((destruct * 100).ToString("0.#") + "% Chance");
 
             return string.Join(" | ", parts);
@@ -131,21 +120,21 @@ namespace OracleOfDereth
         public string GetGemUseString()
         {
             if (!IsGem) return "";
-            return wo.Values(BoolValueKey.UnlimitedUses) ? "Unlimited Use" : "Single Use";
+            return item.Values(BoolValueKey.UnlimitedUses) ? "Unlimited Use" : "Single Use";
         }
 
         public string GetMaterial()
         {
-            if (wo.Values(LongValueKey.Material) <= 0) return "";
-            if (MaterialInfo.TryGetValue(wo.Values(LongValueKey.Material), out string mat)) return mat;
-            return "Unknown Material " + wo.Values(LongValueKey.Material);
+            if (item.Values(LongValueKey.Material) <= 0) return "";
+            if (MaterialInfo.TryGetValue(item.Values(LongValueKey.Material), out string mat)) return mat;
+            return "Unknown Material " + item.Values(LongValueKey.Material);
         }
 
         public string GetName()
         {
             string material = GetMaterial();
-            if (material.Length > 0) return material + " " + wo.Name;
-            return wo.Name;
+            if (material.Length > 0) return material + " " + item.Name;
+            return item.Name;
         }
 
         public string GetItemSlotName()
@@ -157,19 +146,19 @@ namespace OracleOfDereth
             if (IsSummon) return "Summon";
             if (IsRare) return "Rare";
             if (IsFoolproof) return "Foolproof";
-            if (wo.ObjectClass == ObjectClass.SpellComponent) return "Component";
-            if (wo.ObjectClass == ObjectClass.CraftedFletching) return "Fletching";
-            if (wo.ObjectClass == ObjectClass.CraftedAlchemy) return "Alchemy";
-            if (wo.ObjectClass == ObjectClass.CraftedCooking) return "Cooking";
-            if (wo.ObjectClass == ObjectClass.BaseCooking) return "Cooking";
-            return wo.ObjectClass.ToString();
+            if (item.ObjectClass == ObjectClass.SpellComponent) return "Component";
+            if (item.ObjectClass == ObjectClass.CraftedFletching) return "Fletching";
+            if (item.ObjectClass == ObjectClass.CraftedAlchemy) return "Alchemy";
+            if (item.ObjectClass == ObjectClass.CraftedCooking) return "Cooking";
+            if (item.ObjectClass == ObjectClass.BaseCooking) return "Cooking";
+            return item.ObjectClass.ToString();
         }
 
         public string GetWeaponTypeName()
         {
             // Casters don't map cleanly onto the weapon-skill switch (GetWeaponSkill forces
             // unknown casters to War), so classify them from their wield req / element instead.
-            if (wo.ObjectClass == ObjectClass.WandStaffOrb) return GetCasterSchoolName();
+            if (item.ObjectClass == ObjectClass.WandStaffOrb) return GetCasterSchoolName();
 
             int skill = GetWeaponSkill();
             switch (skill)
@@ -191,9 +180,9 @@ namespace OracleOfDereth
         // A non-skill wield requirement (e.g. level only) with no element is a "No Wield" caster.
         private string GetCasterSchoolName()
         {
-            if (wo.Values(LongValueKey.WieldReqType, 0) == 2)
+            if (item.Values(LongValueKey.WieldReqType, 0) == 2)
             {
-                switch (wo.Values(LongValueKey.WieldReqAttribute, 0))
+                switch (item.Values(LongValueKey.WieldReqAttribute, 0))
                 {
                     case 34: return "War";    // War Magic
                     case 33: return "Life";   // Life Magic
@@ -201,11 +190,11 @@ namespace OracleOfDereth
                 }
             }
 
-            if ((wo.Values(LongValueKey.WandElemDmgType, 0) & 1024) != 0) return "Nether";
+            if ((item.Values(LongValueKey.WandElemDmgType, 0) & 1024) != 0) return "Nether";
 
             // Appraised, but no magic-skill wield req and no element — a plain no-wield caster
             // (e.g. focusing stones, level-gated sceptres).
-            if (wo.HasIdData) return "No Wield";
+            if (item.HasIdData) return "No Wield";
 
             // Not appraised yet — fall back to a name-based guess.
             return GuessWeaponTypeFromName();
@@ -220,17 +209,17 @@ namespace OracleOfDereth
         // Ken) don't hit inside other words.
         public string GuessWeaponTypeFromName()
         {
-            string name = wo.Name ?? "";
+            string name = item.Name ?? "";
 
-            if (wo.ObjectClass == ObjectClass.WandStaffOrb)
+            if (item.ObjectClass == ObjectClass.WandStaffOrb)
                 return NetherCasterRegex.IsMatch(name) ? "Nether" : "War";
 
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon)
+            if (item.ObjectClass == ObjectClass.MeleeWeapon)
             {
                 // Two-handers are certain from the equip slot (the game uses it to
                 // block the shield slot), so don't name-guess them — some two-hand
                 // maces/etc. share keywords with one-handed types.
-                if ((wo.Values(LongValueKey.EquipableSlots, 0) & 0x02000000) != 0) return "Two Hand";
+                if ((item.Values(LongValueKey.EquipableSlots, 0) & 0x02000000) != 0) return "Two Hand";
 
                 if (HeavyWeaponRegex.IsMatch(name)) return "Heavy";
                 if (FinesseWeaponRegex.IsMatch(name)) return "Finesse";
@@ -238,7 +227,7 @@ namespace OracleOfDereth
                 return "Melee";   // melee weapon whose name we don't recognise yet
             }
 
-            if (wo.ObjectClass == ObjectClass.MissileWeapon)
+            if (item.ObjectClass == ObjectClass.MissileWeapon)
             {
                 if (CrossbowRegex.IsMatch(name)) return "Crossbow";
                 if (ThrownRegex.IsMatch(name)) return "Thrown";
@@ -271,18 +260,18 @@ namespace OracleOfDereth
 
         public string GetSlotName()
         {
-            int slots = wo.Values(LongValueKey.EquipableSlots, 0);
-            int coverage = wo.Values(LongValueKey.Coverage, 0);
+            int slots = item.Values(LongValueKey.EquipableSlots, 0);
+            int coverage = item.Values(LongValueKey.Coverage, 0);
 
             // Underclothing (no armor level)
-            if (wo.ObjectClass == ObjectClass.Clothing && wo.Values(LongValueKey.ArmorLevel, 0) == 0)
+            if (item.ObjectClass == ObjectClass.Clothing && item.Values(LongValueKey.ArmorLevel, 0) == 0)
             {
                 if ((slots & 0x02) != 0) return "Shirt";
                 if ((slots & 0x40) != 0) return "Pants";
             }
 
             // Jewelry — try EquipableSlots, then fall back to name
-            if (wo.ObjectClass == ObjectClass.Jewelry)
+            if (item.ObjectClass == ObjectClass.Jewelry)
             {
                 // EquipMask values from AC EquipMask enum
                 if ((slots & 0xC0000) != 0) return "Ring";         // FingerWearLeft | FingerWearRight
@@ -291,7 +280,7 @@ namespace OracleOfDereth
                 if ((slots & 0x4000000) != 0) return "Trinket";    // TrinketOne
 
                 // Fallback to name
-                string name = wo.Name.ToLower();
+                string name = item.Name.ToLower();
                 if (name.Contains("ring") || name.Contains("band") || name.Contains("signet")) return "Ring";
                 if (name.Contains("bracelet")) return "Bracelet";
                 if (name.Contains("necklace") || name.Contains("gorget") || name.Contains("amulet") || name.Contains("pendant") || name.Contains("choker") || name.Contains("locket")) return "Necklace";
@@ -385,9 +374,9 @@ namespace OracleOfDereth
 
         public string GetMasteryString()
         {
-            if (wo.Values((LongValueKey)353) <= 0) return "";
-            if (MasteryInfo.TryGetValue(wo.Values((LongValueKey)353), out string mastery)) return mastery;
-            return "Unknown Mastery " + wo.Values((LongValueKey)353);
+            if (item.Values((LongValueKey)353) <= 0) return "";
+            if (MasteryInfo.TryGetValue(item.Values((LongValueKey)353), out string mastery)) return mastery;
+            return "Unknown Mastery " + item.Values((LongValueKey)353);
         }
 
         // ============================================================
@@ -397,7 +386,7 @@ namespace OracleOfDereth
         /// <summary>Returns the full set name as stored (e.g. "Adept's Set").</summary>
         public string GetFullSetName()
         {
-            int set = wo.Values((LongValueKey)265, 0);
+            int set = item.Values((LongValueKey)265, 0);
             if (set == 0) return "";
             if (AttributeSetInfo.TryGetValue(set, out string setName)) return setName;
             return "Unknown Set";
@@ -406,7 +395,7 @@ namespace OracleOfDereth
         /// <summary>Returns a shortened set name for display (e.g. "Adept").</summary>
         public string GetSetName()
         {
-            int set = wo.Values((LongValueKey)265, 0);
+            int set = item.Values((LongValueKey)265, 0);
             if (set != 0 && AttributeSetInfo.TryGetValue(set, out string setName))
             {
                 if (setName.Contains("Perfect Light")) return "Perfect Light";
@@ -419,7 +408,7 @@ namespace OracleOfDereth
         // Armor
         // ============================================================
 
-        public int GetArmorLevel() => wo.Values(LongValueKey.ArmorLevel, 0);
+        public int GetArmorLevel() => item.Values(LongValueKey.ArmorLevel, 0);
 
         public string GetArmorLevelString()
         {
@@ -429,30 +418,30 @@ namespace OracleOfDereth
 
         public string GetProtectionsString()
         {
-            if (wo.ObjectClass != ObjectClass.Armor || wo.Values(LongValueKey.Unenchantable, 0) == 0) return "";
+            if (item.ObjectClass != ObjectClass.Armor || item.Values(LongValueKey.Unenchantable, 0) == 0) return "";
 
             return "[" +
-                wo.Values(DoubleValueKey.SlashProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.PierceProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.BludgeonProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.ColdProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.FireProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.AcidProt).ToString("N1") + "/" +
-                wo.Values(DoubleValueKey.LightningProt).ToString("N1") + "]";
+                item.Values(DoubleValueKey.SlashProt).ToString("N1") + "/" +
+                item.Values(DoubleValueKey.PierceProt).ToString("N1") + "/" +
+                item.Values(DoubleValueKey.BludgeonProt).ToString("N1") + "/" +
+                item.Values(DoubleValueKey.ColdProt).ToString("N1") + "/" +
+                item.Values(DoubleValueKey.FireProt).ToString("N1") + "/" +
+                item.Values(DoubleValueKey.AcidProt).ToString("N1") + "/" +
+                item.Values(DoubleValueKey.LightningProt).ToString("N1") + "]";
         }
 
         // ============================================================
         // Ratings
         // ============================================================
 
-        public int RatingDamage => wo.Values((LongValueKey)370);
-        public int RatingDamageResist => wo.Values((LongValueKey)371);
-        public int RatingCrit => wo.Values((LongValueKey)372);
-        public int RatingCritResist => wo.Values((LongValueKey)373);
-        public int RatingCritDamage => wo.Values((LongValueKey)374);
-        public int RatingCritDamageResist => wo.Values((LongValueKey)375);
-        public int RatingHealBoost => wo.Values((LongValueKey)376);
-        public int RatingVitality => wo.Values((LongValueKey)379);
+        public int RatingDamage => item.Values((LongValueKey)370);
+        public int RatingDamageResist => item.Values((LongValueKey)371);
+        public int RatingCrit => item.Values((LongValueKey)372);
+        public int RatingCritResist => item.Values((LongValueKey)373);
+        public int RatingCritDamage => item.Values((LongValueKey)374);
+        public int RatingCritDamageResist => item.Values((LongValueKey)375);
+        public int RatingHealBoost => item.Values((LongValueKey)376);
+        public int RatingVitality => item.Values((LongValueKey)379);
 
         public string GetRatingsString()
         {
@@ -481,9 +470,9 @@ namespace OracleOfDereth
             if (IsEquipped && !AssumeFullBuffs) return null;
 
             int? result = null;
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon) result = GetMeleeOD();
-            else if (wo.ObjectClass == ObjectClass.MissileWeapon) result = GetMissileOD();
-            else if (wo.ObjectClass == ObjectClass.WandStaffOrb) result = GetCasterOD();
+            if (item.ObjectClass == ObjectClass.MeleeWeapon) result = GetMeleeOD();
+            else if (item.ObjectClass == ObjectClass.MissileWeapon) result = GetMissileOD();
+            else if (item.ObjectClass == ObjectClass.WandStaffOrb) result = GetCasterOD();
 
             if (result != null && (result < -15 || result > 30)) return null;
 
@@ -493,7 +482,7 @@ namespace OracleOfDereth
         public int? GetOAValue()
         {
             if (IsEquipped && !AssumeFullBuffs) return null;
-            if (wo.ObjectClass != ObjectClass.MeleeWeapon) return null;
+            if (item.ObjectClass != ObjectClass.MeleeWeapon) return null;
 
             int? result = GetMeleeOA();
             if (result != null && (result < -15 || result > 30)) return null;
@@ -606,7 +595,7 @@ namespace OracleOfDereth
         {
             if (!IsWeapon) return "";
 
-            int dt = wo.ObjectClass == ObjectClass.WandStaffOrb ? wo.Values(LongValueKey.WandElemDmgType, 0) : wo.Values(LongValueKey.DamageType, 0);
+            int dt = item.ObjectClass == ObjectClass.WandStaffOrb ? item.Values(LongValueKey.WandElemDmgType, 0) : item.Values(LongValueKey.DamageType, 0);
 
             if ((dt & 1) != 0) return "Slash";
             if ((dt & 2) != 0) return "Pierce";
@@ -625,22 +614,22 @@ namespace OracleOfDereth
 
         public double GetWeaponDamageLow()
         {
-            if (wo.Values(LongValueKey.MaxDamage) == 0) return 0;
-            if (wo.Values(DoubleValueKey.Variance) == 0) return wo.Values(LongValueKey.MaxDamage);
-            return wo.Values(LongValueKey.MaxDamage) - (wo.Values(LongValueKey.MaxDamage) * wo.Values(DoubleValueKey.Variance));
+            if (item.Values(LongValueKey.MaxDamage) == 0) return 0;
+            if (item.Values(DoubleValueKey.Variance) == 0) return item.Values(LongValueKey.MaxDamage);
+            return item.Values(LongValueKey.MaxDamage) - (item.Values(LongValueKey.MaxDamage) * item.Values(DoubleValueKey.Variance));
         }
 
-        public int GetWeaponDamageHigh() => wo.Values(LongValueKey.MaxDamage, 0);
-        public int GetElementalDamageBonus() => wo.Values(LongValueKey.ElementalDmgBonus, 0);
-        public double GetDamageBonusPct() => Math.Round(((wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100));
-        public double GetElementalDamageVsMonsters() => Math.Round(((wo.Values(DoubleValueKey.ElementalDamageVersusMonsters, 1) - 1) * 100));
+        public int GetWeaponDamageHigh() => item.Values(LongValueKey.MaxDamage, 0);
+        public int GetElementalDamageBonus() => item.Values(LongValueKey.ElementalDmgBonus, 0);
+        public double GetDamageBonusPct() => Math.Round(((item.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100));
+        public double GetElementalDamageVsMonsters() => Math.Round(((item.Values(DoubleValueKey.ElementalDamageVersusMonsters, 1) - 1) * 100));
 
         public string GetDamageString()
         {
             var parts = new List<string>();
             int high = GetWeaponDamageHigh();
 
-            if (high != 0 && wo.Values(DoubleValueKey.Variance) != 0)
+            if (high != 0 && item.Values(DoubleValueKey.Variance) != 0)
                 parts.Add(GetWeaponDamageLow().ToString("N2") + "-" + high);
             else if (high != 0)
                 parts.Add(high.ToString());
@@ -656,11 +645,11 @@ namespace OracleOfDereth
         // Bonuses (Attack, Defense, Mana Conversion)
         // ============================================================
 
-        public double GetAttackBonus() => Math.Round(((wo.Values(DoubleValueKey.AttackBonus, 1) - 1) * 100));
-        public double GetMeleeDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) - 1) * 100));
-        public double GetMagicDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MagicDBonus, 1) - 1) * 100), 1);
-        public double GetMissileDefenseBonus() => Math.Round(((wo.Values(DoubleValueKey.MissileDBonus, 1) - 1) * 100), 1);
-        public double GetManaConversionBonus() => Math.Round((wo.Values(DoubleValueKey.ManaCBonus) * 100));
+        public double GetAttackBonus() => Math.Round(((item.Values(DoubleValueKey.AttackBonus, 1) - 1) * 100));
+        public double GetMeleeDefenseBonus() => Math.Round(((item.Values(DoubleValueKey.MeleeDefenseBonus, 1) - 1) * 100));
+        public double GetMagicDefenseBonus() => Math.Round(((item.Values(DoubleValueKey.MagicDBonus, 1) - 1) * 100), 1);
+        public double GetMissileDefenseBonus() => Math.Round(((item.Values(DoubleValueKey.MissileDBonus, 1) - 1) * 100), 1);
+        public double GetManaConversionBonus() => Math.Round((item.Values(DoubleValueKey.ManaCBonus) * 100));
 
         // Attack / melee-defense modifier including the item's innate cantrip bonus — e.g. a
         // Legendary Heart Thirst adds +9% to attack, Legendary Defender +9% to melee defense.
@@ -690,7 +679,7 @@ namespace OracleOfDereth
         {
             var parts = new List<string>();
 
-            int imbued = wo.Values(LongValueKey.Imbued);
+            int imbued = item.Values(LongValueKey.Imbued);
             if (imbued > 0)
             {
                 if ((imbued & 1) == 1) parts.Add("CS");
@@ -712,7 +701,7 @@ namespace OracleOfDereth
             // Resistance cleaving lives in the same imbue-like slot as the rends, using the same
             // element abbreviations (e.g. "AcidCleave", "FireCleave"). CleaveType (key 263) stores
             // the cleaved element as a single value, not a bitmask.
-            switch (wo.Values((LongValueKey)263, 0))
+            switch (item.Values((LongValueKey)263, 0))
             {
                 case 1: parts.Add("SlashCleave"); break;
                 case 2: parts.Add("PierceCleave"); break;
@@ -734,12 +723,12 @@ namespace OracleOfDereth
         // "Biting Strike" raises the weapon's critical chance via CriticalFrequency (key 147);
         // "Crushing Blow" raises its critical-damage via CriticalMultiplier (key 136, base 1.0).
         // These are the named quest/aug versions of the CS/CB imbues, stored as floats not bits.
-        public bool HasBitingStrike() => wo.Values((DoubleValueKey)147, 0) > 0;
-        public bool HasCrushingBlow() => wo.Values((DoubleValueKey)136, 0) > 1;
+        public bool HasBitingStrike() => item.Values((DoubleValueKey)147, 0) > 0;
+        public bool HasCrushingBlow() => item.Values((DoubleValueKey)136, 0) > 1;
 
         // The creature type a slayer weapon does bonus damage to (SlayerSpecies, key 166).
         // 0 when the weapon isn't a slayer.
-        public int GetSlayerSpecies() => wo.Values((LongValueKey)166, 0);
+        public int GetSlayerSpecies() => item.Values((LongValueKey)166, 0);
 
         // The slayer's target species name (e.g. "Virindi"), "Unknown" for an unmapped id, or
         // "" when the weapon isn't a slayer at all.
@@ -757,7 +746,7 @@ namespace OracleOfDereth
             return name.Length > 0 ? name + " Slayer" : "";
         }
 
-        public int GetTinksValue() => wo.Values(LongValueKey.NumberTimesTinkered, 0);
+        public int GetTinksValue() => item.Values(LongValueKey.NumberTimesTinkered, 0);
 
         public string GetTinksString()
         {
@@ -771,15 +760,15 @@ namespace OracleOfDereth
 
         public string GetSpellsString()
         {
-            if (innateSpells.Count == 0) return "";
+            if (item.SpellCount == 0) return "";
 
             FileService service = CoreManager.Current.Filter<FileService>();
-            List<int> sorted = new List<int>(innateSpells);
+            List<int> sorted = new List<int>(item.Spells);
             sorted.Sort();
             sorted.Reverse();
 
-            bool isLootGenerated = wo.LongKeys.Contains((int)LongValueKey.Material);
-            bool isUnenchantable = wo.Values(LongValueKey.Unenchantable, 0) != 0;
+            bool isLootGenerated = item.LongKeys.Contains((int)LongValueKey.Material);
+            bool isUnenchantable = item.Values(LongValueKey.Unenchantable, 0) != 0;
 
             var parts = new List<string>();
             foreach (int spellId in sorted)
@@ -827,11 +816,11 @@ namespace OracleOfDereth
 
         public string GetCantripsString()
         {
-            if (innateSpells.Count == 0) return "";
+            if (item.SpellCount == 0) return "";
 
             FileService service = CoreManager.Current.Filter<FileService>();
             var parts = new List<string>();
-            foreach (int spellId in innateSpells)
+            foreach (int spellId in item.Spells)
             {
                 Decal.Filters.Spell spell = service.SpellTable.GetById(spellId);
                 if (spell == null) continue;
@@ -869,29 +858,29 @@ namespace OracleOfDereth
 
         public string GetWieldReqName()
         {
-            if (wo.Values(LongValueKey.WieldReqValue) > 0)
+            if (item.Values(LongValueKey.WieldReqValue) > 0)
             {
-                if (wo.Values(LongValueKey.WieldReqType) == 7 && wo.Values(LongValueKey.WieldReqAttribute) == 1) return "Wield Lvl";
-                if (SkillInfo.TryGetValue(wo.Values(LongValueKey.WieldReqAttribute), out string skillName)) return skillName;
-                return "Unknown Skill " + wo.Values(LongValueKey.WieldReqAttribute);
+                if (item.Values(LongValueKey.WieldReqType) == 7 && item.Values(LongValueKey.WieldReqAttribute) == 1) return "Wield Lvl";
+                if (SkillInfo.TryGetValue(item.Values(LongValueKey.WieldReqAttribute), out string skillName)) return skillName;
+                return "Unknown Skill " + item.Values(LongValueKey.WieldReqAttribute);
             }
 
             // Summon/Aetheria/Cloak fallback: property 369 = level, 366 = skill
-            if (wo.Values((LongValueKey)369) > 0) return "Wield Lvl";
-            if (wo.Values((LongValueKey)366) > 0)
+            if (item.Values((LongValueKey)369) > 0) return "Wield Lvl";
+            if (item.Values((LongValueKey)366) > 0)
             {
-                if (SkillInfo.TryGetValue(wo.Values((LongValueKey)366), out string skillName)) return skillName;
+                if (SkillInfo.TryGetValue(item.Values((LongValueKey)366), out string skillName)) return skillName;
             }
             return "";
         }
 
         public int GetWieldReqLevel()
         {
-            if (wo.Values(LongValueKey.WieldReqValue, 0) > 0) return wo.Values(LongValueKey.WieldReqValue, 0);
+            if (item.Values(LongValueKey.WieldReqValue, 0) > 0) return item.Values(LongValueKey.WieldReqValue, 0);
 
             // Summon/Aetheria/Cloak fallback
-            if (wo.Values((LongValueKey)369) > 0) return wo.Values((LongValueKey)369);
-            if (wo.Values((LongValueKey)367) > 0) return wo.Values((LongValueKey)367);
+            if (item.Values((LongValueKey)369) > 0) return item.Values((LongValueKey)369);
+            if (item.Values((LongValueKey)367) > 0) return item.Values((LongValueKey)367);
             return 0;
         }
 
@@ -902,7 +891,7 @@ namespace OracleOfDereth
             return name + " " + GetWieldReqLevel();
         }
 
-        public int GetLoreValue() => wo.Values(LongValueKey.LoreRequirement, 0);
+        public int GetLoreValue() => item.Values(LongValueKey.LoreRequirement, 0);
 
         public string GetLoreString()
         {
@@ -910,11 +899,11 @@ namespace OracleOfDereth
             return "Diff " + GetLoreValue();
         }
 
-        public int GetWorkmanshipValue() => wo.Values(LongValueKey.Workmanship, 0);
+        public int GetWorkmanshipValue() => item.Values(LongValueKey.Workmanship, 0);
 
         // Salvage carries a fractional average workmanship (the mean of the pieces that
         // went into the bag) instead of the integer craft value equipment uses.
-        public double GetSalvageWorkmanshipValue() => wo.Values(DoubleValueKey.SalvageWorkmanship, 0);
+        public double GetSalvageWorkmanshipValue() => item.Values(DoubleValueKey.SalvageWorkmanship, 0);
 
         // Column form, e.g. "Work 9.50". The columns sort numerically off
         // GetSalvageWorkmanshipValue, so the decimals here are display only.
@@ -927,13 +916,13 @@ namespace OracleOfDereth
 
         public string GetWorkmanshipString()
         {
-            if (wo.ObjectClass == ObjectClass.Salvage)
+            if (item.ObjectClass == ObjectClass.Salvage)
             {
-                if (wo.Values(DoubleValueKey.SalvageWorkmanship) > 0) return "Work " + wo.Values(DoubleValueKey.SalvageWorkmanship).ToString("N2");
+                if (item.Values(DoubleValueKey.SalvageWorkmanship) > 0) return "Work " + item.Values(DoubleValueKey.SalvageWorkmanship).ToString("N2");
             }
             else
             {
-                if (wo.Values(LongValueKey.Workmanship) > 0 && GetTinksValue() != 10) return "Craft " + wo.Values(LongValueKey.Workmanship);
+                if (item.Values(LongValueKey.Workmanship) > 0 && GetTinksValue() != 10) return "Craft " + item.Values(LongValueKey.Workmanship);
             }
             return "";
         }
@@ -942,30 +931,30 @@ namespace OracleOfDereth
         {
             var parts = new List<string>();
 
-            if (wo.Values((LongValueKey)369) > 0) parts.Add("Lvl " + wo.Values((LongValueKey)369));
+            if (item.Values((LongValueKey)369) > 0) parts.Add("Lvl " + item.Values((LongValueKey)369));
 
-            if (wo.Values(LongValueKey.SkillLevelReq) > 0 && (wo.Values(LongValueKey.WieldReqAttribute) != wo.Values(LongValueKey.ActivationReqSkillId) || wo.Values(LongValueKey.WieldReqValue) < wo.Values(LongValueKey.SkillLevelReq)))
+            if (item.Values(LongValueKey.SkillLevelReq) > 0 && (item.Values(LongValueKey.WieldReqAttribute) != item.Values(LongValueKey.ActivationReqSkillId) || item.Values(LongValueKey.WieldReqValue) < item.Values(LongValueKey.SkillLevelReq)))
             {
-                if (SkillInfo.TryGetValue(wo.Values(LongValueKey.ActivationReqSkillId), out string skillName))
-                    parts.Add(skillName + " " + wo.Values(LongValueKey.SkillLevelReq) + " to Activate");
+                if (SkillInfo.TryGetValue(item.Values(LongValueKey.ActivationReqSkillId), out string skillName))
+                    parts.Add(skillName + " " + item.Values(LongValueKey.SkillLevelReq) + " to Activate");
                 else
-                    parts.Add("Unknown Skill " + wo.Values(LongValueKey.ActivationReqSkillId) + " " + wo.Values(LongValueKey.SkillLevelReq) + " to Activate");
+                    parts.Add("Unknown Skill " + item.Values(LongValueKey.ActivationReqSkillId) + " " + item.Values(LongValueKey.SkillLevelReq) + " to Activate");
             }
 
-            if (wo.Values((LongValueKey)366) > 0 && wo.Values((LongValueKey)367) > 0)
+            if (item.Values((LongValueKey)366) > 0 && item.Values((LongValueKey)367) > 0)
             {
-                if (SkillInfo.TryGetValue(wo.Values((LongValueKey)366), out string skillName))
-                    parts.Add(skillName + " " + wo.Values((LongValueKey)367));
+                if (SkillInfo.TryGetValue(item.Values((LongValueKey)366), out string skillName))
+                    parts.Add(skillName + " " + item.Values((LongValueKey)367));
                 else
-                    parts.Add("Unknown Skill " + wo.Values((LongValueKey)366) + " " + wo.Values((LongValueKey)367));
+                    parts.Add("Unknown Skill " + item.Values((LongValueKey)366) + " " + item.Values((LongValueKey)367));
             }
 
-            if (wo.Values((LongValueKey)368) > 0 && wo.Values((LongValueKey)367) > 0)
+            if (item.Values((LongValueKey)368) > 0 && item.Values((LongValueKey)367) > 0)
             {
-                if (SkillInfo.TryGetValue(wo.Values((LongValueKey)368), out string skillName))
-                    parts.Add("Spec " + skillName + " " + wo.Values((LongValueKey)367));
+                if (SkillInfo.TryGetValue(item.Values((LongValueKey)368), out string skillName))
+                    parts.Add("Spec " + skillName + " " + item.Values((LongValueKey)367));
                 else
-                    parts.Add("Unknown Skill Spec " + wo.Values((LongValueKey)368) + " " + wo.Values((LongValueKey)367));
+                    parts.Add("Unknown Skill Spec " + item.Values((LongValueKey)368) + " " + item.Values((LongValueKey)367));
             }
 
             return string.Join(", ", parts);
@@ -973,12 +962,12 @@ namespace OracleOfDereth
 
         public string GetActivationReqString()
         {
-            if (wo.Values(LongValueKey.SkillLevelReq) <= 0) return "";
-            if (wo.Values(LongValueKey.ActivationReqSkillId) == wo.Values(LongValueKey.WieldReqAttribute)
-                && wo.Values(LongValueKey.WieldReqValue) >= wo.Values(LongValueKey.SkillLevelReq)) return "";
+            if (item.Values(LongValueKey.SkillLevelReq) <= 0) return "";
+            if (item.Values(LongValueKey.ActivationReqSkillId) == item.Values(LongValueKey.WieldReqAttribute)
+                && item.Values(LongValueKey.WieldReqValue) >= item.Values(LongValueKey.SkillLevelReq)) return "";
 
-            if (SkillInfo.TryGetValue(wo.Values(LongValueKey.ActivationReqSkillId), out string skillName))
-                return skillName + " " + wo.Values(LongValueKey.SkillLevelReq);
+            if (SkillInfo.TryGetValue(item.Values(LongValueKey.ActivationReqSkillId), out string skillName))
+                return skillName + " " + item.Values(LongValueKey.SkillLevelReq);
             return "";
         }
 
@@ -989,13 +978,13 @@ namespace OracleOfDereth
         public string GetSummonDamageString()
         {
             if (!IsSummon) return "";
-            return $"{new Summon { Item = wo }.DamageScore()}%";
+            return $"{new Summon { Item = item }.DamageScore()}%";
         }
 
         public string GetSummonDefenseString()
         {
             if (!IsSummon) return "";
-            return $"{new Summon { Item = wo }.DefenseScore()}%";
+            return $"{new Summon { Item = item }.DefenseScore()}%";
         }
 
         public string GetSummonString()
@@ -1010,7 +999,7 @@ namespace OracleOfDereth
         {
             if (!IsSummon) return "";
 
-            string name = wo.Name;
+            string name = item.Name;
             if (SummonNaturalistRegex.IsMatch(name)) return "Naturalist";
             if (SummonNecromancerRegex.IsMatch(name)) return "Necromancer";
             if (SummonPrimalistRegex.IsMatch(name)) return "Primalist";
@@ -1029,9 +1018,9 @@ namespace OracleOfDereth
         {
             FileService service = CoreManager.Current.Filter<FileService>();
 
-            if (wo.SpellCount > 0)
+            if (item.SpellCount > 0)
             {
-                Decal.Filters.Spell spell = service.SpellTable.GetById(wo.Spell(0));
+                Decal.Filters.Spell spell = service.SpellTable.GetById(item.Spell(0));
                 if (spell == null) return "";
                 string name = spell.Name;
 
@@ -1055,13 +1044,13 @@ namespace OracleOfDereth
             }
 
             // No spells — check CloakWeaveProc (352) for -200 damage cloaks vs tailored cloaks
-            if (wo.Values((LongValueKey)352, 0) != 0) return "-200 Damage";
+            if (item.Values((LongValueKey)352, 0) != 0) return "-200 Damage";
             return "";
         }
 
         public int GetCloakLevel()
         {
-            int iconOverlay = wo.Values((LongValueKey)218103849, 0);
+            int iconOverlay = item.Values((LongValueKey)218103849, 0);
             if (iconOverlay == 0) return 0;
             return iconOverlay - 27700 + 1;
         }
@@ -1075,7 +1064,7 @@ namespace OracleOfDereth
         // SigilThree=Red (225+). Returns "" when the slot isn't known (e.g. pre-ID).
         public string GetAetheriaColor()
         {
-            int slots = wo.Values(LongValueKey.EquipableSlots, 0);
+            int slots = item.Values(LongValueKey.EquipableSlots, 0);
             if ((slots & 0x10000000) != 0) return "Blue";
             if ((slots & 0x20000000) != 0) return "Yellow";
             if ((slots & 0x40000000) != 0) return "Red";
@@ -1084,7 +1073,7 @@ namespace OracleOfDereth
 
         public int GetAetheriaLevel()
         {
-            int iconOverlay = wo.Values((LongValueKey)218103849, 0);
+            int iconOverlay = item.Values((LongValueKey)218103849, 0);
             if (iconOverlay == 0) return 0;
             return iconOverlay - 27700 + 1;
         }
@@ -1092,9 +1081,9 @@ namespace OracleOfDereth
         public string GetAetheriaSurge()
         {
             FileService service = CoreManager.Current.Filter<FileService>();
-            for (int i = 0; i < wo.SpellCount; i++)
+            for (int i = 0; i < item.SpellCount; i++)
             {
-                Decal.Filters.Spell spell = service.SpellTable.GetById(wo.Spell(i));
+                Decal.Filters.Spell spell = service.SpellTable.GetById(item.Spell(i));
                 if (spell == null) continue;
                 string name = spell.Name;
                 if (name.Contains("Destruction")) return "Destruction";
@@ -1124,8 +1113,8 @@ namespace OracleOfDereth
         // Value & Burden
         // ============================================================
 
-        public int GetValue() => wo.Values(LongValueKey.Value, 0);
-        public int GetBurden() => wo.Values(LongValueKey.Burden, 0);
+        public int GetValue() => item.Values(LongValueKey.Value, 0);
+        public int GetBurden() => item.Values(LongValueKey.Burden, 0);
 
         public string GetValueString()
         {
@@ -1145,8 +1134,8 @@ namespace OracleOfDereth
 
         public string GetKeyringString()
         {
-            if (wo.ObjectClass != ObjectClass.Misc || !wo.Name.Contains("Keyring")) return "";
-            return "Keys: " + wo.Values(LongValueKey.KeysHeld) + ", Uses: " + wo.Values(LongValueKey.UsesRemaining);
+            if (item.ObjectClass != ObjectClass.Misc || !item.Name.Contains("Keyring")) return "";
+            return "Keys: " + item.Values(LongValueKey.KeysHeld) + ", Uses: " + item.Values(LongValueKey.UsesRemaining);
         }
 
         // ============================================================
@@ -1232,18 +1221,16 @@ namespace OracleOfDereth
         private const int Key_MeleeDefenseBonus = 29;
         private const int Key_ManaCBonus = 144;
 
-        private bool IsEquipped => intValues.TryGetValue(10, out int location) && location > 0;
+        private bool IsEquipped => item.TryGetValue((LongValueKey)10, out int location) && location > 0;
 
         private int GetBuffedIntValue(int key, int defaultValue = 0)
         {
-            if (!intValues.ContainsKey(key)) return defaultValue;
+            if (!item.TryGetValue((LongValueKey)key, out int value)) return defaultValue;
 
-            int value = intValues[key];
-
-            foreach (int spell in activeSpells)
+            foreach (int spell in item.ActiveSpells)
                 if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key) value -= effect.Change;
 
-            foreach (int spell in innateSpells)
+            foreach (int spell in item.Spells)
                 if (IntSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && effect.Bonus != 0) value += effect.Bonus;
 
             return value;
@@ -1251,11 +1238,9 @@ namespace OracleOfDereth
 
         private double GetBuffedDoubleValue(int key, double defaultValue = 0)
         {
-            if (!doubleValues.ContainsKey(key)) return defaultValue;
+            if (!item.TryGetValue((DoubleValueKey)key, out double value)) return defaultValue;
 
-            double value = doubleValues[key];
-
-            foreach (int spell in activeSpells)
+            foreach (int spell in item.ActiveSpells)
             {
                 if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key)
                 {
@@ -1265,7 +1250,7 @@ namespace OracleOfDereth
                         value -= effect.Change;
                 }
             }
-            foreach (int spell in innateSpells)
+            foreach (int spell in item.Spells)
             {
                 if (DoubleSpellEffects.TryGetValue(spell, out var effect) && effect.Key == key && Math.Abs(effect.Bonus) > Double.Epsilon)
                 {
@@ -1278,7 +1263,7 @@ namespace OracleOfDereth
             return value;
         }
 
-        private int GetHolderLevel() => IsEquipped && wo.HasActiveSpellData ? wo.HolderLevel ?? 0 : 0;
+        private int GetHolderLevel() => IsEquipped && item.HasActiveSpellData ? item.HolderLevel ?? 0 : 0;
 
         private bool AssumeFullBuffs => GetHolderLevel() >= 200;
 
@@ -1288,22 +1273,22 @@ namespace OracleOfDereth
 
             var sb = new StringBuilder("(");
 
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon)
+            if (item.ObjectClass == ObjectClass.MeleeWeapon)
                 sb.Append(CalcBuffedTinkedDoT().ToString("N1") + "/" + GetBuffedIntValue(Key_MaxDamage));
-            else if (wo.ObjectClass == ObjectClass.MissileWeapon)
+            else if (item.ObjectClass == ObjectClass.MissileWeapon)
                 sb.Append(CalcBuffedMissileDamage().ToString("N1"));
             else
                 sb.Append(((GetBuffedDoubleValue(Key_ElementalDmgVsMonsters) - 1) * 100).ToString("N1"));
 
             sb.Append(" ");
 
-            if (wo.Values(DoubleValueKey.AttackBonus, 1) != 1)
+            if (item.Values(DoubleValueKey.AttackBonus, 1) != 1)
                 sb.Append(Math.Round(((GetBuffedDoubleValue(Key_AttackBonus) - 1) * 100)).ToString("N1") + "/");
 
-            if (wo.Values(DoubleValueKey.MeleeDefenseBonus, 1) != 1)
+            if (item.Values(DoubleValueKey.MeleeDefenseBonus, 1) != 1)
                 sb.Append(Math.Round(((GetBuffedDoubleValue(Key_MeleeDefenseBonus) - 1) * 100)).ToString("N1"));
 
-            if (wo.Values(DoubleValueKey.ManaCBonus) != 0)
+            if (item.Values(DoubleValueKey.ManaCBonus) != 0)
                 sb.Append("/" + Math.Round(GetBuffedDoubleValue(Key_ManaCBonus) * 100));
 
             sb.Append(")");
@@ -1312,16 +1297,15 @@ namespace OracleOfDereth
 
         private double CalcBuffedTinkedDoT()
         {
-            if (!doubleValues.ContainsKey(167772171) || !intValues.ContainsKey(Key_MaxDamage))
+            if (!item.TryGetValue((DoubleValueKey)167772171, out double variance) || !item.TryGetValue((LongValueKey)Key_MaxDamage, out _))
                 return -1;
 
-            double variance = doubleValues[167772171];
             int maxDamage = GetBuffedIntValue(Key_MaxDamage);
-            intValues.TryGetValue(Key_Tinks, out int tinks);
+            item.TryGetValue((LongValueKey)Key_Tinks, out int tinks);
             int numberOfTinksLeft = Math.Max(10 - Math.Max(tinks, 0), 0);
 
-            if (!intValues.TryGetValue(Key_Imbued, out int imbued) || imbued == 0) numberOfTinksLeft--;
-            if (!intValues.TryGetValue(Key_Material, out int material) || material == 0) numberOfTinksLeft = 0;
+            if (!item.TryGetValue((LongValueKey)Key_Imbued, out int imbued) || imbued == 0) numberOfTinksLeft--;
+            if (!item.TryGetValue((LongValueKey)Key_Material, out int material) || material == 0) numberOfTinksLeft = 0;
 
             for (int i = 1; i <= numberOfTinksLeft; i++)
             {
@@ -1339,7 +1323,7 @@ namespace OracleOfDereth
 
         private double CalcBuffedMissileDamage()
         {
-            if (!intValues.ContainsKey(Key_MaxDamage) || !doubleValues.ContainsKey(Key_DamageBonus) || !intValues.ContainsKey(Key_ElementalDmgBonus)) return -1;
+            if (!item.TryGetValue((LongValueKey)Key_MaxDamage, out _) || !item.TryGetValue((DoubleValueKey)Key_DamageBonus, out _) || !item.TryGetValue((LongValueKey)Key_ElementalDmgBonus, out _)) return -1;
             return GetBuffedIntValue(Key_MaxDamage) + (((GetBuffedDoubleValue(Key_DamageBonus) - 1) * 100) / 3) + GetBuffedIntValue(Key_ElementalDmgBonus);
         }
 
@@ -1361,7 +1345,7 @@ namespace OracleOfDereth
 
         private int? GetMeleeOD()
         {
-            if (!intValues.ContainsKey(Key_MaxDamage)) return null;
+            if (!item.TryGetValue((LongValueKey)Key_MaxDamage, out _)) return null;
 
             int skill = GetWeaponSkill();
             int mastery = GetMastery();
@@ -1390,16 +1374,16 @@ namespace OracleOfDereth
             double maxElemBonus = LookupMaxProperty(skill, mastery, 0, e => e.MaxElemBonus);
             if (maxElemBonus <= 0) maxElemBonus = 22;
 
-            double dmgMod = Math.Round((wo.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100);
-            int numTimesTinkered = wo.Values(LongValueKey.NumberTimesTinkered, 0);
+            double dmgMod = Math.Round((item.Values(DoubleValueKey.DamageBonus, 1) - 1) * 100);
+            int numTimesTinkered = item.Values(LongValueKey.NumberTimesTinkered, 0);
             double remainingTinks = 10;
 
-            if (wo.Values(DoubleValueKey.SalvageWorkmanship, -1) >= 0)
+            if (item.Values(DoubleValueKey.SalvageWorkmanship, -1) >= 0)
             {
                 if (numTimesTinkered > 0)
                 {
                     remainingTinks -= numTimesTinkered;
-                    if (wo.Values(LongValueKey.Imbued, 0) == 0) remainingTinks--;
+                    if (item.Values(LongValueKey.Imbued, 0) == 0) remainingTinks--;
                 }
                 else
                 {
@@ -1418,7 +1402,7 @@ namespace OracleOfDereth
             if (AssumeFullBuffs) buffedDmg -= 24;
             if (buffedDmg <= 10) buffedDmg += 24;
 
-            intValues.TryGetValue(Key_ElementalDmgBonus, out int elemBonus);
+            item.TryGetValue((LongValueKey)Key_ElementalDmgBonus, out int elemBonus);
             double calcMissileDmg = (1 + (dmgMod + (4 * remainingTinks)) / 100) * (elemBonus + buffedDmg + arrowMax) / maxTinkedMissileMod;
 
             return (int)Math.Round(calcMissileDmg - (maxElemBonus + 24 + arrowMax));
@@ -1440,7 +1424,7 @@ namespace OracleOfDereth
 
         private int? GetMeleeOA()
         {
-            if (!doubleValues.ContainsKey(Key_AttackBonus)) return null;
+            if (!item.TryGetValue((DoubleValueKey)Key_AttackBonus, out _)) return null;
 
             int maxAtk = GetMaxAttack();
             if (maxAtk <= 0) return null;
@@ -1453,24 +1437,24 @@ namespace OracleOfDereth
 
         private int GetWeaponSkill()
         {
-            if (intValues.TryGetValue(Key_WeaponSkill, out int weaponSkill) && weaponSkill != 0) return weaponSkill;
+            if (item.TryGetValue((LongValueKey)Key_WeaponSkill, out int weaponSkill) && weaponSkill != 0) return weaponSkill;
 
-            int wieldAttr = wo.Values(LongValueKey.WieldReqAttribute, 0);
+            int wieldAttr = item.Values(LongValueKey.WieldReqAttribute, 0);
             if (wieldAttr >= 34) return wieldAttr;
 
-            intValues.TryGetValue(353, out int mastery);
+            item.TryGetValue((LongValueKey)353, out int mastery);
 
-            if (wo.ObjectClass == ObjectClass.MeleeWeapon)
+            if (item.ObjectClass == ObjectClass.MeleeWeapon)
             {
                 if (mastery == 11) return 41;
                 if (LookupMaxProperty(45, mastery, 0, e => e.MaxDmg) > 0) return 45;
                 if (LookupMaxProperty(44, mastery, 0, e => e.MaxDmg) > 0) return 44;
             }
-            if (wo.ObjectClass == ObjectClass.MissileWeapon)
+            if (item.ObjectClass == ObjectClass.MissileWeapon)
             {
                 if (LookupMaxProperty(47, mastery, 0, e => e.MaxDmgMod) > 0) return 47;
             }
-            if (wo.ObjectClass == ObjectClass.WandStaffOrb)
+            if (item.ObjectClass == ObjectClass.WandStaffOrb)
             {
                 if (LookupMaxProperty(34, mastery, 0, e => e.MaxElemVsMon) > 0) return 34;
                 if (LookupMaxProperty(43, mastery, 0, e => e.MaxElemVsMon) > 0) return 43;
@@ -1481,25 +1465,25 @@ namespace OracleOfDereth
 
         private int GetMastery()
         {
-            intValues.TryGetValue(353, out int mastery);
+            item.TryGetValue((LongValueKey)353, out int mastery);
             if (mastery != 0) return mastery;
 
-            intValues.TryGetValue(Key_WeaponSkill, out int skill);
-            if (skill == 0) skill = wo.Values(LongValueKey.WieldReqAttribute, 0);
+            item.TryGetValue((LongValueKey)Key_WeaponSkill, out int skill);
+            if (skill == 0) skill = item.Values(LongValueKey.WieldReqAttribute, 0);
             if (skill == 41 || skill == 0x29) return 11;
             return 0;
         }
 
         private bool IsMultiStrike()
         {
-            intValues.TryGetValue(Key_CombatUse, out int combatUse);
-            intValues.TryGetValue(353, out int mastery);
+            item.TryGetValue((LongValueKey)Key_CombatUse, out int combatUse);
+            item.TryGetValue((LongValueKey)353, out int mastery);
             return combatUse == 160 || combatUse == 166 || combatUse == 486 || (combatUse == 4 && mastery == 11 && !IsTwoHandedSpear());
         }
 
         private bool IsTwoHandedSpear()
         {
-            string name = wo.Name.ToLower();
+            string name = item.Name.ToLower();
             return name.Contains("spear") || name.Contains("pike") || name.Contains("assagai") || name.Contains("yari") || name.Contains("naginata") || name.Contains("trident");
         }
 
@@ -1508,9 +1492,9 @@ namespace OracleOfDereth
             int mastery = GetMastery();
             int skill = GetWeaponSkill();
 
-            if (wo.ObjectClass == ObjectClass.MissileWeapon || wo.ObjectClass == ObjectClass.WandStaffOrb) return 20;
+            if (item.ObjectClass == ObjectClass.MissileWeapon || item.ObjectClass == ObjectClass.WandStaffOrb) return 20;
             if (skill == 0x29 || mastery == 11) return IsTwoHandedSpear() ? 20 : 18;
-            if ((skill == 0x2E) && mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0) return 25;
+            if ((skill == 0x2E) && mastery == 4 && item.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0) return 25;
             if (MaxMeleeDefenseByMastery.TryGetValue(mastery, out int maxDef)) return maxDef;
 
             return 0;
@@ -1522,7 +1506,7 @@ namespace OracleOfDereth
             int skill = GetWeaponSkill();
 
             if (skill == 0x29 || mastery == 11) return IsTwoHandedSpear() ? 20 : 22;
-            if ((skill == 0x2E) && mastery == 4 && wo.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0) return 15;
+            if ((skill == 0x2E) && mastery == 4 && item.Name.IndexOf("Jitte", StringComparison.OrdinalIgnoreCase) >= 0) return 15;
             if (MaxAttackByMastery.TryGetValue(mastery, out int maxAtk)) return maxAtk;
 
             return 0;

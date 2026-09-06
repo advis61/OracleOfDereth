@@ -134,6 +134,25 @@ namespace OracleOfDereth
             Container = container ?? Values((LongValueKey)218103810);
         }
 
+        public bool TryGetValue(LongValueKey key, out int value) => integers.TryGetValue((int)key, out value);
+        public bool TryGetValue(DoubleValueKey key, out double value) => doubles.TryGetValue((int)key, out value);
+
+        // Enumerate without exposing the underlying arrays to mutation.
+        public IEnumerable<int> Spells
+        {
+            get { foreach (int spell in spells) yield return spell; }
+        }
+
+        // HasActiveSpellData still distinguishes unknown buffs from a known empty list.
+        public IEnumerable<int> ActiveSpells
+        {
+            get
+            {
+                if (activeSpells == null) yield break;
+                foreach (int spell in activeSpells) yield return spell;
+            }
+        }
+
         public int Values(LongValueKey key, int fallback = 0) => integers.TryGetValue((int)key, out int value) ? value : fallback;
         public double Values(DoubleValueKey key, double fallback = 0) => doubles.TryGetValue((int)key, out double value) ? value : fallback;
         public string Values(StringValueKey key, string fallback = "") => strings.TryGetValue((int)key, out string value) ? value : fallback;

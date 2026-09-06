@@ -101,6 +101,18 @@ internal static class VGInventoryTests
 
     private static void AssertObservations()
     {
+        var zeroes = new Item("Conquest", "Mule", 1, "Dagger", ObjectClass.MeleeWeapon,
+            new Dictionary<int, int> { [(int)LongValueKey.MaxDamage] = 0 },
+            doubles: new Dictionary<int, double> { [(int)DoubleValueKey.AttackBonus] = 0 });
+        Check(zeroes.TryGetValue(LongValueKey.MaxDamage, out int damage) && damage == 0,
+            "An explicit zero damage must remain a present property.");
+        Check(!zeroes.TryGetValue(LongValueKey.ElementalDmgBonus, out _),
+            "Missing integer properties must remain distinguishable from zero.");
+        Check(zeroes.TryGetValue(DoubleValueKey.AttackBonus, out double attack) && attack == 0,
+            "An explicit zero attack bonus must remain a present property.");
+        Check(!zeroes.TryGetValue(DoubleValueKey.MeleeDefenseBonus, out _),
+            "Missing double properties must remain distinguishable from zero.");
+
         var integers = new Dictionary<int, int> { [218103842] = 56, [159] = 44, [353] = 6, [47] = 160 };
         var doubles = new Dictionary<int, double> { [167772171] = .43 };
         var strings = new Dictionary<int, string> { [16] = "Original description" };
