@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <view icon="8894" title="Oracle Of Dereth" width="210" height="345">
 	<control progid="DecalControls.Notebook" name="MainViewNotebook">
 		<page label="Status">
@@ -682,6 +682,44 @@
 								</control>
 							</control>
 						</page>
+					</control>
+				</page>
+				<page label="Inventory">
+					<control progid="DecalControls.FixedLayout" clipped="">
+						<control progid="DecalControls.StaticText" name="VGInventoryText" left="5" top="5" width="1200" height="20" text="Saved Inventory: 0"/>
+						<control progid="DecalControls.StaticText" name="VGInventoryFilterLabel" left="5" top="59" width="38" height="16" text="Filter:"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryRefresh" left="5" top="30" width="108" height="24" text="Refresh"/>
+						<control progid="DecalControls.Edit" name="VGInventoryFilterText" left="46" top="57" width="293" height="20" text=""/><control progid="DecalControls.PushButton" name="VGInventoryFilterReset" left="343" top="56" width="50" height="22" text="Reset"/>
+						<control progid="DecalControls.CheckBox" name="VGInventoryFilterWeapons" left="398" top="59" width="70" height="16" text="Weapons" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="VGInventoryFilterArmor" left="478" top="59" width="60" height="16" text="Armor" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="VGInventoryFilterClothing" left="546" top="59" width="70" height="16" text="Clothing" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="VGInventoryFilterJewelry" left="626" top="59" width="64" height="16" text="Jewelry" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="VGInventoryFilterCloaks" left="700" top="59" width="58" height="16" text="Cloaks" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="VGInventoryFilterSummons" left="768" top="59" width="75" height="16" text="Summons" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="VGInventoryFilterAetheria" left="853" top="59" width="70" height="16" text="Aetheria" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="VGInventoryFilterSalvage" left="933" top="59" width="64" height="16" text="Salvage" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="VGInventoryFilterOther" left="1007" top="59" width="52" height="16" text="Other" checked="false"/>
+							<control progid="DecalControls.CheckBox" name="VGInventoryFilterDoubles" left="1063" top="59" width="70" height="16" text="Doubles" checked="false"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryClipboard" left="910" top="30" width="52" height="22" text="Copy"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryExportText" left="966" top="30" width="52" height="22" text="Text"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryExportCsv" left="1022" top="30" width="52" height="22" text="CSV"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryExportJson" left="1078" top="30" width="52" height="22" text="JSON"/>
+						<control progid="DecalControls.StaticText" name="VGInventoryListSortCharacter" left="1" top="81" width="160" height="17" text="Character"/>
+						<control progid="DecalControls.StaticText" name="VGInventoryListSortName" left="193" top="81" width="210" height="17" text="Item Name"/>
+						<control progid="DecalControls.StaticText" name="VGInventoryListSortCol1" left="488" top="81" width="140" height="17" text="Type"/>
+						<control progid="DecalControls.StaticText" name="VGInventoryListSortCol2" left="685" top="81" width="60" height="17" text="Effect"/>
+						<control progid="DecalControls.StaticText" name="VGInventoryListSortCol3" left="860" top="81" width="50" height="17" text="Info"/>
+						<control progid="DecalControls.StaticText" name="VGInventoryListSortCol4" left="984" top="81" width="360" height="17" text="Details"/>
+						<control progid="DecalControls.List" name="VGInventoryList" left="0" top="101" width="1920" height="2000">
+							<column progid="DecalControls.TextColumn" name="Character" fixedwidth="160" />
+							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
+							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="288" />
+							<column progid="DecalControls.TextColumn" name="Col1" fixedwidth="140" />
+							<column progid="DecalControls.TextColumn" name="Col2" fixedwidth="140" />
+							<column progid="DecalControls.TextColumn" name="Col3" fixedwidth="195" />
+							<column progid="DecalControls.TextColumn" name="Col4" fixedwidth="2000" />
+							<column progid="DecalControls.TextColumn" name="Id" fixedwidth="1" />
+						</control>
 					</control>
 				</page>
 			</control>

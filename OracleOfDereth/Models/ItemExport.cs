@@ -16,7 +16,7 @@ namespace OracleOfDereth
         public static string ToText(List<Item> items, string nameOverride = null)
         {
             string path = ExportPath("txt", nameOverride);
-            File.WriteAllLines(path, items.Select(t => t.Description));
+            File.WriteAllLines(path, items.Select(t => string.IsNullOrEmpty(t.Character) ? t.Description : t.Character + ": " + t.Description));
             return path;
         }
 
@@ -83,14 +83,22 @@ namespace OracleOfDereth
 
         private static string[] Row(Item item)
         {
-            WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
-            if (wo == null) return new[] { item.Name };
+            VirindiObject wo = item.SavedObject;
+            if (wo == null && string.IsNullOrEmpty(item.Character)) wo = CoreManager.Current.WorldFilter[item.Id];
+            if (wo == null)
+            {
+                var row = new string[Headers.Length];
+                row[0] = item.Character;
+                row[1] = item.Server;
+                row[2] = item.Name;
+                return row;
+            }
 
             ItemInfo info = new ItemInfo(wo);
 
             return new[] {
-                CoreManager.Current.CharacterFilter.Name,
-                Server.Name,
+                wo.IsSnapshot ? item.Character : CoreManager.Current.CharacterFilter.Name,
+                wo.IsSnapshot ? item.Server : Server.Name,
                 info.GetName(),
                 info.GetObjectClassName(),
                 info.GetItemSlotName(),

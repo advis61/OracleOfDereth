@@ -20,7 +20,7 @@ namespace OracleOfDereth
     public class Summon
     {
         // Instance variables
-        public WorldObject Item;
+        public VirindiObject Item;
 
         public static bool Identified(WorldObject item)
         {

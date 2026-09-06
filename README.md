@@ -214,6 +214,15 @@ Displays your buffs and debuffs with time remaining.
 - Sort by name, info, details, spells.
 - Export to clipboard, text, csv and json
 
+### Server Inventory (VGI)
+
+- Open **Server → Inventory** to browse VGI's saved items for every character on your current server.
+- Uses the same item summaries, search, category checkboxes, Doubles filter, and sorting as Items, with a sortable Character column. Search also matches character names.
+- **Refresh** rereads the saved database. Offline characters reflect their last VGI scan; this does not request identification or modify VGI's data.
+- Click a row to print its saved description. Copy, Text, CSV, and JSON use the filtered list and include character ownership.
+- VGI is optional. Without its database, continue using the existing Items tab to add and identify items.
+- Equipped snapshots do not show OD/OA/OM because VGI does not save the active-buff list needed to resolve their overages reliably.
+
 ### XP Augmentations
 
 - Displays your character's Blank Augmentation Gem quest timers

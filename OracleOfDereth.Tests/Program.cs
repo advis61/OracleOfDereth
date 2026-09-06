@@ -7,8 +7,10 @@ using OracleOfDereth;
 
 internal static class Program
 {
-    private static int Main()
+    private static int Main(string[] args)
     {
+        VGInventoryTests.Run();
+        if (args.Length == 2 && args[0] == "--vgi") VGInventoryTests.Audit(args[1]);
         AssertScreenshotBounds();
         AssertScreenshotPaths();
         AssertSummonOwnership();

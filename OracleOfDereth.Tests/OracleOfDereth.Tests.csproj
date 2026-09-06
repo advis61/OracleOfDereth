@@ -7,5 +7,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\OracleOfDereth\OracleOfDereth.csproj" />
+    <Reference Include="Decal.Adapter">
+      <HintPath>..\deps\Decal.Adapter.dll</HintPath>
+    </Reference>
+    <Reference Include="VirindiViewService">
+      <HintPath>..\deps\VirindiViewService.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

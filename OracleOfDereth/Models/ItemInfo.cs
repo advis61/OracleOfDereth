@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -15,14 +16,16 @@ namespace OracleOfDereth
         // Constructor & Internal State
         // ============================================================
 
-        public readonly WorldObject wo;
+        public readonly VirindiObject wo;
 
         private readonly List<int> activeSpells = new List<int>();
         private readonly List<int> innateSpells = new List<int>();
         private readonly Dictionary<int, int> intValues = new Dictionary<int, int>();
         private readonly Dictionary<int, double> doubleValues = new Dictionary<int, double>();
 
-        public ItemInfo(WorldObject worldObject)
+        public ItemInfo(WorldObject worldObject) : this(new VirindiObject(worldObject)) { }
+
+        public ItemInfo(VirindiObject worldObject)
         {
             wo = worldObject;
 
@@ -1292,6 +1295,9 @@ namespace OracleOfDereth
         private int GetHolderLevel()
         {
             if (!IsEquipped) return 0;
+            // A saved object's container ID must never resolve to an unrelated live object.
+            // Without active buffs in VGI, leave equipped-item overages unknown.
+            if (wo.IsSnapshot) return 0;
 
             try
             {

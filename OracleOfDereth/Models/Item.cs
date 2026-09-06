@@ -23,6 +23,9 @@ namespace OracleOfDereth
         public int SortCol3Work = 0;   // workmanship (Col3 fourth sort)
         public int SortCol4 = 0;
         public string Description = "";
+        public string Character = "";
+        public string Server = "";
+        public VirindiObject SavedObject;
 
         // False until the appraisal arrives. Stub rows (icon + name only) show
         // immediately on Add; the detail columns fill in once this flips true.
@@ -45,7 +48,17 @@ namespace OracleOfDereth
         // Fill the identify-dependent fields from the appraised WorldObject.
         public void Populate(WorldObject wo)
         {
+            Populate(new VirindiObject(wo));
+        }
+
+        public void Populate(VirindiObject wo)
+        {
             ItemInfo info = new ItemInfo(wo);
+
+            Id = wo.Id;
+            Character = wo.OwnerCharName;
+            Server = wo.OwnerServer;
+            SavedObject = wo.IsSnapshot ? wo : null;
 
             Name = info.GetName();
             Icon = wo.Icon;

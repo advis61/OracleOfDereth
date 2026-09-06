@@ -98,7 +98,7 @@ namespace OracleOfDereth
                 : new string[0];
 
             if (terms.Length == 0) return true;
-            string combined = Combined(t);
+            string combined = Combined(t) + " " + t.Character;
             foreach (string term in terms)
             {
                 int requiredCount = 1;
@@ -155,7 +155,7 @@ namespace OracleOfDereth
         // Paint the given items into the HudList: status/loading icon, item icon, name and
         // the four summary columns, with the id stashed in the (hidden) last column. Takes
         // the "not complete" icon for column 0 and the id of the selected row.
-        public static void Render(HudList list, List<Item> items, int iconNotComplete, int selectedId)
+        public static void Render(HudList list, List<Item> items, int iconNotComplete, int selectedId, bool showCharacter = false, Item selectedItem = null)
         {
             for (int x = 0; x < items.Count; x++)
             {
@@ -164,7 +164,8 @@ namespace OracleOfDereth
 
                 Item item = items[x];
 
-                AssignImage((HudPictureBox)row[0], iconNotComplete);
+                if (showCharacter) ((HudStaticText)row[0]).Text = item.Character;
+                else AssignImage((HudPictureBox)row[0], iconNotComplete);
                 AssignImage((HudPictureBox)row[1], item.Icon);
                 ((HudStaticText)row[2]).Text = item.Name;
                 ((HudStaticText)row[3]).Text = item.SummaryCol1;
@@ -177,7 +178,14 @@ namespace OracleOfDereth
                 ((HudStaticText)row[4]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
                 ((HudStaticText)row[5]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
 
-                SetRowColor(row, selected: item.Id == selectedId && selectedId != 0, loading: !item.IsIdentified);
+                bool selected = showCharacter ? ReferenceEquals(item, selectedItem) : item.Id == selectedId && selectedId != 0;
+                SetRowColor(row, selected, loading: !item.IsIdentified);
+                if (showCharacter)
+                {
+                    HudStaticText character = (HudStaticText)row[0];
+                    if (selected) character.TextColor = ColorSelected;
+                    else character.ResetTextColor();
+                }
             }
 
             // Trim surplus rows. Nothing to clean up alongside them: AssignImage keeps its

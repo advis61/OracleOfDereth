@@ -84,6 +84,7 @@ namespace OracleOfDereth
             { 4_03, 600 }, // Fship (recruiting fellowships)
             { 4_04, 430 }, // Quests (Custom Quests)
             { 4_05, 450 }, // Top (leaderboards; every sub-tab is the same shape)
+            { 4_06, 1440 }, // Inventory (VGI, all characters on the current server)
 
             // About / Settings / Help
             { 5_00, 350 }, // About
@@ -125,6 +126,7 @@ namespace OracleOfDereth
             { 4_03, 545 }, // Fship (recruiting fellowships)
             { 4_04, 545 }, // Quests (Custom Quests)
             { 4_05, 555 }, // Top (leaderboards) — taller: a third row of tabs above the list
+            { 4_06, 570 }, // Inventory
 
             // About / Settings / Help
             { 5_00, 270 }, // About
@@ -184,6 +186,7 @@ namespace OracleOfDereth
                 InitBuffs();
                 InitFellowship();
                 InitItems();
+                InitVGInventory();
                 InitNearby();
                 InitQuests();
                 InitFavorites();
@@ -239,6 +242,7 @@ namespace OracleOfDereth
                 });
 
                 DisposeComponent(DisposeItems);
+                DisposeComponent(DisposeVGInventory);
                 DisposeComponent(DisposeNearby);
                 DisposeComponent(DisposeFellowship);
                 DisposeComponent(DisposeQuests);
@@ -278,7 +282,7 @@ namespace OracleOfDereth
             catch (Exception ex) { Util.Log(ex); }
         }
 
-        public bool IsItemsTabActive() { return view.Visible && CurrentTab() == 1_04; }
+        public bool IsItemsTabActive() { return view != null && MainViewNotebook != null && StatusViewNotebook != null && view.Visible && CurrentTab() == 1_04; }
 
         private int CurrentTab()
         {
@@ -308,9 +312,9 @@ namespace OracleOfDereth
             // Save the new view height
             MainViewHeights[tab] = view.Height;
 
-            if (tab == 1_04)
+            if (tab == 1_04 || tab == 4_06)
             {
-                // Items tab is freely widenable — remember its width instead of locking it.
+                // Item lists are freely widenable — remember each tab's width.
                 MainViewWidths[tab] = view.Width;
             }
             else
@@ -474,6 +478,7 @@ namespace OracleOfDereth
             if (currentTab == 4_03) { UpdateConquestFship(); }
             if (currentTab == 4_04) { UpdateCustomQuests(); }
             if (currentTab == 4_05) { UpdateTop(); }
+            if (currentTab == 4_06) { UpdateVGInventory(); }
 
             // About / Settings / Help
             if (currentTab == 5_00) {; }

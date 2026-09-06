@@ -61,6 +61,8 @@ namespace OracleOfDereth
             Col3WorkDescending,
             Col4Ascending,
             Col4Descending,
+            CharacterAscending,
+            CharacterDescending,
         }
 
         // In-flight identify requests: item id -> when we sent it. Tracked so a dropped
@@ -562,6 +564,21 @@ namespace OracleOfDereth
 
         private static bool IsEmpty(string s) => string.IsNullOrEmpty(s);
 
+        // Saved inventories use the existing sort model without entering the live ID queue.
+        public void Load(IEnumerable<VirindiObject> objects)
+        {
+            var items = new List<Item>();
+            foreach (VirindiObject obj in objects)
+            {
+                var item = new Item();
+                item.Populate(obj);
+                items.Add(item);
+            }
+            Clear();
+            Items = items;
+            Sort(CurrentSortType);
+        }
+
         // Toggle a column header: descending if we're already sorted ascending on it, else
         // ascending. Lets the views' header-click handlers be one-liners.
         public void ToggleSort(SortType ascending, SortType descending)
@@ -621,6 +638,12 @@ namespace OracleOfDereth
                     break;
                 case SortType.Col4Ascending:
                     Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol4).ThenBy(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.CharacterAscending:
+                    Items = Items.OrderBy(t => t.Character).ThenBy(t => t.Name).ToList();
+                    break;
+                case SortType.CharacterDescending:
+                    Items = Items.OrderByDescending(t => t.Character).ThenBy(t => t.Name).ToList();
                     break;
                 case SortType.Col4Descending:
                     Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol4).ThenByDescending(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
