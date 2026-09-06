@@ -103,7 +103,7 @@ namespace OracleOfDereth
         // Rows still showing as stubs (greyed, no detail columns). This is what the status
         // line reports as "identifying" — it matches what the user actually sees, unlike the
         // in-flight queue count which drops to 0 the moment requests resolve or are dropped.
-        public int UnidentifiedCount => Items.Count(t => !t.IsIdentified);
+        public int UnidentifiedCount => Items.Count(t => !t.IsComplete);
 
         // Whether to include the item in the list. We intentionally keep attuned
         // items (they're shown, just not actually tradeable). All checks here are
@@ -246,7 +246,7 @@ namespace OracleOfDereth
                 foreach (WorldObject wo in inv)
                 {
                     if (!IsInInventory(wo)) continue;
-                    if (Items.Any(t => t.Id == wo.Id && t.IsIdentified)) continue;                 // already done
+                    if (Items.Any(t => t.Id == wo.Id && t.IsComplete)) continue;                 // already done
                     if (PendingIds.ContainsKey(wo.Id) || IdentifyQueue.Contains(wo.Id)) continue;  // already in flight
                     // (an unidentified stub that gave up falls through here and gets re-queued)
 
@@ -349,7 +349,7 @@ namespace OracleOfDereth
 
                 WorldObject wo = CoreManager.Current.WorldFilter[id];
                 if (wo == null) continue;                                            // can't appraise it right now; leave its row as-is
-                if (Items.Any(t => t.Id == id && t.IsIdentified)) continue;          // already filled in (stubs don't block)
+                if (Items.Any(t => t.Id == id && t.IsComplete)) continue;          // already filled in (stubs don't block)
                 if (PendingIds.ContainsKey(id)) continue;
 
                 // Already identified — fill the stub in now, no request needed
@@ -388,7 +388,7 @@ namespace OracleOfDereth
             // item in-game). This fills it the instant the data lands instead of waiting for
             // the next Tick self-heal. Ignore appraisals for items not in this list.
             ItemListRow existing = Items.FirstOrDefault(t => t.Id == changed.Id);
-            if (!wasPending && !wasQueued && (existing == null || existing.IsIdentified)) return;
+            if (!wasPending && !wasQueued && (existing == null || existing.IsComplete)) return;
 
             // Fill the stub in place. We don't remove it here — an item earns its
             // spot when added (already pre-filtered) and keeps it while details load.
@@ -428,7 +428,7 @@ namespace OracleOfDereth
             // that have left the world (null WorldObject) can't be appraised, so we skip them.
             foreach (ItemListRow item in Items)
             {
-                if (item.IsIdentified) continue;
+                if (item.IsComplete) continue;
                 if (PendingIds.ContainsKey(item.Id) || IdentifyQueue.Contains(item.Id)) continue;
 
                 WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
@@ -451,7 +451,7 @@ namespace OracleOfDereth
             for (int i = 0; i < Items.Count; i++)
             {
                 ItemListRow item = Items[i];
-                if (item.IsIdentified) continue;
+                if (item.IsComplete) continue;
 
                 WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
                 if (wo == null) continue;
@@ -505,7 +505,7 @@ namespace OracleOfDereth
             for (int i = 0; i < Items.Count; i++)
             {
                 ItemListRow item = Items[i];
-                if (!item.IsIdentified) continue;
+                if (!item.IsComplete) continue;
                 WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
                 if (wo != null) Items[i] = Describe(wo);
             }
@@ -542,7 +542,7 @@ namespace OracleOfDereth
             int index = Items.FindIndex(t => t.Id == wo.Id);
             if (index < 0) Items.Add(item);
             else Items[index] = item;
-            ItemCache.Store(item.Id, item, wo.Name);
+            ItemCache.Store(item);
         }
 
         // Capture a complete observation and compute its display once. A new appraisal

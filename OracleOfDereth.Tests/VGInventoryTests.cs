@@ -56,7 +56,7 @@ internal static class VGInventoryTests
         filter.Armor = true;
         filter.Weapons = false;
         Check(!list.Items.Any(filter.Matches), "Character search bypassed the category filter.");
-        var misleadingOwner = new ItemListRow(new Item("Conquest", "Legendary Legendary", 1, "Dagger", ObjectClass.MeleeWeapon)) { SummaryCol4 = "Legendary Blood Thirst" };
+        var misleadingOwner = new ItemListRow(new Item("Conquest", "Legendary Legendary", 1, "Legendary Dagger", ObjectClass.MeleeWeapon));
         Check(!new ItemFilter { Doubles = true }.Matches(misleadingOwner), "Character names must not count as item cantrips.");
 
         var iron = VGInventory.DecodeItem("Conquest", "Mule A", 7, "Test Dagger", ObjectClass.MeleeWeapon, Fixture(material: 61));
@@ -71,12 +71,12 @@ internal static class VGInventoryTests
         Check(ReferenceEquals(named.Items[0].Item, iron), "Name sorting must use the material-prefixed display name.");
 
         ItemCache.Init();
-        ItemCache.Store(iron.Id, ironInfo, iron.Name);
+        ItemCache.Store(ironInfo);
         var cached = ItemCache.Get(iron.Id, iron.Name);
         Check(cached != null && !ReferenceEquals(cached, ironInfo) && cached.DisplayName == ironInfo.DisplayName, "Cache must return an independent item with its display intact.");
         cached.PopulateStub();
-        Check(!cached.IsIdentified && cached.SummaryCol3 == "" && cached.SortCol3OD == 0, "Stub population retained old appraisal details.");
-        Check(ironInfo.IsIdentified && ItemCache.Get(iron.Id, iron.Name).IsIdentified, "Updating a cached copy changed the original or cache.");
+        Check(!cached.IsComplete && cached.SummaryCol3 == "" && cached.SortCol3OD == 0, "Stub population retained old appraisal details.");
+        Check(ironInfo.IsComplete && ItemCache.Get(iron.Id, iron.Name).IsComplete, "Updating a cached copy changed the original or cache.");
         Check(ItemCache.Get(iron.Id, "Different item") == null, "Cache accepted a recycled object ID.");
         ItemCache.Clear();
 
@@ -220,9 +220,9 @@ internal static class VGInventoryTests
             Check(inventory.Refresh("Conquest"), inventory.Error);
             Check(inventory.List.Items.Count == 3 && inventory.UnreadableCount == 1, "Server filter or unreadable-row preservation failed.");
             var broken = inventory.List.Items.Single(i => i.Character == "Broken");
-            Check(!broken.IsIdentified && new ItemFilter { Weapons = true }.Matches(broken), "Unreadable weapon lost its category or was marked identified.");
+            Check(!broken.IsComplete && new ItemFilter { Weapons = true }.Matches(broken), "Unreadable weapon lost its category or was marked identified.");
             broken.Populate();
-            Check(!broken.IsIdentified && broken.Description.Contains("unavailable"), "Unreadable item manufactured appraisal data.");
+            Check(!broken.IsComplete && broken.Description.Contains("unavailable"), "Unreadable item manufactured appraisal data.");
             Check(inventory.Search(new ItemFilter { Text = "Mule B" }).Count == 1, "Inventory search lost character ownership.");
             Check(inventory.List.QueueCount == 0, "Database read queued live identification.");
             Check(before.SequenceEqual(File.ReadAllBytes(database)), "Read modified the database.");

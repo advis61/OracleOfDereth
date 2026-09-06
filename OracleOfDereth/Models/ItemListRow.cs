@@ -14,19 +14,20 @@ namespace OracleOfDereth
         public string Character => Item.Character;
         public string Server => Item.Server;
         public string DisplayName { get; private set; }
-        public bool IsIdentified { get; private set; }
-        public int SortCategory = 0; // Groups like items together: 0=weapon, 1=armor, 2=jewelry, 3=cloak, 4=summon, 5=aetheria, 9=other
-        public string SummaryCol1 = "";
-        public string SummaryCol2 = "";
-        public string SummaryCol3 = "";
-        public string SummaryCol4 = "";
-        public int SortCol2 = 0;
-        public int SortCol3OD = 0;     // OD value (Col3 cycle leads with this for weapons)
-        public int SortCol3 = 0;       // total attack modifier (Col3 secondary sort)
-        public int SortCol3Melee = 0;  // total melee-defense modifier (Col3 tertiary sort)
-        public int SortCol3Work = 0;   // workmanship (Col3 fourth sort)
-        public int SortCol4 = 0;
-        public string Description = "";
+        // Ready for display, including items that do not require appraisal.
+        public bool IsComplete { get; private set; }
+        public int SortCategory { get; private set; } = 0; // Groups like items together: 0=weapon, 1=armor, 2=jewelry, 3=cloak, 4=summon, 5=aetheria, 9=other
+        public string SummaryCol1 { get; private set; } = "";
+        public string SummaryCol2 { get; private set; } = "";
+        public string SummaryCol3 { get; private set; } = "";
+        public string SummaryCol4 { get; private set; } = "";
+        public int SortCol2 { get; private set; } = 0;
+        public int SortCol3OD { get; private set; } = 0;     // OD value (Col3 cycle leads with this for weapons)
+        public int SortCol3 { get; private set; } = 0;       // total attack modifier (Col3 secondary sort)
+        public int SortCol3Melee { get; private set; } = 0;  // total melee-defense modifier (Col3 tertiary sort)
+        public int SortCol3Work { get; private set; } = 0;   // workmanship (Col3 fourth sort)
+        public int SortCol4 { get; private set; } = 0;
+        public string Description { get; private set; } = "";
 
         public ItemListRow(WorldObject worldObject) : this(new Item(worldObject)) { }
 
@@ -39,7 +40,7 @@ namespace OracleOfDereth
 
         // Fill the base data available before ID. Type and category are derivable without
         // an appraisal, so set them now — that keeps the row in its final category (filter)
-        // bucket from the start. Leaves IsIdentified false; the detail columns stay blank.
+        // bucket from the start. Leaves IsComplete false; the detail columns stay blank.
         public void PopulateStub()
         {
             ItemInfo info = new ItemInfo(Item);
@@ -50,7 +51,7 @@ namespace OracleOfDereth
             SortCol2 = SortCol3OD = SortCol3 = SortCol3Melee = SortCol3Work = SortCol4 = 0;
             Description = Item.Name + " (details unavailable)";
             SortCategory = GetSortCategory(info);
-            IsIdentified = false;
+            IsComplete = false;
         }
 
         // Compute display text once when properties load/change, never during rendering.
@@ -84,7 +85,7 @@ namespace OracleOfDereth
             }
             SortCol4 = 0; // Col4 (cantrips) is a string; sort falls through to SummaryCol4
             Description = info.ToString();
-            IsIdentified = true;
+            IsComplete = true;
         }
 
         // Col1 — item type / slot. Weapons append their damage element (e.g. "Heavy Acid",

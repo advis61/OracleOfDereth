@@ -179,7 +179,7 @@ namespace OracleOfDereth
                 ((HudStaticText)row[5]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
 
                 bool selected = showCharacter ? ReferenceEquals(item, selectedItem) : item.Id == selectedId && selectedId != 0;
-                SetRowColor(row, selected, loading: !item.IsIdentified);
+                SetRowColor(row, selected, loading: !item.IsComplete);
                 if (showCharacter)
                 {
                     HudStaticText character = (HudStaticText)row[0];

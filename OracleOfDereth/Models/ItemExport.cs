@@ -83,7 +83,7 @@ namespace OracleOfDereth
 
         private static string[] Row(ItemListRow item)
         {
-            if (!item.IsIdentified)
+            if (!item.IsComplete)
             {
                 var row = new string[Headers.Length];
                 row[0] = item.Character;
