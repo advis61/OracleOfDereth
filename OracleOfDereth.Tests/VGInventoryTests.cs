@@ -133,7 +133,7 @@ internal static class VGInventoryTests
             "Unknown active buffs were treated as a known empty list for an equipped item.");
         Check(typeof(Item).Assembly.GetType("OracleOfDereth.WorldObject") == null,
             "The plugin must not define a competing WorldObject type.");
-        Check(typeof(WorldItemCapture).GetMethod("Capture").GetParameters()[0].ParameterType == typeof(Decal.Adapter.Wrappers.WorldObject),
+        Check(typeof(Item).GetConstructor(new[] { typeof(Decal.Adapter.Wrappers.WorldObject) }) != null,
             "Live capture must accept Decal's WorldObject.");
         Check(!typeof(Item).GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
             .Any(f => typeof(Decal.Adapter.Wrappers.WorldObject).IsAssignableFrom(f.FieldType)),

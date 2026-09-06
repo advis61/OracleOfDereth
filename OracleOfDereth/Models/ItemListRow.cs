@@ -28,7 +28,7 @@ namespace OracleOfDereth
         public int SortCol4 = 0;
         public string Description = "";
 
-        public ItemListRow(WorldObject worldObject) : this(WorldItemCapture.Capture(worldObject)) { }
+        public ItemListRow(WorldObject worldObject) : this(new Item(worldObject)) { }
 
         public ItemListRow(Item item, bool completeWithoutAppraisal = false)
         {

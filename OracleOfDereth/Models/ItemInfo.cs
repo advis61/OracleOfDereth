@@ -23,7 +23,7 @@ namespace OracleOfDereth
         private readonly Dictionary<int, int> intValues = new Dictionary<int, int>();
         private readonly Dictionary<int, double> doubleValues = new Dictionary<int, double>();
 
-        public ItemInfo(WorldObject worldObject) : this(WorldItemCapture.Capture(worldObject)) { }
+        public ItemInfo(WorldObject worldObject) : this(new Item(worldObject)) { }
 
         public ItemInfo(Item worldObject)
         {

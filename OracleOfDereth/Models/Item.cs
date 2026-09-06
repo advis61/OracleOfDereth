@@ -1,3 +1,5 @@
+using Decal.Adapter;
+using DecalWorldObject = Decal.Adapter.Wrappers.WorldObject;
 using Decal.Adapter.Wrappers;
 using System;
 using System.Collections.Generic;
@@ -33,6 +35,77 @@ namespace OracleOfDereth
         public int Spell(int index) => spells[index];
         public int ActiveSpellCount => activeSpells?.Length ?? 0;
         public int ActiveSpell(int index) => activeSpells != null ? activeSpells[index] : throw new InvalidOperationException("Active spells were not captured.");
+
+        // Capture live properties and ownership on the game thread without retaining Decal objects.
+        public Item(DecalWorldObject worldObject)
+        {
+            if (worldObject == null) throw new ArgumentNullException(nameof(worldObject));
+            var integers = new Dictionary<int, int>();
+            var doubles = new Dictionary<int, double>();
+            var strings = new Dictionary<int, string>();
+            var booleans = new Dictionary<int, bool>();
+            var spells = new List<int>();
+            var activeSpells = new List<int>();
+            foreach (int key in worldObject.LongKeys) integers[key] = worldObject.Values((LongValueKey)key);
+            foreach (int key in worldObject.DoubleKeys) doubles[key] = worldObject.Values((DoubleValueKey)key);
+            foreach (int key in worldObject.StringKeys) strings[key] = worldObject.Values((StringValueKey)key);
+            foreach (int key in worldObject.BoolKeys) booleans[key] = worldObject.Values((BoolValueKey)key);
+
+            // Some quest weapons expose these values without enumerating their keys.
+            foreach (LongValueKey key in new[] { LongValueKey.MaxDamage, LongValueKey.ElementalDmgBonus, (LongValueKey)353 })
+            {
+                int value = worldObject.Values(key, 0);
+                if (!integers.ContainsKey((int)key) && value != 0) integers[(int)key] = value;
+            }
+            foreach (DoubleValueKey key in new[] { DoubleValueKey.DamageBonus, DoubleValueKey.AttackBonus, DoubleValueKey.MeleeDefenseBonus, DoubleValueKey.ElementalDamageVersusMonsters })
+            {
+                double value = worldObject.Values(key, 0);
+                if (!doubles.ContainsKey((int)key) && value != 0) doubles[(int)key] = value;
+            }
+            for (int i = 0; i < worldObject.SpellCount; i++) spells.Add(worldObject.Spell(i));
+            for (int i = 0; i < worldObject.ActiveSpellCount; i++) activeSpells.Add(worldObject.ActiveSpell(i));
+
+            string server = CoreManager.Current?.CharacterFilter?.Server ?? "";
+            string character = "";
+            int? holderLevel = null;
+            // Capture ownership and equipment context now. Calculations must never
+            // resolve a snapshot's container ID against a later/different world.
+            var visited = new HashSet<int>();
+            int container = worldObject.Container;
+            var worldFilter = CoreManager.Current?.WorldFilter;
+            while (worldFilter != null && container != 0 && visited.Add(container))
+            {
+                DecalWorldObject owner = worldFilter[container];
+                if (owner == null) break;
+                if (owner.ObjectClass == ObjectClass.Player)
+                {
+                    character = owner.Name;
+                    if (container == worldObject.Container)
+                    {
+                        int level = owner.Values((LongValueKey)25, 0);
+                        if (level > 0) holderLevel = level;
+                    }
+                    break;
+                }
+                container = owner.Container;
+            }
+            Server = server;
+            Character = character;
+            Id = worldObject.Id;
+            Name = worldObject.Name ?? "";
+            ObjectClass = worldObject.ObjectClass;
+            this.integers = integers;
+            this.strings = strings;
+            this.booleans = booleans;
+            this.doubles = doubles;
+            int64s = new Dictionary<int, long>();
+            this.spells = spells.ToArray();
+            this.activeSpells = worldObject.HasIdData ? activeSpells.ToArray() : null;
+            HasIdData = worldObject.HasIdData;
+            HolderLevel = holderLevel;
+            Icon = worldObject.Icon;
+            Container = worldObject.Container;
+        }
 
         // An omitted property or spell list means unavailable, not a guessed zero/empty
         // appraisal. Callers supply the metadata they actually know about the owner.

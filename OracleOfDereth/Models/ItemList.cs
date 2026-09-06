@@ -549,7 +549,7 @@ namespace OracleOfDereth
         // creates a new entry; existing/cache-held observations cannot change underneath it.
         private static ItemListRow Describe(WorldObject wo)
         {
-            var info = new ItemListRow(WorldItemCapture.Capture(wo), completeWithoutAppraisal: NeedsNoAppraisal(wo));
+            var info = new ItemListRow(new Item(wo), completeWithoutAppraisal: NeedsNoAppraisal(wo));
             info.Populate();
             return info;
         }
