@@ -192,7 +192,7 @@ namespace OracleOfDereth
         public void UpdateItemsList()
         {
             ItemFilter filter = ItemsFilter();
-            List<Item> items = InventoryList.Items.Where(filter.Matches).ToList();
+            List<ItemListRow> items = InventoryList.Items.Where(filter.Matches).ToList();
 
             // Appraise the exact on-screen rows (text + category) first, then fall back to the
             // category-only matches — so a search term doesn't leave the rest of the selected
@@ -270,11 +270,11 @@ namespace OracleOfDereth
         // The rows currently on screen: the underlying list narrowed by the active
         // category checkboxes + search box. Export/clipboard act on this, not the full
         // list, so what you save matches what you see.
-        private List<Item> DisplayedItems() => InventoryList.Items.Where(ItemsFilter().Matches).ToList();
+        private List<ItemListRow> DisplayedItems() => InventoryList.Items.Where(ItemsFilter().Matches).ToList();
 
         private void ItemsExportText_Hit(object sender, EventArgs e)
         {
-            List<Item> items = DisplayedItems();
+            List<ItemListRow> items = DisplayedItems();
             string path = ItemExport.ToText(items);
             Util.ClipboardCopy(path);
             Util.Chat($"Exported {items.Count} items to {path}");
@@ -282,7 +282,7 @@ namespace OracleOfDereth
 
         private void ItemsExportCsv_Hit(object sender, EventArgs e)
         {
-            List<Item> items = DisplayedItems();
+            List<ItemListRow> items = DisplayedItems();
             string path = ItemExport.ToCsv(items);
             Util.ClipboardCopy(path);
             Util.Chat($"Exported {items.Count} items to {path}");
@@ -290,7 +290,7 @@ namespace OracleOfDereth
 
         private void ItemsExportJson_Hit(object sender, EventArgs e)
         {
-            List<Item> items = DisplayedItems();
+            List<ItemListRow> items = DisplayedItems();
             string path = ItemExport.ToJson(items);
             Util.ClipboardCopy(path);
             Util.Chat($"Exported {items.Count} items to {path}");
@@ -298,7 +298,7 @@ namespace OracleOfDereth
 
         private void ItemsClipboard_Hit(object sender, EventArgs e)
         {
-            List<Item> items = DisplayedItems();
+            List<ItemListRow> items = DisplayedItems();
             string text = string.Join("\n", items.Select(t => t.Description));
             Util.ClipboardCopy(text);
             Util.Chat($"Copied {items.Count} items to clipboard");

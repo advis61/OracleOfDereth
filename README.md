@@ -378,6 +378,8 @@ Type `/od questflag` when selecting an NPC to lookup their quest flag info.
 
 This plugin builds against .NET Framework 4.8 and uses VirindiViewService.
 
+Inventory data follows one path: `WorldItemCapture` captures Decal's `WorldObject`, or `VGInventory` decodes a saved record, into an immutable `Item`. `ItemInfo` provides calculations and identification helpers; `ItemListRow` populates and caches display fields from an `Item`. `ItemList` holds those rows and manages sorting and the live identification queue. A new appraisal replaces the observation. Unknown active spells and holder levels stay explicitly unknown, and saved object IDs are never resolved against the live world.
+
 ## License
 
 MIT

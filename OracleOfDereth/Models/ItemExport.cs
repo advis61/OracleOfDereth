@@ -13,26 +13,26 @@ namespace OracleOfDereth
     // path written. Kept separate from ItemList, which is just the identify/sort pipeline.
     public static class ItemExport
     {
-        public static string ToText(List<Item> items, string nameOverride = null)
+        public static string ToText(List<ItemListRow> items, string nameOverride = null)
         {
             string path = ExportPath("txt", nameOverride);
             File.WriteAllLines(path, items.Select(t => string.IsNullOrEmpty(t.Character) ? t.Description : t.Character + ": " + t.Description));
             return path;
         }
 
-        public static string ToCsv(List<Item> items, string nameOverride = null)
+        public static string ToCsv(List<ItemListRow> items, string nameOverride = null)
         {
             string path = ExportPath("csv", nameOverride);
 
             var lines = new List<string> { string.Join(",", Headers.Select(CsvEscape)) };
-            foreach (Item item in items)
+            foreach (ItemListRow item in items)
                 lines.Add(string.Join(",", Row(item).Select(CsvEscape)));
 
             File.WriteAllLines(path, lines);
             return path;
         }
 
-        public static string ToJson(List<Item> items, string nameOverride = null)
+        public static string ToJson(List<ItemListRow> items, string nameOverride = null)
         {
             string path = ExportPath("json", nameOverride);
 
@@ -81,24 +81,22 @@ namespace OracleOfDereth
             "D", "DR", "C", "CR", "CD", "CDR", "HB", "V"
         };
 
-        private static string[] Row(Item item)
+        private static string[] Row(ItemListRow item)
         {
-            VirindiObject wo = item.SavedObject;
-            if (wo == null && string.IsNullOrEmpty(item.Character)) wo = CoreManager.Current.WorldFilter[item.Id];
-            if (wo == null)
+            if (!item.IsIdentified)
             {
                 var row = new string[Headers.Length];
                 row[0] = item.Character;
                 row[1] = item.Server;
-                row[2] = item.Name;
+                row[2] = item.DisplayName;
                 return row;
             }
 
-            ItemInfo info = new ItemInfo(wo);
+            ItemInfo info = new ItemInfo(item.Item);
 
             return new[] {
-                wo.IsSnapshot ? item.Character : CoreManager.Current.CharacterFilter.Name,
-                wo.IsSnapshot ? item.Server : Server.Name,
+                item.Character,
+                item.Server,
                 info.GetName(),
                 info.GetObjectClassName(),
                 info.GetItemSlotName(),

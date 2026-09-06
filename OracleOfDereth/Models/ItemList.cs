@@ -43,7 +43,7 @@ namespace OracleOfDereth
         }
 
         // Collection of Items
-        public List<Item> Items = new List<Item>();
+        public List<ItemListRow> Items = new List<ItemListRow>();
         public SortType CurrentSortType = SortType.NameAscending;
 
         public enum SortType
@@ -133,7 +133,7 @@ namespace OracleOfDereth
             if (wo.Name == "Aetheria") return false;
 
             // Rares (often Gems/Salvage) carry spells we want to show, so they need an ID too.
-            if (new ItemInfo(wo).IsRare) return false;
+            if (wo.Values((LongValueKey)218103850, 0) == 23308) return false;
 
             switch (wo.ObjectClass)
             {
@@ -216,7 +216,7 @@ namespace OracleOfDereth
             // Reopened a recent trade? Reuse the cached appraisal instead of re-identifying.
             if (useCache)
             {
-                Item cached = ItemCache.Get(id, wo.Name);
+                ItemListRow cached = ItemCache.Get(id, wo.Name);
                 if (cached != null)
                 {
                     Items.Add(cached);
@@ -387,7 +387,7 @@ namespace OracleOfDereth
             // request already gave up, or that we never requested (e.g. the user clicked the
             // item in-game). This fills it the instant the data lands instead of waiting for
             // the next Tick self-heal. Ignore appraisals for items not in this list.
-            Item existing = Items.FirstOrDefault(t => t.Id == changed.Id);
+            ItemListRow existing = Items.FirstOrDefault(t => t.Id == changed.Id);
             if (!wasPending && !wasQueued && (existing == null || existing.IsIdentified)) return;
 
             // Fill the stub in place. We don't remove it here — an item earns its
@@ -426,7 +426,7 @@ namespace OracleOfDereth
             // Re-queue any present, still-unidentified row that isn't already in flight or
             // queued, so the list keeps converging instead of leaving stuck grey rows. Items
             // that have left the world (null WorldObject) can't be appraised, so we skip them.
-            foreach (Item item in Items)
+            foreach (ItemListRow item in Items)
             {
                 if (item.IsIdentified) continue;
                 if (PendingIds.ContainsKey(item.Id) || IdentifyQueue.Contains(item.Id)) continue;
@@ -448,8 +448,9 @@ namespace OracleOfDereth
         {
             bool added = false;
 
-            foreach (Item item in Items)
+            for (int i = 0; i < Items.Count; i++)
             {
+                ItemListRow item = Items[i];
                 if (item.IsIdentified) continue;
 
                 WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
@@ -459,7 +460,7 @@ namespace OracleOfDereth
                 // (its ObjectClass may not have loaded when the stub was first created).
                 if (!wo.HasIdData && !NeedsNoAppraisal(wo)) continue;
 
-                Fill(item, wo);
+                AddFromWorldObject(wo);
                 PendingIds.Remove(item.Id);
                 IdentifyQueue.Remove(item.Id);
                 added = true;
@@ -501,10 +502,12 @@ namespace OracleOfDereth
 
         private void Refresh()
         {
-            foreach (Item item in Items.Where(t => t.IsIdentified))
+            for (int i = 0; i < Items.Count; i++)
             {
+                ItemListRow item = Items[i];
+                if (!item.IsIdentified) continue;
                 WorldObject wo = CoreManager.Current.WorldFilter[item.Id];
-                if (wo != null) item.Populate(wo);
+                if (wo != null) Items[i] = Describe(wo);
             }
 
             Sort(CurrentSortType);
@@ -535,21 +538,20 @@ namespace OracleOfDereth
         // Add an already-identified item, or fill in its existing stub row.
         private void AddFromWorldObject(WorldObject wo)
         {
-            Item item = Items.FirstOrDefault(t => t.Id == wo.Id);
-            if (item == null)
-            {
-                item = new Item { Id = wo.Id };
-                Items.Add(item);
-            }
-            Fill(item, wo);
+            ItemListRow item = Describe(wo);
+            int index = Items.FindIndex(t => t.Id == wo.Id);
+            if (index < 0) Items.Add(item);
+            else Items[index] = item;
+            ItemCache.Store(item.Id, item, wo.Name);
         }
 
-        // Populate an item from its appraisal and remember it in the short-lived cache, so a
-        // trade window reopened shortly after can reuse it instead of re-identifying.
-        private static void Fill(Item item, WorldObject wo)
+        // Capture a complete observation and compute its display once. A new appraisal
+        // creates a new entry; existing/cache-held observations cannot change underneath it.
+        private static ItemListRow Describe(WorldObject wo)
         {
-            item.Populate(wo);
-            ItemCache.Store(item.Id, item, wo.Name);
+            var info = new ItemListRow(WorldItemCapture.Capture(wo), completeWithoutAppraisal: NeedsNoAppraisal(wo));
+            info.Populate();
+            return info;
         }
 
         // Add a placeholder row carrying the base data available before ID.
@@ -557,22 +559,20 @@ namespace OracleOfDereth
         {
             if (Items.Any(t => t.Id == wo.Id)) return;
 
-            Item item = new Item { Id = wo.Id };
-            item.PopulateStub(wo);
+            ItemListRow item = new ItemListRow(wo);
+            item.PopulateStub();
             Items.Add(item);
         }
 
         private static bool IsEmpty(string s) => string.IsNullOrEmpty(s);
 
         // Saved inventories use the existing sort model without entering the live ID queue.
-        public void Load(IEnumerable<VirindiObject> objects)
+        public void Load(IEnumerable<Item> objects)
         {
-            var items = new List<Item>();
-            foreach (VirindiObject obj in objects)
+            var items = objects.Select(obj => new ItemListRow(obj)).ToList();
+            foreach (ItemListRow item in items)
             {
-                var item = new Item();
-                item.Populate(obj);
-                items.Add(item);
+                item.Populate();
             }
             Clear();
             Items = items;
@@ -607,46 +607,46 @@ namespace OracleOfDereth
             switch (sortType)
             {
                 case SortType.NameAscending:
-                    Items = Items.OrderBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.NameDescending:
-                    Items = Items.OrderByDescending(t => t.Name).ToList();
+                    Items = Items.OrderByDescending(t => t.DisplayName).ToList();
                     break;
                 case SortType.Col1Ascending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenBy(t => t.SummaryCol1).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenBy(t => t.SummaryCol1).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.Col1Descending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenByDescending(t => t.SummaryCol1).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenByDescending(t => t.SummaryCol1).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.Col2Ascending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol2).ThenBy(t => t.SummaryCol2).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol2).ThenBy(t => t.SummaryCol2).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.Col2Descending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol2).ThenByDescending(t => t.SummaryCol2).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol2).ThenByDescending(t => t.SummaryCol2).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.Col3ODDescending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3OD).ThenBy(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3OD).ThenBy(t => t.SummaryCol3).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.Col3AttackDescending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.Col3MeleeDescending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3Melee).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3Melee).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.Col3WorkDescending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3Work).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3Work).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.Col4Ascending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol4).ThenBy(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol4).ThenBy(t => t.SummaryCol4).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.CharacterAscending:
-                    Items = Items.OrderBy(t => t.Character).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => t.Character).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.CharacterDescending:
-                    Items = Items.OrderByDescending(t => t.Character).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderByDescending(t => t.Character).ThenBy(t => t.DisplayName).ToList();
                     break;
                 case SortType.Col4Descending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol4).ThenByDescending(t => t.SummaryCol4).ThenBy(t => t.Name).ToList();
+                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol4).ThenByDescending(t => t.SummaryCol4).ThenBy(t => t.DisplayName).ToList();
                     break;
             }
         }

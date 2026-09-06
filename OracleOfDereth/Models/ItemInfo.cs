@@ -16,38 +16,24 @@ namespace OracleOfDereth
         // Constructor & Internal State
         // ============================================================
 
-        public readonly VirindiObject wo;
+        public readonly Item wo;
 
         private readonly List<int> activeSpells = new List<int>();
         private readonly List<int> innateSpells = new List<int>();
         private readonly Dictionary<int, int> intValues = new Dictionary<int, int>();
         private readonly Dictionary<int, double> doubleValues = new Dictionary<int, double>();
 
-        public ItemInfo(WorldObject worldObject) : this(new VirindiObject(worldObject)) { }
+        public ItemInfo(WorldObject worldObject) : this(WorldItemCapture.Capture(worldObject)) { }
 
-        public ItemInfo(VirindiObject worldObject)
+        public ItemInfo(Item worldObject)
         {
-            wo = worldObject;
+            wo = worldObject ?? throw new ArgumentNullException(nameof(worldObject));
 
             foreach (var key in wo.LongKeys) intValues[key] = wo.Values((LongValueKey)key);
             foreach (var key in wo.DoubleKeys) doubleValues[key] = wo.Values((DoubleValueKey)key);
 
-            // Some quest weapons don't expose keys via LongKeys/DoubleKeys but the values are accessible via wo.Values() directly.
-            EnsureKey(intValues, Key_MaxDamage, wo.Values(LongValueKey.MaxDamage, 0));
-            EnsureKey(intValues, Key_ElementalDmgBonus, wo.Values(LongValueKey.ElementalDmgBonus, 0));
-            EnsureKey(intValues, 353, wo.Values((LongValueKey)353, 0)); // Mastery
-            EnsureKey(doubleValues, Key_DamageBonus, wo.Values(DoubleValueKey.DamageBonus, 0));
-            EnsureKey(doubleValues, Key_AttackBonus, wo.Values(DoubleValueKey.AttackBonus, 0));
-            EnsureKey(doubleValues, Key_MeleeDefenseBonus, wo.Values(DoubleValueKey.MeleeDefenseBonus, 0));
-            EnsureKey(doubleValues, Key_ElementalDmgVsMonsters, wo.Values(DoubleValueKey.ElementalDamageVersusMonsters, 0));
-
             for (int i = 0; i < wo.ActiveSpellCount; i++) activeSpells.Add(wo.ActiveSpell(i));
             for (int i = 0; i < wo.SpellCount; i++) innateSpells.Add(wo.Spell(i));
-        }
-
-        private static void EnsureKey<T>(Dictionary<int, T> dict, int key, T value) where T : struct, IComparable
-        {
-            if (!dict.ContainsKey(key) && value.CompareTo(default(T)) != 0) dict[key] = value;
         }
 
         // ============================================================
@@ -1292,22 +1278,7 @@ namespace OracleOfDereth
             return value;
         }
 
-        private int GetHolderLevel()
-        {
-            if (!IsEquipped) return 0;
-            // A saved object's container ID must never resolve to an unrelated live object.
-            // Without active buffs in VGI, leave equipped-item overages unknown.
-            if (wo.IsSnapshot) return 0;
-
-            try
-            {
-                WorldObject holder = CoreManager.Current.WorldFilter[wo.Container];
-                if (holder != null) return holder.Values((LongValueKey)25, 0);
-            }
-            catch { }
-
-            return 0;
-        }
+        private int GetHolderLevel() => IsEquipped && wo.HasActiveSpellData ? wo.HolderLevel ?? 0 : 0;
 
         private bool AssumeFullBuffs => GetHolderLevel() >= 200;
 
@@ -2201,5 +2172,6 @@ namespace OracleOfDereth
         };
 
         #endregion
+
     }
 }

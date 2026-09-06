@@ -9,8 +9,8 @@ namespace OracleOfDereth
     {
         private readonly VGInventory SavedInventory = new VGInventory();
         private bool suppressVGInventoryFilter;
-        private List<Item> visibleVGInventory = new List<Item>();
-        private Item selectedVGInventoryItem;
+        private List<ItemListRow> visibleVGInventory = new List<ItemListRow>();
+        private ItemListRow selectedVGInventoryItem;
 
         public HudStaticText VGInventoryText { get; private set; }
         public HudButton VGInventoryRefresh { get; private set; }

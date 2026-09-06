@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace OracleOfDereth
 {
@@ -24,7 +25,7 @@ namespace OracleOfDereth
         // Explicit directory is also useful for reading a copied database in diagnostics.
         public VGInventory(string directory = null) { this.directory = directory; }
 
-        public List<Item> Search(ItemFilter filter) => List.Items.Where(filter.Matches).ToList();
+        public List<ItemListRow> Search(ItemFilter filter) => List.Items.Where(filter.Matches).ToList();
 
         public bool Refresh(string server)
         {
@@ -45,8 +46,8 @@ namespace OracleOfDereth
                 string path = Path.Combine(folder, "_" + server + ".db");
                 if (!File.Exists(path)) throw new InvalidOperationException("No saved VGI inventory for " + server + ". Use Items to add and identify items.");
 
-                var objects = new List<VirindiObject>();
-                var unreadable = new List<Item>();
+                var objects = new List<Item>();
+                int unreadable = 0;
                 using (DbConnection connection = OpenConnection(folder, path))
                 using (DbCommand command = connection.CreateCommand())
                 {
@@ -67,22 +68,20 @@ namespace OracleOfDereth
                             var category = (ObjectClass)reader.GetInt32(4);
                             try
                             {
-                                objects.Add(new VirindiObject(ownerServer, character, id, name, category, (byte[])reader.GetValue(5)));
+                                objects.Add(DecodeItem(ownerServer, character, id, name, category, (byte[])reader.GetValue(5)));
                             }
                             catch (Exception ex) when (ex is IOException || ex is InvalidDataException)
                             {
                                 // Keep the owner/name visible even if an old or truncated blob
                                 // cannot supply details. Never queue an offline item for ID.
-                                unreadable.Add(new Item { Id = id, Name = name, Character = character, Server = ownerServer,
-                                    SortCategory = 9, Description = name + " (saved details unavailable)" });
+                                objects.Add(new Item(ownerServer, character, id, name, category));
+                                unreadable++;
                             }
                         }
                     }
                 }
                 List.Load(objects);
-                List.Items.AddRange(unreadable);
-                List.Sort(List.CurrentSortType);
-                UnreadableCount = unreadable.Count;
+                UnreadableCount = unreadable;
                 LoadedAt = DateTime.Now;
                 return true;
             }
@@ -130,5 +129,66 @@ namespace OracleOfDereth
             }
             return null;
         }
+        // VGI's five property dictionaries, innate spells and trailing marker. The
+        // active-spell list is absent, so the resulting Item explicitly leaves it unknown.
+        public static Item DecodeItem(string server, string character, int id, string name, ObjectClass category, byte[] data)
+        {
+            if (data == null) throw new ArgumentNullException(nameof(data));
+            var integers = new Dictionary<int, int>();
+            var strings = new Dictionary<int, string>();
+            var booleans = new Dictionary<int, bool>();
+            var doubles = new Dictionary<int, double>();
+            var int64s = new Dictionary<int, long>();
+            var spells = new List<int>();
+            using (var stream = new MemoryStream(data, false))
+            using (var reader = new BinaryReader(stream))
+            {
+                ReadProperties(reader, integers, 8, r => r.ReadInt32());
+                ReadProperties(reader, strings, 5, ReadString);
+                ReadProperties(reader, booleans, 5, r => r.ReadBoolean());
+                ReadProperties(reader, doubles, 12, r => r.ReadDouble());
+                ReadProperties(reader, int64s, 12, r => r.ReadInt64());
+                int count = ReadCount(reader, 4);
+                for (int i = 0; i < count; i++) spells.Add(reader.ReadInt32());
+                reader.ReadInt32();
+                if (stream.Position != stream.Length) throw new InvalidDataException("Unsupported VGI item data.");
+            }
+            return new Item(server, character, id, name, category, integers, strings, booleans, doubles, int64s, spells, hasIdData: true);
+        }
+
+        private static void ReadProperties<T>(BinaryReader reader, Dictionary<int, T> values, int minimumSize, Func<BinaryReader, T> read)
+        {
+            int count = ReadCount(reader, minimumSize);
+            for (int i = 0; i < count; i++)
+            {
+                int key = reader.ReadInt32();
+                values[key] = read(reader);
+            }
+        }
+
+        private static int ReadCount(BinaryReader reader, int minimumSize)
+        {
+            int count = reader.ReadInt32();
+            if (count < 0 || count > (reader.BaseStream.Length - reader.BaseStream.Position) / minimumSize)
+                throw new InvalidDataException("Invalid VGI property count.");
+            return count;
+        }
+
+        private static string ReadString(BinaryReader reader)
+        {
+            // VGI uses ASCII with a variable-length prefix: three 7-bit groups, then
+            // an optional full fourth byte. Do not use BinaryReader.ReadString (UTF-8).
+            uint length = 0;
+            for (int group = 0; group < 4; group++)
+            {
+                byte next = reader.ReadByte();
+                length |= (uint)(group == 3 ? next : next & 127) << (group * 7);
+                if (group == 3 || (next & 128) == 0) break;
+            }
+            if (length > reader.BaseStream.Length - reader.BaseStream.Position)
+                throw new InvalidDataException("Invalid VGI string length.");
+            return Encoding.ASCII.GetString(reader.ReadBytes((int)length));
+        }
+
     }
 }

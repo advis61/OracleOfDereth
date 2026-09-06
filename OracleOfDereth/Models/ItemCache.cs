@@ -9,19 +9,19 @@ namespace OracleOfDereth
     // on the ChangePortalMode event.
     public static class ItemCache
     {
-        private struct Entry { public Item Item; public string BaseName; }
+        private struct Entry { public ItemListRow Item; public string BaseName; }
         private static readonly Dictionary<int, Entry> Cache = new Dictionary<int, Entry>();
 
         // Remember an identified item. baseName is the WorldObject's plain name, checked on
         // lookup so a recycled id can't hand back another item's appraisal.
-        public static void Store(int id, Item item, string baseName)
+        public static void Store(int id, ItemListRow item, string baseName)
         {
             if (item == null || !item.IsIdentified) return;
             Cache[id] = new Entry { Item = item.Clone(), BaseName = baseName ?? "" };
         }
 
         // A fresh cached copy for this id, or null if missing / a different item.
-        public static Item Get(int id, string baseName)
+        public static ItemListRow Get(int id, string baseName)
         {
             if (!Cache.TryGetValue(id, out Entry e)) return null;
             if (e.BaseName != (baseName ?? "")) return null;

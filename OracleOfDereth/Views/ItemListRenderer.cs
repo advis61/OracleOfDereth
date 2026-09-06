@@ -29,7 +29,7 @@ namespace OracleOfDereth
         // True when the filter actually narrows the list (some category ticked, text typed, or Doubles set).
         public bool IsActive => AnyCategorySelected() || !string.IsNullOrWhiteSpace(Text) || Doubles;
 
-        public bool Matches(Item t)
+        public bool Matches(ItemListRow t)
         {
             if (!IsCategoryVisible(t.SortCategory)) return false;
             if (!MatchesDoubles(t)) return false;
@@ -39,7 +39,7 @@ namespace OracleOfDereth
         // Category-only match, ignoring the search text. Used for second-tier identify priority:
         // appraise everything in the selected categories once the exact (text + category) matches
         // are done, so clearing the search term finds the broader set already identified.
-        public bool MatchesCategory(Item t) => IsCategoryVisible(t.SortCategory);
+        public bool MatchesCategory(ItemListRow t) => IsCategoryVisible(t.SortCategory);
 
         // Category checkboxes act as a whitelist: with none ticked there's no category
         // filtering at all (everything shows); tick one or more to show only those.
@@ -67,13 +67,13 @@ namespace OracleOfDereth
         }
 
         // The item's searchable text: name plus every summary column, as one string.
-        private static string Combined(Item t) => $"{t.Name} {t.SummaryCol1} {t.SummaryCol2} {t.SummaryCol3} {t.SummaryCol4}";
+        private static string Combined(ItemListRow t) => $"{t.DisplayName} {t.SummaryCol1} {t.SummaryCol2} {t.SummaryCol3} {t.SummaryCol4}";
 
         // "Doubles": items doubled up on their highest cantrip tier — two or more legendary, OR
         // two or more epic with no legendary, OR two or more major with no epic/legendary. Counts
         // the tier words in the row text (case-insensitive); a single higher-tier cantrip outranks
         // (disqualifies) a lower-tier double.
-        private bool MatchesDoubles(Item t)
+        private bool MatchesDoubles(ItemListRow t)
         {
             if (!Doubles) return true;
 
@@ -90,7 +90,7 @@ namespace OracleOfDereth
             return CountOccurrences(combined, "major") >= 2;
         }
 
-        private bool MatchesText(Item t)
+        private bool MatchesText(ItemListRow t)
         {
             string trimmed = (Text ?? "").Trim();
             string[] terms = trimmed.Length > 0
@@ -155,19 +155,19 @@ namespace OracleOfDereth
         // Paint the given items into the HudList: status/loading icon, item icon, name and
         // the four summary columns, with the id stashed in the (hidden) last column. Takes
         // the "not complete" icon for column 0 and the id of the selected row.
-        public static void Render(HudList list, List<Item> items, int iconNotComplete, int selectedId, bool showCharacter = false, Item selectedItem = null)
+        public static void Render(HudList list, List<ItemListRow> items, int iconNotComplete, int selectedId, bool showCharacter = false, ItemListRow selectedItem = null)
         {
             for (int x = 0; x < items.Count; x++)
             {
                 HudList.HudListRowAccessor row;
                 if (x >= list.RowCount) { row = list.AddRow(); } else { row = list[x]; }
 
-                Item item = items[x];
+                ItemListRow item = items[x];
 
                 if (showCharacter) ((HudStaticText)row[0]).Text = item.Character;
                 else AssignImage((HudPictureBox)row[0], iconNotComplete);
                 AssignImage((HudPictureBox)row[1], item.Icon);
-                ((HudStaticText)row[2]).Text = item.Name;
+                ((HudStaticText)row[2]).Text = item.DisplayName;
                 ((HudStaticText)row[3]).Text = item.SummaryCol1;
                 ((HudStaticText)row[4]).Text = item.SummaryCol2;
                 ((HudStaticText)row[5]).Text = item.SummaryCol3;

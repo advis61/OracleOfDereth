@@ -189,7 +189,7 @@ namespace OracleOfDereth
             if (view == null) return;
 
             ItemFilter filter = Filter();
-            List<Item> items = TradeItems.Items.Where(filter.Matches).ToList();
+            List<ItemListRow> items = TradeItems.Items.Where(filter.Matches).ToList();
 
             // Appraise the exact on-screen rows (text + category) first, then fall back to the
             // category-only matches — so a narrow search term like "defender armor" doesn't leave
@@ -281,10 +281,10 @@ namespace OracleOfDereth
         {
             try
             {
-                Item item = RequireSelectedTradeItem();
+                ItemListRow item = RequireSelectedTradeItem();
                 if (item == null) return;
                 Trade.Add(item.Id);
-                Util.Chat($"Adding {item.Name} from {Trade.PartnerName}", Util.ColorPink);
+                Util.Chat($"Adding {item.DisplayName} from {Trade.PartnerName}", Util.ColorPink);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -312,13 +312,13 @@ namespace OracleOfDereth
         // The rows currently on screen: the partner's offered items narrowed by the active
         // category checkboxes + search box. Export acts on this, not the full list, so what
         // you save matches what you see.
-        private List<Item> DisplayedItems() => TradeItems.Items.Where(Filter().Matches).ToList();
+        private List<ItemListRow> DisplayedItems() => TradeItems.Items.Where(Filter().Matches).ToList();
 
         private void ExportTextButton_Hit(object sender, EventArgs e)
         {
             try
             {
-                List<Item> items = DisplayedItems();
+                List<ItemListRow> items = DisplayedItems();
                 string path = ItemExport.ToText(items, Trade.PartnerName);
                 Util.ClipboardCopy(path);
                 Util.Chat($"Exported {items.Count} items to {path}");
@@ -330,7 +330,7 @@ namespace OracleOfDereth
         {
             try
             {
-                List<Item> items = DisplayedItems();
+                List<ItemListRow> items = DisplayedItems();
                 string path = ItemExport.ToCsv(items, Trade.PartnerName);
                 Util.ClipboardCopy(path);
                 Util.Chat($"Exported {items.Count} items to {path}");
@@ -342,7 +342,7 @@ namespace OracleOfDereth
         {
             try
             {
-                List<Item> items = DisplayedItems();
+                List<ItemListRow> items = DisplayedItems();
                 string path = ItemExport.ToJson(items, Trade.PartnerName);
                 Util.ClipboardCopy(path);
                 Util.Chat($"Exported {items.Count} items to {path}");
@@ -351,14 +351,14 @@ namespace OracleOfDereth
         }
 
         // The in-game-selected trade item if we can act on it, else null (with a chat note).
-        private Item RequireSelectedTradeItem()
+        private ItemListRow RequireSelectedTradeItem()
         {
             if (string.IsNullOrEmpty(Trade.PartnerName))
             {
                 Util.Chat("No trade partner.", Util.ColorPink);
                 return null;
             }
-            Item item = TradeItems.Items.FirstOrDefault(t => t.Id == Target.CurrentTargetId);
+            ItemListRow item = TradeItems.Items.FirstOrDefault(t => t.Id == Target.CurrentTargetId);
             if (item == null)
             {
                 Util.Chat("Select one of the trade items first.", Util.ColorPink);

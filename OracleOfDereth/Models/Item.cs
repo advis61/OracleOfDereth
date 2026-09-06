@@ -1,206 +1,69 @@
-using System.Collections.Generic;
-
 using Decal.Adapter.Wrappers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OracleOfDereth
 {
-    // A single row in an ItemList. Holds the display data and knows how to fill itself
-    // from a WorldObject; the identify/stub/sort pipeline that drives this lives in ItemList.
-    public class Item
+    // A single observation of an item. Property collections are copied on construction
+    // and never mutated or exposed. No WorldObject, database, or UI references survive here.
+    public sealed class Item
     {
-        public string Name = "";
-        public int Id = 0;
-        public int Icon = 0;
-        public int SortCategory = 0; // Groups like items together: 0=weapon, 1=armor, 2=jewelry, 3=cloak, 4=summon, 5=aetheria, 9=other
-        public string SummaryCol1 = "";
-        public string SummaryCol2 = "";
-        public string SummaryCol3 = "";
-        public string SummaryCol4 = "";
-        public int SortCol2 = 0;
-        public int SortCol3OD = 0;     // OD value (Col3 cycle leads with this for weapons)
-        public int SortCol3 = 0;       // total attack modifier (Col3 secondary sort)
-        public int SortCol3Melee = 0;  // total melee-defense modifier (Col3 tertiary sort)
-        public int SortCol3Work = 0;   // workmanship (Col3 fourth sort)
-        public int SortCol4 = 0;
-        public string Description = "";
-        public string Character = "";
-        public string Server = "";
-        public VirindiObject SavedObject;
+        private readonly Dictionary<int, int> integers;
+        private readonly Dictionary<int, string> strings;
+        private readonly Dictionary<int, bool> booleans;
+        private readonly Dictionary<int, double> doubles;
+        private readonly Dictionary<int, long> int64s;
+        private readonly int[] spells;
+        private readonly int[] activeSpells;
 
-        // False until the appraisal arrives. Stub rows (icon + name only) show
-        // immediately on Add; the detail columns fill in once this flips true.
-        public bool IsIdentified = false;
+        public string Server { get; }
+        public string Character { get; }
+        public int Id { get; }
+        public string Name { get; }
+        public ObjectClass ObjectClass { get; }
+        public int Icon { get; }
+        public int Container { get; }
+        public bool HasIdData { get; }
+        public int? HolderLevel { get; }
+        public bool HasActiveSpellData => activeSpells != null;
+        public IEnumerable<int> LongKeys => integers.Keys;
+        public IEnumerable<int> DoubleKeys => doubles.Keys;
+        public int SpellCount => spells.Length;
+        public int Spell(int index) => spells[index];
+        public int ActiveSpellCount => activeSpells?.Length ?? 0;
+        public int ActiveSpell(int index) => activeSpells != null ? activeSpells[index] : throw new InvalidOperationException("Active spells were not captured.");
 
-        // Fill the base data available before ID. Type and category are derivable without
-        // an appraisal, so set them now — that keeps the row in its final category (filter)
-        // bucket from the start. Leaves IsIdentified false; the detail columns stay blank.
-        public void PopulateStub(WorldObject wo)
+        // An omitted property or spell list means unavailable, not a guessed zero/empty
+        // appraisal. Callers supply the metadata they actually know about the owner.
+        public Item(string server, string character, int id, string name, ObjectClass category,
+            IDictionary<int, int> integers = null, IDictionary<int, string> strings = null,
+            IDictionary<int, bool> booleans = null, IDictionary<int, double> doubles = null,
+            IDictionary<int, long> int64s = null, IEnumerable<int> spells = null,
+            IEnumerable<int> activeSpells = null, bool hasIdData = false,
+            int? holderLevel = null, int? icon = null, int? container = null)
         {
-            ItemInfo info = new ItemInfo(wo);
-
-            Name = wo.Name;
-            Icon = wo.Icon;
-            SummaryCol1 = GetSummaryCol1(info);
-            SortCategory = GetSortCategory(info);
-            IsIdentified = false;
+            Server = server ?? "";
+            Character = character ?? "";
+            Id = id;
+            Name = name ?? "";
+            ObjectClass = category;
+            this.integers = integers == null ? new Dictionary<int, int>() : new Dictionary<int, int>(integers);
+            this.strings = strings == null ? new Dictionary<int, string>() : new Dictionary<int, string>(strings);
+            this.booleans = booleans == null ? new Dictionary<int, bool>() : new Dictionary<int, bool>(booleans);
+            this.doubles = doubles == null ? new Dictionary<int, double>() : new Dictionary<int, double>(doubles);
+            this.int64s = int64s == null ? new Dictionary<int, long>() : new Dictionary<int, long>(int64s);
+            this.spells = spells?.ToArray() ?? new int[0];
+            this.activeSpells = activeSpells?.ToArray();
+            HasIdData = hasIdData;
+            HolderLevel = holderLevel;
+            Icon = icon ?? Values((LongValueKey)218103809);
+            Container = container ?? Values((LongValueKey)218103810);
         }
 
-        // Fill the identify-dependent fields from the appraised WorldObject.
-        public void Populate(WorldObject wo)
-        {
-            Populate(new VirindiObject(wo));
-        }
-
-        public void Populate(VirindiObject wo)
-        {
-            ItemInfo info = new ItemInfo(wo);
-
-            Id = wo.Id;
-            Character = wo.OwnerCharName;
-            Server = wo.OwnerServer;
-            SavedObject = wo.IsSnapshot ? wo : null;
-
-            Name = info.GetName();
-            Icon = wo.Icon;
-            SortCategory = GetSortCategory(info);
-            SummaryCol1 = GetSummaryCol1(info);
-            SummaryCol2 = GetSummaryCol2(info);
-            SummaryCol3 = GetSummaryCol3(info);
-            SummaryCol4 = GetSummaryCol4(info);
-            SortCol2 = 0; // Col2 now shows the imbue string; its sort falls through to SummaryCol2
-            SortCol3OD = GetSortInt(info.GetODValue()); // Col3 cycle leads with OD, then the attack/melee mods
-            SortCol3 = GetSortInt((int)info.GetTotalAttack());
-            SortCol3Melee = GetSortInt((int)info.GetTotalMeleeDefense());
-            SortCol3Work = GetSortInt(info.GetWorkmanshipValue());
-
-            // Salvage's Col3 is a lone decimal workmanship, not the OD/attack/melee spread the
-            // Col3 cycle steps through — so point every position of the cycle at it (x100 to keep
-            // the decimals). Otherwise the sort falls through to the string, where "Work 10.00"
-            // would come out ahead of "Work 6.15".
-            if (info.IsSalvage)
-            {
-                int salvageWork = (int)(info.GetSalvageWorkmanshipValue() * 100);
-                SortCol3OD = salvageWork;
-                SortCol3 = salvageWork;
-                SortCol3Melee = salvageWork;
-                SortCol3Work = salvageWork;
-            }
-            SortCol4 = 0; // Col4 (cantrips) is a string; sort falls through to SummaryCol4
-            Description = info.ToString();
-            IsIdentified = true;
-        }
-
-        // Col1 — item type / slot. Weapons append their damage element (e.g. "Heavy Acid",
-        // "Two Hand Bludgeon"). The imbue moved to Col2 and the OD value to Col3.
-        private static string GetSummaryCol1(ItemInfo info)
-        {
-            string type = info.GetItemSlotName();
-
-            if (info.IsWeapon)
-            {
-                string element = info.GetElementName();
-
-                // Append the element (e.g. "Two Hand Fire"), unless it just repeats the type —
-                // a Nether caster's type is also "Nether", so don't print "Nether Nether".
-                if (element != "" && element != type) type += " " + element;
-            }
-            else if (info.IsSummon)
-            {
-                type = info.GetSummonSpecString(); // Primalist / Necromancer / Naturalist / Generic
-            }
-            return type;
-        }
-
-        private static string GetSummaryCol2(ItemInfo info)
-        {
-            if (info.IsWeapon) return info.GetImbueString(); // full imbue list (may carry more than one)
-            if (info.IsCloak) return info.GetCloakProc();
-            if (info.IsArmorClothing) return info.GetSetName();
-            if (info.IsJewelry) return info.GetSetName();
-            if (info.IsSalvage) return info.GetSalvageTinkerSkillString(); // e.g. "Weapon Tink"
-            return "";
-        }
-
-        private static string GetSummaryCol3(ItemInfo info)
-        {
-            if (info.IsWeapon) return info.GetWeaponODModsString(Setting.ShowWeaponScoreWorkmanship.IsYes);
-            if (info.IsSalvage) return info.GetSalvageWorkmanshipString(); // e.g. "Work 9.50"
-            if (info.IsHealingKit) return info.GetHealingKitString();      // e.g. "+250 Skill | +200% Bonus"
-            if (info.IsManaStone) return info.GetManaStoneString();        // e.g. "250% Efficient | 10% Chance"
-            if (info.IsGem) return info.GetGemUseString();                 // "Unlimited Use" / "Single Use"
-            if (info.IsCloak) return info.GetRatingsString();
-            if (info.IsSummon) return info.GetSummonString(); // "DMG x% | DEF y%"
-            if (info.IsArmorClothing) return info.GetRatingsString();
-            if (info.IsJewelry) return info.GetRatingsString();
-            return "";
-        }
-
-        private static string GetSummaryCol4(ItemInfo info)
-        {
-            string col4 = "";
-            if (info.IsWeapon) col4 = info.GetCantripsString();
-            else if (info.IsCloak) col4 = $"Level {info.GetCloakLevel()}, {info.GetFullSetName()}";
-            else if (info.IsAetheria) col4 = info.GetAetheriaSummaryString(); // "Level 5, Defense, Destruction"
-            else if (info.IsArmorClothing || info.IsJewelry) col4 = info.GetSpellsString();
-            else if (info.IsRare) col4 = info.GetSpellsString();
-            else if (info.IsSalvage) col4 = info.GetSalvageDescriptionString();
-            else col4 = info.GetFullDescription();
-
-            // Append the wield requirement and tinks (e.g. "Tinks 5") to whatever the column
-            // shows. Only skill-based wield reqs ("Two Handed Combat 420") in general; a plain
-            // level req ("Wield Lvl 180") isn't worth a slot — except summons, whose wield level
-            // is their key gating and is always shown.
-            string wield = info.GetWieldReqString();
-            string tinks = info.GetTinksString();
-
-            var parts = new List<string>();
-
-            // Weapons lead Col4 with their slayer bonus (e.g. "Virindi Slayer"), if any.
-            if (info.IsWeapon)
-            {
-                string slayer = info.GetSlayerString();
-                if (slayer.Length > 0) parts.Add(slayer);
-            }
-
-            if (col4.Length > 0) parts.Add(col4);
-            if (wield.Length > 0 && (info.IsSummon || info.GetWieldReqName() != "Wield Lvl")) parts.Add(wield);
-            if (tinks.Length > 0) parts.Add(tinks);
-
-            // Weapons: tack any missile/magic defense bonus and the Multi-Strike flag on the end.
-            if (info.IsWeapon)
-            {
-                string extras = info.GetWeaponExtrasString();
-                if (extras.Length > 0) parts.Add(extras);
-            }
-
-            return string.Join(", ", parts);
-        }
-
-        private static int GetSortCategory(ItemInfo info)
-        {
-            if (info.IsWeapon) return 0;
-            if (info.IsClothing) return 7;
-            if (info.IsArmorClothing) return 1;
-            if (info.IsJewelry) return 2;
-            if (info.IsCloak) return 3;
-            if (info.IsSummon) return 4;
-            if (info.IsAetheria) return 5;
-            if (info.IsSalvage || info.IsFoolproof) return 6;
-            return 9;
-        }
-
-        private static int GetSortInt(int? value)
-        {
-            return value ?? 0;
-        }
-
-        // Shallow copy — all fields are value types or immutable strings, so this is a full,
-        // independent copy. Used to stash/restore rows in ItemCache.
-        public Item Clone() => (Item)MemberwiseClone();
-
-        public override string ToString()
-        {
-            return $"{Name} ({Id})";
-        }
+        public int Values(LongValueKey key, int fallback = 0) => integers.TryGetValue((int)key, out int value) ? value : fallback;
+        public double Values(DoubleValueKey key, double fallback = 0) => doubles.TryGetValue((int)key, out double value) ? value : fallback;
+        public string Values(StringValueKey key, string fallback = "") => strings.TryGetValue((int)key, out string value) ? value : fallback;
+        public bool Values(BoolValueKey key, bool fallback = false) => booleans.TryGetValue((int)key, out bool value) ? value : fallback;
     }
 }

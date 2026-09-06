@@ -1,4 +1,4 @@
-﻿using Decal.Adapter;
+using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Decal.Filters;
 using System;
@@ -20,13 +20,13 @@ namespace OracleOfDereth
     public class Summon
     {
         // Instance variables
-        public VirindiObject Item;
+        public Item Item;
 
         public static bool Identified(WorldObject item)
         {
             if(Setting.SummonScore.IsNo) { return false; }
 
-            Summon summon = new() { Item = item };
+            Summon summon = new() { Item = WorldItemCapture.Capture(item) };
             if (!summon.IsSummon()) { return false; }
 
             Util.Chat(summon.ToString(), Util.ColorCyan, "");
