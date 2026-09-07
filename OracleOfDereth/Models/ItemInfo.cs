@@ -297,6 +297,39 @@ namespace OracleOfDereth
             return BuildSlotCoverage(slots, coverage);
         }
 
+        [Flags]
+        public enum ArmorSlot
+        {
+            None = 0,
+            Head = 1,
+            Chest = 2,
+            Abdomen = 4,
+            UpperArms = 8,
+            LowerArms = 16,
+            Hands = 32,
+            UpperLegs = 64,
+            LowerLegs = 128,
+            Feet = 256,
+        }
+
+        public ArmorSlot GetArmorSlots() => GetArmorSlots(
+            item.Values(LongValueKey.EquipableSlots, 0), item.Values(LongValueKey.Coverage, 0));
+
+        private static ArmorSlot GetArmorSlots(int slots, int coverage)
+        {
+            ArmorSlot result = ArmorSlot.None;
+            if ((slots & 0x01) != 0 || (coverage & 0x4000) != 0) result |= ArmorSlot.Head;
+            if ((slots & 0x200) != 0 || (slots & 0x02) != 0 || (coverage & 0x08) != 0 || (coverage & 0x400) != 0) result |= ArmorSlot.Chest;
+            if ((slots & 0x400) != 0 || (slots & 0x04) != 0 || (coverage & 0x10) != 0 || (coverage & 0x800) != 0) result |= ArmorSlot.Abdomen;
+            if ((slots & 0x800) != 0 || (slots & 0x08) != 0 || (coverage & 0x20) != 0 || (coverage & 0x1000) != 0) result |= ArmorSlot.UpperArms;
+            if ((slots & 0x1000) != 0 || (slots & 0x10) != 0 || (coverage & 0x40) != 0 || (coverage & 0x2000) != 0) result |= ArmorSlot.LowerArms;
+            if ((slots & 0x20) != 0 || (coverage & 0x8000) != 0) result |= ArmorSlot.Hands;
+            if ((slots & 0x2000) != 0 || (slots & 0x40) != 0 || (coverage & 0x02) != 0 || (coverage & 0x100) != 0) result |= ArmorSlot.UpperLegs;
+            if ((slots & 0x4000) != 0 || (slots & 0x80) != 0 || (coverage & 0x04) != 0 || (coverage & 0x200) != 0) result |= ArmorSlot.LowerLegs;
+            if ((slots & 0x100) != 0 || (coverage & 0x10000) != 0) result |= ArmorSlot.Feet;
+            return result;
+        }
+
         // Label the covered slot(s). Each location is matched against its armor bit, its
         // clothing-"wear" bit, or the Coverage fallback. A single slot shows its full name
         // ("Chest", "Upper Arms", ...). Two slots list both, collapsing an Upper+Lower pair
@@ -305,15 +338,16 @@ namespace OracleOfDereth
         // collapsed list for any unrecognised combo.
         private static string BuildSlotCoverage(int slots, int coverage)
         {
-            bool head      = (slots & 0x01) != 0 || (coverage & 0x4000) != 0;
-            bool chest     = (slots & 0x200) != 0 || (slots & 0x02) != 0 || (coverage & 0x08) != 0 || (coverage & 0x400) != 0;
-            bool abdomen   = (slots & 0x400) != 0 || (slots & 0x04) != 0 || (coverage & 0x10) != 0 || (coverage & 0x800) != 0;
-            bool upperArms = (slots & 0x800) != 0 || (slots & 0x08) != 0 || (coverage & 0x20) != 0 || (coverage & 0x1000) != 0;
-            bool lowerArms = (slots & 0x1000) != 0 || (slots & 0x10) != 0 || (coverage & 0x40) != 0 || (coverage & 0x2000) != 0;
-            bool hands     = (slots & 0x20) != 0 || (coverage & 0x8000) != 0;
-            bool upperLegs = (slots & 0x2000) != 0 || (slots & 0x40) != 0 || (coverage & 0x02) != 0 || (coverage & 0x100) != 0;
-            bool lowerLegs = (slots & 0x4000) != 0 || (slots & 0x80) != 0 || (coverage & 0x04) != 0 || (coverage & 0x200) != 0;
-            bool feet      = (slots & 0x100) != 0 || (coverage & 0x10000) != 0;
+            ArmorSlot coveredSlots = GetArmorSlots(slots, coverage);
+            bool head = (coveredSlots & ArmorSlot.Head) != 0;
+            bool chest = (coveredSlots & ArmorSlot.Chest) != 0;
+            bool abdomen = (coveredSlots & ArmorSlot.Abdomen) != 0;
+            bool upperArms = (coveredSlots & ArmorSlot.UpperArms) != 0;
+            bool lowerArms = (coveredSlots & ArmorSlot.LowerArms) != 0;
+            bool hands = (coveredSlots & ArmorSlot.Hands) != 0;
+            bool upperLegs = (coveredSlots & ArmorSlot.UpperLegs) != 0;
+            bool lowerLegs = (coveredSlots & ArmorSlot.LowerLegs) != 0;
+            bool feet = (coveredSlots & ArmorSlot.Feet) != 0;
 
             // Covered slots (full names, head-to-toe) — used for the count and the single/fallback labels.
             var covered = new List<string>();

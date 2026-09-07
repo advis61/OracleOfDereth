@@ -218,6 +218,8 @@ Displays your buffs and debuffs with time remaining.
 
 - Open **Server → Inventory** to browse VGI's saved items for every character on your current server.
 - Uses the same item summaries, search, category checkboxes, Doubles filter, and sorting as Items, with a sortable Character column. Search also matches character names.
+- The subfilter row follows the most recently enabled category. Weapons offers HW (Heavy), FW (Finesse), LW (Light), 2H (Two Handed), War, Void, TW (Thrown), Bow, and Xbow (Crossbow). Multiple selections are alternatives; none means all weapons. Switching categories preserves subfilter selections, and Reset clears them.
+- Weapon elements appear on the right: Slash, Pierce, Bludge, Fire, Frost, Storm, Acid, and Nether. They search the Type summary, including Fire/Flame, Frost/Cold, Storm/Lightning, and Nether/Void aliases. Elements combine with weapon types; multiple elements match any selected value.
 - Searches scan the current server and display the best **2,000 matches** for the selected sort. The count includes matches beyond the limit; narrow your filters to find specific items. Clipboard and exports include the displayed results.
 - Changing filters or sorting reruns the search; typing waits briefly before searching. Scans run in short steps, and a newer search cancels the previous one.
 - **Refresh** rereads the saved database. Offline characters reflect their last VGI scan; this does not request identification or modify VGI's data.

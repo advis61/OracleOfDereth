@@ -18,6 +18,9 @@ internal static class VGInventoryTests
     {
         Setting.Init();
         AssertObservations();
+        AssertWeaponSubfilters();
+        AssertElementSubfilters();
+        AssertArmorSubfilters();
         var settings = new XmlDocument();
         settings.LoadXml("<Settings />");
         typeof(SettingsFile).GetField("_doc", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, settings);
@@ -97,6 +100,132 @@ internal static class VGInventoryTests
         try { VGInventory.DecodeItem("Conquest", "Mule", 1, "Broken", ObjectClass.MeleeWeapon, bytes); }
         catch (Exception ex) when (ex is IOException || ex is InvalidDataException) { return; }
         throw new InvalidOperationException("Malformed VGI blob was accepted.");
+    }
+
+    private static void AssertArmorSubfilters()
+    {
+        var slots = new[] { ItemInfo.ArmorSlot.Head, ItemInfo.ArmorSlot.Chest, ItemInfo.ArmorSlot.Abdomen,
+            ItemInfo.ArmorSlot.UpperArms, ItemInfo.ArmorSlot.LowerArms, ItemInfo.ArmorSlot.Hands,
+            ItemInfo.ArmorSlot.UpperLegs, ItemInfo.ArmorSlot.LowerLegs, ItemInfo.ArmorSlot.Feet };
+        var equip = new[] { 1, 0x200, 0x400, 0x800, 0x1000, 0x20, 0x2000, 0x4000, 0x100 };
+        var coverage = new[] { 0x4000, 8, 16, 32, 64, 0x8000, 2, 4, 0x10000 };
+        ItemListRow ArmorRow(int mask, int cover = 0)
+        {
+            var row = new ItemListRow(new Item("Conquest", "Mule", 1, "Armor", ObjectClass.Armor,
+                new Dictionary<int, int> { [(int)LongValueKey.EquipableSlots] = mask, [(int)LongValueKey.Coverage] = cover }));
+            row.PopulateStub(); return row;
+        }
+        for (int i = 0; i < slots.Length; i++)
+        {
+            foreach (var row in new[] { ArmorRow(equip[i]), ArmorRow(0, coverage[i]) })
+            {
+                Check(new ItemInfo(row.Item).GetArmorSlots() == slots[i], "Armor slot/coverage mapping differs for " + slots[i]);
+                for (int j = 0; j < slots.Length; j++)
+                    Check(new ItemFilter { Armor = true, ArmorSlots = slots[j] }.Matches(row) == (i == j), "Armor filter matched wrong slot.");
+            }
+        }
+        var coat = ArmorRow(0x200 | 0x400 | 0x800);
+        foreach (var slot in new[] { ItemInfo.ArmorSlot.Chest, ItemInfo.ArmorSlot.Abdomen, ItemInfo.ArmorSlot.UpperArms })
+            Check(new ItemFilter { Armor = true, ArmorSlots = slot }.Matches(coat), "Multi-slot armor lost a covered slot.");
+        Check(new ItemFilter { Armor = true, ArmorSlots = ItemInfo.ArmorSlot.Feet | ItemInfo.ArmorSlot.Chest }.Matches(coat),
+            "Armor slots must combine as alternatives.");
+        Check(!new ItemFilter { Armor = true, ArmorSlots = ItemInfo.ArmorSlot.Feet }.Matches(coat), "Coat matched Feet.");
+        Check(new ItemFilter { Armor = true }.Matches(coat) && new ItemFilter { ArmorSlots = ItemInfo.ArmorSlot.Feet }.Matches(coat),
+            "Empty or inactive armor subfilters must not narrow results.");
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 2, "Dagger", ObjectClass.MeleeWeapon));
+        weapon.PopulateStub();
+        Check(new ItemFilter { Armor = true, Weapons = true, ArmorSlots = ItemInfo.ArmorSlot.Head }.Matches(weapon),
+            "Armor slots hid another selected category.");
+    }
+
+    private static void AssertElementSubfilters()
+    {
+        var cases = new[] {
+            (new ItemFilter { Weapons = true, ElementSlash = true }, new[] { "Slash" }),
+            (new ItemFilter { Weapons = true, ElementPierce = true }, new[] { "Pierce" }),
+            (new ItemFilter { Weapons = true, ElementBludge = true }, new[] { "Bludge", "Bludgeon" }),
+            (new ItemFilter { Weapons = true, ElementFire = true }, new[] { "Fire", "Flame" }),
+            (new ItemFilter { Weapons = true, ElementFrost = true }, new[] { "Frost", "Cold" }),
+            (new ItemFilter { Weapons = true, ElementStorm = true }, new[] { "Storm", "Lightning" }),
+            (new ItemFilter { Weapons = true, ElementAcid = true }, new[] { "Acid" }),
+            (new ItemFilter { Weapons = true, ElementNether = true }, new[] { "Void", "Nether" })
+        };
+        var row = new ItemListRow(new Item("Conquest", "Fire Mule", 1, "Flame Dagger", ObjectClass.MeleeWeapon,
+            new Dictionary<int, int> { [159] = 44 }));
+        row.PopulateStub();
+        // Supply representative display text: the filter's contract is the Type column.
+        PropertyInfo summary = typeof(ItemListRow).GetProperty("SummaryCol1");
+        for (int i = 0; i < cases.Length; i++)
+            foreach (string name in cases[i].Item2)
+            {
+                summary.SetValue(row, "Heavy " + name.ToLowerInvariant());
+                for (int j = 0; j < cases.Length; j++)
+                    Check(cases[j].Item1.Matches(row) == (i == j), "Element alias mismatch: " + name);
+            }
+        summary.SetValue(row, "Heavy Cold");
+        Check(new ItemFilter { Weapons = true, WeaponHW = true, ElementFire = true, ElementFrost = true }.Matches(row),
+            "Element choices must combine as alternatives.");
+        Check(!new ItemFilter { Weapons = true, WeaponFW = true, ElementFrost = true }.Matches(row),
+            "Element filter bypassed weapon-type selection.");
+        Check(new ItemFilter { ElementFire = true }.Matches(row), "Disabled parent left an element filter active.");
+        Check(new ItemFilter { Weapons = true }.Matches(row), "No element selection must allow all elements.");
+        var armor = new ItemListRow(new Item("Conquest", "Mule", 2, "Armor", ObjectClass.Armor));
+        armor.PopulateStub();
+        Check(new ItemFilter { Weapons = true, Armor = true, ElementFire = true }.Matches(armor),
+            "Weapon elements hid another selected category.");
+    }
+
+    private static void AssertWeaponSubfilters()
+    {
+        var skills = new[] { 44, 46, 45, 41, 34, 43 };
+        var filters = new[] {
+            new ItemFilter { Weapons = true, WeaponHW = true },
+            new ItemFilter { Weapons = true, WeaponFW = true },
+            new ItemFilter { Weapons = true, WeaponLW = true },
+            new ItemFilter { Weapons = true, Weapon2H = true },
+            new ItemFilter { Weapons = true, WeaponWar = true },
+            new ItemFilter { Weapons = true, WeaponVoid = true }
+        };
+        var rows = skills.Select(skill => {
+            var item = new Item("Conquest", "Mule", skill, "Test Weapon", skill == 34 || skill == 43 ? ObjectClass.WandStaffOrb : ObjectClass.MeleeWeapon,
+                new Dictionary<int, int> { [159] = skill, [(int)LongValueKey.WieldReqType] = 2, [(int)LongValueKey.WieldReqAttribute] = skill });
+            var row = new ItemListRow(item); row.PopulateStub(); return row;
+        }).ToList();
+        for (int i = 0; i < filters.Length; i++)
+            Check(rows.Where(filters[i].Matches).SequenceEqual(new[] { rows[i] }), "Weapon subfilter matched the wrong skill: " + skills[i]);
+        Check(rows.All(new ItemFilter { Weapons = true }.Matches), "No selected weapon subfilters must allow every weapon.");
+        Check(rows.Count(new ItemFilter { Weapons = true, WeaponHW = true, WeaponVoid = true }.Matches) == 2,
+            "Weapon subfilters must combine as alternatives.");
+        Check(rows.All(new ItemFilter { WeaponHW = true }.Matches), "Disabled parent left a weapon subfilter active.");
+        var missileNames = new[] { "Atlatl", "Slingshot", "Longbow", "Crossbow", "Arbalest" };
+        var missiles = missileNames.Select(name => {
+            var row = new ItemListRow(new Item("Conquest", "Mule", 1, name, ObjectClass.MissileWeapon,
+                new Dictionary<int, int> { [159] = 47 }));
+            row.PopulateStub(); return row;
+        }).ToList();
+        Check(missiles.Where(new ItemFilter { Weapons = true, WeaponTW = true }.Matches).SequenceEqual(missiles.Take(2)),
+            "TW must match the Thrown types shown in the Type column.");
+        Check(missiles.Where(new ItemFilter { Weapons = true, WeaponBow = true }.Matches).SequenceEqual(missiles.Skip(2).Take(1)),
+            "Bow must exclude thrown weapons and crossbows.");
+        Check(missiles.Where(new ItemFilter { Weapons = true, WeaponXbow = true }.Matches).SequenceEqual(missiles.Skip(3)),
+            "Xbow must match crossbows and arbalests.");
+        Check(missiles.All(new ItemFilter { Weapons = true, WeaponTW = true, WeaponBow = true, WeaponXbow = true }.Matches),
+            "Missile subfilters must combine as alternatives.");
+        Check(!rows.Any(new ItemFilter { Weapons = true, WeaponTW = true, WeaponBow = true, WeaponXbow = true }.Matches),
+            "Missile subfilters included melee weapons or casters.");
+        var unclassified = new ItemListRow(new Item("Conquest", "Mule", 3, "Unclassified", ObjectClass.MeleeWeapon));
+        unclassified.PopulateStub();
+        var otherFilter = new ItemFilter { Weapons = true, WeaponOther = true };
+        Check(otherFilter.Matches(unclassified) && !rows.Concat(missiles).Any(otherFilter.Matches),
+            "Other must match only weapon types outside the named groups.");
+        Check(rows.Concat(new[] { unclassified }).Count(new ItemFilter { Weapons = true, WeaponHW = true, WeaponOther = true }.Matches) == 2,
+            "Other must combine with named groups as an alternative.");
+        var armor = new ItemListRow(new Item("Conquest", "Mule", 1, "Armor", ObjectClass.Armor));
+        armor.PopulateStub();
+        Check(new ItemFilter { Weapons = true, WeaponHW = true, Armor = true }.Matches(armor),
+            "Weapon subfilters hid another selected category.");
+        Check(!new ItemFilter { Weapons = true, WeaponHW = true, Text = "NotPresent" }.Matches(rows[0]),
+            "Weapon subfilter bypassed text filtering.");
     }
 
     private static void AssertObservations()
@@ -288,7 +417,7 @@ internal static class VGInventoryTests
                     ItemList.OrderRows(expected, sort).Take(VGInventory.ResultLimit).Select(r => r.Character + ":" + r.Id)),
                     "Bounded search differs from full-list sorting: " + sort);
             }
-            var query = new ItemFilter { Text = "Mule 35", Weapons = true };
+            var query = new ItemFilter { Text = "Mule 35", Weapons = true, WeaponHW = true };
             Check(inventory.Refresh("Conquest", query), inventory.Error);
             Check(inventory.MatchCount == expected.Count(query.Matches) && inventory.List.Items.All(query.Matches),
                 "Filtered query searched only the previous capped results.");

@@ -14,7 +14,26 @@ namespace OracleOfDereth
     {
         public string Text = "";
         public bool Weapons = false;
+        public bool WeaponHW = false;
+        public bool WeaponFW = false;
+        public bool WeaponLW = false;
+        public bool Weapon2H = false;
+        public bool WeaponWar = false;
+        public bool WeaponVoid = false;
+        public bool WeaponOther = false;
+        public bool WeaponTW = false;
+        public bool WeaponBow = false;
+        public bool WeaponXbow = false;
+        public bool ElementSlash = false;
+        public bool ElementPierce = false;
+        public bool ElementBludge = false;
+        public bool ElementFire = false;
+        public bool ElementFrost = false;
+        public bool ElementStorm = false;
+        public bool ElementAcid = false;
+        public bool ElementNether = false;
         public bool Armor = false;
+        public ItemInfo.ArmorSlot ArmorSlots = ItemInfo.ArmorSlot.None;
         public bool Clothing = false;
         public bool Jewelry = false;
         public bool Cloaks = false;
@@ -32,9 +51,56 @@ namespace OracleOfDereth
         public bool Matches(ItemListRow t)
         {
             if (!IsCategoryVisible(t.SortCategory)) return false;
+            if (Armor && t.SortCategory == 1 && ArmorSlots != ItemInfo.ArmorSlot.None &&
+                (new ItemInfo(t.Item).GetArmorSlots() & ArmorSlots) == 0) return false;
+            if (!MatchesWeaponType(t)) return false;
+            if (!MatchesWeaponElement(t)) return false;
             if (!MatchesDoubles(t)) return false;
             return MatchesText(t);
         }
+
+        // Subfilters narrow only the weapon category; selected armor/etc. still match.
+        // Hidden selections are inactive when the parent Weapons checkbox is off.
+        private bool MatchesWeaponType(ItemListRow row)
+        {
+            if (!Weapons || row.SortCategory != 0 ||
+                !(WeaponHW || WeaponFW || WeaponLW || Weapon2H || WeaponWar || WeaponVoid || WeaponTW || WeaponBow || WeaponXbow || WeaponOther)) return true;
+            switch (new ItemInfo(row.Item).GetWeaponTypeName())
+            {
+                case "Heavy": return WeaponHW;
+                case "Finesse": return WeaponFW;
+                case "Light": return WeaponLW;
+                case "Two Hand": return Weapon2H;
+                case "War": return WeaponWar;
+                case "Nether": return WeaponVoid;
+                case "Thrown": return WeaponTW;
+                case "Bow": return WeaponBow;
+                case "Crossbow": return WeaponXbow;
+                default: return WeaponOther;
+            }
+        }
+
+        // Search the Type summary (SummaryCol1), using the names displayed by the list.
+        // Element choices are alternatives, combined with the weapon-type group by AND.
+        private bool MatchesWeaponElement(ItemListRow row)
+        {
+            if (!Weapons || row.SortCategory != 0 ||
+                !(ElementSlash || ElementPierce || ElementBludge || ElementFire ||
+                  ElementFrost || ElementStorm || ElementAcid || ElementNether)) return true;
+            string type = row.SummaryCol1;
+            return (ElementSlash && HasElement(type, "Slash")) ||
+                (ElementPierce && HasElement(type, "Pierce")) ||
+                (ElementBludge && HasElement(type, "Bludge")) ||
+                (ElementFire && HasElement(type, "Fire", "Flame")) ||
+                (ElementFrost && HasElement(type, "Frost", "Cold")) ||
+                (ElementStorm && HasElement(type, "Storm", "Lightning")) ||
+                (ElementAcid && HasElement(type, "Acid")) ||
+                (ElementNether && HasElement(type, "Void", "Nether"));
+        }
+
+        private static bool HasElement(string text, string name, string alias = null) =>
+            text.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0 ||
+            (alias != null && text.IndexOf(alias, StringComparison.OrdinalIgnoreCase) >= 0);
 
         // Category-only match, ignoring the search text. Used for second-tier identify priority:
         // appraise everything in the selected categories once the exact (text + category) matches
