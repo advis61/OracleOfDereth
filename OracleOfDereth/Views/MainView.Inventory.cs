@@ -36,6 +36,13 @@ namespace OracleOfDereth
         private HudCheckBox vgInventoryArmorUpperLegs;
         private HudCheckBox vgInventoryArmorLowerLegs;
         private HudCheckBox vgInventoryArmorFeet;
+        private HudCheckBox vgInventoryArmorSetAdept;
+        private HudCheckBox vgInventoryArmorSetDefender;
+        private HudCheckBox vgInventoryArmorSetDexterous;
+        private HudCheckBox vgInventoryArmorSetHearty;
+        private HudCheckBox vgInventoryArmorSetWise;
+        private HudCheckBox vgInventoryArmorSetNoSet;
+        private HudCheckBox vgInventoryArmorSetOther;
         private bool suppressVGInventoryFilter;
         private DateTime? vgInventorySearchDue;
         private System.Windows.Forms.Timer vgInventoryTimer;
@@ -188,6 +195,27 @@ namespace OracleOfDereth
             vgInventoryArmorFeet = (HudCheckBox)view["VGInventoryArmorFeet"];
             vgInventoryArmorFeet.Visible = false;
             vgInventoryArmorFeet.Change += VGInventoryFilter_Change;
+            vgInventoryArmorSetAdept = (HudCheckBox)view["VGInventoryArmorSetAdept"];
+            vgInventoryArmorSetAdept.Visible = false;
+            vgInventoryArmorSetAdept.Change += VGInventoryFilter_Change;
+            vgInventoryArmorSetDefender = (HudCheckBox)view["VGInventoryArmorSetDefender"];
+            vgInventoryArmorSetDefender.Visible = false;
+            vgInventoryArmorSetDefender.Change += VGInventoryFilter_Change;
+            vgInventoryArmorSetDexterous = (HudCheckBox)view["VGInventoryArmorSetDexterous"];
+            vgInventoryArmorSetDexterous.Visible = false;
+            vgInventoryArmorSetDexterous.Change += VGInventoryFilter_Change;
+            vgInventoryArmorSetHearty = (HudCheckBox)view["VGInventoryArmorSetHearty"];
+            vgInventoryArmorSetHearty.Visible = false;
+            vgInventoryArmorSetHearty.Change += VGInventoryFilter_Change;
+            vgInventoryArmorSetWise = (HudCheckBox)view["VGInventoryArmorSetWise"];
+            vgInventoryArmorSetWise.Visible = false;
+            vgInventoryArmorSetWise.Change += VGInventoryFilter_Change;
+            vgInventoryArmorSetNoSet = (HudCheckBox)view["VGInventoryArmorSetNoSet"];
+            vgInventoryArmorSetNoSet.Visible = false;
+            vgInventoryArmorSetNoSet.Change += VGInventoryFilter_Change;
+            vgInventoryArmorSetOther = (HudCheckBox)view["VGInventoryArmorSetOther"];
+            vgInventoryArmorSetOther.Visible = false;
+            vgInventoryArmorSetOther.Change += VGInventoryFilter_Change;
             vgInventorySortIcon = new HudPictureBox { Image = IconSort };
             ((HudFixedLayout)view["VGInventoryListSort"]).AddControl(vgInventorySortIcon, new System.Drawing.Rectangle(0, 0, 16, 16));
             vgInventorySortIcon.Hit += VGInventoryListSortCharacter_Click;
@@ -243,6 +271,13 @@ namespace OracleOfDereth
             vgInventoryArmorUpperLegs.Change -= VGInventoryFilter_Change;
             vgInventoryArmorLowerLegs.Change -= VGInventoryFilter_Change;
             vgInventoryArmorFeet.Change -= VGInventoryFilter_Change;
+            vgInventoryArmorSetAdept.Change -= VGInventoryFilter_Change;
+            vgInventoryArmorSetDefender.Change -= VGInventoryFilter_Change;
+            vgInventoryArmorSetDexterous.Change -= VGInventoryFilter_Change;
+            vgInventoryArmorSetHearty.Change -= VGInventoryFilter_Change;
+            vgInventoryArmorSetWise.Change -= VGInventoryFilter_Change;
+            vgInventoryArmorSetNoSet.Change -= VGInventoryFilter_Change;
+            vgInventoryArmorSetOther.Change -= VGInventoryFilter_Change;
             VGInventoryRefresh.Hit -= VGInventoryRefresh_Hit;
             VGInventoryClipboard.Hit -= VGInventoryClipboard_Hit;
             VGInventoryExportText.Hit -= VGInventoryExportText_Hit;
@@ -297,6 +332,13 @@ namespace OracleOfDereth
             WeaponBow = vgInventoryWeaponBow.Checked,
             WeaponXbow = vgInventoryWeaponXbow.Checked,
             Armor = VGInventoryFilterArmor.Checked,
+            ArmorSetAdept = vgInventoryArmorSetAdept.Checked,
+            ArmorSetDefender = vgInventoryArmorSetDefender.Checked,
+            ArmorSetDexterous = vgInventoryArmorSetDexterous.Checked,
+            ArmorSetHearty = vgInventoryArmorSetHearty.Checked,
+            ArmorSetWise = vgInventoryArmorSetWise.Checked,
+            ArmorSetNoSet = vgInventoryArmorSetNoSet.Checked,
+            ArmorSetOther = vgInventoryArmorSetOther.Checked,
             ArmorSlots = (vgInventoryArmorHead.Checked ? ItemInfo.ArmorSlot.Head : ItemInfo.ArmorSlot.None) |
                 (vgInventoryArmorChest.Checked ? ItemInfo.ArmorSlot.Chest : ItemInfo.ArmorSlot.None) |
                 (vgInventoryArmorAbdomen.Checked ? ItemInfo.ArmorSlot.Abdomen : ItemInfo.ArmorSlot.None) |
@@ -380,6 +422,13 @@ namespace OracleOfDereth
                 if (changed.Checked) vgInventoryCategoryOrder.Add(changed);
             }
             HudCheckBox active = vgInventoryCategoryOrder.LastOrDefault();
+            vgInventoryArmorSetAdept.Visible = active == VGInventoryFilterArmor;
+            vgInventoryArmorSetDefender.Visible = active == VGInventoryFilterArmor;
+            vgInventoryArmorSetDexterous.Visible = active == VGInventoryFilterArmor;
+            vgInventoryArmorSetHearty.Visible = active == VGInventoryFilterArmor;
+            vgInventoryArmorSetWise.Visible = active == VGInventoryFilterArmor;
+            vgInventoryArmorSetNoSet.Visible = active == VGInventoryFilterArmor;
+            vgInventoryArmorSetOther.Visible = active == VGInventoryFilterArmor;
             vgInventoryArmorHead.Visible = active == VGInventoryFilterArmor;
             vgInventoryArmorChest.Visible = active == VGInventoryFilterArmor;
             vgInventoryArmorAbdomen.Visible = active == VGInventoryFilterArmor;
@@ -488,6 +537,20 @@ namespace OracleOfDereth
             vgInventoryArmorLowerLegs.Visible = false;
             vgInventoryArmorFeet.Checked = false;
             vgInventoryArmorFeet.Visible = false;
+            vgInventoryArmorSetAdept.Checked = false;
+            vgInventoryArmorSetAdept.Visible = false;
+            vgInventoryArmorSetDefender.Checked = false;
+            vgInventoryArmorSetDefender.Visible = false;
+            vgInventoryArmorSetDexterous.Checked = false;
+            vgInventoryArmorSetDexterous.Visible = false;
+            vgInventoryArmorSetHearty.Checked = false;
+            vgInventoryArmorSetHearty.Visible = false;
+            vgInventoryArmorSetWise.Checked = false;
+            vgInventoryArmorSetWise.Visible = false;
+            vgInventoryArmorSetNoSet.Checked = false;
+            vgInventoryArmorSetNoSet.Visible = false;
+            vgInventoryArmorSetOther.Checked = false;
+            vgInventoryArmorSetOther.Visible = false;
             suppressVGInventoryFilter = false;
             RefreshVGInventory();
         }

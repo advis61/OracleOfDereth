@@ -21,6 +21,7 @@ internal static class VGInventoryTests
         AssertWeaponSubfilters();
         AssertElementSubfilters();
         AssertArmorSubfilters();
+        AssertArmorSetSubfilters();
         var settings = new XmlDocument();
         settings.LoadXml("<Settings />");
         typeof(SettingsFile).GetField("_doc", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, settings);
@@ -100,6 +101,47 @@ internal static class VGInventoryTests
         try { VGInventory.DecodeItem("Conquest", "Mule", 1, "Broken", ObjectClass.MeleeWeapon, bytes); }
         catch (Exception ex) when (ex is IOException || ex is InvalidDataException) { return; }
         throw new InvalidOperationException("Malformed VGI blob was accepted.");
+    }
+
+    private static void AssertArmorSetSubfilters()
+    {
+        var ids = new[] { 14, 16, 20, 19, 21, 0, 9999 };
+        var filters = new[] {
+            new ItemFilter { Armor = true, ArmorSetAdept = true },
+            new ItemFilter { Armor = true, ArmorSetDefender = true },
+            new ItemFilter { Armor = true, ArmorSetDexterous = true },
+            new ItemFilter { Armor = true, ArmorSetHearty = true },
+            new ItemFilter { Armor = true, ArmorSetWise = true },
+            new ItemFilter { Armor = true, ArmorSetNoSet = true },
+            new ItemFilter { Armor = true, ArmorSetOther = true }
+        };
+        var rows = ids.Select(id => {
+            var row = new ItemListRow(new Item("Conquest", "Mule", id, "Armor", ObjectClass.Armor,
+                new Dictionary<int, int> { [265] = id, [(int)LongValueKey.EquipableSlots] = 1 }, hasIdData: true));
+            row.PopulateStub(); return row;
+        }).ToList();
+        for (int i = 0; i < filters.Length; i++)
+            Check(rows.Where(filters[i].Matches).SequenceEqual(new[] { rows[i] }), "Armor set filter mismatch: " + ids[i]);
+        var absent = new ItemListRow(new Item("Conquest", "Mule", 1, "Armor", ObjectClass.Armor, hasIdData: true));
+        absent.PopulateStub();
+        Check(filters[5].Matches(absent) && !filters[6].Matches(absent), "Absent set on appraised armor must be No Set.");
+        var dedication = new ItemListRow(new Item("Conquest", "Mule", 30, "Armor", ObjectClass.Armor,
+            new Dictionary<int, int> { [265] = 30 }, hasIdData: true));
+        dedication.PopulateStub();
+        Check(filters[6].Matches(dedication) && !filters[5].Matches(dedication), "Dedication must now match Other, not No Set.");
+        var unknown = new ItemListRow(new Item("Conquest", "Mule", 2, "Unreadable armor", ObjectClass.Armor));
+        unknown.PopulateStub();
+        Check(!filters.Any(f => f.Matches(unknown)), "Unreadable armor must not invent a set or No Set.");
+        Check(rows.Count(new ItemFilter { Armor = true, ArmorSetAdept = true, ArmorSetOther = true }.Matches) == 2,
+            "Armor set choices must combine as alternatives.");
+        Check(!new ItemFilter { Armor = true, ArmorSetAdept = true, ArmorSlots = ItemInfo.ArmorSlot.Feet }.Matches(rows[0]),
+            "Armor set filter bypassed slot selection.");
+        Check(rows.All(new ItemFilter { Armor = true }.Matches) && rows.All(new ItemFilter { ArmorSetAdept = true }.Matches),
+            "Inactive set filters must not narrow results.");
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 3, "Dagger", ObjectClass.MeleeWeapon));
+        weapon.PopulateStub();
+        Check(new ItemFilter { Armor = true, Weapons = true, ArmorSetAdept = true }.Matches(weapon),
+            "Armor set filter hid another selected category.");
     }
 
     private static void AssertArmorSubfilters()

@@ -33,6 +33,13 @@ namespace OracleOfDereth
         public bool ElementAcid = false;
         public bool ElementNether = false;
         public bool Armor = false;
+        public bool ArmorSetAdept = false;
+        public bool ArmorSetDefender = false;
+        public bool ArmorSetDexterous = false;
+        public bool ArmorSetHearty = false;
+        public bool ArmorSetWise = false;
+        public bool ArmorSetNoSet = false;
+        public bool ArmorSetOther = false;
         public ItemInfo.ArmorSlot ArmorSlots = ItemInfo.ArmorSlot.None;
         public bool Clothing = false;
         public bool Jewelry = false;
@@ -53,10 +60,32 @@ namespace OracleOfDereth
             if (!IsCategoryVisible(t.SortCategory)) return false;
             if (Armor && t.SortCategory == 1 && ArmorSlots != ItemInfo.ArmorSlot.None &&
                 (new ItemInfo(t.Item).GetArmorSlots() & ArmorSlots) == 0) return false;
+            if (!MatchesArmorSet(t)) return false;
             if (!MatchesWeaponType(t)) return false;
             if (!MatchesWeaponElement(t)) return false;
             if (!MatchesDoubles(t)) return false;
             return MatchesText(t);
+        }
+
+        private bool MatchesArmorSet(ItemListRow row)
+        {
+            if (!Armor || row.SortCategory != 1 ||
+                !(ArmorSetAdept || ArmorSetDefender || ArmorSetDexterous || ArmorSetHearty ||
+                  ArmorSetWise || ArmorSetNoSet || ArmorSetOther)) return true;
+            // Same Equipment Set property used by ItemInfo; unknown nonzero sets are Other.
+            // Missing appraisal data cannot establish that an item has no set.
+            if (!row.Item.TryGetValue((Decal.Adapter.Wrappers.LongValueKey)265, out int set) && !row.Item.HasIdData)
+                return false;
+            switch (set)
+            {
+                case 0: return ArmorSetNoSet;
+                case 14: return ArmorSetAdept;
+                case 16: return ArmorSetDefender;
+                case 20: return ArmorSetDexterous;
+                case 19: return ArmorSetHearty;
+                case 21: return ArmorSetWise;
+                default: return ArmorSetOther;
+            }
         }
 
         // Subfilters narrow only the weapon category; selected armor/etc. still match.
