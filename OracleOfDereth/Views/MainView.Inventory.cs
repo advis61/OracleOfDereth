@@ -32,6 +32,7 @@ namespace OracleOfDereth
         public HudCheckBox VGInventoryFilterSalvage { get; private set; }
         public HudCheckBox VGInventoryFilterOther { get; private set; }
         public HudCheckBox VGInventoryFilterDoubles { get; private set; }
+        private HudPictureBox vgInventorySortIcon;
         public HudStaticText VGInventoryListSortCharacter { get; private set; }
         public HudStaticText VGInventoryListSortName { get; private set; }
         public HudStaticText VGInventoryListSortCol1 { get; private set; }
@@ -78,6 +79,9 @@ namespace OracleOfDereth
             VGInventoryFilterOther.Change += VGInventoryFilter_Change;
             VGInventoryFilterDoubles = (HudCheckBox)view["VGInventoryFilterDoubles"];
             VGInventoryFilterDoubles.Change += VGInventoryFilter_Change;
+            vgInventorySortIcon = new HudPictureBox { Image = IconSort };
+            ((HudFixedLayout)view["VGInventoryListSort"]).AddControl(vgInventorySortIcon, new System.Drawing.Rectangle(0, 0, 16, 16));
+            vgInventorySortIcon.Hit += VGInventoryListSortCharacter_Click;
             VGInventoryListSortCharacter = (HudStaticText)view["VGInventoryListSortCharacter"];
             VGInventoryListSortCharacter.Hit += VGInventoryListSortCharacter_Click;
             VGInventoryListSortName = (HudStaticText)view["VGInventoryListSortName"];
@@ -120,6 +124,7 @@ namespace OracleOfDereth
             VGInventoryFilterSalvage.Change -= VGInventoryFilter_Change;
             VGInventoryFilterOther.Change -= VGInventoryFilter_Change;
             VGInventoryFilterDoubles.Change -= VGInventoryFilter_Change;
+            vgInventorySortIcon.Hit -= VGInventoryListSortCharacter_Click;
             VGInventoryListSortCharacter.Hit -= VGInventoryListSortCharacter_Click;
             VGInventoryListSortName.Hit -= VGInventoryListSortName_Click;
             VGInventoryListSortCol1.Hit -= VGInventoryListSortCol1_Click;
