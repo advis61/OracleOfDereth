@@ -218,7 +218,7 @@ Displays your buffs and debuffs with time remaining.
 
 - Open **Server → Inventory** to browse VGI's saved items for every character on your current server.
 - Uses the same item summaries, search, category checkboxes, Doubles filter, and sorting as Items, with a sortable Character column. Search also matches character names.
-- Searches scan the current server and display the best **1,000 matches** for the selected sort. The count includes matches beyond the limit; narrow your filters to find specific items. Clipboard and exports include the displayed results.
+- Searches scan the current server and display the best **2,000 matches** for the selected sort. The count includes matches beyond the limit; narrow your filters to find specific items. Clipboard and exports include the displayed results.
 - Changing filters or sorting reruns the search; typing waits briefly before searching. Scans run in short steps, and a newer search cancels the previous one.
 - **Refresh** rereads the saved database. Offline characters reflect their last VGI scan; this does not request identification or modify VGI's data.
 - Click a row to print its saved description. Copy, Text, CSV, and JSON use the filtered list and include character ownership.

@@ -173,7 +173,7 @@ namespace OracleOfDereth
             while (SavedInventory.IsSearching && slice.ElapsedMilliseconds < 8)
                 SavedInventory.AdvanceSearch();
             if (SavedInventory.IsSearching)
-                VGInventoryText.Text = $"Searching {Server.Name}: {SavedInventory.ScannedCount:N0} items read...";
+                VGInventoryText.Text = $"Searching: {SavedInventory.ScannedCount:N0} items read...";
             else
             {
                 vgInventoryTimer.Stop();
@@ -186,7 +186,7 @@ namespace OracleOfDereth
         {
             visibleVGInventory = SavedInventory.List.Items;
             ItemListRenderer.Render(VGInventoryList, visibleVGInventory, 0, 0, showCharacter: true, selectedItem: selectedVGInventoryItem);
-            string status = $"{Server.Name}: Showing {visibleVGInventory.Count:N0} of {SavedInventory.MatchCount:N0} matches ({SavedInventory.TotalCount:N0} items)";
+            string status = $"Showing {visibleVGInventory.Count:N0} of {SavedInventory.MatchCount:N0} matches ({SavedInventory.TotalCount:N0} items)";
             if (SavedInventory.MatchCount > VGInventory.ResultLimit) status += " - narrow your filters";
             if (SavedInventory.UnreadableCount > 0) status += " (" + SavedInventory.UnreadableCount + " saved details unavailable)";
             if (!string.IsNullOrEmpty(SavedInventory.Error))

@@ -254,7 +254,7 @@ internal static class VGInventoryTests
             Check(inventory.Refresh("Conquest"), inventory.Error);
             timer.Stop();
             Check(inventory.TotalCount == 25000 && inventory.MatchCount == 25000 && inventory.List.Items.Count == VGInventory.ResultLimit,
-                "Large search must count all matches but retain only 1000 rows.");
+                "Large search must count all matches but retain only 2000 rows.");
             Check(inventory.List.Items[0].DisplayName == "Dagger 00001", "Top results were restricted to early database records.");
             Console.WriteLine($"25,000-item search: {timer.ElapsedMilliseconds} ms; retained managed delta {GC.GetTotalMemory(true) - baseline:N0} bytes; {inventory.List.Items.Count} rows.");
             var previousRows = inventory.List.Items;
