@@ -299,7 +299,7 @@ namespace OracleOfDereth
         private void ItemsClipboard_Hit(object sender, EventArgs e)
         {
             List<ItemListRow> items = DisplayedItems();
-            string text = string.Join("\n", items.Select(t => t.Description));
+            string text = string.Join(Environment.NewLine + Environment.NewLine, items.Select(t => t.Description));
             Util.ClipboardCopy(text);
             Util.Chat($"Copied {items.Count} items to clipboard");
         }

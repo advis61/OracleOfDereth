@@ -19,6 +19,7 @@ internal static class VGInventoryTests
         Setting.Init();
         AssertObservations();
         AssertWeaponSubfilters();
+        AssertWeaponDoubles();
         AssertAmmunitionCategory();
         AssertElementSubfilters();
         AssertArmorSubfilters();
@@ -552,6 +553,36 @@ internal static class VGInventoryTests
             var row = new ItemListRow(new Item("Conquest", "Mule", 2, name, ObjectClass.MissileWeapon));
             row.PopulateStub();
             Check(new ItemFilter { Weapons = true }.Matches(row), "Weapons excluded a missile launcher: " + name);
+        }
+    }
+
+    private static void AssertWeaponDoubles()
+    {
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 1, "Legendary Legendary", ObjectClass.MeleeWeapon));
+        weapon.PopulateStub();
+        var filter = new ItemFilter { Doubles = true };
+        var cases = new Dictionary<string, bool> {
+            ["Legendary Blood Thirst, Legendary Defender"] = true,
+            ["Epic Heart Seeker, Epic Spirit Drinker"] = true,
+            ["Epic Blood Thirst, Epic Defender, Legendary Swift Hunter"] = true,
+            ["Legendary Blood Thirst, Legendary Swift Hunter"] = false,
+            ["Epic Blood Thirst, Epic Swift Hunter"] = false,
+            ["Legendary Blood Thirst, Epic Defender, Epic Heart Seeker"] = false,
+            ["Major Blood Thirst, Major Defender"] = false,
+            ["Legendary Swift Hunter, Legendary Coordination"] = false,
+            [""] = false
+        };
+        foreach (var test in cases)
+        {
+            typeof(ItemListRow).GetProperty("SummaryCol4").SetValue(weapon, test.Key);
+            Check(filter.Matches(weapon) == test.Value, "Weapon doubles mismatch: " + test.Key);
+        }
+        var armor = new ItemListRow(new Item("Conquest", "Mule", 2, "Armor", ObjectClass.Armor));
+        armor.PopulateStub();
+        foreach (string tier in new[] { "Legendary", "Epic", "Major" })
+        {
+            typeof(ItemListRow).GetProperty("SummaryCol4").SetValue(armor, tier + " Coordination, " + tier + " Quickness");
+            Check(filter.Matches(armor), "Nonweapon doubles behavior changed.");
         }
     }
 

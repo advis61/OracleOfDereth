@@ -116,6 +116,7 @@ namespace OracleOfDereth
 
         public HudStaticText VGInventoryText { get; private set; }
         public HudButton VGInventoryRefresh { get; private set; }
+        private HudButton vgInventoryHelp;
         public HudButton VGInventoryClipboard { get; private set; }
         public HudButton VGInventoryExportText { get; private set; }
         public HudButton VGInventoryExportCsv { get; private set; }
@@ -147,6 +148,8 @@ namespace OracleOfDereth
             VGInventoryText.FontHeight = 10;
             VGInventoryRefresh = (HudButton)view["VGInventoryRefresh"];
             VGInventoryRefresh.Hit += VGInventoryRefresh_Hit;
+            vgInventoryHelp = (HudButton)view["VGInventoryHelp"];
+            vgInventoryHelp.Hit += VGInventoryHelp_Hit;
             VGInventoryClipboard = (HudButton)view["VGInventoryClipboard"];
             VGInventoryClipboard.Hit += VGInventoryClipboard_Hit;
             VGInventoryExportText = (HudButton)view["VGInventoryExportText"];
@@ -604,6 +607,7 @@ namespace OracleOfDereth
             vgInventoryAetheriaSurgeProtection.Change -= VGInventoryFilter_Change;
             vgInventoryAetheriaSurgeRegeneration.Change -= VGInventoryFilter_Change;
             VGInventoryRefresh.Hit -= VGInventoryRefresh_Hit;
+            vgInventoryHelp.Hit -= VGInventoryHelp_Hit;
             VGInventoryClipboard.Hit -= VGInventoryClipboard_Hit;
             VGInventoryExportText.Hit -= VGInventoryExportText_Hit;
             VGInventoryExportCsv.Hit -= VGInventoryExportCsv_Hit;
@@ -793,6 +797,11 @@ namespace OracleOfDereth
             if (!string.IsNullOrEmpty(SavedInventory.Error))
                 status = SavedInventory.Error + (SavedInventory.LoadedAt.HasValue ? " — showing previous read." : "");
             VGInventoryText.Text = status;
+        }
+
+        private void VGInventoryHelp_Hit(object sender, EventArgs e)
+        {
+            Util.Chat("This screen works with Virindi Global Inventory to show saved items across your characters on this server. If an item you expect is missing, make sure that character has Track All Items selected in Virindi Global Inventory.", Util.ColorPink);
         }
 
         private void VGInventoryRefresh_Hit(object sender, EventArgs e)
@@ -1176,7 +1185,7 @@ namespace OracleOfDereth
 
         private void VGInventoryClipboard_Hit(object sender, EventArgs e)
         {
-            Util.ClipboardCopy(string.Join("\n", visibleVGInventory.Select(t => t.Character + ": " + t.Description)));
+            Util.ClipboardCopy(string.Join(Environment.NewLine + Environment.NewLine, visibleVGInventory.Select(t => t.Character + ": " + t.Description)));
             Util.Chat($"Copied {visibleVGInventory.Count} items to clipboard");
         }
 

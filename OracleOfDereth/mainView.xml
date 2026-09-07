@@ -688,7 +688,8 @@
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="VGInventoryText" left="5" top="5" width="780" height="20" text="Saved Inventory: 0"/>
 						<control progid="DecalControls.StaticText" name="VGInventoryFilterLabel" left="5" top="32" width="38" height="16" text="Filter:"/>
-						<control progid="DecalControls.PushButton" name="VGInventoryRefresh" left="1022" top="3" width="108" height="22" text="Refresh"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryRefresh" left="798" top="3" width="87" height="22" text="Refresh"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryHelp" left="889" top="3" width="17" height="22" text="?"/>
 						<control progid="DecalControls.Edit" name="VGInventoryFilterText" left="46" top="30" width="293" height="20" text=""/><control progid="DecalControls.PushButton" name="VGInventoryFilterReset" left="343" top="29" width="50" height="22" text="Reset"/>
 						<control progid="DecalControls.CheckBox" name="VGInventoryFilterWeapons" left="395" top="32" width="70" height="16" text="Weapons" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="VGInventoryFilterArmor" left="473" top="32" width="60" height="16" text="Armor" checked="false"/>
@@ -700,10 +701,10 @@
 						<control progid="DecalControls.CheckBox" name="VGInventoryFilterSalvage" left="920" top="32" width="64" height="16" text="Salvage" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="VGInventoryFilterOther" left="992" top="32" width="60" height="16" text="Others" checked="false"/>
 							<control progid="DecalControls.CheckBox" name="VGInventoryFilterDoubles" left="1060" top="32" width="70" height="16" text="Doubles" checked="false"/>
-						<control progid="DecalControls.PushButton" name="VGInventoryClipboard" left="798" top="3" width="52" height="22" text="Copy"/>
-						<control progid="DecalControls.PushButton" name="VGInventoryExportText" left="854" top="3" width="52" height="22" text="Text"/>
-						<control progid="DecalControls.PushButton" name="VGInventoryExportCsv" left="966" top="3" width="52" height="22" text="CSV"/>
-						<control progid="DecalControls.PushButton" name="VGInventoryExportJson" left="910" top="3" width="52" height="22" text="JSON"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryClipboard" left="910" top="3" width="52" height="22" text="Copy"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryExportText" left="966" top="3" width="52" height="22" text="Text"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryExportCsv" left="1022" top="3" width="52" height="22" text="CSV"/>
+						<control progid="DecalControls.PushButton" name="VGInventoryExportJson" left="1078" top="3" width="52" height="22" text="JSON"/>
 						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponHW" left="5" top="59" width="40" height="16" text="HW" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponFW" left="53" top="59" width="39" height="16" text="FW" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponLW" left="100" top="59" width="39" height="16" text="LW" checked="false"/>

@@ -417,6 +417,26 @@ namespace OracleOfDereth
         {
             if (!Doubles) return true;
 
+            if (t.SortCategory == 0)
+            {
+                int weaponLegendary = 0, weaponEpic = 0;
+                foreach (string entry in t.SummaryCol4.Split(','))
+                {
+                    string spell = entry.Trim();
+                    bool legendaryTier = spell.StartsWith("Legendary ", StringComparison.OrdinalIgnoreCase);
+                    bool epicTier = spell.StartsWith("Epic ", StringComparison.OrdinalIgnoreCase);
+                    if (!legendaryTier && !epicTier) continue;
+                    string name = spell.Substring(legendaryTier ? 10 : 5);
+                    if (!name.Equals("Blood Thirst", StringComparison.OrdinalIgnoreCase) &&
+                        !name.Equals("Defender", StringComparison.OrdinalIgnoreCase) &&
+                        !name.Equals("Heart Seeker", StringComparison.OrdinalIgnoreCase) &&
+                        !name.Equals("Spirit Drinker", StringComparison.OrdinalIgnoreCase)) continue;
+                    if (legendaryTier) weaponLegendary++;
+                    else weaponEpic++;
+                }
+                return weaponLegendary > 0 ? weaponLegendary >= 2 : weaponEpic >= 2;
+            }
+
             string combined = Combined(t);
 
             int legendary = CountOccurrences(combined, "legendary");

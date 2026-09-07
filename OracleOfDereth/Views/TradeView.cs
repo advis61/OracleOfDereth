@@ -302,7 +302,7 @@ namespace OracleOfDereth
         {
             try
             {
-                string text = string.Join("\n", TradeItems.Items.Select(t => t.Description));
+                string text = string.Join(Environment.NewLine + Environment.NewLine, TradeItems.Items.Select(t => t.Description));
                 Util.ClipboardCopy(text);
                 Util.Chat($"Copied {TradeItems.Items.Count} items to clipboard");
             }
