@@ -114,7 +114,11 @@ namespace OracleOfDereth
             if (!IsPlayer() && !IsMonster() && !IsCorpse() && age > 60)
                 score -= Math.Min(500, (age - 60) * 2);
 
-            return score + (200 / (1 + Math.Max(0, Distance())));
+            // Player-owned pets and summons should stay low even when newly spawned and close.
+            if (WorldObjectVisibility.IsPlayerOwnedCreature(Item)) score -= 2500;
+
+            // A gradual proximity boost: +400 at zero distance, +200 at 20, +67 at 100.
+            return score + (400 / (1 + Math.Max(0, Distance()) / 20));
         }
 
         public static bool MatchesFilter(bool isPlayer, bool isMonster, bool players, bool monsters, bool other)

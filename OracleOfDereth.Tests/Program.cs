@@ -502,6 +502,15 @@ internal static class Program
 
     private static void AssertSummonOwnership()
     {
+        var isOwned = typeof(WorldObjectVisibility).GetMethod("IsPlayerOwnedCreature", BindingFlags.Static | BindingFlags.NonPublic,
+            null, new[] { typeof(Decal.Adapter.Wrappers.ObjectClass), typeof(uint) }, null);
+        foreach (Decal.Adapter.Wrappers.ObjectClass category in Enum.GetValues(typeof(Decal.Adapter.Wrappers.ObjectClass)))
+        {
+            bool creature = category == Decal.Adapter.Wrappers.ObjectClass.Monster || category == Decal.Adapter.Wrappers.ObjectClass.Npc;
+            foreach (uint owner in new[] { 0u, 0x50000001u, 0x50000002u })
+                if ((bool)isOwned.Invoke(null, new object[] { category, owner }) != (creature && owner != 0))
+                    throw new InvalidOperationException("Nearby pet detection confused unowned creatures or other object classes with pets.");
+        }
         var shouldDelete = typeof(WorldObjectVisibility).GetMethod("ShouldDeletePet", BindingFlags.Static | BindingFlags.NonPublic);
         const uint player = 0x50000001;
         foreach (var fixture in new[]

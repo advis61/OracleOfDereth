@@ -124,7 +124,7 @@ internal static class VGInventoryTests
             for (int attempt = 0; attempt < 2; attempt++)
             {
                 Check(!inventory.Refresh("Conquest"), "Missing SQLite unexpectedly succeeded.");
-                Check(inventory.Error == "VGI: Virindi Global Inventory's SQLite component is missing or could not load. Reinstall the VGI decal plugin. Use items to add and identify items.",
+                Check(inventory.Error == "VGI: Virindi Global Inventory's SQLite component is missing or could not load. Reinstall the VGI decal plugin",
                     "Missing SQLite did not show the installation guidance.");
                 Check(!inventory.IsSearching && inventory.List.Items.Count == 0 && inventory.List.QueueCount == 0,
                     "Missing SQLite left a running search, results, or live identification requests.");

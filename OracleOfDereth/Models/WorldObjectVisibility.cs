@@ -77,23 +77,44 @@ namespace OracleOfDereth
 
         internal static bool ShouldDeletePet(uint ownerId, uint playerId) => playerId != 0 && ownerId != 0 && ownerId != playerId;
 
-        private static unsafe void DeleteWeenie(int id, int playerId)
+        internal static bool IsPlayerOwnedCreature(ObjectClass category, uint ownerId) =>
+            ownerId != 0 && (category == ObjectClass.Monster || category == ObjectClass.Npc);
+
+        internal static bool IsPlayerOwnedCreature(WorldObject creature)
         {
+            if (creature == null || (creature.ObjectClass != ObjectClass.Monster && creature.ObjectClass != ObjectClass.Npc))
+                return false;
+            return IsPlayerOwnedCreature(creature.ObjectClass, GetPetOwner(creature.Id));
+        }
+
+        private static unsafe uint GetPetOwner(int id)
+        {
+            var core = CoreManager.Current;
+            if (IntPtr.Size != 4 || core == null || core.CharacterFilter.LoginStatus < 1 ||
+                !core.Actions.IsValidObject(id) || core.Actions.Underlying.GetPhysicsObjectPtr(id) == 0) return 0;
+
             // Retail x86 client bindings verified against UtilityBelt.Service 3.0.11:
-            // CObjectMaint.s_pcInstance, GetWeenieObject(uint), DeleteObject(uint).
+            // CObjectMaint.s_pcInstance and GetWeenieObject(uint).
             // UtilityBelt's Nametags uses ACCWeenieObject.pwd._pet_owner to recognize pets.
             // pwd starts at 0x98, and _pet_owner is at 0xA8 within PublicWeenieDesc.
             // Keep these client-version-specific details here, as with AcClient.cs.
             void* objects = *(void**)0x842ADC;
-            if (objects == null) return;
+            if (objects == null) return 0;
 
             var getWeenie = (delegate* unmanaged[Thiscall]<void*, uint, byte*>)0x5088E0;
             byte* weenie = getWeenie(objects, unchecked((uint)id));
-            if (weenie == null) return;
+            if (weenie == null) return 0;
 
-            uint ownerId = *(uint*)(weenie + 0x98 + 0xA8);
+            return *(uint*)(weenie + 0x98 + 0xA8);
+        }
+
+        private static unsafe void DeleteWeenie(int id, int playerId)
+        {
+            uint ownerId = GetPetOwner(id);
             if (!ShouldDeletePet(ownerId, unchecked((uint)playerId))) return;
 
+            void* objects = *(void**)0x842ADC;
+            if (objects == null) return;
             var deleteObject = (delegate* unmanaged[Thiscall]<void*, uint, int>)0x508FA0;
             deleteObject(objects, unchecked((uint)id));
         }
