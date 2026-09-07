@@ -79,12 +79,12 @@ namespace OracleOfDereth
 
             // Server
             { 4_00, 720 }, // Augs (Conquest)
-            { 4_01, 720 }, // Experience (character summary + XP bonuses) — same width as Augs
-            { 4_02, 580 }, // Bank
+            { 4_02, 720 }, // Experience (character summary + XP bonuses) — same width as Augs
+            { 4_01, 580 }, // Bank
             { 4_03, 600 }, // Fship (recruiting fellowships)
-            { 4_04, 430 }, // Quests (Custom Quests)
-            { 4_05, 450 }, // Top (leaderboards; every sub-tab is the same shape)
-            { 4_06, 1440 }, // Inventory (VGI, all characters on the current server)
+            { 4_05, 430 }, // Quests (Custom Quests)
+            { 4_06, 450 }, // Top (leaderboards; every sub-tab is the same shape)
+            { 4_04, 1440 }, // Inventory (VGI, all characters on the current server)
 
             // About / Settings / Help
             { 5_00, 350 }, // About
@@ -121,12 +121,12 @@ namespace OracleOfDereth
 
             // Server
             { 4_00, 561 }, // Augs (Conquest) — advanced augs over enlightenment augs
-            { 4_01, 310 }, // Experience (character summary + seven XP bonus rows)
-            { 4_02, 350 }, // Bank
+            { 4_02, 310 }, // Experience (character summary + seven XP bonus rows)
+            { 4_01, 350 }, // Bank
             { 4_03, 545 }, // Fship (recruiting fellowships)
-            { 4_04, 545 }, // Quests (Custom Quests)
-            { 4_05, 555 }, // Top (leaderboards) — taller: a third row of tabs above the list
-            { 4_06, 570 }, // Inventory
+            { 4_05, 545 }, // Quests (Custom Quests)
+            { 4_06, 555 }, // Top (leaderboards) — taller: a third row of tabs above the list
+            { 4_04, 570 }, // Inventory
 
             // About / Settings / Help
             { 5_00, 270 }, // About
@@ -312,7 +312,7 @@ namespace OracleOfDereth
             // Save the new view height
             MainViewHeights[tab] = view.Height;
 
-            if (tab == 1_04 || tab == 4_06)
+            if (tab == 1_04 || tab == 4_04)
             {
                 // Item lists are freely widenable — remember each tab's width.
                 MainViewWidths[tab] = view.Width;
@@ -473,12 +473,12 @@ namespace OracleOfDereth
 
             // Server Tab
             if (currentTab == 4_00) { UpdateConquestAugmentations(); }
-            if (currentTab == 4_01) { UpdateConquestExperience(); }
-            if (currentTab == 4_02) { UpdateConquestBank(); }
+            if (currentTab == 4_02) { UpdateConquestExperience(); }
+            if (currentTab == 4_01) { UpdateConquestBank(); }
             if (currentTab == 4_03) { UpdateConquestFship(); }
-            if (currentTab == 4_04) { UpdateCustomQuests(); }
-            if (currentTab == 4_05) { UpdateTop(); }
-            if (currentTab == 4_06) { UpdateVGInventory(); }
+            if (currentTab == 4_05) { UpdateCustomQuests(); }
+            if (currentTab == 4_06) { UpdateTop(); }
+            if (currentTab == 4_04) { UpdateVGInventory(); }
 
             // About / Settings / Help
             if (currentTab == 5_00) {; }

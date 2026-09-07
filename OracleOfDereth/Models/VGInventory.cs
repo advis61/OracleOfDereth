@@ -64,7 +64,7 @@ namespace OracleOfDereth
             }
             catch (Exception ex)
             {
-                Error = "VGI: " + ex.GetBaseException().Message;
+                Error = "VGI: " + (ex is SQLiteProviderException ? ex.Message : ex.GetBaseException().Message);
             }
             CancelSearch();
             return false;
@@ -83,7 +83,7 @@ namespace OracleOfDereth
             if (string.IsNullOrWhiteSpace(server)) throw new InvalidOperationException("Log in to view this server's inventory.");
             if (server.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) throw new InvalidOperationException("Invalid server name.");
             string folder = directory ?? FindDirectory();
-            if (folder == null) throw new InvalidOperationException("VGI is not installed. Use Items to add and identify items.");
+            if (folder == null) throw new InvalidOperationException("Virindi Global Inventory decal plugin is not installed. Use items to add and identify items.");
             string path = Path.Combine(folder, "_" + server + ".db");
             if (!File.Exists(path)) throw new InvalidOperationException("No saved VGI inventory for " + server + ". Use Items to add and identify items.");
 
@@ -145,22 +145,39 @@ namespace OracleOfDereth
 
         private static DbConnection OpenConnection(string folder, string path)
         {
-            // VGI supplies its SQLite provider. Late binding keeps it optional for users
-            // without VGI and avoids shipping a competing mixed-mode SQLite DLL.
-            Assembly provider = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "System.Data.SQLite")
-                ?? Assembly.LoadFrom(Path.Combine(folder, "System.Data.SQLite.dll"));
-            var connection = (DbConnection)Activator.CreateInstance(provider.GetType("System.Data.SQLite.SQLiteConnection", true));
-            var settings = new DbConnectionStringBuilder
+            DbConnection connection = null;
+            try
             {
-                ["Data Source"] = path,
-                ["Read Only"] = true,
-                ["FailIfMissing"] = true,
-                ["Pooling"] = false,
-                ["Default Timeout"] = 2
-            };
-            connection.ConnectionString = settings.ConnectionString;
-            try { connection.Open(); return connection; }
-            catch { connection.Dispose(); throw; }
+                // VGI supplies its SQLite provider. Keep it optional and reuse it if already loaded.
+                Assembly provider = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "System.Data.SQLite")
+                    ?? Assembly.LoadFrom(Path.Combine(folder, "System.Data.SQLite.dll"));
+                connection = (DbConnection)Activator.CreateInstance(provider.GetType("System.Data.SQLite.SQLiteConnection", true));
+                var settings = new DbConnectionStringBuilder
+                {
+                    ["Data Source"] = path,
+                    ["Read Only"] = true,
+                    ["FailIfMissing"] = true,
+                    ["Pooling"] = false,
+                    ["Default Timeout"] = 2
+                };
+                connection.ConnectionString = settings.ConnectionString;
+                connection.Open();
+                return connection;
+            }
+            catch (Exception ex)
+            {
+                connection?.Dispose();
+                Exception cause = ex.GetBaseException();
+                if (cause is FileNotFoundException || cause is FileLoadException || cause is BadImageFormatException ||
+                    cause is DllNotFoundException || cause is EntryPointNotFoundException || cause is TypeLoadException)
+                    throw new SQLiteProviderException(ex);
+                throw;
+            }
+        }
+
+        private sealed class SQLiteProviderException : Exception
+        {
+            public SQLiteProviderException(Exception inner) : base("Virindi Global Inventory's SQLite component is missing or could not load. Reinstall the VGI decal plugin", inner) { } 
         }
 
         private static string FindDirectory()

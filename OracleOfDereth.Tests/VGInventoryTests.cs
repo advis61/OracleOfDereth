@@ -98,13 +98,39 @@ internal static class VGInventoryTests
         var missing = new VGInventory(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")));
         Check(!missing.Refresh("Conquest") && missing.List.Items.Count == 0, "Missing database must not create an inventory.");
         Check(!missing.Refresh("../Conquest"), "Server names must not escape the inventory directory.");
+        AssertMissingSQLite();
 
         var layout = new XmlDocument();
         using (Stream xml = typeof(Item).Assembly.GetManifestResourceStream("OracleOfDereth.mainView.xml")) layout.Load(xml);
         var tabs = layout.SelectNodes("//control[@name='ServerViewNotebook']/page");
-        Check(tabs.Count == 7 && tabs[6].Attributes["label"].Value == "Inventory", "Inventory is not at Server tab index 6.");
+        Check(tabs.Cast<XmlNode>().Select(tab => tab.Attributes["label"].Value).SequenceEqual(
+            new[] { "Augs", "Bank", "Experience", "Fship", "Inventory", "Quests", "Top" }),
+            "Server tabs are not in alphabetical order.");
         Check(layout.SelectNodes("//control[starts-with(@name,'VGInventoryFilter') and @progid='DecalControls.CheckBox']").Count == 10, "Inventory filters differ from Items.");
         Check(layout.SelectSingleNode("//control[@name='VGInventoryList']/column[1]").Attributes["name"].Value == "Character", "First column must be Character.");
+    }
+
+    private static void AssertMissingSQLite()
+    {
+        Check(!AppDomain.CurrentDomain.GetAssemblies().Any(a => a.GetName().Name == "System.Data.SQLite"),
+            "Missing SQLite test must run before loading the audit provider.");
+        string temporary = Path.Combine(Path.GetTempPath(), "Oracle-missing-sqlite-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(temporary);
+        try
+        {
+            // Reach the provider loader without needing a real database or changing the installation.
+            File.WriteAllBytes(Path.Combine(temporary, "_Conquest.db"), new byte[0]);
+            var inventory = new VGInventory(temporary);
+            for (int attempt = 0; attempt < 2; attempt++)
+            {
+                Check(!inventory.Refresh("Conquest"), "Missing SQLite unexpectedly succeeded.");
+                Check(inventory.Error == "VGI: Virindi Global Inventory's SQLite component is missing or could not load. Reinstall the VGI decal plugin. Use items to add and identify items.",
+                    "Missing SQLite did not show the installation guidance.");
+                Check(!inventory.IsSearching && inventory.List.Items.Count == 0 && inventory.List.QueueCount == 0,
+                    "Missing SQLite left a running search, results, or live identification requests.");
+            }
+        }
+        finally { Directory.Delete(temporary, true); }
     }
 
     private static void Reject(byte[] bytes)
