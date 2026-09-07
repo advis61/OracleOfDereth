@@ -1197,10 +1197,10 @@ namespace OracleOfDereth
         public override string ToString()
         {
             var parts = new List<string>();
+            bool workmanshipInScore = IsWeapon && Setting.ShowWeaponScoreWorkmanship.IsYes && GetWorkmanshipValue() > 0;
 
             AddPart(parts, GetName());
             AddPart(parts, GetMasteryString());
-            bool workmanshipInScore = IsWeapon && Setting.ShowWeaponScoreWorkmanship.IsYes && GetWorkmanshipValue() > 0;
             AddPart(parts, GetWeaponOveragesString(workmanshipInScore));
             AddPart(parts, GetSummonString());
             AddPart(parts, GetFullSetName());

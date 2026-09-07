@@ -1166,7 +1166,12 @@ namespace OracleOfDereth
                 }
             }
             // Always retain access to the saved description, including offline items.
-            Util.Chat(selectedVGInventoryItem.Character + ": " + selectedVGInventoryItem.Description, Util.ColorCyan);
+            string description = selectedVGInventoryItem.Character + ": " + selectedVGInventoryItem.Description;
+            var modifiers = System.Windows.Forms.Control.ModifierKeys;
+            if ((modifiers & (System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.Control)) != 0)
+                Util.Think(description);
+            else
+                Util.Chat(description, Util.ColorCyan);
         }
 
         private void VGInventoryClipboard_Hit(object sender, EventArgs e)
