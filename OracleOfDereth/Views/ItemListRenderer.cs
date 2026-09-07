@@ -124,7 +124,7 @@ namespace OracleOfDereth
         public bool Matches(ItemListRow t)
         {
             if (!IsCategoryVisible(t.SortCategory)) return false;
-            if (Armor && t.SortCategory == 1 && ArmorSlots != ItemInfo.ArmorSlot.None &&
+            if (Armor && t.SortCategory == ItemCategory.Armor && ArmorSlots != ItemInfo.ArmorSlot.None &&
                 (new ItemInfo(t.Item).GetArmorSlots() & ArmorSlots) == 0) return false;
             if (!MatchesCloakLevel(t)) return false;
             if (!MatchesCloakProc(t)) return false;
@@ -143,7 +143,7 @@ namespace OracleOfDereth
 
         private bool MatchesCloakProc(ItemListRow row)
         {
-            if (!Cloaks || row.SortCategory != 3 ||
+            if (!Cloaks || row.SortCategory != ItemCategory.Cloaks ||
                 !(CloakProcDamage200 || CloakProcCiS || CloakProcMelee || CloakProcMissile ||
                   CloakProcMagic || CloakProcAoE || CloakProcOther)) return true;
             switch (row.SummaryCol2)
@@ -169,7 +169,7 @@ namespace OracleOfDereth
 
         private bool MatchesCloakLevel(ItemListRow row)
         {
-            if (!Cloaks || row.SortCategory != 3 ||
+            if (!Cloaks || row.SortCategory != ItemCategory.Cloaks ||
                 !(CloakLevel1 || CloakLevel2 || CloakLevel3 || CloakLevel4 || CloakLevel5 || CloakLevelOther)) return true;
             switch (new ItemInfo(row.Item).GetCloakLevel())
             {
@@ -184,7 +184,7 @@ namespace OracleOfDereth
 
         private bool MatchesJewelry(ItemListRow row)
         {
-            if (!Jewelry || row.SortCategory != 2 ||
+            if (!Jewelry || row.SortCategory != ItemCategory.Jewelry ||
                 !(JewelryNecklace || JewelryTrinket || JewelryBracelet || JewelryRing)) return true;
             // ItemInfo groups both wrist slots as Bracelet and both finger slots as Ring.
             switch (new ItemInfo(row.Item).GetSlotName())
@@ -199,7 +199,7 @@ namespace OracleOfDereth
 
         private bool MatchesAetheria(ItemListRow row)
         {
-            if (!Aetheria || row.SortCategory != 5) return true;
+            if (!Aetheria || row.SortCategory != ItemCategory.Aetheria) return true;
             var info = new ItemInfo(row.Item);
             int level = info.GetAetheriaLevel();
             if ((AetheriaLevel1 || AetheriaLevel2 || AetheriaLevel3 || AetheriaLevel4 || AetheriaLevel5) &&
@@ -220,7 +220,7 @@ namespace OracleOfDereth
 
         private bool MatchesSalvage(ItemListRow row)
         {
-            if (!Salvage || row.SortCategory != 6 ||
+            if (!Salvage || row.SortCategory != ItemCategory.Salvage ||
                 !(SalvageIron || SalvageGranite || SalvageMahogany || SalvageGreenGarnet || SalvageVelvet ||
                   SalvageBrass || SalvageSteel || SalvageRends || SalvageImbues || SalvageOther)) return true;
             switch (new ItemInfo(row.Item).GetMaterial())
@@ -257,7 +257,7 @@ namespace OracleOfDereth
 
         private bool MatchesOtherClass(ItemListRow row)
         {
-            if (!Other || row.SortCategory != 9 ||
+            if (!Other || row.SortCategory != ItemCategory.Other ||
                 !(OtherClassAlchemy || OtherClassComponent || OtherClassCooking || OtherClassFood ||
                   OtherClassGem || OtherClassHealingKit || OtherClassKey || OtherClassLockpick ||
                   OtherClassManaStone || OtherClassMisc || OtherClassRare || OtherClassOther)) return true;
@@ -284,7 +284,7 @@ namespace OracleOfDereth
 
         private bool MatchesSummon(ItemListRow row)
         {
-            if (!Summons || row.SortCategory != 4 ||
+            if (!Summons || row.SortCategory != ItemCategory.Summons ||
                 !(SummonNaturalist || SummonNecromancer || SummonPrimalist || SummonOther)) return true;
             switch (new ItemInfo(row.Item).GetSummonSpecString())
             {
@@ -297,7 +297,7 @@ namespace OracleOfDereth
 
         private bool MatchesClothing(ItemListRow row)
         {
-            if (!Clothing || row.SortCategory != 7) return true;
+            if (!Clothing || row.SortCategory != ItemCategory.Clothing) return true;
             var info = new ItemInfo(row.Item);
             string garment = info.GetSlotName();
             bool shirt = garment == "Shirt", pants = garment == "Pants";
@@ -314,7 +314,7 @@ namespace OracleOfDereth
 
         private bool MatchesArmorSet(ItemListRow row)
         {
-            if (!Armor || row.SortCategory != 1 ||
+            if (!Armor || row.SortCategory != ItemCategory.Armor ||
                 !(ArmorSetAdept || ArmorSetDefender || ArmorSetDexterous || ArmorSetHearty ||
                   ArmorSetWise || ArmorSetNoSet || ArmorSetOther)) return true;
             // Same Equipment Set property used by ItemInfo; unknown nonzero sets are Other.
@@ -337,7 +337,7 @@ namespace OracleOfDereth
         // Hidden selections are inactive when the parent Weapons checkbox is off.
         private bool MatchesWeaponType(ItemListRow row)
         {
-            if (!Weapons || row.SortCategory != 0 ||
+            if (!Weapons || row.SortCategory != ItemCategory.Weapons ||
                 !(WeaponHW || WeaponFW || WeaponLW || Weapon2H || WeaponWar || WeaponVoid || WeaponTW || WeaponBow || WeaponXbow || WeaponOther)) return true;
             switch (new ItemInfo(row.Item).GetWeaponTypeName())
             {
@@ -358,7 +358,7 @@ namespace OracleOfDereth
         // Element choices are alternatives, combined with the weapon-type group by AND.
         private bool MatchesWeaponElement(ItemListRow row)
         {
-            if (!Weapons || row.SortCategory != 0 ||
+            if (!Weapons || row.SortCategory != ItemCategory.Weapons ||
                 !(ElementSlash || ElementPierce || ElementBludge || ElementFire ||
                   ElementFrost || ElementStorm || ElementAcid || ElementNether)) return true;
             string type = row.SummaryCol1;
@@ -388,20 +388,20 @@ namespace OracleOfDereth
             return Weapons || Armor || Clothing || Jewelry || Cloaks || Summons || Aetheria || Salvage || Other;
         }
 
-        private bool IsCategoryVisible(int sortCategory)
+        private bool IsCategoryVisible(ItemCategory sortCategory)
         {
             if (!AnyCategorySelected()) return true;
 
             switch (sortCategory)
             {
-                case 0: return Weapons;
-                case 1: return Armor;
-                case 2: return Jewelry;
-                case 3: return Cloaks;
-                case 4: return Summons;
-                case 5: return Aetheria;
-                case 6: return Salvage;
-                case 7: return Clothing;
+                case ItemCategory.Weapons: return Weapons;
+                case ItemCategory.Armor: return Armor;
+                case ItemCategory.Jewelry: return Jewelry;
+                case ItemCategory.Cloaks: return Cloaks;
+                case ItemCategory.Summons: return Summons;
+                case ItemCategory.Aetheria: return Aetheria;
+                case ItemCategory.Salvage: return Salvage;
+                case ItemCategory.Clothing: return Clothing;
                 default: return Other;
             }
         }
@@ -417,7 +417,7 @@ namespace OracleOfDereth
         {
             if (!Doubles) return true;
 
-            if (t.SortCategory == 0)
+            if (t.SortCategory == ItemCategory.Weapons)
             {
                 int weaponLegendary = 0, weaponEpic = 0;
                 foreach (string entry in t.SummaryCol4.Split(','))

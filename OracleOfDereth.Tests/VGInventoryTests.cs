@@ -234,7 +234,7 @@ internal static class VGInventoryTests
             var row = new ItemListRow(new Item("Conquest", "Mule", i, "Test", objectClass,
                 new Dictionary<int, int> { [218103850] = expected[i] == "Rare" ? 23308 : 0 }));
             row.PopulateStub();
-            Check(row.SortCategory == 9, "Object class fixture must belong to Others.");
+            Check(row.SortCategory == ItemCategory.Other, "Object class fixture must belong to Others.");
             return row;
         }).ToList();
         foreach (string name in expected.Distinct())
@@ -435,7 +435,7 @@ internal static class VGInventoryTests
         var fullPants = Garment(0xc4);
         var partialPants = Garment(0xc0);
         var rows = new[] { fullShirt, partialShirt, fullPants, partialPants };
-        Check(rows.All(r => r.SortCategory == 7), "Clothing fixture was not classified as underclothing.");
+        Check(rows.All(r => r.SortCategory == ItemCategory.Clothing), "Clothing fixture was not classified as underclothing.");
         Check(rows.Where(new ItemFilter { Clothing = true, ClothingShirt = true }.Matches).SequenceEqual(rows.Take(2)),
             "Shirt filter must match the garment slot, not the item name.");
         Check(rows.Where(new ItemFilter { Clothing = true, ClothingPants = true }.Matches).SequenceEqual(rows.Skip(2)),

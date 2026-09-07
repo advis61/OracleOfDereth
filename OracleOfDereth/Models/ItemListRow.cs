@@ -4,6 +4,20 @@ using Decal.Adapter.Wrappers;
 
 namespace OracleOfDereth
 {
+    // Explicit values preserve the existing category grouping when sorting rows.
+    public enum ItemCategory
+    {
+        Weapons = 0,
+        Armor = 1,
+        Jewelry = 2,
+        Cloaks = 3,
+        Summons = 4,
+        Aetheria = 5,
+        Salvage = 6,
+        Clothing = 7,
+        Other = 9
+    }
+
     // Cached display of an immutable item observation, shared by live and saved lists.
     public class ItemListRow
     {
@@ -17,7 +31,7 @@ namespace OracleOfDereth
         public string DisplayName { get; private set; }
         // Ready for display, including items that do not require appraisal.
         public bool IsComplete { get; private set; }
-        public int SortCategory { get; private set; } = 0; // Groups like items together: 0=weapon, 1=armor, 2=jewelry, 3=cloak, 4=summon, 5=aetheria, 9=other
+        public ItemCategory SortCategory { get; private set; } = ItemCategory.Weapons;
         public string SummaryCol1 { get; private set; } = "";
         public string SummaryCol2 { get; private set; } = "";
         public string SummaryCol3 { get; private set; } = "";
@@ -178,17 +192,17 @@ namespace OracleOfDereth
             return string.Join(", ", parts);
         }
 
-        private static int GetSortCategory(ItemInfo info)
+        private static ItemCategory GetSortCategory(ItemInfo info)
         {
-            if (info.IsWeapon && !info.IsAmmo) return 0;
-            if (info.IsClothing) return 7;
-            if (info.IsArmorClothing) return 1;
-            if (info.IsJewelry) return 2;
-            if (info.IsCloak) return 3;
-            if (info.IsSummon) return 4;
-            if (info.IsAetheria) return 5;
-            if (info.IsSalvage || info.IsFoolproof) return 6;
-            return 9;
+            if (info.IsWeapon && !info.IsAmmo) return ItemCategory.Weapons;
+            if (info.IsClothing) return ItemCategory.Clothing;
+            if (info.IsArmorClothing) return ItemCategory.Armor;
+            if (info.IsJewelry) return ItemCategory.Jewelry;
+            if (info.IsCloak) return ItemCategory.Cloaks;
+            if (info.IsSummon) return ItemCategory.Summons;
+            if (info.IsAetheria) return ItemCategory.Aetheria;
+            if (info.IsSalvage || info.IsFoolproof) return ItemCategory.Salvage;
+            return ItemCategory.Other;
         }
 
         private static int GetSortInt(int? value)

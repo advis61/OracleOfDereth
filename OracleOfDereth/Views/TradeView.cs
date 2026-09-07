@@ -308,9 +308,10 @@ namespace OracleOfDereth
         {
             try
             {
-                string text = string.Join(Environment.NewLine + Environment.NewLine, TradeItems.Items.Select(t => t.Description));
+                List<ItemListRow> items = DisplayedItems();
+                string text = string.Join(Environment.NewLine + Environment.NewLine, items.Select(t => t.Description));
                 Util.ClipboardCopy(text);
-                Util.Chat($"Copied {TradeItems.Items.Count} items to clipboard");
+                Util.Chat($"Copied {items.Count} items to clipboard");
             }
             catch (Exception ex) { Util.Log(ex); }
         }
