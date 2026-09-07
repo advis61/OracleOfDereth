@@ -273,7 +273,11 @@ namespace OracleOfDereth
                         core.Actions.SelectItem(live.Id);
                 }
             }
-            // Always retain access to the saved description, including offline items.
+            // Our character's live identification supplies the description.
+            if (saved.Server == Server.Name && !string.IsNullOrEmpty(saved.Character) &&
+                saved.Character == core?.CharacterFilter?.Name) return;
+
+            // Items on other characters still need their saved description.
             string description = selectedVGInventoryItem.Character + ": " + selectedVGInventoryItem.Description;
             var modifiers = System.Windows.Forms.Control.ModifierKeys;
             if ((modifiers & (System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.Control)) != 0)
