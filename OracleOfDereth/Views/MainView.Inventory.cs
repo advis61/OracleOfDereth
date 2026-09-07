@@ -230,9 +230,29 @@ namespace OracleOfDereth
         private void VGInventoryList_Click(object sender, int row, int col)
         {
             if (row < 0 || row >= visibleVGInventory.Count) return;
+            int previous = visibleVGInventory.IndexOf(selectedVGInventoryItem);
+            if (previous != row)
+            {
+                if (previous >= 0 && previous < VGInventoryList.RowCount)
+                    ItemListRenderer.SetRowColor(VGInventoryList[previous], false, !visibleVGInventory[previous].IsComplete, showCharacter: true);
+                if (row < VGInventoryList.RowCount)
+                    ItemListRenderer.SetRowColor(VGInventoryList[row], true, !visibleVGInventory[row].IsComplete, showCharacter: true);
+            }
             selectedVGInventoryItem = visibleVGInventory[row];
-            UpdateVGInventoryList();
-            // Offline IDs are not selectable game targets. Show the saved description.
+            Item saved = selectedVGInventoryItem.Item;
+            var core = Decal.Adapter.CoreManager.Current;
+            if (saved.Server == Server.Name && !string.IsNullOrEmpty(saved.Character))
+            {
+                var worldObject = core?.WorldFilter?[saved.Id];
+                if (worldObject != null)
+                {
+                    var live = new Item(worldObject);
+                    if (saved.Character == live.Character && saved.Server == live.Server &&
+                        saved.Name == live.Name && saved.ObjectClass == live.ObjectClass && saved.Icon == live.Icon)
+                        core.Actions.SelectItem(live.Id);
+                }
+            }
+            // Always retain access to the saved description, including offline items.
             Util.Chat(selectedVGInventoryItem.Character + ": " + selectedVGInventoryItem.Description, Util.ColorCyan);
         }
 

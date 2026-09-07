@@ -179,13 +179,7 @@ namespace OracleOfDereth
                 ((HudStaticText)row[5]).TextAlignment = VirindiViewService.WriteTextFormats.Center;
 
                 bool selected = showCharacter ? ReferenceEquals(item, selectedItem) : item.Id == selectedId && selectedId != 0;
-                SetRowColor(row, selected, loading: !item.IsComplete);
-                if (showCharacter)
-                {
-                    HudStaticText character = (HudStaticText)row[0];
-                    if (selected) character.TextColor = ColorSelected;
-                    else character.ResetTextColor();
-                }
+                SetRowColor(row, selected, loading: !item.IsComplete, showCharacter: showCharacter);
             }
 
             // Trim surplus rows. Nothing to clean up alongside them: AssignImage keeps its
@@ -198,7 +192,7 @@ namespace OracleOfDereth
 
         // Tint the row's text columns (Name..Details): highlighted when selected, dim grey
         // while still loading its appraisal, otherwise the default colour.
-        private static void SetRowColor(HudList.HudListRowAccessor row, bool selected, bool loading)
+        public static void SetRowColor(HudList.HudListRowAccessor row, bool selected, bool loading, bool showCharacter = false)
         {
             for (int col = 2; col <= 6; col++)
             {
@@ -206,6 +200,12 @@ namespace OracleOfDereth
                 if (selected) cell.TextColor = ColorSelected;
                 else if (loading) cell.TextColor = ColorLoading;
                 else cell.ResetTextColor();
+            }
+            if (showCharacter)
+            {
+                HudStaticText character = (HudStaticText)row[0];
+                if (selected) character.TextColor = ColorSelected;
+                else character.ResetTextColor();
             }
         }
 
