@@ -54,6 +54,7 @@ namespace OracleOfDereth
 
         // Set while Reset clears the filter controls, so their Change events don't each
         // trigger a refresh/re-request — we refresh once at the end instead.
+        private ItemSubfilters tradeSubfilters;
         private bool suppressFilter = false;
         public TradeView()
         {
@@ -129,6 +130,9 @@ namespace OracleOfDereth
                 TradeFilterDoubles = (HudCheckBox)view["TradeFilterDoubles"];
                 TradeFilterDoubles.Change += Filter_Change;
 
+                tradeSubfilters = new ItemSubfilters((HudFixedLayout)view["TradeSubfilters"],
+                    category => (HudCheckBox)view["TradeFilter" + category], Filter_Change);
+
                 TradeListSortCompleteIcon = new HudPictureBox();
                 TradeListSortCompleteIcon.Image = IconSort;
                 TradeListSortComplete = (HudFixedLayout)view["TradeListSortComplete"];
@@ -168,7 +172,7 @@ namespace OracleOfDereth
 
         private ItemFilter Filter()
         {
-            return new ItemFilter
+            return tradeSubfilters.Apply(new ItemFilter
             {
                 Text = TradeFilterText?.Text ?? "",
                 Weapons = TradeFilterWeapons.Checked,
@@ -181,7 +185,7 @@ namespace OracleOfDereth
                 Salvage = TradeFilterSalvage.Checked,
                 Other = TradeFilterOther.Checked,
                 Doubles = TradeFilterDoubles.Checked,
-            };
+            });
         }
 
         public void UpdateList()
@@ -232,6 +236,7 @@ namespace OracleOfDereth
         private void Filter_Change(object sender, EventArgs e)
         {
             if (suppressFilter) return;
+            tradeSubfilters.CategoryChanged(sender as HudCheckBox);
 
             // UpdateList feeds the now-visible ids to PrioritizeIdentify, so the identify
             // pump appraises the filtered rows before the rest as in-flight slots free up.
@@ -242,6 +247,7 @@ namespace OracleOfDereth
         private void FilterReset_Hit(object sender, EventArgs e)
         {
             suppressFilter = true;
+            tradeSubfilters.Reset();
             TradeFilterText.Text = "";
             TradeFilterWeapons.Checked = false;
             TradeFilterArmor.Checked = false;
@@ -382,6 +388,7 @@ namespace OracleOfDereth
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
+            tradeSubfilters?.Dispose();
 
             if (TradeItems != null) TradeItems.OnItemsListChanged = null;
             Trade.OnChanged = null;

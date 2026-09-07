@@ -92,7 +92,7 @@
 						</control>
 					</control>
 				</page>
-				<page label="Items">
+<page label="Items">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="ItemsText" left="5" top="5" width="600" height="20" text="Inventory Items: 0"/>
 						<control progid="DecalControls.PushButton" name="ItemsAddAll" left="5" top="30" width="108" height="24" text="Add All"/>
@@ -101,27 +101,28 @@
 						<control progid="DecalControls.CheckBox" name="ItemsAddSelected" left="345" top="33" width="130" height="20" text="Auto-add selected" checked="false"/>
 						<control progid="DecalControls.StaticText" name="ItemsFilterLabel" left="5" top="59" width="38" height="16" text="Filter:"/>
 						<control progid="DecalControls.Edit" name="ItemsFilterText" left="46" top="57" width="293" height="20" text=""/><control progid="DecalControls.PushButton" name="ItemsFilterReset" left="343" top="56" width="50" height="22" text="Reset"/>
-						<control progid="DecalControls.CheckBox" name="ItemsFilterWeapons" left="398" top="59" width="70" height="16" text="Weapons" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="ItemsFilterArmor" left="478" top="59" width="60" height="16" text="Armor" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="ItemsFilterClothing" left="546" top="59" width="70" height="16" text="Clothing" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="ItemsFilterJewelry" left="626" top="59" width="64" height="16" text="Jewelry" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="ItemsFilterCloaks" left="700" top="59" width="58" height="16" text="Cloaks" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="ItemsFilterSummons" left="768" top="59" width="75" height="16" text="Summons" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="ItemsFilterAetheria" left="853" top="59" width="70" height="16" text="Aetheria" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="ItemsFilterSalvage" left="933" top="59" width="64" height="16" text="Salvage" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="ItemsFilterOther" left="1007" top="59" width="52" height="16" text="Other" checked="false"/>
-							<control progid="DecalControls.CheckBox" name="ItemsFilterDoubles" left="1063" top="59" width="70" height="16" text="Doubles" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="ItemsFilterWeapons" left="395" top="59" width="70" height="16" text="Weapons" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="ItemsFilterArmor" left="473" top="59" width="60" height="16" text="Armor" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="ItemsFilterClothing" left="541" top="59" width="70" height="16" text="Clothing" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="ItemsFilterJewelry" left="619" top="59" width="64" height="16" text="Jewelry" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="ItemsFilterCloaks" left="691" top="59" width="60" height="16" text="Cloaks" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="ItemsFilterSummons" left="759" top="59" width="75" height="16" text="Summons" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="ItemsFilterAetheria" left="842" top="59" width="70" height="16" text="Aetheria" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="ItemsFilterSalvage" left="920" top="59" width="64" height="16" text="Salvage" checked="false"/>
+						<control progid="DecalControls.CheckBox" name="ItemsFilterOther" left="992" top="59" width="60" height="16" text="Others" checked="false"/>
+							<control progid="DecalControls.CheckBox" name="ItemsFilterDoubles" left="1060" top="59" width="70" height="16" text="Doubles" checked="false"/>
 						<control progid="DecalControls.PushButton" name="ItemsClipboard" left="910" top="3" width="52" height="22" text="Copy"/>
 						<control progid="DecalControls.PushButton" name="ItemsExportText" left="966" top="3" width="52" height="22" text="Text"/>
 						<control progid="DecalControls.PushButton" name="ItemsExportCsv" left="1022" top="3" width="52" height="22" text="CSV"/>
 						<control progid="DecalControls.PushButton" name="ItemsExportJson" left="1078" top="3" width="52" height="22" text="JSON"/>
-						<control progid="DecalControls.FixedLayout" name="ItemsListSortComplete" left="1" top="85" width="16" height="16"/>
-						<control progid="DecalControls.StaticText" name="ItemsListSortName" left="49" top="81" width="210" height="17" text="Item Name"/>
-						<control progid="DecalControls.StaticText" name="ItemsListSortCol1" left="344" top="81" width="140" height="17" text="Type"/>
-						<control progid="DecalControls.StaticText" name="ItemsListSortCol2" left="541" top="81" width="60" height="17" text="Effect"/>
-						<control progid="DecalControls.StaticText" name="ItemsListSortCol3" left="716" top="81" width="50" height="17" text="Info"/>
-						<control progid="DecalControls.StaticText" name="ItemsListSortCol4" left="840" top="81" width="360" height="17" text="Details"/>
-						<control progid="DecalControls.List" name="ItemsList" left="0" top="101" width="1920" height="2000">
+						<control progid="DecalControls.FixedLayout" name="ItemsSubfilters" left="0" top="86" width="1135" height="16"/>
+						<control progid="DecalControls.FixedLayout" name="ItemsListSortComplete" left="1" top="112" width="16" height="16"/>
+						<control progid="DecalControls.StaticText" name="ItemsListSortName" left="49" top="108" width="210" height="17" text="Item Name"/>
+						<control progid="DecalControls.StaticText" name="ItemsListSortCol1" left="344" top="108" width="140" height="17" text="Type"/>
+						<control progid="DecalControls.StaticText" name="ItemsListSortCol2" left="541" top="108" width="60" height="17" text="Effect"/>
+						<control progid="DecalControls.StaticText" name="ItemsListSortCol3" left="716" top="108" width="50" height="17" text="Info"/>
+						<control progid="DecalControls.StaticText" name="ItemsListSortCol4" left="840" top="108" width="360" height="17" text="Details"/>
+						<control progid="DecalControls.List" name="ItemsList" left="0" top="128" width="1920" height="2000">
 							<column progid="DecalControls.IconColumn" name="Remove" fixedwidth="16" />
 							<column progid="DecalControls.IconColumn" name="Icon" fixedwidth="16" />
 							<column progid="DecalControls.TextColumn" name="Name" fixedwidth="288" />
@@ -684,7 +685,7 @@
 						</page>
 					</control>
 				</page>
-				<page label="Inventory">
+<page label="Inventory">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="VGInventoryText" left="5" top="5" width="780" height="20" text="Saved Inventory: 0"/>
 						<control progid="DecalControls.StaticText" name="VGInventoryFilterLabel" left="5" top="32" width="38" height="16" text="Filter:"/>
@@ -705,105 +706,7 @@
 						<control progid="DecalControls.PushButton" name="VGInventoryExportText" left="966" top="3" width="52" height="22" text="Text"/>
 						<control progid="DecalControls.PushButton" name="VGInventoryExportCsv" left="1022" top="3" width="52" height="22" text="CSV"/>
 						<control progid="DecalControls.PushButton" name="VGInventoryExportJson" left="1078" top="3" width="52" height="22" text="JSON"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponHW" left="5" top="59" width="40" height="16" text="HW" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponFW" left="53" top="59" width="39" height="16" text="FW" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponLW" left="100" top="59" width="39" height="16" text="LW" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryWeapon2H" left="147" top="59" width="34" height="16" text="2H" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponWar" left="348" top="59" width="42" height="16" text="War" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponVoid" left="398" top="59" width="46" height="16" text="Void" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponOther" left="452" top="59" width="50" height="16" text="Other" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponTW" left="301" top="59" width="39" height="16" text="TW" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponBow" left="189" top="59" width="43" height="16" text="Bow" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryWeaponXbow" left="240" top="59" width="53" height="16" text="XBow" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryElementSlash" left="541" top="59" width="70" height="16" text="Slashing" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryElementPierce" left="619" top="59" width="64" height="16" text="Pierce" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryElementBludge" left="691" top="59" width="60" height="16" text="Bludge" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryElementFire" left="759" top="59" width="75" height="16" text="Flame" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryElementFrost" left="842" top="59" width="70" height="16" text="Frost" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryElementStorm" left="920" top="59" width="64" height="16" text="Storm" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryElementAcid" left="992" top="59" width="60" height="16" text="Acid" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryElementNether" left="1060" top="59" width="70" height="16" text="Nether" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorHead" left="5" top="59" width="48" height="16" text="Head" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorChest" left="61" top="59" width="52" height="16" text="Chest" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorAbdomen" left="121" top="59" width="48" height="16" text="Girth" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorUpperArms" left="177" top="59" width="51" height="16" text="UArm" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorLowerArms" left="236" top="59" width="51" height="16" text="LArm" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorHands" left="295" top="59" width="54" height="16" text="Hands" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorUpperLegs" left="357" top="59" width="51" height="16" text="ULeg" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorLowerLegs" left="416" top="59" width="49" height="16" text="LLeg" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorFeet" left="473" top="59" width="44" height="16" text="Feet" checked="false"/>
-												<control progid="DecalControls.CheckBox" name="VGInventoryArmorSetAdept" left="691" top="59" width="60" height="16" text="Adept" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorSetDefender" left="759" top="59" width="75" height="16" text="Defender" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorSetDexterous" left="842" top="59" width="70" height="16" text="Dexterous" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorSetHearty" left="920" top="59" width="64" height="16" text="Hearty" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorSetWise" left="992" top="59" width="60" height="16" text="Wise" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorSetNoSet" left="619" top="59" width="64" height="16" text="No Set" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryArmorSetOther" left="1060" top="59" width="70" height="16" text="Other" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryClothingShirt" left="5" top="59" width="48" height="16" text="Shirt" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryClothingPants" left="61" top="59" width="52" height="16" text="Pants" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryClothingFullCoverage" left="121" top="59" width="100" height="16" text="Full coverage" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryClothingPartialCoverage" left="229" top="59" width="120" height="16" text="Partial coverage" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryJewelryNecklace" left="5" top="59" width="76" height="16" text="Necklace" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryJewelryTrinket" left="89" top="59" width="62" height="16" text="Trinket" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryJewelryBracelet" left="159" top="59" width="72" height="16" text="Bracelet" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryJewelryRing" left="239" top="59" width="48" height="16" text="Ring" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakLevel1" left="5" top="59" width="64" height="16" text="Level 1" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakLevel2" left="77" top="59" width="64" height="16" text="Level 2" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakLevel3" left="149" top="59" width="64" height="16" text="Level 3" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakLevel4" left="221" top="59" width="64" height="16" text="Level 4" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakLevel5" left="293" top="59" width="64" height="16" text="Level 5" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakProcOther" left="1060" top="59" width="70" height="16" text="Other" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakProcDamage200" left="619" top="59" width="64" height="16" text="-200" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakProcCiS" left="691" top="59" width="60" height="16" text="CiS" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakProcMelee" left="759" top="59" width="75" height="16" text="Melee" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakProcMissile" left="842" top="59" width="70" height="16" text="Missile" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakProcMagic" left="920" top="59" width="64" height="16" text="Magic" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakProcAoE" left="992" top="59" width="60" height="16" text="AoE" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryCloakLevelOther" left="365" top="59" width="54" height="16" text="Other" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySalvageIron" left="5" top="59" width="44" height="16" text="Iron" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySalvageGranite" left="57" top="59" width="68" height="16" text="Granite" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySalvageMahogany" left="133" top="59" width="88" height="16" text="Mahogany" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySalvageGreenGarnet" left="229" top="59" width="108" height="16" text="Green Garnet" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySalvageVelvet" left="345" top="59" width="60" height="16" text="Velvet" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySalvageBrass" left="413" top="59" width="54" height="16" text="Brass" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySalvageSteel" left="475" top="59" width="50" height="16" text="Steel" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySalvageRends" left="533" top="59" width="58" height="16" text="Rends" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySalvageImbues" left="599" top="59" width="66" height="16" text="Imbues" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySalvageOther" left="673" top="59" width="54" height="16" text="Other" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassAlchemy" left="5" top="59" width="76" height="16" text="Alchemy" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassComponent" left="89" top="59" width="94" height="16" text="Component" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassCooking" left="191" top="59" width="76" height="16" text="Cooking" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassFood" left="275" top="59" width="50" height="16" text="Food" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassGem" left="333" top="59" width="46" height="16" text="Gem" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassHealingKit" left="387" top="59" width="86" height="16" text="HealingKit" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassKey" left="481" top="59" width="42" height="16" text="Key" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassLockpick" left="531" top="59" width="72" height="16" text="Lockpick" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassManaStone" left="611" top="59" width="88" height="16" text="ManaStone" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassMisc" left="707" top="59" width="48" height="16" text="Misc" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassRare" left="763" top="59" width="50" height="16" text="Rare" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryOtherClassOther" left="821" top="59" width="54" height="16" text="Other" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySummonNaturalist" left="5" top="59" width="85" height="16" text="Naturalist" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySummonNecromancer" left="98" top="59" width="108" height="16" text="Necromancer" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySummonPrimalist" left="214" top="59" width="78" height="16" text="Primalist" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventorySummonOther" left="300" top="59" width="54" height="16" text="Other" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaLevel1" left="5" top="59" width="26" height="16" text="1" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaLevel2" left="35" top="59" width="26" height="16" text="2" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaLevel3" left="65" top="59" width="26" height="16" text="3" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaLevel4" left="95" top="59" width="26" height="16" text="4" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaLevel5" left="125" top="59" width="26" height="16" text="5" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaColorBlue" left="163" top="59" width="48" height="16" text="Blue" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaColorYellow" left="215" top="59" width="62" height="16" text="Yellow" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaColorRed" left="281" top="59" width="46" height="16" text="Red" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaSigilDefense" left="339" top="59" width="70" height="16" text="Defense" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaSigilDestruction" left="413" top="59" width="90" height="16" text="Destruction" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaSigilFury" left="507" top="59" width="46" height="16" text="Fury" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaSigilGrowth" left="557" top="59" width="66" height="16" text="Growth" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaSigilVigor" left="627" top="59" width="50" height="16" text="Vigor" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaSurgeAffliction" left="699" top="59" width="76" height="16" text="Affliction" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaSurgeDestruction" left="779" top="59" width="90" height="16" text="Destruction" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaSurgeFestering" left="873" top="59" width="74" height="16" text="Festering" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaSurgeProtection" left="951" top="59" width="80" height="16" text="Protection" checked="false"/>
-						<control progid="DecalControls.CheckBox" name="VGInventoryAetheriaSurgeRegeneration" left="1035" top="59" width="100" height="16" text="Regeneration" checked="false"/>
+						<control progid="DecalControls.FixedLayout" name="VGInventorySubfilters" left="0" top="59" width="1135" height="16"/>
 						<control progid="DecalControls.FixedLayout" name="VGInventoryListSort" left="1" top="85" width="16" height="16"/>
 						<control progid="DecalControls.StaticText" name="VGInventoryListSortCharacter" left="19" top="81" width="142" height="17" text="Character"/>
 						<control progid="DecalControls.StaticText" name="VGInventoryListSortName" left="193" top="81" width="210" height="17" text="Item Name"/>

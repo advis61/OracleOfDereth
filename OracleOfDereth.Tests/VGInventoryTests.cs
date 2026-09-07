@@ -31,6 +31,7 @@ internal static class VGInventoryTests
         AssertAetheriaSubfilters();
         AssertOtherClassSubfilters();
         AssertSalvageSubfilters();
+        AssertSharedSubfilterBindings();
         AssertCloakEffectSubfilters();
         var settings = new XmlDocument();
         settings.LoadXml("<Settings />");
@@ -145,6 +146,42 @@ internal static class VGInventoryTests
         var weapon = new ItemListRow(new Item("Conquest", "Mule", 2, "Dagger", ObjectClass.MeleeWeapon));
         weapon.PopulateStub();
         Check(new ItemFilter { Cloaks = true, Weapons = true, CloakProcCiS = true }.Matches(weapon), "Cloak effects hid another category.");
+    }
+
+    private static void AssertSharedSubfilterBindings()
+    {
+        // Exercise the shared UI bindings without constructing a Decal window.
+        var type = typeof(ItemFilter).Assembly.GetType("OracleOfDereth.ItemSubfilters", true);
+        var definitions = (Array)type.GetField("Definitions", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+        var mainFields = new HashSet<string> { "Weapons", "Armor", "Clothing", "Jewelry", "Cloaks",
+            "Summons", "Aetheria", "Salvage", "Other", "Doubles" };
+        var booleanFields = typeof(ItemFilter).GetFields().Where(field => field.FieldType == typeof(bool)).ToList();
+        var boundFields = new HashSet<string>();
+        var boundSlots = ItemInfo.ArmorSlot.None;
+        foreach (var definition in definitions)
+        {
+            var apply = (Action<ItemFilter, bool>)definition.GetType().GetField("Apply").GetValue(definition);
+            var filter = new ItemFilter();
+            apply(filter, true);
+            var selected = booleanFields.Where(field => (bool)field.GetValue(filter)).ToList();
+            Check(selected.Count + (filter.ArmorSlots == ItemInfo.ArmorSlot.None ? 0 : 1) == 1,
+                "A subfilter must change exactly one selection.");
+            foreach (var field in selected)
+                Check(!mainFields.Contains(field.Name) && boundFields.Add(field.Name), "Duplicate or main-category subfilter binding.");
+            Check((boundSlots & filter.ArmorSlots) == 0, "Duplicate armor slot binding.");
+            boundSlots |= filter.ArmorSlots;
+            if (selected.Count != 0)
+            {
+                apply(filter, false);
+                Check(selected.All(field => !(bool)field.GetValue(filter)), "Unchecked subfilter retained its selection.");
+            }
+        }
+        Check(boundFields.SetEquals(booleanFields.Where(field => !mainFields.Contains(field.Name)).Select(field => field.Name)),
+            "The shared controls omitted a subfilter.");
+        var allSlots = ItemInfo.ArmorSlot.Head | ItemInfo.ArmorSlot.Chest | ItemInfo.ArmorSlot.Abdomen |
+            ItemInfo.ArmorSlot.UpperArms | ItemInfo.ArmorSlot.LowerArms | ItemInfo.ArmorSlot.Hands |
+            ItemInfo.ArmorSlot.UpperLegs | ItemInfo.ArmorSlot.LowerLegs | ItemInfo.ArmorSlot.Feet;
+        Check(boundSlots == allSlots, "The shared controls omitted an armor slot.");
     }
 
     private static void AssertSalvageSubfilters()

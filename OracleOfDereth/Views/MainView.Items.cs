@@ -14,6 +14,7 @@ namespace OracleOfDereth
 
         // Set while Reset clears all the filter controls, so each control's Change event
         // doesn't trigger a refresh/re-request — we do one refresh at the end instead.
+        private ItemSubfilters itemsSubfilters;
         private bool suppressItemsFilter = false;
 
         // Items
@@ -106,6 +107,9 @@ namespace OracleOfDereth
             ItemsFilterDoubles = (HudCheckBox)view["ItemsFilterDoubles"];
             ItemsFilterDoubles.Change += ItemsFilter_Change;
 
+            itemsSubfilters = new ItemSubfilters((HudFixedLayout)view["ItemsSubfilters"],
+                category => (HudCheckBox)view["ItemsFilter" + category], ItemsFilter_Change);
+
             ItemsListSortCompleteIcon = new HudPictureBox();
             ItemsListSortCompleteIcon.Image = IconSort;
             ItemsListSortComplete = (HudFixedLayout)view["ItemsListSortComplete"];
@@ -134,6 +138,7 @@ namespace OracleOfDereth
 
         private void DisposeItems()
         {
+            itemsSubfilters?.Dispose();
             InventoryList.OnItemsListChanged = null;
             InventoryList.OnQueueFinished = null;
             ItemsAddSelected.Change -= ItemsAddSelected_Change;
@@ -173,7 +178,7 @@ namespace OracleOfDereth
         // Build the filter from the tab's checkboxes + search box.
         private ItemFilter ItemsFilter()
         {
-            return new ItemFilter
+            return itemsSubfilters.Apply(new ItemFilter
             {
                 Text = ItemsFilterText?.Text ?? "",
                 Weapons = ItemsFilterWeapons.Checked,
@@ -186,7 +191,7 @@ namespace OracleOfDereth
                 Salvage = ItemsFilterSalvage.Checked,
                 Other = ItemsFilterOther.Checked,
                 Doubles = ItemsFilterDoubles.Checked,
-            };
+            });
         }
 
         public void UpdateItemsList()
@@ -213,6 +218,7 @@ namespace OracleOfDereth
         private void ItemsFilter_Change(object sender, EventArgs e)
         {
             if (suppressItemsFilter) return;
+            itemsSubfilters.CategoryChanged(sender as HudCheckBox);
 
             // UpdateItemsList feeds the now-visible ids to PrioritizeIdentify, so the identify
             // pump appraises the filtered rows before the rest as in-flight slots free up.
@@ -223,6 +229,7 @@ namespace OracleOfDereth
         private void ItemsFilterReset_Hit(object sender, EventArgs e)
         {
             suppressItemsFilter = true;
+            itemsSubfilters.Reset();
             ItemsFilterText.Text = "";
             ItemsFilterWeapons.Checked = false;
             ItemsFilterArmor.Checked = false;
