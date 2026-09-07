@@ -13,6 +13,7 @@ namespace OracleOfDereth
         public int Icon => Item.Icon;
         public string Character => Item.Character;
         public string Server => Item.Server;
+        public string AetheriaSurge { get; private set; } = "";
         public string DisplayName { get; private set; }
         // Ready for display, including items that do not require appraisal.
         public bool IsComplete { get; private set; }
@@ -35,6 +36,7 @@ namespace OracleOfDereth
         {
             Item = item ?? throw new ArgumentNullException(nameof(item));
             this.completeWithoutAppraisal = completeWithoutAppraisal;
+            AetheriaSurge = "";
             DisplayName = Item.Name;
         }
 
@@ -45,6 +47,7 @@ namespace OracleOfDereth
         {
             ItemInfo info = new ItemInfo(Item);
 
+            AetheriaSurge = "";
             DisplayName = Item.Name;
             SummaryCol1 = GetSummaryCol1(info);
             SummaryCol2 = SummaryCol3 = SummaryCol4 = "";
@@ -59,6 +62,7 @@ namespace OracleOfDereth
         {
             if (!Item.HasIdData && !completeWithoutAppraisal) { PopulateStub(); return; }
             ItemInfo info = new ItemInfo(Item);
+            AetheriaSurge = info.IsAetheria ? info.GetAetheriaSurge() : "";
             DisplayName = info.GetName();
             SortCategory = GetSortCategory(info);
             SummaryCol1 = GetSummaryCol1(info);
@@ -176,7 +180,7 @@ namespace OracleOfDereth
 
         private static int GetSortCategory(ItemInfo info)
         {
-            if (info.IsWeapon) return 0;
+            if (info.IsWeapon && !info.IsAmmo) return 0;
             if (info.IsClothing) return 7;
             if (info.IsArmorClothing) return 1;
             if (info.IsJewelry) return 2;

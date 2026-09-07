@@ -1200,7 +1200,8 @@ namespace OracleOfDereth
 
             AddPart(parts, GetName());
             AddPart(parts, GetMasteryString());
-            AddPart(parts, GetWeaponOveragesString());
+            bool workmanshipInScore = IsWeapon && Setting.ShowWeaponScoreWorkmanship.IsYes && GetWorkmanshipValue() > 0;
+            AddPart(parts, GetWeaponOveragesString(workmanshipInScore));
             AddPart(parts, GetSummonString());
             AddPart(parts, GetFullSetName());
             AddPart(parts, GetArmorLevelString());
@@ -1213,7 +1214,7 @@ namespace OracleOfDereth
             AddPart(parts, GetWieldReqString());
             AddPart(parts, GetSummonReqsString());
             AddPart(parts, GetLoreString());
-            AddPart(parts, GetWorkmanshipString());
+            if (!workmanshipInScore) AddPart(parts, GetWorkmanshipString());
             AddPart(parts, GetProtectionsString());
             AddPart(parts, GetValueString());
             AddPart(parts, GetBurdenString());

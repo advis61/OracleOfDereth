@@ -19,9 +19,18 @@ internal static class VGInventoryTests
         Setting.Init();
         AssertObservations();
         AssertWeaponSubfilters();
+        AssertAmmunitionCategory();
         AssertElementSubfilters();
         AssertArmorSubfilters();
         AssertArmorSetSubfilters();
+        AssertClothingSubfilters();
+        AssertJewelrySubfilters();
+        AssertCloakSubfilters();
+        AssertSummonSubfilters();
+        AssertAetheriaSubfilters();
+        AssertOtherClassSubfilters();
+        AssertSalvageSubfilters();
+        AssertCloakEffectSubfilters();
         var settings = new XmlDocument();
         settings.LoadXml("<Settings />");
         typeof(SettingsFile).GetField("_doc", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, settings);
@@ -101,6 +110,316 @@ internal static class VGInventoryTests
         try { VGInventory.DecodeItem("Conquest", "Mule", 1, "Broken", ObjectClass.MeleeWeapon, bytes); }
         catch (Exception ex) when (ex is IOException || ex is InvalidDataException) { return; }
         throw new InvalidOperationException("Malformed VGI blob was accepted.");
+    }
+
+    private static void AssertCloakEffectSubfilters()
+    {
+        var cases = new[] {
+            (new ItemFilter { Cloaks = true, CloakProcDamage200 = true }, new[] { "-200 Damage" }),
+            (new ItemFilter { Cloaks = true, CloakProcCiS = true }, new[] { "CiS" }),
+            (new ItemFilter { Cloaks = true, CloakProcMelee = true }, new[] { "Melee Shroud" }),
+            (new ItemFilter { Cloaks = true, CloakProcMissile = true }, new[] { "Missile Shroud" }),
+            (new ItemFilter { Cloaks = true, CloakProcMagic = true }, new[] { "Magic Shroud" }),
+            (new ItemFilter { Cloaks = true, CloakProcAoE = true }, new[] { "Blade Ring", "Bludgeon Ring", "Piercing Ring", "Acid Ring",
+                "Fire Ring", "Frost Ring", "Lightning Ring", "Void Ring", "Melee Ring", "Magic Ring" }),
+            (new ItemFilter { Cloaks = true, CloakProcOther = true }, new[] { "Shroud", "Unrecognized effect", "" })
+        };
+        var row = new ItemListRow(new Item("Conquest", "Mule", 1, "Cloak", ObjectClass.Clothing,
+            new Dictionary<int, int> { [(int)LongValueKey.EquipableSlots] = 0x8000000, [218103849] = 27704 }));
+        row.PopulateStub();
+        var summary = typeof(ItemListRow).GetProperty("SummaryCol2");
+        for (int i = 0; i < cases.Length; i++)
+            foreach (var effect in cases[i].Item2)
+            {
+                summary.SetValue(row, effect);
+                for (int j = 0; j < cases.Length; j++)
+                    Check(cases[j].Item1.Matches(row) == (i == j), "Cloak Effect filter mismatch: " + effect);
+            }
+        summary.SetValue(row, "CiS");
+        Check(new ItemFilter { Cloaks = true, CloakLevel5 = true, CloakProcCiS = true }.Matches(row), "Level and Effect must combine.");
+        Check(!new ItemFilter { Cloaks = true, CloakLevelOther = true, CloakProcCiS = true }.Matches(row), "Level Other matched level 5.");
+        Check(!new ItemFilter { Cloaks = true, CloakLevel5 = true, CloakProcOther = true }.Matches(row), "Effect Other matched CiS.");
+        Check(new ItemFilter { Cloaks = true, CloakProcCiS = true, CloakProcAoE = true }.Matches(row), "Effect choices must combine as alternatives.");
+        Check(new ItemFilter { CloakProcOther = true }.Matches(row), "Inactive effect filter narrowed results.");
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 2, "Dagger", ObjectClass.MeleeWeapon));
+        weapon.PopulateStub();
+        Check(new ItemFilter { Cloaks = true, Weapons = true, CloakProcCiS = true }.Matches(weapon), "Cloak effects hid another category.");
+    }
+
+    private static void AssertSalvageSubfilters()
+    {
+        var groups = new Dictionary<string, int[]> {
+            ["Iron"] = new[] { 61 }, ["Granite"] = new[] { 67 }, ["Mahogany"] = new[] { 74 },
+            ["GreenGarnet"] = new[] { 23 }, ["Velvet"] = new[] { 7 }, ["Brass"] = new[] { 57 },
+            ["Steel"] = new[] { 64 },
+            ["Rends"] = new[] { 35, 27, 26, 21, 15, 13, 47, 41, 32 },
+            ["Imbues"] = new[] { 49, 50, 34, 25, 22, 16, 20, 38, 54, 62 }
+        };
+        // Cover every known material, missing material, and an unknown future value.
+        var rows = Enumerable.Range(0, 78).Concat(new[] { 999 }).Select(material => {
+            var row = new ItemListRow(new Item("Conquest", "Mule", material, "Salvage", ObjectClass.Salvage,
+                new Dictionary<int, int> { [(int)LongValueKey.Material] = material }));
+            row.PopulateStub();
+            return row;
+        }).ToList();
+        foreach (var group in groups)
+        {
+            var filter = new ItemFilter { Salvage = true };
+            typeof(ItemFilter).GetField("Salvage" + group.Key).SetValue(filter, true);
+            Check(rows.Where(filter.Matches).SequenceEqual(rows.Where(row => group.Value.Contains(row.Item.Values(LongValueKey.Material)))),
+                "Salvage material group mismatch: " + group.Key);
+        }
+        var named = new HashSet<int>(groups.Values.SelectMany(ids => ids));
+        Check(rows.Where(new ItemFilter { Salvage = true, SalvageOther = true }.Matches).SequenceEqual(
+            rows.Where(row => !named.Contains(row.Item.Values(LongValueKey.Material)))),
+            "Other salvage must exclude all named groups.");
+        Check(rows.Count(new ItemFilter { Salvage = true, SalvageIron = true, SalvageRends = true }.Matches) == 10,
+            "Salvage selections must combine as alternatives.");
+        Check(rows.All(new ItemFilter { Salvage = true }.Matches) && rows.All(new ItemFilter { SalvageIron = true }.Matches),
+            "Empty or inactive Salvage subfilters narrowed results.");
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 100, "Dagger", ObjectClass.MeleeWeapon,
+            new Dictionary<int, int> { [(int)LongValueKey.Material] = 61 }));
+        weapon.PopulateStub();
+        Check(new ItemFilter { Salvage = true, Weapons = true, SalvageImbues = true }.Matches(weapon),
+            "Salvage filters hid another selected category.");
+    }
+
+    private static void AssertOtherClassSubfilters()
+    {
+        var classes = new[] { ObjectClass.BaseAlchemy, ObjectClass.CraftedAlchemy, ObjectClass.SpellComponent,
+            ObjectClass.BaseCooking, ObjectClass.CraftedCooking, ObjectClass.Food, ObjectClass.Gem,
+            ObjectClass.HealingKit, ObjectClass.Key, ObjectClass.Lockpick, ObjectClass.ManaStone,
+            ObjectClass.Misc, ObjectClass.Gem, ObjectClass.Book, ObjectClass.Unknown };
+        var expected = new[] { "Alchemy", "Alchemy", "Component", "Cooking", "Cooking", "Food", "Gem",
+            "HealingKit", "Key", "Lockpick", "ManaStone", "Misc", "Rare", "Other", "Other" };
+        var rows = classes.Select((objectClass, i) => {
+            var row = new ItemListRow(new Item("Conquest", "Mule", i, "Test", objectClass,
+                new Dictionary<int, int> { [218103850] = expected[i] == "Rare" ? 23308 : 0 }));
+            row.PopulateStub();
+            Check(row.SortCategory == 9, "Object class fixture must belong to Others.");
+            return row;
+        }).ToList();
+        foreach (string name in expected.Distinct())
+        {
+            var filter = new ItemFilter { Other = true };
+            typeof(ItemFilter).GetField("OtherClass" + name).SetValue(filter, true);
+            Check(rows.Where(filter.Matches).SequenceEqual(rows.Where((row, i) => expected[i] == name)),
+                "Others object class filter mismatch: " + name);
+        }
+        Check(rows.Count(new ItemFilter { Other = true, OtherClassGem = true, OtherClassRare = true }.Matches) == 2,
+            "Others object class selections must combine as alternatives.");
+        Check(rows.All(new ItemFilter { Other = true }.Matches) && rows.All(new ItemFilter { OtherClassGem = true }.Matches),
+            "Empty or inactive Others subfilters narrowed results.");
+        var aetheria = new ItemListRow(new Item("Conquest", "Mule", 99, "Aetheria", ObjectClass.Gem,
+            new Dictionary<int, int> { [(int)LongValueKey.EquipableSlots] = 0x10000000 }));
+        aetheria.PopulateStub();
+        Check(new ItemFilter { Other = true, Aetheria = true, OtherClassFood = true }.Matches(aetheria),
+            "Others subfilters hid another selected category sharing the Gem object class.");
+    }
+
+    private static void AssertAetheriaSubfilters()
+    {
+        var levelRows = Enumerable.Range(0, 6).Select(level => {
+            var row = new ItemListRow(new Item("Conquest", "Mule", level, "Aetheria", ObjectClass.Gem,
+                new Dictionary<int, int> { [(int)LongValueKey.EquipableSlots] = 0x10000000,
+                    [218103849] = level == 0 ? 0 : 27699 + level, [265] = 35 }));
+            row.PopulateStub();
+            typeof(ItemListRow).GetProperty("AetheriaSurge").SetValue(row, "Protection");
+            return row;
+        }).ToList();
+        for (int level = 1; level <= 5; level++)
+        {
+            var filter = new ItemFilter { Aetheria = true };
+            typeof(ItemFilter).GetField("AetheriaLevel" + level).SetValue(filter, true);
+            Check(levelRows.Where(filter.Matches).SequenceEqual(new[] { levelRows[level] }), "Aetheria level filter mismatch.");
+        }
+        var combined = new ItemFilter { Aetheria = true, AetheriaLevel1 = true, AetheriaLevel5 = true,
+            AetheriaColorBlue = true, AetheriaSigilDefense = true, AetheriaSurgeProtection = true };
+        Check(levelRows.Count(combined.Matches) == 2, "Aetheria levels must combine as alternatives with all other groups.");
+        combined.AetheriaColorBlue = false;
+        combined.AetheriaColorRed = true;
+        Check(!levelRows.Any(combined.Matches), "Level selection bypassed the color filter.");
+        Check(levelRows.All(new ItemFilter { Aetheria = true }.Matches) &&
+            levelRows.All(new ItemFilter { AetheriaLevel1 = true }.Matches), "Empty or inactive Aetheria levels narrowed results.");
+        var colorNames = new[] { "Blue", "Yellow", "Red" };
+        var slots = new[] { 0x10000000, 0x20000000, 0x40000000 };
+        var sigils = new[] { "Defense", "Destruction", "Fury", "Growth", "Vigor" };
+        var surges = new[] { "Affliction", "Destruction", "Festering", "Protection", "Regeneration" };
+        var rows = new List<ItemListRow>();
+        for (int c = 0; c < slots.Length; c++)
+            for (int g = 0; g < sigils.Length; g++)
+                foreach (string surge in surges)
+                {
+                    var row = new ItemListRow(new Item("Conquest", "Mule", rows.Count, "Aetheria", ObjectClass.Gem,
+                        new Dictionary<int, int> { [(int)LongValueKey.EquipableSlots] = slots[c], [265] = 35 + g }));
+                    row.PopulateStub();
+                    Check(new ItemInfo(row.Item).GetAetheriaColor() == colorNames[c], "Aetheria color must follow the slot.");
+                    Check(new ItemInfo(row.Item).GetSetName() == sigils[g], "Aetheria sigil mapping differs from ItemInfo.");
+                    // Supply the resolved surge cached by Populate, independently of the sigil.
+                    typeof(ItemListRow).GetProperty("AetheriaSurge").SetValue(row, surge);
+                    rows.Add(row);
+                }
+        foreach (string color in colorNames)
+        {
+            var filter = new ItemFilter { Aetheria = true };
+            typeof(ItemFilter).GetField("AetheriaColor" + color).SetValue(filter, true);
+            Check(rows.Count(filter.Matches) == 25, "Aetheria color filter failed.");
+        }
+        foreach (string sigil in sigils)
+        {
+            var filter = new ItemFilter { Aetheria = true };
+            typeof(ItemFilter).GetField("AetheriaSigil" + sigil).SetValue(filter, true);
+            Check(rows.Count(filter.Matches) == 15, "Aetheria sigil filter failed.");
+        }
+        foreach (string surge in surges)
+        {
+            var filter = new ItemFilter { Aetheria = true };
+            typeof(ItemFilter).GetField("AetheriaSurge" + surge).SetValue(filter, true);
+            Check(rows.Count(filter.Matches) == 15, "Aetheria surge filter failed.");
+        }
+        var exact = new ItemFilter { Aetheria = true, AetheriaColorBlue = true,
+            AetheriaSigilDefense = true, AetheriaSurgeDestruction = true };
+        Check(rows.Count(exact.Matches) == 1, "Aetheria groups must combine with AND.");
+        exact.AetheriaColorRed = true;
+        Check(rows.Count(exact.Matches) == 2, "Selections inside a group must combine as alternatives.");
+        Check(rows.Count(new ItemFilter { Aetheria = true, AetheriaSigilDestruction = true, AetheriaSurgeAffliction = true }.Matches) == 3,
+            "Destruction sigil was confused with the surge.");
+        Check(rows.All(new ItemFilter { Aetheria = true }.Matches) && rows.All(new ItemFilter { AetheriaColorBlue = true }.Matches),
+            "Empty or inactive Aetheria subfilters narrowed results.");
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 1, "Dagger", ObjectClass.MeleeWeapon));
+        weapon.PopulateStub();
+        Check(new ItemFilter { Aetheria = true, Weapons = true, AetheriaColorRed = true }.Matches(weapon),
+            "Aetheria filters hid another selected category.");
+        rows[0].PopulateStub();
+        Check(rows[0].AetheriaSurge == "", "Stub retained a cached surge.");
+    }
+
+    private static void AssertSummonSubfilters()
+    {
+        var names = new[] { "Moar Essence", "Zombie Essence", "Fire Elemental Essence", "Unknown Essence" };
+        var filters = new[] {
+            new ItemFilter { Summons = true, SummonNaturalist = true },
+            new ItemFilter { Summons = true, SummonNecromancer = true },
+            new ItemFilter { Summons = true, SummonPrimalist = true },
+            new ItemFilter { Summons = true, SummonOther = true }
+        };
+        var rows = names.Select(name => {
+            var row = new ItemListRow(new Item("Conquest", "Mule", 1, name, ObjectClass.Misc,
+                new Dictionary<int, int> { [(int)LongValueKey.UsesTotal] = 50 }));
+            row.PopulateStub(); return row;
+        }).ToList();
+        for (int i = 0; i < filters.Length; i++)
+            Check(rows.Where(filters[i].Matches).SequenceEqual(new[] { rows[i] }), "Summon specialization filter mismatch.");
+        Check(rows.Count(new ItemFilter { Summons = true, SummonNaturalist = true, SummonOther = true }.Matches) == 2,
+            "Summon specializations must combine as alternatives.");
+        Check(rows.All(new ItemFilter { Summons = true }.Matches) && rows.All(new ItemFilter { SummonPrimalist = true }.Matches),
+            "Empty or inactive summon subfilters narrowed results.");
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 9, "Dagger", ObjectClass.MeleeWeapon));
+        weapon.PopulateStub();
+        Check(new ItemFilter { Summons = true, Weapons = true, SummonOther = true }.Matches(weapon),
+            "Summon subfilters hid another selected category.");
+    }
+
+    private static void AssertCloakSubfilters()
+    {
+        var filters = new[] {
+            new ItemFilter { Cloaks = true, CloakLevel1 = true },
+            new ItemFilter { Cloaks = true, CloakLevel2 = true },
+            new ItemFilter { Cloaks = true, CloakLevel3 = true },
+            new ItemFilter { Cloaks = true, CloakLevel4 = true },
+            new ItemFilter { Cloaks = true, CloakLevel5 = true }
+        };
+        var rows = Enumerable.Range(0, 6).Select(level => {
+            var row = new ItemListRow(new Item("Conquest", "Mule", level, "Cloak", ObjectClass.Clothing,
+                new Dictionary<int, int> { [(int)LongValueKey.EquipableSlots] = 0x8000000,
+                    [218103849] = level == 0 ? 0 : 27699 + level }));
+            row.PopulateStub(); return row;
+        }).ToList();
+        for (int i = 0; i < filters.Length; i++)
+            Check(rows.Where(filters[i].Matches).SequenceEqual(new[] { rows[i + 1] }), "Cloak level filter mismatch.");
+        Check(rows.Where(new ItemFilter { Cloaks = true, CloakLevelOther = true }.Matches).SequenceEqual(new[] { rows[0] }),
+            "Other cloak levels must exclude levels 1 through 5.");
+        Check(rows.Count(new ItemFilter { Cloaks = true, CloakLevel1 = true, CloakLevel5 = true }.Matches) == 2,
+            "Cloak levels must combine as alternatives.");
+        Check(rows.All(new ItemFilter { Cloaks = true }.Matches) && rows.All(new ItemFilter { CloakLevel1 = true }.Matches),
+            "Empty or inactive cloak subfilters narrowed results.");
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 9, "Dagger", ObjectClass.MeleeWeapon));
+        weapon.PopulateStub();
+        Check(new ItemFilter { Cloaks = true, Weapons = true, CloakLevel5 = true }.Matches(weapon),
+            "Cloak subfilters hid another selected category.");
+    }
+
+    private static void AssertJewelrySubfilters()
+    {
+        ItemListRow Jewel(int slots, string name = "Unspecified")
+        {
+            var row = new ItemListRow(new Item("Conquest", "Mule", slots, name, ObjectClass.Jewelry,
+                new Dictionary<int, int> { [(int)LongValueKey.EquipableSlots] = slots }));
+            row.PopulateStub(); return row;
+        }
+        var filters = new[] {
+            new ItemFilter { Jewelry = true, JewelryNecklace = true },
+            new ItemFilter { Jewelry = true, JewelryTrinket = true },
+            new ItemFilter { Jewelry = true, JewelryBracelet = true },
+            new ItemFilter { Jewelry = true, JewelryRing = true }
+        };
+        var masks = new[] { new[] { 0x8000 }, new[] { 0x4000000 },
+            new[] { 0x10000, 0x20000, 0x30000 }, new[] { 0x40000, 0x80000, 0xc0000 } };
+        for (int i = 0; i < masks.Length; i++)
+            foreach (int mask in masks[i])
+                for (int j = 0; j < filters.Length; j++)
+                    Check(filters[j].Matches(Jewel(mask)) == (i == j), "Jewelry filter mismatch for slot " + mask);
+        Check(filters[2].Matches(Jewel(0, "Bracelet")) && filters[3].Matches(Jewel(0, "Signet Ring")),
+            "Jewelry filters must retain ItemInfo's pre-identification name fallback.");
+        Check(filters[0].Matches(Jewel(0x8000, "Ring")), "Known slot must take precedence over item name.");
+        var all = masks.SelectMany(m => m).Select(m => Jewel(m)).ToList();
+        Check(all.All(new ItemFilter { Jewelry = true }.Matches) && all.All(new ItemFilter { JewelryRing = true }.Matches),
+            "Empty or inactive jewelry subfilters must not narrow results.");
+        Check(all.Count(new ItemFilter { Jewelry = true, JewelryRing = true, JewelryBracelet = true }.Matches) == 6,
+            "Jewelry selections must combine as alternatives.");
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 1, "Dagger", ObjectClass.MeleeWeapon));
+        weapon.PopulateStub();
+        Check(new ItemFilter { Jewelry = true, Weapons = true, JewelryRing = true }.Matches(weapon),
+            "Jewelry subfilters hid another selected category.");
+    }
+
+    private static void AssertClothingSubfilters()
+    {
+        ItemListRow Garment(int slots, int coverage = 0)
+        {
+            var row = new ItemListRow(new Item("Conquest", "Mule", slots, "Garment", ObjectClass.Clothing,
+                new Dictionary<int, int> { [(int)LongValueKey.EquipableSlots] = slots,
+                    [(int)LongValueKey.Coverage] = coverage }, hasIdData: true));
+            row.PopulateStub(); return row;
+        }
+        var fullShirt = Garment(0x1a);
+        var partialShirt = Garment(0x0a);
+        var fullPants = Garment(0xc4);
+        var partialPants = Garment(0xc0);
+        var rows = new[] { fullShirt, partialShirt, fullPants, partialPants };
+        Check(rows.All(r => r.SortCategory == 7), "Clothing fixture was not classified as underclothing.");
+        Check(rows.Where(new ItemFilter { Clothing = true, ClothingShirt = true }.Matches).SequenceEqual(rows.Take(2)),
+            "Shirt filter must match the garment slot, not the item name.");
+        Check(rows.Where(new ItemFilter { Clothing = true, ClothingPants = true }.Matches).SequenceEqual(rows.Skip(2)),
+            "Pants filter must match the garment slot.");
+        Check(rows.Where(new ItemFilter { Clothing = true, ClothingFullCoverage = true }.Matches).SequenceEqual(new[] { fullShirt, fullPants }),
+            "Full coverage must require all three appropriate locations.");
+        Check(rows.Where(new ItemFilter { Clothing = true, ClothingPartialCoverage = true }.Matches).SequenceEqual(new[] { partialShirt, partialPants }),
+            "Partial coverage included a full garment.");
+        Check(rows.Count(new ItemFilter { Clothing = true, ClothingPants = true, ClothingFullCoverage = true }.Matches) == 1,
+            "Garment and coverage filters must combine with AND.");
+        var full = new ItemFilter { Clothing = true, ClothingFullCoverage = true };
+        Check(full.Matches(Garment(0x02, 0x68)) && full.Matches(Garment(0x40, 0x16)),
+            "Coverage fallback failed for full shirts or pants.");
+        Check(!full.Matches(Garment(0x0e)), "Any three slots must not count as full shirt coverage.");
+        Check(rows.All(new ItemFilter { Clothing = true, ClothingShirt = true, ClothingPants = true,
+            ClothingFullCoverage = true, ClothingPartialCoverage = true }.Matches), "Selecting all clothing options excluded garments.");
+        Check(rows.All(new ItemFilter { Clothing = true }.Matches) && rows.All(new ItemFilter { ClothingPants = true, ClothingFullCoverage = true }.Matches),
+            "Empty or inactive clothing subfilters narrowed results.");
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 1, "Dagger", ObjectClass.MeleeWeapon));
+        weapon.PopulateStub();
+        Check(new ItemFilter { Clothing = true, Weapons = true, ClothingShirt = true, ClothingFullCoverage = true }.Matches(weapon),
+            "Clothing subfilters affected another category.");
     }
 
     private static void AssertArmorSetSubfilters()
@@ -215,6 +534,25 @@ internal static class VGInventoryTests
         armor.PopulateStub();
         Check(new ItemFilter { Weapons = true, Armor = true, ElementFire = true }.Matches(armor),
             "Weapon elements hid another selected category.");
+    }
+
+    private static void AssertAmmunitionCategory()
+    {
+        foreach (string name in new[] { "Burning Sands Arrow", "Quarrel", "Atlatl Dart" })
+        {
+            var row = new ItemListRow(new Item("Conquest", "Mule", 1, name, ObjectClass.MissileWeapon,
+                new Dictionary<int, int> { [(int)LongValueKey.StackMax] = 250 }));
+            row.PopulateStub();
+            Check(!new ItemFilter { Weapons = true }.Matches(row), "Weapons included ammunition: " + name);
+            Check(new ItemFilter { Other = true }.Matches(row) && new ItemFilter().Matches(row),
+                "Ammunition must remain available under Others and in the full list.");
+        }
+        foreach (string name in new[] { "Longbow", "Crossbow", "Atlatl" })
+        {
+            var row = new ItemListRow(new Item("Conquest", "Mule", 2, name, ObjectClass.MissileWeapon));
+            row.PopulateStub();
+            Check(new ItemFilter { Weapons = true }.Matches(row), "Weapons excluded a missile launcher: " + name);
+        }
     }
 
     private static void AssertWeaponSubfilters()

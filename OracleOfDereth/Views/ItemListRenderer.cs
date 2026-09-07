@@ -1,3 +1,4 @@
+using Decal.Adapter.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -42,12 +43,77 @@ namespace OracleOfDereth
         public bool ArmorSetOther = false;
         public ItemInfo.ArmorSlot ArmorSlots = ItemInfo.ArmorSlot.None;
         public bool Clothing = false;
+        public bool ClothingShirt = false;
+        public bool ClothingPants = false;
+        public bool ClothingFullCoverage = false;
+        public bool ClothingPartialCoverage = false;
         public bool Jewelry = false;
+        public bool JewelryNecklace = false;
+        public bool JewelryTrinket = false;
+        public bool JewelryBracelet = false;
+        public bool JewelryRing = false;
         public bool Cloaks = false;
+        public bool CloakLevel1 = false;
+        public bool CloakLevel2 = false;
+        public bool CloakLevel3 = false;
+        public bool CloakLevel4 = false;
+        public bool CloakLevel5 = false;
+        public bool CloakLevelOther = false;
+        public bool CloakProcOther = false;
+        public bool CloakProcDamage200 = false;
+        public bool CloakProcCiS = false;
+        public bool CloakProcMelee = false;
+        public bool CloakProcMissile = false;
+        public bool CloakProcMagic = false;
+        public bool CloakProcAoE = false;
         public bool Summons = false;
+        public bool SummonNaturalist = false;
+        public bool SummonNecromancer = false;
+        public bool SummonPrimalist = false;
+        public bool SummonOther = false;
         public bool Aetheria = false;
+        public bool AetheriaLevel1 = false;
+        public bool AetheriaLevel2 = false;
+        public bool AetheriaLevel3 = false;
+        public bool AetheriaLevel4 = false;
+        public bool AetheriaLevel5 = false;
+        public bool AetheriaColorBlue = false;
+        public bool AetheriaColorYellow = false;
+        public bool AetheriaColorRed = false;
+        public bool AetheriaSigilDefense = false;
+        public bool AetheriaSigilDestruction = false;
+        public bool AetheriaSigilFury = false;
+        public bool AetheriaSigilGrowth = false;
+        public bool AetheriaSigilVigor = false;
+        public bool AetheriaSurgeAffliction = false;
+        public bool AetheriaSurgeDestruction = false;
+        public bool AetheriaSurgeFestering = false;
+        public bool AetheriaSurgeProtection = false;
+        public bool AetheriaSurgeRegeneration = false;
         public bool Salvage = false;
+        public bool SalvageIron = false;
+        public bool SalvageGranite = false;
+        public bool SalvageMahogany = false;
+        public bool SalvageGreenGarnet = false;
+        public bool SalvageVelvet = false;
+        public bool SalvageBrass = false;
+        public bool SalvageSteel = false;
+        public bool SalvageRends = false;
+        public bool SalvageImbues = false;
+        public bool SalvageOther = false;
         public bool Other = false;
+        public bool OtherClassAlchemy = false;
+        public bool OtherClassComponent = false;
+        public bool OtherClassCooking = false;
+        public bool OtherClassFood = false;
+        public bool OtherClassGem = false;
+        public bool OtherClassHealingKit = false;
+        public bool OtherClassKey = false;
+        public bool OtherClassLockpick = false;
+        public bool OtherClassManaStone = false;
+        public bool OtherClassMisc = false;
+        public bool OtherClassRare = false;
+        public bool OtherClassOther = false;
 
         // Not a category — an extra AND condition: items carrying two or more legendary spells.
         public bool Doubles = false;
@@ -60,11 +126,190 @@ namespace OracleOfDereth
             if (!IsCategoryVisible(t.SortCategory)) return false;
             if (Armor && t.SortCategory == 1 && ArmorSlots != ItemInfo.ArmorSlot.None &&
                 (new ItemInfo(t.Item).GetArmorSlots() & ArmorSlots) == 0) return false;
+            if (!MatchesCloakLevel(t)) return false;
+            if (!MatchesCloakProc(t)) return false;
+            if (!MatchesJewelry(t)) return false;
+            if (!MatchesAetheria(t)) return false;
+            if (!MatchesSalvage(t)) return false;
+            if (!MatchesOtherClass(t)) return false;
+            if (!MatchesSummon(t)) return false;
+            if (!MatchesClothing(t)) return false;
             if (!MatchesArmorSet(t)) return false;
             if (!MatchesWeaponType(t)) return false;
             if (!MatchesWeaponElement(t)) return false;
             if (!MatchesDoubles(t)) return false;
             return MatchesText(t);
+        }
+
+        private bool MatchesCloakProc(ItemListRow row)
+        {
+            if (!Cloaks || row.SortCategory != 3 ||
+                !(CloakProcDamage200 || CloakProcCiS || CloakProcMelee || CloakProcMissile ||
+                  CloakProcMagic || CloakProcAoE || CloakProcOther)) return true;
+            switch (row.SummaryCol2)
+            {
+                case "-200 Damage": return CloakProcDamage200;
+                case "CiS": return CloakProcCiS;
+                case "Melee Shroud": return CloakProcMelee;
+                case "Missile Shroud": return CloakProcMissile;
+                case "Magic Shroud": return CloakProcMagic;
+                case "Blade Ring":
+                case "Bludgeon Ring":
+                case "Piercing Ring":
+                case "Acid Ring":
+                case "Fire Ring":
+                case "Frost Ring":
+                case "Lightning Ring":
+                case "Void Ring":
+                case "Melee Ring":
+                case "Magic Ring": return CloakProcAoE;
+                default: return CloakProcOther;
+            }
+        }
+
+        private bool MatchesCloakLevel(ItemListRow row)
+        {
+            if (!Cloaks || row.SortCategory != 3 ||
+                !(CloakLevel1 || CloakLevel2 || CloakLevel3 || CloakLevel4 || CloakLevel5 || CloakLevelOther)) return true;
+            switch (new ItemInfo(row.Item).GetCloakLevel())
+            {
+                case 1: return CloakLevel1;
+                case 2: return CloakLevel2;
+                case 3: return CloakLevel3;
+                case 4: return CloakLevel4;
+                case 5: return CloakLevel5;
+                default: return CloakLevelOther;
+            }
+        }
+
+        private bool MatchesJewelry(ItemListRow row)
+        {
+            if (!Jewelry || row.SortCategory != 2 ||
+                !(JewelryNecklace || JewelryTrinket || JewelryBracelet || JewelryRing)) return true;
+            // ItemInfo groups both wrist slots as Bracelet and both finger slots as Ring.
+            switch (new ItemInfo(row.Item).GetSlotName())
+            {
+                case "Necklace": return JewelryNecklace;
+                case "Trinket": return JewelryTrinket;
+                case "Bracelet": return JewelryBracelet;
+                case "Ring": return JewelryRing;
+                default: return false;
+            }
+        }
+
+        private bool MatchesAetheria(ItemListRow row)
+        {
+            if (!Aetheria || row.SortCategory != 5) return true;
+            var info = new ItemInfo(row.Item);
+            int level = info.GetAetheriaLevel();
+            if ((AetheriaLevel1 || AetheriaLevel2 || AetheriaLevel3 || AetheriaLevel4 || AetheriaLevel5) &&
+                !((AetheriaLevel1 && level == 1) || (AetheriaLevel2 && level == 2) || (AetheriaLevel3 && level == 3) ||
+                  (AetheriaLevel4 && level == 4) || (AetheriaLevel5 && level == 5))) return false;
+            string color = info.GetAetheriaColor();
+            string sigil = info.GetSetName();
+            // Keep the surge separate: Destruction can appear in either group.
+            string surge = row.AetheriaSurge;
+            if ((AetheriaColorBlue || AetheriaColorYellow || AetheriaColorRed) &&
+                !((AetheriaColorBlue && color == "Blue") || (AetheriaColorYellow && color == "Yellow") || (AetheriaColorRed && color == "Red"))) return false;
+            if ((AetheriaSigilDefense || AetheriaSigilDestruction || AetheriaSigilFury || AetheriaSigilGrowth || AetheriaSigilVigor) &&
+                !((AetheriaSigilDefense && sigil == "Defense") || (AetheriaSigilDestruction && sigil == "Destruction") || (AetheriaSigilFury && sigil == "Fury") || (AetheriaSigilGrowth && sigil == "Growth") || (AetheriaSigilVigor && sigil == "Vigor"))) return false;
+            if ((AetheriaSurgeAffliction || AetheriaSurgeDestruction || AetheriaSurgeFestering || AetheriaSurgeProtection || AetheriaSurgeRegeneration) &&
+                !((AetheriaSurgeAffliction && surge == "Affliction") || (AetheriaSurgeDestruction && surge == "Destruction") || (AetheriaSurgeFestering && surge == "Festering") || (AetheriaSurgeProtection && surge == "Protection") || (AetheriaSurgeRegeneration && surge == "Regeneration"))) return false;
+            return true;
+        }
+
+        private bool MatchesSalvage(ItemListRow row)
+        {
+            if (!Salvage || row.SortCategory != 6 ||
+                !(SalvageIron || SalvageGranite || SalvageMahogany || SalvageGreenGarnet || SalvageVelvet ||
+                  SalvageBrass || SalvageSteel || SalvageRends || SalvageImbues || SalvageOther)) return true;
+            switch (new ItemInfo(row.Item).GetMaterial())
+            {
+                case "Iron": return SalvageIron;
+                case "Granite": return SalvageGranite;
+                case "Mahogany": return SalvageMahogany;
+                case "Green Garnet": return SalvageGreenGarnet;
+                case "Velvet": return SalvageVelvet;
+                case "Brass": return SalvageBrass;
+                case "Steel": return SalvageSteel;
+                case "Red Garnet":
+                case "Jet":
+                case "Imperial Topaz":
+                case "Emerald":
+                case "Black Garnet":
+                case "Aquamarine":
+                case "White Sapphire":
+                case "Sunstone":
+                case "Onyx": return SalvageRends;
+                case "Yellow Topaz":
+                case "Zircon":
+                case "Peridot":
+                case "Hematite":
+                case "Fire Opal":
+                case "Black Opal":
+                case "Diamond":
+                case "Ruby":
+                case "Gromnie Hide":
+                case "Pyreal": return SalvageImbues;
+                default: return SalvageOther;
+            }
+        }
+
+        private bool MatchesOtherClass(ItemListRow row)
+        {
+            if (!Other || row.SortCategory != 9 ||
+                !(OtherClassAlchemy || OtherClassComponent || OtherClassCooking || OtherClassFood ||
+                  OtherClassGem || OtherClassHealingKit || OtherClassKey || OtherClassLockpick ||
+                  OtherClassManaStone || OtherClassMisc || OtherClassRare || OtherClassOther)) return true;
+            // Rare is an appraisal marker, not a Decal object class; keep it distinct
+            // from its underlying class, just like the existing Type column.
+            if (new ItemInfo(row.Item).IsRare) return OtherClassRare;
+            switch (row.Item.ObjectClass)
+            {
+                case ObjectClass.BaseAlchemy:
+                case ObjectClass.CraftedAlchemy: return OtherClassAlchemy;
+                case ObjectClass.SpellComponent: return OtherClassComponent;
+                case ObjectClass.BaseCooking:
+                case ObjectClass.CraftedCooking: return OtherClassCooking;
+                case ObjectClass.Food: return OtherClassFood;
+                case ObjectClass.Gem: return OtherClassGem;
+                case ObjectClass.HealingKit: return OtherClassHealingKit;
+                case ObjectClass.Key: return OtherClassKey;
+                case ObjectClass.Lockpick: return OtherClassLockpick;
+                case ObjectClass.ManaStone: return OtherClassManaStone;
+                case ObjectClass.Misc: return OtherClassMisc;
+                default: return OtherClassOther;
+            }
+        }
+
+        private bool MatchesSummon(ItemListRow row)
+        {
+            if (!Summons || row.SortCategory != 4 ||
+                !(SummonNaturalist || SummonNecromancer || SummonPrimalist || SummonOther)) return true;
+            switch (new ItemInfo(row.Item).GetSummonSpecString())
+            {
+                case "Naturalist": return SummonNaturalist;
+                case "Necromancer": return SummonNecromancer;
+                case "Primalist": return SummonPrimalist;
+                default: return SummonOther;
+            }
+        }
+
+        private bool MatchesClothing(ItemListRow row)
+        {
+            if (!Clothing || row.SortCategory != 7) return true;
+            var info = new ItemInfo(row.Item);
+            string garment = info.GetSlotName();
+            bool shirt = garment == "Shirt", pants = garment == "Pants";
+            if ((ClothingShirt || ClothingPants) && !((ClothingShirt && shirt) || (ClothingPants && pants)))
+                return false;
+            if (!ClothingFullCoverage && !ClothingPartialCoverage) return true;
+            if (!shirt && !pants) return false;
+            var required = shirt
+                ? ItemInfo.ArmorSlot.Chest | ItemInfo.ArmorSlot.UpperArms | ItemInfo.ArmorSlot.LowerArms
+                : ItemInfo.ArmorSlot.Abdomen | ItemInfo.ArmorSlot.UpperLegs | ItemInfo.ArmorSlot.LowerLegs;
+            bool full = (info.GetArmorSlots() & required) == required;
+            return full ? ClothingFullCoverage : ClothingPartialCoverage;
         }
 
         private bool MatchesArmorSet(ItemListRow row)
