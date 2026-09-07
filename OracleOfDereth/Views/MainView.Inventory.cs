@@ -9,6 +9,8 @@ namespace OracleOfDereth
     {
         private readonly VGInventory SavedInventory = new VGInventory();
         private bool suppressVGInventoryFilter;
+        private DateTime? vgInventorySearchDue;
+        private System.Windows.Forms.Timer vgInventoryTimer;
         private List<ItemListRow> visibleVGInventory = new List<ItemListRow>();
         private ItemListRow selectedVGInventoryItem;
 
@@ -91,10 +93,16 @@ namespace OracleOfDereth
             VGInventoryList = (HudList)view["VGInventoryList"];
             VGInventoryList.Click += VGInventoryList_Click;
             VGInventoryList.ClearRows();
+            vgInventoryTimer = new System.Windows.Forms.Timer { Interval = 25 };
+            vgInventoryTimer.Tick += VGInventorySearchTick;
         }
 
         private void DisposeVGInventory()
         {
+            vgInventoryTimer.Stop();
+            vgInventoryTimer.Tick -= VGInventorySearchTick;
+            vgInventoryTimer.Dispose();
+            SavedInventory.CancelSearch();
             VGInventoryRefresh.Hit -= VGInventoryRefresh_Hit;
             VGInventoryClipboard.Hit -= VGInventoryClipboard_Hit;
             VGInventoryExportText.Hit -= VGInventoryExportText_Hit;
@@ -141,23 +149,45 @@ namespace OracleOfDereth
 
         public void UpdateVGInventory()
         {
-            // Update() runs every tick. Only load on the first visit or a server change;
-            // filters and header clicks repaint in memory, and Refresh rereads the file.
-            if (SavedInventory.ServerName != Server.Name) RefreshVGInventory();
+            if (SavedInventory.ServerName != Server.Name ||
+                (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value))
+                RefreshVGInventory();
         }
 
         private void RefreshVGInventory()
         {
-            SavedInventory.Refresh(Server.Name);
+            vgInventorySearchDue = null;
+            SavedInventory.BeginRefresh(Server.Name, VGInventoryFilter());
+            vgInventoryTimer.Start();
             selectedVGInventoryItem = null;
             UpdateVGInventoryList();
         }
 
+        private void VGInventorySearchTick(object sender, EventArgs e)
+        {
+            if (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value)
+                RefreshVGInventory();
+            if (!SavedInventory.IsSearching) return;
+            if (SavedInventory.ServerName != Server.Name) { RefreshVGInventory(); return; }
+            var slice = System.Diagnostics.Stopwatch.StartNew();
+            while (SavedInventory.IsSearching && slice.ElapsedMilliseconds < 8)
+                SavedInventory.AdvanceSearch();
+            if (SavedInventory.IsSearching)
+                VGInventoryText.Text = $"Searching {Server.Name}: {SavedInventory.ScannedCount:N0} items read...";
+            else
+            {
+                vgInventoryTimer.Stop();
+                selectedVGInventoryItem = null;
+                UpdateVGInventoryList();
+            }
+        }
+
         private void UpdateVGInventoryList()
         {
-            visibleVGInventory = SavedInventory.Search(VGInventoryFilter());
+            visibleVGInventory = SavedInventory.List.Items;
             ItemListRenderer.Render(VGInventoryList, visibleVGInventory, 0, 0, showCharacter: true, selectedItem: selectedVGInventoryItem);
-            string status = ItemListRenderer.StatusText(Server.Name + " Inventory", SavedInventory.List.Items.Count, visibleVGInventory.Count, 0);
+            string status = $"{Server.Name}: Showing {visibleVGInventory.Count:N0} of {SavedInventory.MatchCount:N0} matches ({SavedInventory.TotalCount:N0} items)";
+            if (SavedInventory.MatchCount > VGInventory.ResultLimit) status += " - narrow your filters";
             if (SavedInventory.UnreadableCount > 0) status += " (" + SavedInventory.UnreadableCount + " saved details unavailable)";
             if (!string.IsNullOrEmpty(SavedInventory.Error))
                 status = SavedInventory.Error + (SavedInventory.LoadedAt.HasValue ? " — showing previous read." : "");
@@ -172,7 +202,11 @@ namespace OracleOfDereth
 
         private void VGInventoryFilter_Change(object sender, EventArgs e)
         {
-            if (!suppressVGInventoryFilter) UpdateVGInventoryList();
+            if (suppressVGInventoryFilter) return;
+            SavedInventory.CancelSearch();
+            vgInventorySearchDue = DateTime.UtcNow.AddMilliseconds(350);
+            vgInventoryTimer.Start();
+            VGInventoryText.Text = "Waiting to search - showing previous results.";
         }
 
         private void VGInventoryFilterReset_Hit(object sender, EventArgs e)
@@ -190,7 +224,7 @@ namespace OracleOfDereth
             VGInventoryFilterOther.Checked = false;
             VGInventoryFilterDoubles.Checked = false;
             suppressVGInventoryFilter = false;
-            UpdateVGInventoryList();
+            RefreshVGInventory();
         }
 
         private void VGInventoryList_Click(object sender, int row, int col)
@@ -229,12 +263,12 @@ namespace OracleOfDereth
             Util.Chat($"Exported {visibleVGInventory.Count} items to {path}");
         }
 
-        private void VGInventoryListSortCharacter_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.CharacterAscending, ItemList.SortType.CharacterDescending); UpdateVGInventoryList(); }
-        private void VGInventoryListSortName_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.NameAscending, ItemList.SortType.NameDescending); UpdateVGInventoryList(); }
-        private void VGInventoryListSortCol1_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.Col1Ascending, ItemList.SortType.Col1Descending); UpdateVGInventoryList(); }
-        private void VGInventoryListSortCol2_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.Col2Ascending, ItemList.SortType.Col2Descending); UpdateVGInventoryList(); }
-        private void VGInventoryListSortCol3_Click(object sender, EventArgs e) { SavedInventory.List.CycleCol3Sort(); UpdateVGInventoryList(); }
-        private void VGInventoryListSortCol4_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.Col4Ascending, ItemList.SortType.Col4Descending); UpdateVGInventoryList(); }
+        private void VGInventoryListSortCharacter_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.CharacterAscending, ItemList.SortType.CharacterDescending); RefreshVGInventory(); }
+        private void VGInventoryListSortName_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.NameAscending, ItemList.SortType.NameDescending); RefreshVGInventory(); }
+        private void VGInventoryListSortCol1_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.Col1Ascending, ItemList.SortType.Col1Descending); RefreshVGInventory(); }
+        private void VGInventoryListSortCol2_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.Col2Ascending, ItemList.SortType.Col2Descending); RefreshVGInventory(); }
+        private void VGInventoryListSortCol3_Click(object sender, EventArgs e) { SavedInventory.List.CycleCol3Sort(); RefreshVGInventory(); }
+        private void VGInventoryListSortCol4_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.Col4Ascending, ItemList.SortType.Col4Descending); RefreshVGInventory(); }
     }
 }
 

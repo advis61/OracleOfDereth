@@ -152,13 +152,13 @@ internal static class VGInventoryTests
             "Item retained a live WorldObject reference.");
     }
 
-    private static byte[] Fixture(bool equipped = false, int material = 0)
+    private static byte[] Fixture(bool equipped = false, int material = 0, int damage = 36)
     {
         using (var stream = new MemoryStream())
         using (var writer = new BinaryWriter(stream, Encoding.ASCII))
         {
             writer.Write(6);
-            foreach (var pair in new[] { (218103842, 36), (159, 44), (353, 6), (47, 160), (10, equipped ? 1 : 0), (131, material) })
+            foreach (var pair in new[] { (218103842, damage), (159, 44), (353, 6), (47, 160), (10, equipped ? 1 : 0), (131, material) })
             { writer.Write(pair.Item1); writer.Write(pair.Item2); }
             writer.Write(1); writer.Write(16); writer.Write(new string('a', 140));
             writer.Write(1); writer.Write(1); writer.Write(true);
@@ -223,11 +223,78 @@ internal static class VGInventoryTests
             Check(!broken.IsComplete && new ItemFilter { Weapons = true }.Matches(broken), "Unreadable weapon lost its category or was marked identified.");
             broken.Populate();
             Check(!broken.IsComplete && broken.Description.Contains("unavailable"), "Unreadable item manufactured appraisal data.");
-            Check(inventory.Search(new ItemFilter { Text = "Mule B" }).Count == 1, "Inventory search lost character ownership.");
+            Check(inventory.Refresh("Conquest", new ItemFilter { Text = "Mule B" }) && inventory.List.Items.Count == 1, "Inventory search lost character ownership.");
             Check(inventory.List.QueueCount == 0, "Database read queued live identification.");
             Check(before.SequenceEqual(File.ReadAllBytes(database)), "Read modified the database.");
             Check(!inventory.Refresh("Levistras") && inventory.List.Items.Count == 0, "Server change retained another server's items.");
             Check(!File.Exists(Path.Combine(temporary, "_Levistras.db")), "Read created a missing database.");
+            // Large database: best names arrive last, and IDs repeat across characters.
+            using (DbConnection connection = Connection(provider, database, false))
+            using (DbTransaction transaction = connection.BeginTransaction())
+            using (DbCommand command = connection.CreateCommand())
+            {
+                command.Transaction = transaction;
+                command.CommandText = "DELETE FROM ObjectData";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO ObjectData VALUES ('Conquest',@character,@id,@name,1,@data)";
+                foreach (string key in new[] { "@character", "@id", "@name", "@data" })
+                { var p = command.CreateParameter(); p.ParameterName = key; command.Parameters.Add(p); }
+                for (int i = 0; i < 25000; i++)
+                {
+                    command.Parameters[0].Value = "Mule " + (i % 36).ToString("D2");
+                    command.Parameters[1].Value = i / 36;
+                    command.Parameters[2].Value = "Dagger " + (25000 - i).ToString("D5");
+                    command.Parameters[3].Value = Fixture(material: i % 2 == 0 ? 61 : 0, damage: 36 + i % 41);
+                    command.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+            long baseline = GC.GetTotalMemory(true);
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            Check(inventory.Refresh("Conquest"), inventory.Error);
+            timer.Stop();
+            Check(inventory.TotalCount == 25000 && inventory.MatchCount == 25000 && inventory.List.Items.Count == VGInventory.ResultLimit,
+                "Large search must count all matches but retain only 1000 rows.");
+            Check(inventory.List.Items[0].DisplayName == "Dagger 00001", "Top results were restricted to early database records.");
+            Console.WriteLine($"25,000-item search: {timer.ElapsedMilliseconds} ms; retained managed delta {GC.GetTotalMemory(true) - baseline:N0} bytes; {inventory.List.Items.Count} rows.");
+            var previousRows = inventory.List.Items;
+            inventory.BeginRefresh("Conquest", new ItemFilter { Text = "Mule 35" });
+            Check(inventory.AdvanceSearch() && inventory.ScannedCount == 32, "Search did not yield after a bounded batch.");
+            Check(ReferenceEquals(previousRows, inventory.List.Items), "Partial results replaced the completed query.");
+            inventory.CancelSearch();
+            Check(!inventory.IsSearching && ReferenceEquals(previousRows, inventory.List.Items), "Cancellation published partial rows.");
+            using (DbConnection connection = Connection(provider, database, false))
+            using (DbCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "BEGIN EXCLUSIVE"; command.ExecuteNonQuery();
+                command.CommandText = "ROLLBACK"; command.ExecuteNonQuery();
+            }
+            inventory.BeginRefresh("Conquest", new ItemFilter { Text = "No matches" });
+            inventory.AdvanceSearch();
+            Check(inventory.Refresh("Conquest", new ItemFilter { Text = "Mule 35" }) && inventory.List.Items.Count > 0 && inventory.List.Items.All(new ItemFilter { Text = "Mule 35" }.Matches),
+                "A superseded query published stale results.");
+            var expected = new List<ItemListRow>();
+            for (int i = 0; i < 25000; i++)
+            {
+                var row = new ItemListRow(VGInventory.DecodeItem("Conquest", "Mule " + (i % 36).ToString("D2"), i / 36,
+                    "Dagger " + (25000 - i).ToString("D5"), ObjectClass.MeleeWeapon, Fixture(material: i % 2 == 0 ? 61 : 0, damage: 36 + i % 41)));
+                row.Populate(); expected.Add(row);
+            }
+            foreach (ItemList.SortType sort in Enum.GetValues(typeof(ItemList.SortType)))
+            {
+                inventory.List.CurrentSortType = sort;
+                Check(inventory.Refresh("Conquest"), inventory.Error);
+                Check(inventory.List.Items.Select(r => r.Character + ":" + r.Id).SequenceEqual(
+                    ItemList.OrderRows(expected, sort).Take(VGInventory.ResultLimit).Select(r => r.Character + ":" + r.Id)),
+                    "Bounded search differs from full-list sorting: " + sort);
+            }
+            var query = new ItemFilter { Text = "Mule 35", Weapons = true };
+            Check(inventory.Refresh("Conquest", query), inventory.Error);
+            Check(inventory.MatchCount == expected.Count(query.Matches) && inventory.List.Items.All(query.Matches),
+                "Filtered query searched only the previous capped results.");
+            Check(inventory.Refresh("Conquest", new ItemFilter { Armor = true }) && inventory.MatchCount == 0 && inventory.List.Items.Count == 0,
+                "No-match search retained old rows.");
+            Console.WriteLine("25,000-item cap, all sort orders, and filter regression checks passed.");
             Console.WriteLine("VGI database integration tests passed.");
         }
         finally { File.Delete(database); Directory.Delete(temporary); }

@@ -604,51 +604,44 @@ namespace OracleOfDereth
         public void Sort(SortType sortType)
         {
             CurrentSortType = sortType;
+            Items = OrderRows(Items, sortType).ToList();
+        }
+
+        public static IEnumerable<ItemListRow> OrderRows(IEnumerable<ItemListRow> items, SortType sortType)
+        {
+
             switch (sortType)
             {
                 case SortType.NameAscending:
-                    Items = Items.OrderBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => t.DisplayName);
                 case SortType.NameDescending:
-                    Items = Items.OrderByDescending(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderByDescending(t => t.DisplayName);
                 case SortType.Col1Ascending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenBy(t => t.SummaryCol1).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenBy(t => t.SummaryCol1).ThenBy(t => t.DisplayName);
                 case SortType.Col1Descending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenByDescending(t => t.SummaryCol1).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => IsEmpty(t.SummaryCol1)).ThenByDescending(t => t.SummaryCol1).ThenBy(t => t.DisplayName);
                 case SortType.Col2Ascending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol2).ThenBy(t => t.SummaryCol2).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol2).ThenBy(t => t.SummaryCol2).ThenBy(t => t.DisplayName);
                 case SortType.Col2Descending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol2).ThenByDescending(t => t.SummaryCol2).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => IsEmpty(t.SummaryCol2)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol2).ThenByDescending(t => t.SummaryCol2).ThenBy(t => t.DisplayName);
                 case SortType.Col3ODDescending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3OD).ThenBy(t => t.SummaryCol3).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3OD).ThenBy(t => t.SummaryCol3).ThenBy(t => t.DisplayName);
                 case SortType.Col3AttackDescending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.DisplayName);
                 case SortType.Col3MeleeDescending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3Melee).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3Melee).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.DisplayName);
                 case SortType.Col3WorkDescending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3Work).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => IsEmpty(t.SummaryCol3)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol3Work).ThenByDescending(t => t.SummaryCol3).ThenBy(t => t.DisplayName);
                 case SortType.Col4Ascending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol4).ThenBy(t => t.SummaryCol4).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenBy(t => t.SortCol4).ThenBy(t => t.SummaryCol4).ThenBy(t => t.DisplayName);
                 case SortType.CharacterAscending:
-                    Items = Items.OrderBy(t => t.Character).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => t.Character).ThenBy(t => t.DisplayName);
                 case SortType.CharacterDescending:
-                    Items = Items.OrderByDescending(t => t.Character).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderByDescending(t => t.Character).ThenBy(t => t.DisplayName);
                 case SortType.Col4Descending:
-                    Items = Items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol4).ThenByDescending(t => t.SummaryCol4).ThenBy(t => t.DisplayName).ToList();
-                    break;
+                    return items.OrderBy(t => IsEmpty(t.SummaryCol4)).ThenBy(t => t.SortCategory).ThenByDescending(t => t.SortCol4).ThenByDescending(t => t.SummaryCol4).ThenBy(t => t.DisplayName);
             }
+            return items;
         }
 
         public void Remove(int id)

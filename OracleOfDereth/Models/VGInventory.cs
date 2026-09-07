@@ -11,11 +11,14 @@ using System.Text;
 namespace OracleOfDereth
 {
     // Owns the saved inventory for one server. Connections are short-lived and read-only;
-    // filtering/sorting happens in memory so typing never holds VGI's database open.
+    // scans retain only the best matching rows, using the same ordering as live lists.
     public sealed class VGInventory
     {
         private const string PluginKey = @"SOFTWARE\Decal\Plugins\{EB071330-DC65-4302-9CF9-6104B5B4C73B}";
         private readonly string directory;
+        public const int ResultLimit = 1000;
+        public int MatchCount { get; private set; }
+        public int TotalCount { get; private set; }
         public ItemList List { get; } = new ItemList();
         public string ServerName { get; private set; }
         public string Error { get; private set; } = "";
@@ -25,73 +28,119 @@ namespace OracleOfDereth
         // Explicit directory is also useful for reading a copied database in diagnostics.
         public VGInventory(string directory = null) { this.directory = directory; }
 
-        public List<ItemListRow> Search(ItemFilter filter) => List.Items.Where(filter.Matches).ToList();
+        private IEnumerator<bool> scan;
+        public bool IsSearching => scan != null;
+        public int ScannedCount { get; private set; }
 
-        public bool Refresh(string server)
+        public void CancelSearch()
         {
+            scan?.Dispose();
+            scan = null;
+        }
+
+        // Run on the game thread: row calculations use Decal's spell metadata.
+        public void BeginRefresh(string server, ItemFilter filter = null)
+        {
+            CancelSearch();
             if (ServerName != server)
             {
                 List.Clear();
                 LoadedAt = null;
-                UnreadableCount = 0;
+                UnreadableCount = MatchCount = TotalCount = 0;
             }
             ServerName = server;
             Error = "";
+            ScannedCount = 0;
+            scan = Scan(server, filter ?? new ItemFilter(), List.CurrentSortType).GetEnumerator();
+        }
+
+        // Each step processes at most 32 records; disposing cancels and closes SQLite.
+        public bool AdvanceSearch()
+        {
+            if (scan == null) return false;
             try
             {
-                if (string.IsNullOrWhiteSpace(server)) throw new InvalidOperationException("Log in to view this server's inventory.");
-                if (server.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) throw new InvalidOperationException("Invalid server name.");
-                string folder = directory ?? FindDirectory();
-                if (folder == null) throw new InvalidOperationException("VGI is not installed. Use Items to add and identify items.");
-                string path = Path.Combine(folder, "_" + server + ".db");
-                if (!File.Exists(path)) throw new InvalidOperationException("No saved VGI inventory for " + server + ". Use Items to add and identify items.");
-
-                var objects = new List<Item>();
-                int unreadable = 0;
-                using (DbConnection connection = OpenConnection(folder, path))
-                using (DbCommand command = connection.CreateCommand())
-                {
-                    command.CommandTimeout = 2;
-                    command.CommandText = "SELECT OwnerServer, OwnerCharName, ObjectID, ObjectName, ObjectClass, SerializedData FROM ObjectData WHERE OwnerServer = @server";
-                    DbParameter parameter = command.CreateParameter();
-                    parameter.ParameterName = "@server";
-                    parameter.Value = server;
-                    command.Parameters.Add(parameter);
-                    using (DbDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            string ownerServer = reader.GetString(0);
-                            string character = reader.GetString(1);
-                            int id = unchecked((int)reader.GetInt64(2));
-                            string name = reader.GetString(3);
-                            var category = (ObjectClass)reader.GetInt32(4);
-                            try
-                            {
-                                objects.Add(DecodeItem(ownerServer, character, id, name, category, (byte[])reader.GetValue(5)));
-                            }
-                            catch (Exception ex) when (ex is IOException || ex is InvalidDataException)
-                            {
-                                // Keep the owner/name visible even if an old or truncated blob
-                                // cannot supply details. Never queue an offline item for ID.
-                                objects.Add(new Item(ownerServer, character, id, name, category));
-                                unreadable++;
-                            }
-                        }
-                    }
-                }
-                List.Load(objects);
-                UnreadableCount = unreadable;
-                LoadedAt = DateTime.Now;
-                return true;
+                if (scan.MoveNext()) return true;
             }
             catch (Exception ex)
             {
-                // Keep the last successful snapshot on a transient lock/read error for the
-                // same server. A server change clears it above, before any attempted read.
                 Error = "VGI: " + ex.GetBaseException().Message;
-                return false;
             }
+            CancelSearch();
+            return false;
+        }
+
+        // Synchronous entry point for diagnostics and regression tests.
+        public bool Refresh(string server, ItemFilter filter = null)
+        {
+            BeginRefresh(server, filter);
+            while (AdvanceSearch()) { }
+            return string.IsNullOrEmpty(Error);
+        }
+
+        private IEnumerable<bool> Scan(string server, ItemFilter filter, ItemList.SortType sort)
+        {
+            if (string.IsNullOrWhiteSpace(server)) throw new InvalidOperationException("Log in to view this server's inventory.");
+            if (server.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) throw new InvalidOperationException("Invalid server name.");
+            string folder = directory ?? FindDirectory();
+            if (folder == null) throw new InvalidOperationException("VGI is not installed. Use Items to add and identify items.");
+            string path = Path.Combine(folder, "_" + server + ".db");
+            if (!File.Exists(path)) throw new InvalidOperationException("No saved VGI inventory for " + server + ". Use Items to add and identify items.");
+
+            var rows = new List<ItemListRow>();
+            int matches = 0, total = 0;
+            int unreadable = 0;
+            using (DbConnection connection = OpenConnection(folder, path))
+            using (DbCommand command = connection.CreateCommand())
+            {
+                command.CommandTimeout = 2;
+                command.CommandText = "SELECT OwnerServer, OwnerCharName, ObjectID, ObjectName, ObjectClass, SerializedData FROM ObjectData WHERE OwnerServer = @server";
+                DbParameter parameter = command.CreateParameter();
+                parameter.ParameterName = "@server";
+                parameter.Value = server;
+                command.Parameters.Add(parameter);
+                using (DbDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string ownerServer = reader.GetString(0);
+                        string character = reader.GetString(1);
+                        int id = unchecked((int)reader.GetInt64(2));
+                        string name = reader.GetString(3);
+                        var category = (ObjectClass)reader.GetInt32(4);
+                        total++;
+                        Item item;
+                        try
+                        {
+                            item = DecodeItem(ownerServer, character, id, name, category, (byte[])reader.GetValue(5));
+                        }
+                        catch (Exception ex) when (ex is IOException || ex is InvalidDataException)
+                        {
+                            // Keep the owner/name visible even if an old or truncated blob
+                            // cannot supply details. Never queue an offline item for ID.
+                            item = new Item(ownerServer, character, id, name, category);
+                            unreadable++;
+                        }
+                        var row = new ItemListRow(item);
+                        row.Populate();
+                        if (filter.Matches(row))
+                        {
+                            matches++;
+                            rows.Add(row);
+                            // Amortize sorting in small batches, retaining the global best results.
+                            if (rows.Count >= ResultLimit + 256)
+                                rows = ItemList.OrderRows(rows, sort).Take(ResultLimit).ToList();
+                        }
+                        ScannedCount = total;
+                        if (total % 32 == 0) yield return true;
+                    }
+                }
+            }
+            List.Items = ItemList.OrderRows(rows, sort).Take(ResultLimit).ToList();
+            MatchCount = matches;
+            TotalCount = total;
+            UnreadableCount = unreadable;
+            LoadedAt = DateTime.Now;
         }
 
         private static DbConnection OpenConnection(string folder, string path)
