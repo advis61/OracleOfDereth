@@ -534,6 +534,7 @@ internal static class VGInventoryTests
             ItemInfo.ArmorSlot.UpperLegs, ItemInfo.ArmorSlot.LowerLegs, ItemInfo.ArmorSlot.Feet };
         var equip = new[] { 1, 0x200, 0x400, 0x800, 0x1000, 0x20, 0x2000, 0x4000, 0x100 };
         var coverage = new[] { 0x4000, 8, 16, 32, 64, 0x8000, 2, 4, 0x10000 };
+        var labels = new[] { "Head", "Chest", "Abdomen", "Upper Arms", "Lower Arms", "Hands", "Upper Legs", "Lower Legs", "Feet" };
         ItemListRow ArmorRow(int mask, int cover = 0)
         {
             var row = new ItemListRow(new Item("Conquest", "Mule", 1, "Armor", ObjectClass.Armor,
@@ -545,11 +546,25 @@ internal static class VGInventoryTests
             foreach (var row in new[] { ArmorRow(equip[i]), ArmorRow(0, coverage[i]) })
             {
                 Check(new ItemInfo(row.Item).GetArmorSlots() == slots[i], "Armor slot/coverage mapping differs for " + slots[i]);
+                Check(new ItemInfo(row.Item).GetSlotName() == labels[i], "Armor summary label does not match its covered slot.");
                 for (int j = 0; j < slots.Length; j++)
                     Check(new ItemFilter { Armor = true, ArmorSlots = slots[j] }.Matches(row) == (i == j), "Armor filter matched wrong slot.");
             }
         }
         var coat = ArmorRow(0x200 | 0x400 | 0x800);
+        Check(new ItemInfo(ArmorRow(0x200 | 0x400).Item).GetSlotName() == "Chest Abdomen" &&
+            new ItemInfo(ArmorRow(0, 8 | 16).Item).GetSlotName() == "Chest Abdomen",
+            "Chest-and-abdomen armor must list both slots without a garment label.");
+        Check(new ItemInfo(ArmorRow(0x800 | 0x1000).Item).GetSlotName() == "Upper Lower Arms", "Sleeve labels were not concise.");
+        Check(new ItemInfo(ArmorRow(0x200 | 0x800 | 0x1000).Item).GetSlotName() == "Chest Upper Lower Arms",
+            "Chest and arm armor must list its covered slots.");
+        Check(new ItemInfo(ArmorRow(0x2000 | 0x4000).Item).GetSlotName() == "Upper Lower Legs", "Leg labels were not concise.");
+        Check(new ItemInfo(ArmorRow(0x400 | 0x2000 | 0x4000).Item).GetSlotName() == "Leggings 3-slot",
+            "Three-slot leggings must use the compact garment label.");
+        int robeSlots = 0x200 | 0x400 | 0x800 | 0x1000 | 0x2000 | 0x4000;
+        Check(new ItemInfo(ArmorRow(robeSlots).Item).GetSlotName() == "Robe" &&
+            new ItemInfo(ArmorRow(robeSlots | 1 | 0x20 | 0x100).Item).GetSlotName() == "Robe",
+            "Full-body armor must use the compact Robe label.");
         foreach (var slot in new[] { ItemInfo.ArmorSlot.Chest, ItemInfo.ArmorSlot.Abdomen, ItemInfo.ArmorSlot.UpperArms })
             Check(new ItemFilter { Armor = true, ArmorSlots = slot }.Matches(coat), "Multi-slot armor lost a covered slot.");
         Check(new ItemFilter { Armor = true, ArmorSlots = ItemInfo.ArmorSlot.Feet | ItemInfo.ArmorSlot.Chest }.Matches(coat),
