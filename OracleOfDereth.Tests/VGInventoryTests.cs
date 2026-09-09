@@ -71,10 +71,10 @@ internal static class VGInventoryTests
         list.Sort(ItemList.SortType.CharacterAscending);
         Check(list.Items[0].Character == "Mule A", "Character sort failed.");
         MethodInfo exportRow = typeof(ItemExport).GetMethod("Row", BindingFlags.NonPublic | BindingFlags.Static);
-        var exported = (string[])exportRow.Invoke(null, new object[] { list.Items[0] });
-        Check(exported[0] == "Mule A" && exported[1] == "Conquest" && exported[2] == "Other Dagger", "Saved export used the live character or world filter.");
-        var incompleteExport = (string[])exportRow.Invoke(null, new object[] { new ItemListRow(new Item("Conquest", "Mule B", -42, "Unreadable", ObjectClass.MeleeWeapon)) });
-        Check(incompleteExport[0] == "Mule B" && incompleteExport[2] == "Unreadable", "Incomplete saved export used a live object with the same ID.");
+        var exported = (object[])exportRow.Invoke(null, new object[] { list.Items[0] });
+        Check(Equals(exported[0], "Mule A") && Equals(exported[1], "Conquest") && Equals(exported[2], "Other Dagger"), "Saved export used the live character or world filter.");
+        var incompleteExport = (object[])exportRow.Invoke(null, new object[] { new ItemListRow(new Item("Conquest", "Mule B", -42, "Unreadable", ObjectClass.MeleeWeapon)) });
+        Check(Equals(incompleteExport[0], "Mule B") && Equals(incompleteExport[2], "Unreadable"), "Incomplete saved export used a live object with the same ID.");
         var filter = new ItemFilter { Text = "Mule B", Weapons = true };
         Check(list.Items.Count(filter.Matches) == 1, "Character search failed.");
         filter.Armor = true;
@@ -881,7 +881,7 @@ internal static class VGInventoryTests
             Check(inventory.Refresh("Conquest"), inventory.Error);
             timer.Stop();
             Check(inventory.TotalCount == 25000 && inventory.MatchCount == 25000 && inventory.List.Items.Count == VGInventory.ResultLimit,
-                "Large search must count all matches but retain only 2000 rows.");
+                "Large search must count all matches but retain only the display limit.");
             Check(inventory.List.Items[0].DisplayName == "Dagger 00001", "Top results were restricted to early database records.");
             Console.WriteLine($"25,000-item search: {timer.ElapsedMilliseconds} ms; retained managed delta {GC.GetTotalMemory(true) - baseline:N0} bytes; {inventory.List.Items.Count} rows.");
             var previousRows = inventory.List.Items;

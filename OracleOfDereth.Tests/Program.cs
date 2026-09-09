@@ -13,6 +13,7 @@ internal static class Program
             return SavedInventorySearchTests.Consume(args[1], args[2], args[3]);
         SavedInventorySearchTests.Run();
         VGInventoryTests.Run();
+        ItemExportTests.Run();
         if (args.Length == 2 && args[0] == "--vgi") VGInventoryTests.Audit(args[1]);
         AssertScreenshotBounds();
         AssertScreenshotPaths();

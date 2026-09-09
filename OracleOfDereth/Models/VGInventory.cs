@@ -16,7 +16,7 @@ namespace OracleOfDereth
     {
         private const string PluginKey = @"SOFTWARE\Decal\Plugins\{EB071330-DC65-4302-9CF9-6104B5B4C73B}";
         private readonly string directory;
-        public const int ResultLimit = 2000;
+        public const int ResultLimit = 5000;
         public int MatchCount { get; private set; }
         public int TotalCount { get; private set; }
         public ItemList List { get; } = new ItemList();

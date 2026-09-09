@@ -190,7 +190,6 @@ namespace OracleOfDereth
                 vgInventoryTimer.Stop();
                 return;
             }
-
             if (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value) RefreshVGInventory();
             if (!SavedInventory.IsSearching) return;
             if (SavedInventory.ServerName != Server.Name) { RefreshVGInventory(); return; }
@@ -298,7 +297,7 @@ namespace OracleOfDereth
             if (saved.Server == Server.Name && !string.IsNullOrEmpty(saved.Character) && saved.Character == core?.CharacterFilter?.Name) return;
 
             // Items on other characters still need their saved description.
-            string description = selectedVGInventoryItem.Character + ": " + selectedVGInventoryItem.Description;
+            string description = selectedVGInventoryItem.DescriptionWithOwner;
             var modifiers = System.Windows.Forms.Control.ModifierKeys;
             if ((modifiers & (System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.Control)) != 0)
                 Util.Think(description);
@@ -308,29 +307,37 @@ namespace OracleOfDereth
 
         private void VGInventoryClipboard_Hit(object sender, EventArgs e)
         {
-            Util.ClipboardCopy(string.Join(Environment.NewLine + Environment.NewLine, visibleVGInventory.Select(t => t.Character + ": " + t.Description)));
+            Util.ClipboardCopy(string.Join(Environment.NewLine + Environment.NewLine, visibleVGInventory.Select(t => t.DescriptionWithOwner)));
             Util.Chat($"Copied {visibleVGInventory.Count} items to clipboard");
         }
 
         private void VGInventoryExportText_Hit(object sender, EventArgs e)
         {
-            string path = ItemExport.ToText(visibleVGInventory, Server.Name + "-inventory");
-            Util.ClipboardCopy(path);
-            Util.Chat($"Exported {visibleVGInventory.Count} items to {path}");
+            ExportVGInventory(ItemExport.ToText);
         }
 
         private void VGInventoryExportCsv_Hit(object sender, EventArgs e)
         {
-            string path = ItemExport.ToCsv(visibleVGInventory, Server.Name + "-inventory");
-            Util.ClipboardCopy(path);
-            Util.Chat($"Exported {visibleVGInventory.Count} items to {path}");
+            ExportVGInventory(ItemExport.ToCsv);
         }
 
         private void VGInventoryExportJson_Hit(object sender, EventArgs e)
         {
-            string path = ItemExport.ToJson(visibleVGInventory, Server.Name + "-inventory");
-            Util.ClipboardCopy(path);
-            Util.Chat($"Exported {visibleVGInventory.Count} items to {path}");
+            ExportVGInventory(ItemExport.ToJson);
+        }
+
+        private void ExportVGInventory(Func<List<ItemListRow>, string, string> writer)
+        {
+            try
+            {
+                string path = writer(visibleVGInventory, Server.Name + "-inventory");
+                Util.ClipboardCopy(path);
+                Util.Chat($"Exported {visibleVGInventory.Count:N0} items to {path}", Util.ColorPink);
+            }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
+            }
         }
 
         private void VGInventoryListSortCharacter_Click(object sender, EventArgs e) { SavedInventory.List.ToggleSort(ItemList.SortType.CharacterAscending, ItemList.SortType.CharacterDescending); RefreshVGInventory(); }

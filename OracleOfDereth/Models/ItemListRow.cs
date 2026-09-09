@@ -43,6 +43,8 @@ namespace OracleOfDereth
         public int SortCol3Work { get; private set; } = 0;   // workmanship (Col3 fourth sort)
         public int SortCol4 { get; private set; } = 0;
         public string Description { get; private set; } = "";
+        public string DescriptionWithOwner => string.IsNullOrEmpty(Character) ? Description
+            : Character + ": " + Description + " (Last on " + Character + ")";
 
         public ItemListRow(WorldObject worldObject) : this(new Item(worldObject)) { }
 

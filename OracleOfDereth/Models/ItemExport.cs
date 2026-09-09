@@ -2,6 +2,7 @@ using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,7 @@ namespace OracleOfDereth
         public static string ToText(List<ItemListRow> items, string nameOverride = null)
         {
             string path = ExportPath("txt", nameOverride);
-            File.WriteAllLines(path, items.Select(t => string.IsNullOrEmpty(t.Character) ? t.Description : t.Character + ": " + t.Description));
+            File.WriteAllLines(path, items.Select(t => t.DescriptionWithOwner));
             return path;
         }
 
@@ -24,38 +25,45 @@ namespace OracleOfDereth
         {
             string path = ExportPath("csv", nameOverride);
 
-            var lines = new List<string> { string.Join(",", Headers.Select(CsvEscape)) };
-            foreach (ItemListRow item in items)
-                lines.Add(string.Join(",", Row(item).Select(CsvEscape)));
-
-            File.WriteAllLines(path, lines);
+            using (var writer = new StreamWriter(path, false, new UTF8Encoding(false))) WriteCsv(writer, items);
             return path;
+        }
+
+        private static void WriteCsv(TextWriter writer, List<ItemListRow> items)
+        {
+            writer.WriteLine(string.Join(",", Headers.Select(CsvEscape)));
+            foreach (ItemListRow item in items)
+                writer.WriteLine(string.Join(",", Row(item).Select(value => CsvEscape(Convert.ToString(value, CultureInfo.InvariantCulture)))));
         }
 
         public static string ToJson(List<ItemListRow> items, string nameOverride = null)
         {
             string path = ExportPath("json", nameOverride);
 
-            var sb = new StringBuilder();
-            sb.AppendLine("[");
+            using (var writer = new StreamWriter(path, false, new UTF8Encoding(false))) WriteJson(writer, items);
+            return path;
+        }
+
+        private static void WriteJson(TextWriter writer, List<ItemListRow> items)
+        {
+            writer.WriteLine("[");
             for (int i = 0; i < items.Count; i++)
             {
-                string[] row = Row(items[i]);
-                sb.AppendLine("  {");
+                object[] row = Row(items[i]);
+                writer.WriteLine("  {");
 
                 int colCount = Math.Min(Headers.Length, row.Length);
                 for (int c = 0; c < colCount; c++)
                 {
                     string comma = c < colCount - 1 ? "," : "";
-                    sb.AppendLine($"    {Util.JsonString(Headers[c])}: {Util.JsonString(row[c])}{comma}");
+                    string value = row[c] == null || row[c] is string
+                        ? Util.JsonString(row[c] as string) : Convert.ToString(row[c], CultureInfo.InvariantCulture);
+                    writer.WriteLine($"    {Util.JsonString(Headers[c])}: {value}{comma}");
                 }
 
-                sb.AppendLine("  }" + (i < items.Count - 1 ? "," : ""));
+                writer.WriteLine("  }" + (i < items.Count - 1 ? "," : ""));
             }
-            sb.AppendLine("]");
-
-            File.WriteAllText(path, sb.ToString());
-            return path;
+            writer.WriteLine("]");
         }
 
         private static string ExportPath(string extension, string nameOverride = null)
@@ -75,26 +83,34 @@ namespace OracleOfDereth
             "OD", "OA", "OM", "Damage", "Dmg Low", "Dmg High", "Elem Bonus", "Missile %", "Caster %",
             "Attack", "Melee D", "Magic D", "Missile D", "Mana C",
             "Spells", "Wield Req", "Wield Req Level", "Activation Req",
-            "Lore", "Craft", "Value", "Burden",
+            "Lore", "Workmanship", "Value", "Burden",
             "Summon DMG", "Summon DEF",
             "Item Level",
-            "D", "DR", "C", "CR", "CD", "CDR", "HB", "V"
+            "D", "DR", "C", "CR", "CD", "CDR", "HB", "V",
+            "Item ID", "Material", "Element", "Quantity", "Uses Remaining", "Keys Held"
         };
 
-        private static string[] Row(ItemListRow item)
+        private static object[] Row(ItemListRow item)
         {
+            ItemInfo info = new ItemInfo(item.Item);
+            var details = new object[]
+            {
+                unchecked((uint)item.Id), info.GetMaterial(), info.GetElementName(),
+                item.Item.TryGetValue(LongValueKey.StackCount, out int quantity) ? quantity : item.IsComplete ? 1 : (int?)null,
+                item.Item.TryGetValue(LongValueKey.UsesRemaining, out int uses) ? uses : (int?)null,
+                item.Item.TryGetValue(LongValueKey.KeysHeld, out int keys) ? keys : (int?)null
+            };
             if (!item.IsComplete)
             {
-                var row = new string[Headers.Length];
+                var row = new object[Headers.Length - details.Length];
                 row[0] = item.Character;
                 row[1] = item.Server;
                 row[2] = item.DisplayName;
-                return row;
+                row[3] = info.GetObjectClassName();
+                return row.Concat(details).ToArray();
             }
 
-            ItemInfo info = new ItemInfo(item.Item);
-
-            return new[] {
+            return new object[] {
                 item.Character,
                 item.Server,
                 info.GetName(),
@@ -123,7 +139,9 @@ namespace OracleOfDereth
                 info.GetWieldReqLevel() > 0 ? info.GetWieldReqLevel().ToString() : "",
                 info.GetActivationReqString(),
                 info.GetLoreValue() > 0 ? info.GetLoreValue().ToString() : "",
-                info.GetWorkmanshipString(),
+                info.IsSalvage
+                    ? (item.Item.TryGetValue(DoubleValueKey.SalvageWorkmanship, out double work) ? work : (double?)null)
+                    : (item.Item.TryGetValue(LongValueKey.Workmanship, out int craft) ? craft : (double?)null),
                 info.GetValue() > 0 ? info.GetValue().ToString() : "",
                 info.GetBurden() > 0 ? info.GetBurden().ToString() : "",
                 info.GetSummonDamageString(),
@@ -137,7 +155,7 @@ namespace OracleOfDereth
                 info.RatingCritDamageResist > 0 ? info.RatingCritDamageResist.ToString() : "",
                 info.RatingHealBoost > 0 ? info.RatingHealBoost.ToString() : "",
                 info.RatingVitality > 0 ? info.RatingVitality.ToString() : "",
-            };
+            }.Concat(details).ToArray();
         }
 
         // See the note in QuestExport: one escaping rule for every csv the plugin writes.

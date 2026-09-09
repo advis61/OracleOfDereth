@@ -6,6 +6,8 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System.Runtime.Serialization" />
     <ProjectReference Include="..\OracleOfDereth\OracleOfDereth.csproj" />
     <Reference Include="Decal.Adapter">
       <HintPath>..\deps\Decal.Adapter.dll</HintPath>
