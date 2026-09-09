@@ -176,6 +176,35 @@ namespace OracleOfDereth
             return filter;
         }
 
+        public string[] CategoryOrder => categoryOrder.Select(box => categories.First(pair => pair.Value == box).Key).ToArray();
+
+        public void Restore(ItemFilter filter, IEnumerable<string> order)
+        {
+            resetting = true;
+            try
+            {
+                for (int i = 0; i < controls.Count; i++)
+                    controls[i].Checked = IsSelected(filter, Definitions[i].Apply);
+                categoryOrder.Clear();
+                foreach (string name in order.Distinct())
+                    if (categories.TryGetValue(name, out var box) && box.Checked) categoryOrder.Add(box);
+                CategoryChanged(null);
+            }
+            finally { resetting = false; }
+        }
+
+        // Each binding sets exactly one boolean or armor-slot bit. Reuse that mapping
+        // when restoring, so newly added subfilters cannot silently lose their state.
+        private static bool IsSelected(ItemFilter filter, Action<ItemFilter, bool> apply)
+        {
+            var probe = new ItemFilter();
+            apply(probe, true);
+            if (probe.ArmorSlots != ItemInfo.ArmorSlot.None)
+                return (filter.ArmorSlots & probe.ArmorSlots) != 0;
+            return typeof(ItemFilter).GetFields().Any(field => field.FieldType == typeof(bool) &&
+                (bool)field.GetValue(probe) && (bool)field.GetValue(filter));
+        }
+
         public void Reset()
         {
             resetting = true;

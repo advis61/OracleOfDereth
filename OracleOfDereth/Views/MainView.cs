@@ -441,8 +441,7 @@ namespace OracleOfDereth
             // Runs for every tab, so a flashed Refresh label restores even if you switch away.
             if (FlashedButton != null && DateTime.UtcNow >= FlashedUntil) { RestoreFlashedButton(); }
 
-            // Runs every tick regardless of the active tab, so auto-deposit still fires while you're
-            // on another tab (or the window is closed).
+            // Runs every tick regardless of the active tab
             Bank.AutoDepositTick();
 
             int currentTab = CurrentTab();

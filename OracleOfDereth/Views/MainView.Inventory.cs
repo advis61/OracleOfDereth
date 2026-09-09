@@ -106,10 +106,12 @@ namespace OracleOfDereth
             VGInventoryList.ClearRows();
             vgInventoryTimer = new System.Windows.Forms.Timer { Interval = 25 };
             vgInventoryTimer.Tick += VGInventorySearchTick;
+            InitSavedInventorySearch();
         }
 
         private void DisposeVGInventory()
         {
+            DisposeSavedInventorySearch();
             vgInventorySubfilters?.Dispose();
             vgInventoryTimer.Stop();
             vgInventoryTimer.Tick -= VGInventorySearchTick;
@@ -163,36 +165,49 @@ namespace OracleOfDereth
 
         public void UpdateVGInventory()
         {
-            if (SavedInventory.ServerName != Server.Name ||
-                (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value))
+            if (view.Visible && DateTime.UtcNow.Second % 2 == 0) PollSavedInventorySearch();
+
+            if (SavedInventory.ServerName != Server.Name || (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value))
                 RefreshVGInventory();
         }
 
         private void RefreshVGInventory()
         {
+            loadedInventorySelection = null;
             vgInventorySearchDue = null;
             SavedInventory.BeginRefresh(Server.Name, VGInventoryFilter());
             vgInventoryTimer.Start();
             selectedVGInventoryItem = null;
+            UpdateSavedInventorySearchButton(allowSave: vgInventorySavedSearch.Visible);
             UpdateVGInventoryList();
         }
 
         private void VGInventorySearchTick(object sender, EventArgs e)
         {
-            if (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value)
-                RefreshVGInventory();
+            if (Decal.Adapter.CoreManager.Current.CharacterFilter.LoginStatus < 1)
+            {
+                SavedInventory.CancelSearch();
+                vgInventoryTimer.Stop();
+                return;
+            }
+
+            if (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value) RefreshVGInventory();
             if (!SavedInventory.IsSearching) return;
             if (SavedInventory.ServerName != Server.Name) { RefreshVGInventory(); return; }
             var slice = System.Diagnostics.Stopwatch.StartNew();
-            while (SavedInventory.IsSearching && slice.ElapsedMilliseconds < 8)
-                SavedInventory.AdvanceSearch();
+
+            while (SavedInventory.IsSearching && slice.ElapsedMilliseconds < 8) SavedInventory.AdvanceSearch();
+
             if (SavedInventory.IsSearching)
                 VGInventoryText.Text = $"Searching: {SavedInventory.ScannedCount:N0} items read...";
             else
             {
                 vgInventoryTimer.Stop();
                 selectedVGInventoryItem = null;
+                RestoreSavedInventorySelection();
                 UpdateVGInventoryList();
+                if (selectedVGInventoryItem != null)
+                    VGInventoryList.ScrollPosition = visibleVGInventory.IndexOf(selectedVGInventoryItem);
             }
         }
 
@@ -203,8 +218,10 @@ namespace OracleOfDereth
             string status = $"Showing {visibleVGInventory.Count:N0} of {SavedInventory.MatchCount:N0} matches ({SavedInventory.TotalCount:N0} items)";
             if (SavedInventory.MatchCount > VGInventory.ResultLimit) status += " - narrow your filters";
             if (SavedInventory.UnreadableCount > 0) status += " (" + SavedInventory.UnreadableCount + " saved details unavailable)";
+
             if (!string.IsNullOrEmpty(SavedInventory.Error))
                 status = SavedInventory.Error + (SavedInventory.LoadedAt.HasValue ? " — showing previous read." : "");
+
             VGInventoryText.Text = status;
         }
 
@@ -222,6 +239,8 @@ namespace OracleOfDereth
         private void VGInventoryFilter_Change(object sender, EventArgs e)
         {
             if (suppressVGInventoryFilter) return;
+            selectedVGInventoryItem = null;
+            InventorySearchEdited();
             vgInventorySubfilters.CategoryChanged(sender as HudCheckBox);
             SavedInventory.CancelSearch();
             vgInventorySearchDue = DateTime.UtcNow.AddMilliseconds(350);
@@ -245,6 +264,7 @@ namespace OracleOfDereth
             VGInventoryFilterOther.Checked = false;
             VGInventoryFilterDoubles.Checked = false;
             suppressVGInventoryFilter = false;
+            InventorySearchEdited();
             RefreshVGInventory();
         }
 
@@ -260,6 +280,7 @@ namespace OracleOfDereth
                     ItemListRenderer.SetRowColor(VGInventoryList[row], true, !visibleVGInventory[row].IsComplete, showCharacter: true);
             }
             selectedVGInventoryItem = visibleVGInventory[row];
+            InventorySearchEdited();
             Item saved = selectedVGInventoryItem.Item;
             var core = Decal.Adapter.CoreManager.Current;
             if (saved.Server == Server.Name && !string.IsNullOrEmpty(saved.Character))
@@ -274,8 +295,7 @@ namespace OracleOfDereth
                 }
             }
             // Our character's live identification supplies the description.
-            if (saved.Server == Server.Name && !string.IsNullOrEmpty(saved.Character) &&
-                saved.Character == core?.CharacterFilter?.Name) return;
+            if (saved.Server == Server.Name && !string.IsNullOrEmpty(saved.Character) && saved.Character == core?.CharacterFilter?.Name) return;
 
             // Items on other characters still need their saved description.
             string description = selectedVGInventoryItem.Character + ": " + selectedVGInventoryItem.Description;

@@ -9,6 +9,9 @@ internal static class Program
 {
     private static int Main(string[] args)
     {
+        if (args.Length == 4 && args[0] == "--consume-search")
+            return SavedInventorySearchTests.Consume(args[1], args[2], args[3]);
+        SavedInventorySearchTests.Run();
         VGInventoryTests.Run();
         if (args.Length == 2 && args[0] == "--vgi") VGInventoryTests.Audit(args[1]);
         AssertScreenshotBounds();
