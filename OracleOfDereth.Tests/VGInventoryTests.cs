@@ -45,6 +45,15 @@ internal static class VGInventoryTests
         Check(weapon.ActiveSpellCount == 0, "VGI must not invent active spells.");
         Check(weapon.Values((LongValueKey)999999, 17) == 17, "Missing property did not honor its default.");
         Check(weapon.Id == -42 && weapon.Character == "Weapon Mule", "Owner metadata was lost.");
+        foreach (var imbue in new[] { (0, ""), (512, "FireRend"), (0x4000, "NetherRend"), (0x4001, "CS NetherRend") })
+        {
+            var saved = VGInventory.DecodeItem("Conquest", "Weapon Mule", 9, "Test Dagger",
+                ObjectClass.MeleeWeapon, Fixture(imbued: imbue.Item1));
+            Check(new ItemInfo(saved).GetImbueString() == imbue.Item2, "Saved imbue flags were not formatted correctly.");
+            var row = new ItemListRow(saved);
+            row.Populate();
+            Check(row.SummaryCol2 == imbue.Item2, "Inventory row lost the saved imbue indication.");
+        }
         Reject(bytes.Take(bytes.Length - 1).ToArray());
         Reject(new byte[] { 255, 255, 255, 255 });
         Reject(bytes.Concat(new byte[] { 0 }).ToArray());
@@ -770,13 +779,13 @@ internal static class VGInventoryTests
             "Item retained a live WorldObject reference.");
     }
 
-    private static byte[] Fixture(bool equipped = false, int material = 0, int damage = 36)
+    private static byte[] Fixture(bool equipped = false, int material = 0, int damage = 36, int imbued = 0)
     {
         using (var stream = new MemoryStream())
         using (var writer = new BinaryWriter(stream, Encoding.ASCII))
         {
-            writer.Write(6);
-            foreach (var pair in new[] { (218103842, damage), (159, 44), (353, 6), (47, 160), (10, equipped ? 1 : 0), (131, material) })
+            writer.Write(7);
+            foreach (var pair in new[] { (218103842, damage), (159, 44), (353, 6), (47, 160), (10, equipped ? 1 : 0), (131, material), ((int)LongValueKey.Imbued, imbued) })
             { writer.Write(pair.Item1); writer.Write(pair.Item2); }
             writer.Write(1); writer.Write(16); writer.Write(new string('a', 140));
             writer.Write(1); writer.Write(1); writer.Write(true);

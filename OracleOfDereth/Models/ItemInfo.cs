@@ -713,6 +713,7 @@ namespace OracleOfDereth
                 if ((imbued & 1024) == 1024) parts.Add("MeleeImbue");
                 if ((imbued & 4096) == 4096) parts.Add("MagicImbue");
                 if ((imbued & 8192) == 8192) parts.Add("Hematited");
+                if ((imbued & 0x4000) != 0) parts.Add("NetherRend");
                 if ((imbued & 536870912) == 536870912) parts.Add("Absorb");
             }
 
