@@ -77,7 +77,7 @@ namespace OracleOfDereth
                         Selection = item != null && item.Server == character.Server ? new SavedInventorySelection(item) : null
                     }.Save();
                     UpdateSavedInventorySearchButton();
-                    Util.Chat("Search saved. On another character, open Server > Inventory and click Load Search. It can be loaded once.");
+                    Util.Chat("Search saved. On another character, open Server > Inventory and click Load Search. It can be loaded once.", Util.ColorPink);
                     return;
                 }
 
@@ -87,7 +87,7 @@ namespace OracleOfDereth
                 if (saved == null)
                 {
                     PollSavedInventorySearch();
-                    Util.Chat("That saved search has already been loaded or replaced.");
+                    Util.Chat("That saved search has already been loaded or replaced.", Util.ColorPink);
                     return;
                 }
 
@@ -104,7 +104,8 @@ namespace OracleOfDereth
                 SavedInventory.List.CurrentSortType = saved.Sort;
                 RefreshVGInventory();
                 loadedInventorySelection = saved.Selection;
-                Util.Chat("Saved search loaded and cleared.");
+                if (loadedInventorySelection == null)
+                    Util.Chat("Loaded and cleared search.", Util.ColorPink);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -127,12 +128,17 @@ namespace OracleOfDereth
                     // Move the full item/stack to the first main-pack slot, without merging.
                     core.Actions.SelectedStackCount = Math.Max(1, live.Values(Decal.Adapter.Wrappers.LongValueKey.StackCount, 1));
                     core.Actions.MoveItem(live.Id, character.Id, 0, false);
+                    Util.Chat($"Loaded and cleared search. Selected {selection.Name} and moved to main pack.", Util.ColorPink);
+                    return;
                 }
                 else
-                    Util.Chat($"Search loaded, but the exact item {selection.Name} is not available in your live inventory.");
+                    Util.Chat($"Loaded and cleared search. {selection.Name} is not available in your inventory.", Util.ColorPink);
+                return;
             }
             if (selectedVGInventoryItem == null)
-                Util.Chat($"The saved item {selection.Name} on {selection.Owner} is not in these results. The saved filters were restored.");
+                Util.Chat($"Loaded and cleared search. {selection.Name} on {selection.Owner} is not in these results.", Util.ColorPink);
+            else
+                Util.Chat("Loaded and cleared search.", Util.ColorPink);
         }
 
     }
