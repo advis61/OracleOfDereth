@@ -128,7 +128,7 @@ namespace OracleOfDereth
                     // Move the full item/stack to the first main-pack slot, without merging.
                     core.Actions.SelectedStackCount = Math.Max(1, live.Values(Decal.Adapter.Wrappers.LongValueKey.StackCount, 1));
                     core.Actions.MoveItem(live.Id, character.Id, 0, false);
-                    Util.Chat($"Loaded and cleared search. Selected {selection.Name} and moved to main pack.", Util.ColorPink);
+                    Util.Chat($"Loaded and cleared search. Selected {selection.Name} and moving to main pack.", Util.ColorPink);
                     return;
                 }
                 else

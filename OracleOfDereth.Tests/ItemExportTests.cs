@@ -52,7 +52,7 @@ internal static class ItemExportTests
             Check(Convert.ToInt32(json[2]["Keys Held"]) == 12, "Keyring count was lost.");
             Check(json[4]["Quantity"] == null && json[4]["Workmanship"] == null && json[0]["Uses Remaining"] == null, "Missing data was fabricated.");
             Check(Convert.ToUInt32(json[4]["Item ID"]) == unchecked((uint)-46) && Equals(json[4]["ObjectClass"], "Armor"), "Incomplete item lost known identity.");
-            Check(weapon.DescriptionWithOwner == "Atlas: " + weapon.Description + " (Last on Atlas)", "Text/chat ownership suffix differs.");
+            Check(weapon.DescriptionWithOwner == weapon.Description + " (Last on Atlas)", "Text/chat ownership suffix differs.");
             var noOwner = Row(new Item("Conquest", "", 1, "Unknown", ObjectClass.Armor));
             Check(noOwner.DescriptionWithOwner == noOwner.Description, "Invented an owner.");
 
