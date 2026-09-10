@@ -8,7 +8,7 @@
 		<control progid="DecalControls.PushButton" name="TradeWithdrawBank" left="910" top="30" width="220" height="24" text="Withdraw from Bank"/>
 
 		<control progid="DecalControls.StaticText" name="TradeFilterLabel" left="5" top="59" width="38" height="16" text="Filter:"/>
-		<control progid="DecalControls.Edit" name="TradeFilterText" left="46" top="57" width="293" height="20" text=""/><control progid="DecalControls.PushButton" name="TradeFilterReset" left="343" top="56" width="50" height="22" text="Reset"/>
+		<control progid="DecalControls.Edit" name="TradeFilterText" left="46" top="57" width="288" height="20" text=""/><control progid="DecalControls.PushButton" name="TradeFilterReset" left="338" top="56" width="50" height="22" text="Reset"/>
 		<control progid="DecalControls.CheckBox" name="TradeFilterWeapons" left="395" top="59" width="70" height="16" text="Weapons" checked="false"/>
 		<control progid="DecalControls.CheckBox" name="TradeFilterArmor" left="473" top="59" width="60" height="16" text="Armor" checked="false"/>
 		<control progid="DecalControls.CheckBox" name="TradeFilterClothing" left="541" top="59" width="70" height="16" text="Clothing" checked="false"/>

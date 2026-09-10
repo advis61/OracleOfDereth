@@ -97,10 +97,10 @@
 						<control progid="DecalControls.StaticText" name="ItemsText" left="5" top="5" width="600" height="20" text="Inventory Items: 0"/>
 						<control progid="DecalControls.PushButton" name="ItemsAddAll" left="5" top="30" width="108" height="24" text="Add All"/>
 						<control progid="DecalControls.PushButton" name="ItemsAdd" left="118" top="30" width="108" height="24" text="Add Selected"/>
-						<control progid="DecalControls.PushButton" name="ItemsClear" left="231" top="30" width="108" height="24" text="Clear"/>
-						<control progid="DecalControls.CheckBox" name="ItemsAddSelected" left="345" top="33" width="130" height="20" text="Auto-add selected" checked="false"/>
+						<control progid="DecalControls.PushButton" name="ItemsClear" left="231" top="30" width="103" height="24" text="Clear"/>
+						<control progid="DecalControls.CheckBox" name="ItemsAddSelected" left="340" top="33" width="130" height="20" text="Auto-add selected" checked="false"/>
 						<control progid="DecalControls.StaticText" name="ItemsFilterLabel" left="5" top="59" width="38" height="16" text="Filter:"/>
-						<control progid="DecalControls.Edit" name="ItemsFilterText" left="46" top="57" width="293" height="20" text=""/><control progid="DecalControls.PushButton" name="ItemsFilterReset" left="343" top="56" width="50" height="22" text="Reset"/>
+						<control progid="DecalControls.Edit" name="ItemsFilterText" left="46" top="57" width="288" height="20" text=""/><control progid="DecalControls.PushButton" name="ItemsFilterReset" left="338" top="56" width="50" height="22" text="Reset"/>
 						<control progid="DecalControls.CheckBox" name="ItemsFilterWeapons" left="395" top="59" width="70" height="16" text="Weapons" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="ItemsFilterArmor" left="473" top="59" width="60" height="16" text="Armor" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="ItemsFilterClothing" left="541" top="59" width="70" height="16" text="Clothing" checked="false"/>
@@ -528,7 +528,7 @@
 						<control progid="DecalControls.PushButton" name="VGInventorySavedSearch" left="760" top="3" width="125" height="22" text="Save Search"/>
 						<control progid="DecalControls.StaticText" name="VGInventoryFilterLabel" left="5" top="32" width="38" height="16" text="Filter:"/>
 						<control progid="DecalControls.PushButton" name="VGInventoryHelp" left="889" top="3" width="17" height="22" text="?"/>
-						<control progid="DecalControls.Edit" name="VGInventoryFilterText" left="46" top="30" width="293" height="20" text=""/><control progid="DecalControls.PushButton" name="VGInventoryFilterReset" left="343" top="29" width="50" height="22" text="Reset"/>
+						<control progid="DecalControls.Edit" name="VGInventoryFilterText" left="46" top="30" width="288" height="20" text=""/><control progid="DecalControls.PushButton" name="VGInventoryFilterReset" left="338" top="29" width="50" height="22" text="Reset"/>
 						<control progid="DecalControls.CheckBox" name="VGInventoryFilterWeapons" left="395" top="32" width="70" height="16" text="Weapons" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="VGInventoryFilterArmor" left="473" top="32" width="60" height="16" text="Armor" checked="false"/>
 						<control progid="DecalControls.CheckBox" name="VGInventoryFilterClothing" left="541" top="32" width="70" height="16" text="Clothing" checked="false"/>

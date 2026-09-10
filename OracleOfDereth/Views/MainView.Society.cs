@@ -57,12 +57,12 @@ namespace OracleOfDereth
             }
 
             // Status key-value list
-            SocietyStatusList.ClearRows();
+            int index = 0;
 
             if (name == "None")
             {
-                AddStatusRow("Requires", "Level 180+");
-                AddStatusRow("Start with", "Investigating the Societies quest");
+                UpdateStatusRow(index++, "Requires", "Level 180+");
+                UpdateStatusRow(index++, "Start with", "Investigating the Societies quest");
             }
 
             if (name != "None")
@@ -75,37 +75,38 @@ namespace OracleOfDereth
                 string nextRankName = Society.GetNextRankName();
 
                 // Value can briefly exceed the cap (95-100 etc); never show more than max.
-                AddStatusRow("Rank Progress", $"{Math.Min(Society.GetRankProgress(), max)} / {max} ribbons");
+                UpdateStatusRow(index++, "Rank Progress", $"{Math.Min(Society.GetRankProgress(), max)} / {max} ribbons");
 
                 // Master (1001+) trades ribbons for tokens with no per-day cap (the
                 // .es exchange branch never touches the daily counter), so the count
                 // and limit are both meaningless at that rank.
                 if (value > 1000)
                 {
-                    AddStatusRow("Ribbons Today", "Unlimited");
+                    UpdateStatusRow(index++, "Ribbons Today", "Unlimited");
                 }
                 else
                 {
-                    AddStatusRow("Ribbons Today", $"{ribbonsToday} / {dailyLimit}");
+                    UpdateStatusRow(index++, "Ribbons Today", $"{ribbonsToday} / {dailyLimit}");
                 }
 
                 if (ribbonsToNext > 0)
                 {
-                    AddStatusRow("Ribbons to " + nextRankName, ribbonsToNext.ToString());
+                    UpdateStatusRow(index++, "Ribbons to " + nextRankName, ribbonsToNext.ToString());
                 }
 
                 // Status / what to do next
                 string status = GetSocietyStatusText(value);
                 if (status.Length > 0)
                 {
-                    AddStatusRow("Status", status);
+                    UpdateStatusRow(index++, "Status", status);
                 }
             }
+            while (SocietyStatusList.RowCount > index) { SocietyStatusList.RemoveRow(SocietyStatusList.RowCount - 1); }
         }
 
-        private void AddStatusRow(string key, string value)
+        private void UpdateStatusRow(int index, string key, string value)
         {
-            HudList.HudListRowAccessor row = SocietyStatusList.AddRow();
+            var row = index < SocietyStatusList.RowCount ? SocietyStatusList[index] : SocietyStatusList.AddRow();
             SetText(row, 0, key);
             SetText(row, 1, value);
         }

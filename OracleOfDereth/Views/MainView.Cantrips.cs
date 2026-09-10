@@ -73,6 +73,7 @@ namespace OracleOfDereth
             // dictionary. Refreshed every tick like the rest of the tab, so swapping a piece of
             // gear updates the source counts without any invalidation step.
             Cantrip.RefreshGearSources();
+            var activeSpells = new HashSet<int>(CoreManager.Current.CharacterFilter.Enchantments.Select(x => x.SpellId));
 
             // SkillIsKnown() is already true for the non-skill rows (set bonuses, essences and the
             // "Blank" spacers all carry SkillId <= 0), so those show either way and only the real
@@ -109,8 +110,9 @@ namespace OracleOfDereth
 
                 AssignImage((HudPictureBox)row[0], cantrip.Icon());
                 SetText(row, 1, cantrip.Name);
-                SetText(row, 2, cantrip.Level());
-                var source = cantrip.EquippedSource();
+                int tier = cantrip.ActiveTier(activeSpells);
+                SetText(row, 2, cantrip.Level(tier));
+                var source = cantrip.EquippedSource(tier);
                 SetText(row, 3, source.Name);
                 SetText(row, 4, source.Id == 0 ? "" : source.Id.ToString());
             }

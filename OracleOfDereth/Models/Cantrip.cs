@@ -190,29 +190,20 @@ namespace OracleOfDereth
             return (SkillId == -4); 
         }
 
-        public bool IsMinor()
+        public int ActiveTier(ISet<int> activeSpells)
         {
-            return CoreManager.Current.CharacterFilter.Enchantments.Any(x => x.SpellId == Minor);
-        }
-        public bool IsModerate()
-        {
-            return CoreManager.Current.CharacterFilter.Enchantments.Any(x => x.SpellId == Moderate);
-        }
-
-        public bool IsMajor()
-        {
-            return CoreManager.Current.CharacterFilter.Enchantments.Any(x => x.SpellId == Major);
+            if (Legendary > 0 && activeSpells.Contains(Legendary)) return 5;
+            if (Epic > 0 && activeSpells.Contains(Epic)) return 4;
+            if (Major > 0 && activeSpells.Contains(Major)) return 3;
+            if (Moderate > 0 && activeSpells.Contains(Moderate)) return 2;
+            if (Minor > 0 && activeSpells.Contains(Minor)) return 1;
+            return 0;
         }
 
-        public bool IsEpic()
+        private int SpellForTier(int tier) => tier switch
         {
-            return CoreManager.Current.CharacterFilter.Enchantments.Any(x => x.SpellId == Epic);
-        }
-
-        public bool IsLegendary()
-        {
-            return CoreManager.Current.CharacterFilter.Enchantments.Any(x => x.SpellId == Legendary);
-        }
+            5 => Legendary, 4 => Epic, 3 => Major, 2 => Moderate, 1 => Minor, _ => 0
+        };
 
         public int Icon()
         {
@@ -222,23 +213,19 @@ namespace OracleOfDereth
             return spell.IconId;
         }
 
-        public string Level()
+        public string Level(int tier)
         {
-            if(IsSetDedicationBonus()) { return SetDedicationBonusLevel(); }
-            if(IsSetBonus()) { return SetBonusLevel(); }
-            if(IsEssence()) { return EssenceLevel(); }
-            if(IsWarriorsVitality()) { return WarriorsVitalityLevel(); }
-            return CantripLevel();
-        }
+            if (IsSetDedicationBonus())
+                return tier switch { 5 => "9 pieces", 4 => "8 pieces", 3 => "6 pieces", 2 => "4 pieces", 1 => "2 pieces", _ => "-" };
+            if (IsSetBonus())
+                return tier switch { 5 => "5 pieces", 4 => "4 pieces", 3 => "3 pieces", 2 => "2 pieces", _ => "-" };
+            if (IsEssence())
+                return tier switch { 5 => "+30 health", 4 => "+25 health", 3 => "+25 health", 2 => "+20 health", 1 => "+15 health", _ => "-" };
+            if (IsWarriorsVitality())
+                return tier switch { 5 => "+20 health", 4 => "+15 health", 3 => "+10 health", 2 => "+5 health", _ => "-" };
 
-        public string CantripLevel()
-        {
-            if(IsLegendary()) { return "Legendary" + GearSuffix(Legendary); };
-            if(IsEpic()) { return "Epic" + GearSuffix(Epic); };
-            if(IsMajor()) { return "Major" + GearSuffix(Major); };
-            if(IsModerate()) { return "Moderate" + GearSuffix(Moderate); };
-            if(IsMinor()) { return "Minor" + GearSuffix(Minor); };
-            return "-";
+            string level = tier switch { 5 => "Legendary", 4 => "Epic", 3 => "Major", 2 => "Moderate", 1 => "Minor", _ => "-" };
+            return level + GearSuffix(SpellForTier(tier));
         }
 
         // " (2)" when more than one equipped piece grants this exact cantrip — two items casting
@@ -258,10 +245,9 @@ namespace OracleOfDereth
             return source.Count >= 2 ? $" ({source.Count})" : "";
         }
 
-        public (int Id, string Name) EquippedSource()
+        public (int Id, string Name) EquippedSource(int tier)
         {
-            int spellId = IsLegendary() ? Legendary : IsEpic() ? Epic : IsMajor() ? Major :
-                IsModerate() ? Moderate : IsMinor() ? Minor : 0;
+            int spellId = SpellForTier(tier);
             return spellId > 0 && GearSources.TryGetValue(spellId, out var source)
                 ? (source.Id, source.Name) : (0, "");
         }
@@ -271,8 +257,7 @@ namespace OracleOfDereth
             new Dictionary<int, (int Count, int Id, string Name)>();
 
         // Recount which spells the equipped gear is granting. ONE inventory walk, cached here and
-        // reused by every row of a redraw — asking per cantrip would mean ~80 walks a tick, and the
-        // walk is the only part of this that costs anything.
+        // reused by every row of a redraw — asking per cantrip would mean ~80 walks a tick.
         //
         // Reads INNATE spells (WorldObject.Spell(i)), not active ones: an item's innate list is what
         // it grants while worn, whereas its active list is what has been cast onto the item. Only
@@ -312,42 +297,6 @@ namespace OracleOfDereth
             GearSources = counts;
         }
 
-        public string SetBonusLevel()
-        {
-            if (IsLegendary()) { return "5 pieces"; };
-            if (IsEpic()) { return "4 pieces"; };
-            if (IsMajor()) { return "3 pieces"; };
-            if (IsModerate()) { return "2 pieces"; };
-            return "-";
-        }
-        public string SetDedicationBonusLevel()
-        {
-            if (IsLegendary()) { return "9 pieces"; };
-            if (IsEpic()) { return "8 pieces"; };
-            if (IsMajor()) { return "6 pieces"; };
-            if (IsModerate()) { return "4 pieces"; }
-            if (IsMinor()) { return "2 pieces"; }
-            return "-";
-        }
-
-        public string EssenceLevel()
-        {
-            if (IsLegendary()) { return "+30 health"; };
-            if (IsEpic()) { return "+25 health"; };
-            if (IsMajor()) { return "+25 health"; };
-            if (IsModerate()) { return "+20 health"; } 
-            if (IsMinor()) { return "+15 health"; }
-            return "-";
-        }
-
-        public string WarriorsVitalityLevel()
-        {
-            if (IsLegendary()) { return "+20 health"; };
-            if (IsEpic()) { return "+15 health"; };
-            if (IsMajor()) { return "+10 health"; };
-            if (IsModerate()) { return "+5 health"; }
-            return "-";
-        }
     }
 }
 

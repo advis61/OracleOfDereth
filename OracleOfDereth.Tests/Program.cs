@@ -35,6 +35,7 @@ internal static class Program
         AssertTradeSplitExpiresClosed();
         AssertBankTransferTranslation();
         AssertNearbyFilters();
+        AssertCantripTiers();
         AssertSettingsRecovery();
         SettingsFileTests.Run();
         AssertPartialViewCleanup();
@@ -46,6 +47,34 @@ internal static class Program
         AssertConquestAugmentationEffects();
         Console.WriteLine("Regression tests passed.");
         return 0;
+    }
+
+    private static void AssertCantripTiers()
+    {
+        var cantrip = new Cantrip { Minor = 11, Moderate = 12, Major = 13, Epic = 14, Legendary = 15 };
+        var active = new HashSet<int> { 11, 12, 13, 14, 15, 999 };
+        var cases = new[]
+        {
+            (0, new[] { "-", "Minor", "Moderate", "Major", "Epic", "Legendary" }),
+            (-1, new[] { "-", "-", "2 pieces", "3 pieces", "4 pieces", "5 pieces" }),
+            (-2, new[] { "-", "2 pieces", "4 pieces", "6 pieces", "8 pieces", "9 pieces" }),
+            (-3, new[] { "-", "+15 health", "+20 health", "+25 health", "+25 health", "+30 health" }),
+            (-4, new[] { "-", "-", "+5 health", "+10 health", "+15 health", "+20 health" })
+        };
+        for (int tier = 5; tier >= 0; tier--)
+        {
+            int actual = cantrip.ActiveTier(active);
+            if (actual != tier) throw new InvalidOperationException("Cantrip did not select its highest active tier.");
+            foreach (var test in cases)
+            {
+                cantrip.SkillId = test.Item1;
+                if (cantrip.Level(actual) != test.Item2[tier])
+                    throw new InvalidOperationException("Cantrip tier formatting changed for skill " + test.Item1);
+            }
+            active.Remove(10 + tier);
+        }
+        if (new Cantrip().ActiveTier(new HashSet<int> { 0 }) != 0)
+            throw new InvalidOperationException("An unavailable cantrip tier must not count as active.");
     }
 
     private static void AssertNearbyFilters()
