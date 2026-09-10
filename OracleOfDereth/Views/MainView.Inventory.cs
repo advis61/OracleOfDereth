@@ -16,7 +16,6 @@ namespace OracleOfDereth
         private ItemListRow selectedVGInventoryItem;
 
         public HudStaticText VGInventoryText { get; private set; }
-        public HudButton VGInventoryRefresh { get; private set; }
         private HudButton vgInventoryHelp;
         public HudButton VGInventoryClipboard { get; private set; }
         public HudButton VGInventoryExportText { get; private set; }
@@ -47,8 +46,6 @@ namespace OracleOfDereth
         {
             VGInventoryText = (HudStaticText)view["VGInventoryText"];
             VGInventoryText.FontHeight = 10;
-            VGInventoryRefresh = (HudButton)view["VGInventoryRefresh"];
-            VGInventoryRefresh.Hit += VGInventoryRefresh_Hit;
             vgInventoryHelp = (HudButton)view["VGInventoryHelp"];
             vgInventoryHelp.Hit += VGInventoryHelp_Hit;
             VGInventoryClipboard = (HudButton)view["VGInventoryClipboard"];
@@ -117,7 +114,6 @@ namespace OracleOfDereth
             vgInventoryTimer.Tick -= VGInventorySearchTick;
             vgInventoryTimer.Dispose();
             SavedInventory.CancelSearch();
-            VGInventoryRefresh.Hit -= VGInventoryRefresh_Hit;
             vgInventoryHelp.Hit -= VGInventoryHelp_Hit;
             VGInventoryClipboard.Hit -= VGInventoryClipboard_Hit;
             VGInventoryExportText.Hit -= VGInventoryExportText_Hit;
@@ -227,12 +223,6 @@ namespace OracleOfDereth
         private void VGInventoryHelp_Hit(object sender, EventArgs e)
         {
             Util.Chat("This screen works with Virindi Global Inventory to show saved items across your characters on this server. If an item you expect is missing, make sure that character has Track All Items selected in Virindi Global Inventory.", Util.ColorPink);
-        }
-
-        private void VGInventoryRefresh_Hit(object sender, EventArgs e)
-        {
-            RefreshVGInventory();
-            FlashButton(VGInventoryRefresh);
         }
 
         private void VGInventoryFilter_Change(object sender, EventArgs e)

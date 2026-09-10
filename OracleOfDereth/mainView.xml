@@ -523,9 +523,8 @@
 				<page label="Inventory">
 					<control progid="DecalControls.FixedLayout" clipped="">
 						<control progid="DecalControls.StaticText" name="VGInventoryText" left="5" top="5" width="655" height="20" text="Saved Inventory: 0"/>
-						<control progid="DecalControls.PushButton" name="VGInventorySavedSearch" left="665" top="3" width="125" height="22" text="Save Search"/>
+						<control progid="DecalControls.PushButton" name="VGInventorySavedSearch" left="760" top="3" width="125" height="22" text="Save Search"/>
 						<control progid="DecalControls.StaticText" name="VGInventoryFilterLabel" left="5" top="32" width="38" height="16" text="Filter:"/>
-						<control progid="DecalControls.PushButton" name="VGInventoryRefresh" left="798" top="3" width="87" height="22" text="Refresh"/>
 						<control progid="DecalControls.PushButton" name="VGInventoryHelp" left="889" top="3" width="17" height="22" text="?"/>
 						<control progid="DecalControls.Edit" name="VGInventoryFilterText" left="46" top="30" width="293" height="20" text=""/><control progid="DecalControls.PushButton" name="VGInventoryFilterReset" left="343" top="29" width="50" height="22" text="Reset"/>
 						<control progid="DecalControls.CheckBox" name="VGInventoryFilterWeapons" left="395" top="32" width="70" height="16" text="Weapons" checked="false"/>
