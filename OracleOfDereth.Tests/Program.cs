@@ -11,6 +11,8 @@ internal static class Program
     {
         if (args.Length == 4 && args[0] == "--consume-search")
             return SavedInventorySearchTests.Consume(args[1], args[2], args[3]);
+        if (args.Length == 3 && args[0] == "--write-settings")
+            return SettingsFileTests.Write(args[1], args[2]);
         SavedInventorySearchTests.Run();
         VGInventoryTests.Run();
         ItemExportTests.Run();
@@ -33,6 +35,7 @@ internal static class Program
         AssertBankTransferTranslation();
         AssertNearbyFilters();
         AssertSettingsRecovery();
+        SettingsFileTests.Run();
         AssertQuestState();
         AssertMyQuestsParsing();
         AssertQuestAccountFlag();

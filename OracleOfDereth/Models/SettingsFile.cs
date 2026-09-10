@@ -1,5 +1,8 @@
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
 using System.Xml;
 
 namespace OracleOfDereth
@@ -18,28 +21,31 @@ namespace OracleOfDereth
         private static void Load()
         {
             _doc = NewDocument();
-            if (!File.Exists(_filePath))
-            {
-                Save();
-                return;
-            }
-
             try
             {
-                var loaded = new XmlDocument();
-                loaded.Load(_filePath);
-                if (loaded.DocumentElement == null || loaded.DocumentElement.Name != "Settings")
-                    throw new XmlException("Settings file has no Settings root element.");
+                Locked(() =>
+                {
+                    try { _doc = Read(); }
+                    catch (XmlException ex)
+                    {
+                        Util.Log(ex);
+                        File.Delete(_filePath);
+                        Save();
+                    }
+                    if (!File.Exists(_filePath)) Save();
+                });
+            }
+            catch (Exception ex) { Util.Log(ex); }
+        }
 
-                _doc = loaded;
-            }
-            catch (Exception ex)
-            {
-                Util.Log(ex);
-                try { File.Delete(_filePath); }
-                catch (Exception deleteException) { Util.Log(deleteException); }
-                Save();
-            }
+        private static XmlDocument Read()
+        {
+            if (!File.Exists(_filePath)) return NewDocument();
+            var loaded = new XmlDocument();
+            loaded.Load(_filePath);
+            if (loaded.DocumentElement == null || loaded.DocumentElement.Name != "Settings")
+                throw new XmlException("Settings file has no Settings root element.");
+            return loaded;
         }
 
         private static XmlDocument NewDocument()
@@ -72,26 +78,41 @@ namespace OracleOfDereth
         {
             try
             {
-                XmlNode root = _doc.SelectSingleNode("/Settings");
-                if (root == null)
+                Locked(() =>
                 {
-                    root = _doc.CreateElement("Settings");
-                    _doc.AppendChild(root);
-                }
+                    // Merge this one change into the latest file, never a client's stale copy.
+                    _doc = Read();
+                    XmlNode root = _doc.DocumentElement;
+                    XmlNode node = root.SelectSingleNode(key);
+                    if (node == null)
+                    {
+                        node = _doc.CreateElement(key);
+                        root.AppendChild(node);
+                    }
 
-                XmlNode node = root.SelectSingleNode(key);
-                if (node == null)
-                {
-                    node = _doc.CreateElement(key);
-                    root.AppendChild(node);
-                }
-
-                node.InnerText = value;
-                Save();
+                    node.InnerText = value;
+                    Save();
+                });
             }
             catch (Exception ex)
             {
                 Util.Log(ex);
+            }
+        }
+
+        private static void Locked(Action action)
+        {
+            string path = Path.GetFullPath(_filePath).ToUpperInvariant();
+            using (var hash = SHA256.Create())
+            using (var mutex = new Mutex(false, @"Local\OracleOfDereth.Settings." +
+                BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(path))).Replace("-", "")))
+            {
+                bool acquired;
+                try { acquired = mutex.WaitOne(1000); }
+                catch (AbandonedMutexException) { acquired = true; }
+                if (!acquired) throw new IOException("Settings are busy; try again in a moment.");
+                try { action(); }
+                finally { mutex.ReleaseMutex(); }
             }
         }
 
@@ -106,7 +127,7 @@ namespace OracleOfDereth
                 try
                 {
                     _doc.Save(tempPath);
-                    if (File.Exists(_filePath)) File.Replace(tempPath, _filePath, null);
+                    if (File.Exists(_filePath)) File.Replace(tempPath, _filePath, null, true);
                     else File.Move(tempPath, _filePath);
                 }
                 finally
