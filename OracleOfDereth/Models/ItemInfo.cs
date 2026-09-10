@@ -123,18 +123,22 @@ namespace OracleOfDereth
             return item.Values(BoolValueKey.UnlimitedUses) ? "Unlimited Use" : "Single Use";
         }
 
-        public string GetMaterial()
+        public string GetMaterial() => GetMaterial(item.Values(LongValueKey.Material));
+
+        private static string GetMaterial(int material)
         {
-            if (item.Values(LongValueKey.Material) <= 0) return "";
-            if (MaterialInfo.TryGetValue(item.Values(LongValueKey.Material), out string mat)) return mat;
-            return "Unknown Material " + item.Values(LongValueKey.Material);
+            if (material <= 0) return "";
+            if (MaterialInfo.TryGetValue(material, out string mat)) return mat;
+            return "Unknown Material " + material;
         }
 
-        public string GetName()
+        public string GetName() => GetName(item.Name, item.Values(LongValueKey.Material));
+
+        public static string GetName(string name, int materialId)
         {
-            string material = GetMaterial();
-            if (material.Length > 0) return material + " " + item.Name;
-            return item.Name;
+            string material = GetMaterial(materialId);
+            if (material.Length > 0) return material + " " + name;
+            return name;
         }
 
         public string GetItemSlotName()

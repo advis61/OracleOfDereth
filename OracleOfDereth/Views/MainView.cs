@@ -37,11 +37,7 @@ namespace OracleOfDereth
         readonly int IconArrowUp = 0x60028FC;
         readonly int IconArrowDown = 0x60028FD;
         readonly ACImage ImageDisabled = new ACImage(Color.FromArgb(255, 75, 75, 75));
-        readonly Color ColorSelected = Color.Orange;
-
-        // The clicked row on the Flags and Favorites tabs. Deliberately not ColorSelected: that one
-        // already means "flag the master list doesn't know", and a row can be both at once.
-        readonly Color ColorRowSelected = Color.DeepSkyBlue;
+        internal static readonly Color ColorSelected = Color.Orange;
 
         public HudTabView MainViewNotebook { get; private set; }
         public HudTabView StatusViewNotebook { get; private set; }
@@ -62,7 +58,7 @@ namespace OracleOfDereth
 
             // Character Tab
             { 2_00, 650 }, // Augmentations
-            { 2_01, 420 }, // Cantrips
+            { 2_01, 700 }, // Cantrips
             { 2_02, 420 }, // Credits
             { 2_03, 650 }, // Luminance
             { 2_04, 420 }, // Recalls
@@ -505,6 +501,7 @@ namespace OracleOfDereth
             int currentTab = CurrentTab();
             if (currentTab == 1_02) { UpdateNearbyList(); }
             if (currentTab == 1_03) { UpdateFellowshipButtons(); }
+            if (currentTab == 2_01) { UpdateCantripsSelection(); }
         }
 
         // Quest Flag Changes

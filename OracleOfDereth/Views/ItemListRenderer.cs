@@ -590,9 +590,6 @@ namespace OracleOfDereth
         // Dim grey for rows still waiting on their appraisal details.
         private static readonly Color ColorLoading = Color.FromArgb(255, 150, 150, 150);
 
-        // Highlight for the currently-picked row.
-        private static readonly Color ColorSelected = Color.FromArgb(255, 130, 210, 255);
-
         // Paint the given items into the HudList: status/loading icon, item icon, name and
         // the four summary columns, with the id stashed in the (hidden) last column. Takes
         // the "not complete" icon for column 0 and the id of the selected row.
@@ -638,14 +635,14 @@ namespace OracleOfDereth
             for (int col = 2; col <= 6; col++)
             {
                 HudStaticText cell = (HudStaticText)row[col];
-                if (selected) cell.TextColor = ColorSelected;
+                if (selected) cell.TextColor = MainView.ColorSelected;
                 else if (loading) cell.TextColor = ColorLoading;
                 else cell.ResetTextColor();
             }
             if (showCharacter)
             {
                 HudStaticText character = (HudStaticText)row[0];
-                if (selected) character.TextColor = ColorSelected;
+                if (selected) character.TextColor = MainView.ColorSelected;
                 else character.ResetTextColor();
             }
         }

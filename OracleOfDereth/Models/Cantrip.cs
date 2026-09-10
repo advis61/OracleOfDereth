@@ -253,13 +253,22 @@ namespace OracleOfDereth
         {
             if (spellId <= 0) { return ""; }
 
-            GearSources.TryGetValue(spellId, out int sources);
+            GearSources.TryGetValue(spellId, out var source);
 
-            return sources >= 2 ? $" ({sources})" : "";
+            return source.Count >= 2 ? $" ({source.Count})" : "";
         }
 
-        // spell id -> how many equipped pieces grant it. Rebuilt by RefreshGearSources().
-        private static Dictionary<int, int> GearSources = new Dictionary<int, int>();
+        public (int Id, string Name) EquippedSource()
+        {
+            int spellId = IsLegendary() ? Legendary : IsEpic() ? Epic : IsMajor() ? Major :
+                IsModerate() ? Moderate : IsMinor() ? Minor : 0;
+            return spellId > 0 && GearSources.TryGetValue(spellId, out var source)
+                ? (source.Id, source.Name) : (0, "");
+        }
+
+        // Spell id -> count and first equipped source. No live WorldObject references retained.
+        private static Dictionary<int, (int Count, int Id, string Name)> GearSources =
+            new Dictionary<int, (int Count, int Id, string Name)>();
 
         // Recount which spells the equipped gear is granting. ONE inventory walk, cached here and
         // reused by every row of a redraw — asking per cantrip would mean ~80 walks a tick, and the
@@ -270,7 +279,7 @@ namespace OracleOfDereth
         // the former makes a piece of gear the source of a buff.
         public static void RefreshGearSources()
         {
-            var counts = new Dictionary<int, int>();
+            var counts = new Dictionary<int, (int Count, int Id, string Name)>();
 
             if (CoreManager.Current.CharacterFilter.LoginStatus < 1)
             {
@@ -286,13 +295,16 @@ namespace OracleOfDereth
                     // pack don't count. Matches ItemInfo.IsEquipped.
                     if (item.Values((LongValueKey)10, 0) <= 0) { continue; }
 
+                    string name = null;
                     for (int i = 0; i < item.SpellCount; i++)
                     {
                         int spellId = item.Spell(i);
                         if (spellId <= 0) { continue; }
 
-                        counts.TryGetValue(spellId, out int count);
-                        counts[spellId] = count + 1;
+                        counts.TryGetValue(spellId, out var source);
+                        counts[spellId] = source.Count == 0
+                            ? (1, item.Id, name ?? (name = ItemInfo.GetName(item.Name, item.Values(LongValueKey.Material, 0))))
+                            : (source.Count + 1, source.Id, source.Name);
                     }
                 }
             }

@@ -15,16 +15,14 @@ namespace OracleOfDereth
         // trigger its own repaint — we do one at the end instead.
         private bool suppressQuestsFilter = false;
 
-        // The text columns AssignSelected tints for a newly-discovered flag. Hoisted out of the
+        // The text columns tinted for the selected row. Hoisted out of the
         // render loop so it isn't reallocated once per row across thousands of rows.
         private static readonly List<int> QuestsRowColumns = new List<int> { 1, 2, 3, 4 };
 
         // How each row is currently tinted, parallel to the list's rows. Tinting writes four colour
         // properties per row, so firing it on every row of every repaint is the most expensive
-        // thing on this tab — this lets it fire only when a row's tint actually flips. A row can
-        // qualify for both tints at once, hence a code rather than a bool.
+        // thing on this tab — this lets it fire only when a row's tint actually flips.
         private const int TintNone = 0;
-        private const int TintNew = 1;
         private const int TintRowSelected = 2;
 
         private readonly List<int> questsRowTinted = new List<int>();
@@ -243,14 +241,7 @@ namespace OracleOfDereth
                 SetText(row, 3, quest.StatusInQuestView());
                 SetText(row, 4, quest.SolvesText());
 
-                // Flags the server reported that quests.csv doesn't list are tinted rather than
-                // tagged in the Name column — their name is the game's own description, which
-                // already fills the column, and a "(new)" prefix would just crowd it out. The
-                // clicked row outranks that: you need to see what you're about to favourite, and
-                // it's one row against however many are new.
-                int tint = quest.Flag == questsSelectedFlag ? TintRowSelected
-                         : quest.IsNew ? TintNew
-                         : TintNone;
+                int tint = quest.Flag == questsSelectedFlag ? TintRowSelected : TintNone;
 
                 if (questsRowTinted[x] != tint)
                 {
@@ -298,8 +289,7 @@ namespace OracleOfDereth
 
         private Color? TintColor(int tint)
         {
-            if (tint == TintRowSelected) { return ColorRowSelected; }
-            if (tint == TintNew) { return ColorSelected; }
+            if (tint == TintRowSelected) { return ColorSelected; }
 
             return null;
         }

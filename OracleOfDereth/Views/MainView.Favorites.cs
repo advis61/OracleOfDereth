@@ -169,9 +169,7 @@ namespace OracleOfDereth
                 SetText(row, 4, quest.Status());
                 SetText(row, 5, quest.SolvesText());
 
-                int tint = quest.Flag == favoritesSelectedFlag ? TintRowSelected
-                         : quest.IsNew ? TintNew
-                         : TintNone;
+                int tint = quest.Flag == favoritesSelectedFlag ? TintRowSelected : TintNone;
 
                 if (favoritesRowTinted[x] != tint)
                 {

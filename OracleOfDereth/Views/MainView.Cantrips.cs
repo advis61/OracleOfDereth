@@ -1,3 +1,5 @@
+using Decal.Adapter;
+using Decal.Adapter.Wrappers;
 using System.Collections.Generic;
 using System.Linq;
 using VirindiViewService.Controls;
@@ -7,6 +9,7 @@ namespace OracleOfDereth
     partial class MainView
     {
         public HudList CantripsList { get; private set; }
+        private readonly List<int> CantripsListColumns = new List<int> { 1, 2, 3 };
 
         // Unticked by default, so the list opens showing only cantrips for skills this character
         // actually has — the useful view for nearly everyone. Ticking it drops the filter and shows
@@ -22,6 +25,7 @@ namespace OracleOfDereth
         {
             CantripsList = (HudList)view["CantripsList"];
             CantripsList.ClearRows();
+            CantripsList.Click += CantripsList_Click;
 
             CantripsRatings = (HudStaticText)view["CantripsRatings"];
             CantripsRatings.FontHeight = 10;   // matches the header label on every other tab
@@ -32,7 +36,17 @@ namespace OracleOfDereth
 
         private void DisposeCantrips()
         {
+            if (CantripsList != null) CantripsList.Click -= CantripsList_Click;
             CantripsDisplayAll.Change -= CantripsDisplayAll_Change;
+        }
+
+        private void CantripsList_Click(object sender, int row, int col)
+        {
+            if (row < 0 || row >= CantripsList.RowCount) return;
+            if (!int.TryParse(((HudStaticText)CantripsList[row][4]).Text, out int id) || id == 0) return;
+            var item = CoreManager.Current.WorldFilter[id];
+            if (item != null && item.Values((LongValueKey)10, 0) > 0)
+                CoreManager.Current.Actions.SelectItem(id);
         }
 
         // Redraw straight away rather than waiting for the next tick, so the box feels responsive.
@@ -88,15 +102,32 @@ namespace OracleOfDereth
                     AssignImage((HudPictureBox)row[0], 0);
                     SetText(row, 1, "");
                     SetText(row, 2, "");
+                    SetText(row, 3, "");
+                    SetText(row, 4, "");
                     continue;
                 }
 
                 AssignImage((HudPictureBox)row[0], cantrip.Icon());
                 SetText(row, 1, cantrip.Name);
                 SetText(row, 2, cantrip.Level());
+                var source = cantrip.EquippedSource();
+                SetText(row, 3, source.Name);
+                SetText(row, 4, source.Id == 0 ? "" : source.Id.ToString());
             }
 
             while (CantripsList.RowCount > cantrips.Count()) { CantripsList.RemoveRow(CantripsList.RowCount-1); }
+            UpdateCantripsSelection();
+        }
+
+        private void UpdateCantripsSelection()
+        {
+            int targetId = Target.GetCurrent().Id;
+            for (int x = 0; x < CantripsList.RowCount; x++)
+            {
+                var row = CantripsList[x];
+                bool selected = int.TryParse(((HudStaticText)row[4]).Text, out int id) && id != 0 && id == targetId;
+                AssignSelected(row, selected, CantripsListColumns);
+            }
         }
     }
 }
