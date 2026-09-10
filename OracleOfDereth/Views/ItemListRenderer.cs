@@ -541,6 +541,7 @@ namespace OracleOfDereth
                 if (!columns.Any(column => column != null && column.IndexOf(phrase, StringComparison.OrdinalIgnoreCase) >= 0))
                     return false;
 
+            if (terms.Count == 0 && pattern == null) return true;
             string combined = string.Join(" ", columns);
             if (pattern != null)
             {

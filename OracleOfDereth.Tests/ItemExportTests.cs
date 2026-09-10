@@ -26,6 +26,15 @@ internal static class ItemExportTests
             new Dictionary<int, int> { [(int)LongValueKey.StackCount] = 250 }, hasIdData: true));
         var unavailable = Row(new Item("Conquest", "Atlas", -46, "Unknown", ObjectClass.Armor));
         var items = new List<ItemListRow> { weapon, salvage, keys, stack, unavailable };
+        // Description formatting remains identical across population, cloning, and stub transitions.
+        string expected = new ItemInfo(weapon.Item).ToString();
+        var clone = weapon.Clone();
+        Check(clone.Description == expected && weapon.Description == expected, "Deferred description changed output.");
+        clone.PopulateStub();
+        Check(clone.Description == clone.Item.Name + " (details unavailable)" && weapon.Description == expected,
+            "Stub description retained appraisal text or affected another row.");
+        clone.Populate();
+        Check(clone.Description == expected, "Repopulation retained the stub description.");
         var previousCulture = CultureInfo.CurrentCulture;
         try
         {

@@ -42,7 +42,8 @@ namespace OracleOfDereth
         public int SortCol3Melee { get; private set; } = 0;  // total melee-defense modifier (Col3 tertiary sort)
         public int SortCol3Work { get; private set; } = 0;   // workmanship (Col3 fourth sort)
         public int SortCol4 { get; private set; } = 0;
-        public string Description { get; private set; } = "";
+        private string description = "";
+        public string Description => description ?? (description = new ItemInfo(Item).ToString());
         public string DescriptionWithOwner => string.IsNullOrEmpty(Character) ? Description
             : Description + " (Last on " + Character + ")";
 
@@ -68,7 +69,7 @@ namespace OracleOfDereth
             SummaryCol1 = GetSummaryCol1(info);
             SummaryCol2 = SummaryCol3 = SummaryCol4 = "";
             SortCol2 = SortCol3OD = SortCol3 = SortCol3Melee = SortCol3Work = SortCol4 = 0;
-            Description = Item.Name + " (details unavailable)";
+            description = Item.Name + " (details unavailable)";
             SortCategory = GetSortCategory(info);
             IsComplete = false;
         }
@@ -104,7 +105,8 @@ namespace OracleOfDereth
                 SortCol3Work = salvageWork;
             }
             SortCol4 = 0; // Col4 (cantrips) is a string; sort falls through to SummaryCol4
-            Description = info.ToString();
+            // Most scanned rows are never clicked or exported. Format the full text on demand.
+            description = null;
             IsComplete = true;
         }
 
