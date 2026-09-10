@@ -214,8 +214,8 @@ namespace OracleOfDereth
                 title = Trade.IsCyTrader ? $"{Trade.PartnerName} (CyTrader bot)" : Trade.PartnerName;
             view.Title = title;
 
-            // The status line is just the item counts.
-            TradeText.Text = ItemListRenderer.StatusText("Total Items", TradeItems.Items.Count, items.Count, TradeItems.UnidentifiedCount);
+            // Show search errors instead of making an invalid expression look like no matches.
+            TradeText.Text = filter.SearchError ?? ItemListRenderer.StatusText("Total Items", TradeItems.Items.Count, items.Count, TradeItems.UnidentifiedCount);
 
             // One status line: the bot's points list, and (after a check/buy) the quoted price
             // with its MMD equivalent and whether we can afford it.

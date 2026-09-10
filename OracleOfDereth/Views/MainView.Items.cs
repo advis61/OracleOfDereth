@@ -207,7 +207,7 @@ namespace OracleOfDereth
                 InventoryList.Items.Where(filter.MatchesCategory).Select(t => t.Id));
 
             ItemListRenderer.Render(ItemsList, items, IconNotComplete, Target.CurrentTargetId);
-            ItemsText.Text = ItemListRenderer.StatusText("Inventory Items", InventoryList.Items.Count, items.Count, InventoryList.UnidentifiedCount);
+            ItemsText.Text = filter.SearchError ?? ItemListRenderer.StatusText("Inventory Items", InventoryList.Items.Count, items.Count, InventoryList.UnidentifiedCount);
         }
 
         private void ItemsAddSelected_Change(object sender, EventArgs e)
