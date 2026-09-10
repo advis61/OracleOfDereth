@@ -221,7 +221,8 @@ namespace OracleOfDereth
                 reader.ReadInt32();
                 if (stream.Position != stream.Length) throw new InvalidDataException("Unsupported VGI item data.");
             }
-            return new Item(server, character, id, name, category, integers, strings, booleans, doubles, int64s, spells, hasIdData: true);
+            return new Item(integers, strings, booleans, doubles, int64s, spells.ToArray(),
+                server, character, id, name, category, hasIdData: true);
         }
 
         private static void ReadProperties<T>(BinaryReader reader, Dictionary<int, T> values, int minimumSize, Func<BinaryReader, T> read)

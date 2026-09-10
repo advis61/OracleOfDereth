@@ -120,8 +120,7 @@ namespace OracleOfDereth
 
         private static void RemoveGonePlayers()
         {
-            var removed = Fellows.Where(f => CoreManager.Current.WorldFilter[f.Id] == null).ToList();
-            foreach (var fellow in removed) { Fellows.Remove(fellow); }
+            Fellows.RemoveAll(f => CoreManager.Current.WorldFilter[f.Id] == null);
         }
 
         private static void UpdateKnownFellows()

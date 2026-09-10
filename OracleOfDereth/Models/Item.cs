@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace OracleOfDereth
 {
-    // A single observation of an item. Property collections are copied on construction
+    // A single observation of an item. Caller-owned property collections are copied
     // and never mutated or exposed. No WorldObject, database, or UI references survive here.
     public sealed class Item
     {
@@ -115,23 +115,41 @@ namespace OracleOfDereth
             IDictionary<int, long> int64s = null, IEnumerable<int> spells = null,
             IEnumerable<int> activeSpells = null, bool hasIdData = false,
             int? holderLevel = null, int? icon = null, int? container = null)
+            : this(
+                integers == null ? new Dictionary<int, int>() : new Dictionary<int, int>(integers),
+                strings == null ? new Dictionary<int, string>() : new Dictionary<int, string>(strings),
+                booleans == null ? new Dictionary<int, bool>() : new Dictionary<int, bool>(booleans),
+                doubles == null ? new Dictionary<int, double>() : new Dictionary<int, double>(doubles),
+                int64s == null ? new Dictionary<int, long>() : new Dictionary<int, long>(int64s),
+                spells?.ToArray() ?? Array.Empty<int>(), server, character, id, name, category, hasIdData)
+        {
+            this.activeSpells = activeSpells?.ToArray();
+            HolderLevel = holderLevel;
+            Icon = icon ?? Icon;
+            Container = container ?? Container;
+        }
+
+        // Takes ownership of freshly built collections. Callers must not retain or mutate them.
+        // VGI can hand over its decoded properties without allocating a second set of dictionaries.
+        internal Item(Dictionary<int, int> integers, Dictionary<int, string> strings,
+            Dictionary<int, bool> booleans, Dictionary<int, double> doubles,
+            Dictionary<int, long> int64s, int[] spells,
+            string server, string character, int id, string name, ObjectClass category, bool hasIdData)
         {
             Server = server ?? "";
             Character = character ?? "";
             Id = id;
             Name = name ?? "";
             ObjectClass = category;
-            this.integers = integers == null ? new Dictionary<int, int>() : new Dictionary<int, int>(integers);
-            this.strings = strings == null ? new Dictionary<int, string>() : new Dictionary<int, string>(strings);
-            this.booleans = booleans == null ? new Dictionary<int, bool>() : new Dictionary<int, bool>(booleans);
-            this.doubles = doubles == null ? new Dictionary<int, double>() : new Dictionary<int, double>(doubles);
-            this.int64s = int64s == null ? new Dictionary<int, long>() : new Dictionary<int, long>(int64s);
-            this.spells = spells?.ToArray() ?? new int[0];
-            this.activeSpells = activeSpells?.ToArray();
+            this.integers = integers;
+            this.strings = strings;
+            this.booleans = booleans;
+            this.doubles = doubles;
+            this.int64s = int64s;
+            this.spells = spells;
             HasIdData = hasIdData;
-            HolderLevel = holderLevel;
-            Icon = icon ?? Values((LongValueKey)218103809);
-            Container = container ?? Values((LongValueKey)218103810);
+            Icon = Values((LongValueKey)218103809);
+            Container = Values((LongValueKey)218103810);
         }
 
         public bool TryGetValue(LongValueKey key, out int value) => integers.TryGetValue((int)key, out value);
