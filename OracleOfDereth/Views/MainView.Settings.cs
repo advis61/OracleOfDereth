@@ -58,7 +58,11 @@ namespace OracleOfDereth
 
             Setting setting = Setting.All[row];
             setting.CycleValue();
-            if (setting == Setting.ShowWeaponScoreWorkmanship) ItemList.RefreshAll();
+            if (setting == Setting.ShowWeaponWorkmanship || setting == Setting.ShowArmorWorkmanship)
+            {
+                ItemList.RefreshAll();
+                vgInventorySearchDue = System.DateTime.UtcNow;
+            }
             UpdateSettingsList();
 
             Util.Chat($"{setting.Name}: {setting.Value}", Util.ColorPink);

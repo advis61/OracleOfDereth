@@ -1172,7 +1172,7 @@ namespace OracleOfDereth
             ItemInfo info = new ItemInfo(item);
             if (!info.IsWeapon) return false;
 
-            string odString = info.GetWeaponOveragesString(Setting.ShowWeaponScoreWorkmanship.IsYes);
+            string odString = info.GetWeaponOveragesString(Setting.ShowWeaponWorkmanship.IsYes);
             if (odString == null) return false;
 
             Util.Chat(info.GetName() + " " + odString, Util.ColorCyan, "");
@@ -1186,7 +1186,7 @@ namespace OracleOfDereth
         public override string ToString()
         {
             var parts = new List<string>();
-            bool workmanshipInScore = IsWeapon && Setting.ShowWeaponScoreWorkmanship.IsYes && GetWorkmanshipValue() > 0;
+            bool workmanshipInScore = IsWeapon && Setting.ShowWeaponWorkmanship.IsYes && GetWorkmanshipValue() > 0;
 
             AddPart(parts, GetName());
             AddPart(parts, GetMasteryString());

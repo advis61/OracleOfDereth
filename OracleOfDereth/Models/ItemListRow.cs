@@ -143,14 +143,21 @@ namespace OracleOfDereth
 
         private static string GetSummaryCol3(ItemInfo info)
         {
-            if (info.IsWeapon) return info.GetWeaponODModsString(Setting.ShowWeaponScoreWorkmanship.IsYes);
+            if (info.IsWeapon) return info.GetWeaponODModsString(Setting.ShowWeaponWorkmanship.IsYes);
             if (info.IsSalvage) return info.GetSalvageWorkmanshipString(); // e.g. "Work 9.50"
             if (info.IsHealingKit) return info.GetHealingKitString();      // e.g. "+250 Skill | +200% Bonus"
             if (info.IsManaStone) return info.GetManaStoneString();        // e.g. "250% Efficient | 10% Chance"
             if (info.IsGem) return info.GetGemUseString();                 // "Unlimited Use" / "Single Use"
             if (info.IsCloak) return info.GetRatingsString();
             if (info.IsSummon) return info.GetSummonString(); // "DMG x% | DEF y%"
-            if (info.IsArmorClothing) return info.GetRatingsString();
+            if (info.IsArmorClothing)
+            {
+                string ratings = info.GetRatingsString();
+                int work = info.GetWorkmanshipValue();
+                if (Setting.ShowArmorWorkmanship.IsYes && work > 0)
+                    return ratings.Length > 0 ? ratings + " | w" + work : "w" + work;
+                return ratings;
+            }
             if (info.IsJewelry) return info.GetRatingsString();
             return "";
         }

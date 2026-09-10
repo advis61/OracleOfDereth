@@ -36,6 +36,7 @@ internal static class VGInventoryTests
         var settings = new XmlDocument();
         settings.LoadXml("<Settings />");
         typeof(SettingsFile).GetField("_doc", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, settings);
+        AssertArmorWorkmanship();
         byte[] bytes = Convert.FromBase64String(Jambiya);
         var weapon = VGInventory.DecodeItem("Conquest", "Weapon Mule", -42, "Flaming Jambiya", ObjectClass.MeleeWeapon, bytes);
         var info = new ItemInfo(weapon);
@@ -724,6 +725,45 @@ internal static class VGInventoryTests
             "Weapon subfilters hid another selected category.");
         Check(!new ItemFilter { Weapons = true, WeaponHW = true, Text = "NotPresent" }.Matches(rows[0]),
             "Weapon subfilter bypassed text filtering.");
+    }
+
+    private static void AssertArmorWorkmanship()
+    {
+        string original = Setting.ShowArmorWorkmanship.DefaultValue;
+        string originalWeapon = Setting.ShowWeaponWorkmanship.DefaultValue;
+        try
+        {
+            var row = new ItemListRow(new Item("Conquest", "Mule", 1, "Leggings", ObjectClass.Armor,
+                new Dictionary<int, int> { [374] = 2, [(int)LongValueKey.Workmanship] = 6 }, hasIdData: true));
+            var weapon = new ItemListRow(new Item("Conquest", "Mule", 4, "Sword", ObjectClass.MeleeWeapon,
+                new Dictionary<int, int> { [(int)LongValueKey.Workmanship] = 7 }, hasIdData: true));
+            Setting.ShowArmorWorkmanship.DefaultValue = "Yes";
+            Setting.ShowWeaponWorkmanship.DefaultValue = "No";
+            row.Populate();
+            weapon.Populate();
+            Check(row.SummaryCol3 == "CD2 | w6", "Armor must show workmanship beside ratings when enabled.");
+            Check(!weapon.SummaryCol3.Contains("w7"), "Armor setting must not enable weapon workmanship.");
+            Setting.ShowArmorWorkmanship.DefaultValue = "No";
+            Setting.ShowWeaponWorkmanship.DefaultValue = "Yes";
+            row.Populate();
+            weapon.Populate();
+            Check(row.SummaryCol3 == "CD2", "Disabling workmanship must preserve armor ratings.");
+            Check(weapon.SummaryCol3.Contains("w7"), "Weapon workmanship must remain independent of armor.");
+            Setting.ShowArmorWorkmanship.DefaultValue = "Yes";
+            row = new ItemListRow(new Item("Conquest", "Mule", 2, "Leggings", ObjectClass.Armor,
+                new Dictionary<int, int> { [(int)LongValueKey.Workmanship] = 6 }, hasIdData: true));
+            row.Populate();
+            Check(row.SummaryCol3 == "w6", "Unrated armor must not have a leading separator.");
+            row = new ItemListRow(new Item("Conquest", "Mule", 3, "Leggings", ObjectClass.Armor,
+                new Dictionary<int, int> { [374] = 2 }, hasIdData: true));
+            row.Populate();
+            Check(row.SummaryCol3 == "CD2", "Missing workmanship must not appear as w0.");
+        }
+        finally
+        {
+            Setting.ShowArmorWorkmanship.DefaultValue = original;
+            Setting.ShowWeaponWorkmanship.DefaultValue = originalWeapon;
+        }
     }
 
     private static void AssertObservations()

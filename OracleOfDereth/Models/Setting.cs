@@ -45,7 +45,8 @@ namespace OracleOfDereth
         public static Setting DeleteOtherSummons;
         public static Setting DeleteOtherPets;
         public static Setting WeaponScore;
-        public static Setting ShowWeaponScoreWorkmanship;
+        public static Setting ShowWeaponWorkmanship;
+        public static Setting ShowArmorWorkmanship;
         public static Setting WikiSource;
 
         public static void Init()
@@ -67,7 +68,8 @@ namespace OracleOfDereth
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "NearbyWcid", YesNo, "No");
             WeaponScore = Register("Show Weapon Score", "WeaponScore", YesNo, "Yes");
-            ShowWeaponScoreWorkmanship = Register("Show Weapon Score Workmanship", "WeaponScoreWorkmanship", YesNo, "Yes");
+            ShowArmorWorkmanship = Register("Show Workmanship: Armor", "ShowArmorWorkmanship", YesNo, "No");
+            ShowWeaponWorkmanship = Register("Show Workmanship: Weapons", "ShowWeaponWorkmanship", YesNo, "Yes");
             SuppressPeriodicHealingChat = Register("Suppress Periodic Healing Chat", "SuppressPeriodicHealingChat", YesNo, "Yes");
             SuppressPluginRefreshChat = Register("Suppress Plugin Refresh Chat", "SuppressPluginRefreshChat", YesNo, "Yes");
             ShowTradeWindow = Register("Use Trade Window", "TradeWindow", YesNo, "Yes");
