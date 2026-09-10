@@ -129,62 +129,70 @@ namespace OracleOfDereth
         {
             // CharacterFilter_Login will be called multiple times if the character was already in the world
             if (didInit) return;
-            didInit = true;
+            try
+            {
+                // Initialize Settings
+                SettingsFile.Init();
+                Setting.Init();
 
-            // Initialize Settings
-            SettingsFile.Init();
-            Setting.Init();
-
-            // Initialize Collection
-            Augmentation.Init();
-            AugQuest.Init();
-            Cantrip.Init();
-            CreditQuest.Init();
-            FacilityQuest.Init();
-            FellowshipTracker.Init();
-            Fellowship.Init();
-            FlagQuest.Init();
-            JohnQuest.Init();
-            SocietyQuest.Init();
-            CustomQuest.Init();
-            QuestCatalog.Init();
-            QuestCatalogUpdater.Init();
-            Marker.Init();
-            Nearby.Init();
-            QuestFlag.Init();
-            QuestAccountFlag.Init();
-            Recall.Init();
-            Target.Init();
-            Title.Init();
-            ItemList.Init();
-            ItemCache.Init();
-            Trade.Init();
-            ConquestAugmentation.Init();
-            ConquestEnlAugmentation.Init();
-            ConquestBank.Init();
-            ConquestBonus.Init();
-            TopBoard.Init();
+                // Initialize Collection
+                Augmentation.Init();
+                AugQuest.Init();
+                Cantrip.Init();
+                CreditQuest.Init();
+                FacilityQuest.Init();
+                FellowshipTracker.Init();
+                Fellowship.Init();
+                FlagQuest.Init();
+                JohnQuest.Init();
+                SocietyQuest.Init();
+                CustomQuest.Init();
+                QuestCatalog.Init();
+                QuestCatalogUpdater.Init();
+                Marker.Init();
+                Nearby.Init();
+                QuestFlag.Init();
+                QuestAccountFlag.Init();
+                Recall.Init();
+                Target.Init();
+                Title.Init();
+                ItemList.Init();
+                ItemCache.Init();
+                Trade.Init();
+                ConquestAugmentation.Init();
+                ConquestEnlAugmentation.Init();
+                ConquestBank.Init();
+                ConquestBonus.Init();
+                TopBoard.Init();
 
 
-            // Initialize Views
-            mainView = new MainView();
-            targetView = new TargetView();
-            tradeView = new TradeView();
+                // Initialize Views
+                mainView = new MainView();
+                targetView = new TargetView();
+                tradeView = new TradeView();
 
-            // Initialize Other
-            VHotkey.Init();
+                // Initialize Other
+                VHotkey.Init();
 
-            // Initialize 1second update timer
-            timer = new WindowsTimer();
-            timer.Tick += new EventHandler(Tick);
-            timer.Interval = 1000; // 1 second
-            timer.Start();
+                // Initialize 1second update timer
+                timer = new WindowsTimer();
+                timer.Tick += new EventHandler(Tick);
+                timer.Interval = 1000; // 1 second
+                timer.Start();
+                didInit = true;
+            }
+            catch
+            {
+                Shutdown();
+                throw;
+            }
         }
 
         [System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptions]
         [System.Security.SecurityCritical]
         private void Tick(object sender, EventArgs e)
         {
+            if (!didInit) return;
             try
             {
                 if (CoreManager.Current.CharacterFilter.LoginStatus < 1) return;
@@ -218,6 +226,7 @@ namespace OracleOfDereth
         /// </summary>
         protected override void Shutdown()
         {
+            didInit = false;
             ShutdownComponent(() =>
             {
                 CoreManager.Current.CommandLineText -= Current_CommandLineText;
@@ -262,6 +271,10 @@ namespace OracleOfDereth
             ShutdownComponent(() => tradeView?.Dispose());
             ShutdownComponent(() => targetView?.Dispose());
             ShutdownComponent(() => mainView?.Dispose());
+            worldObjectIdentifier = null;
+            tradeView = null;
+            targetView = null;
+            mainView = null;
         }
 
         private static void ShutdownComponent(Action shutdown)

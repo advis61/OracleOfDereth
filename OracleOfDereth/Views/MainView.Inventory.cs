@@ -110,9 +110,13 @@ namespace OracleOfDereth
         {
             DisposeSavedInventorySearch();
             vgInventorySubfilters?.Dispose();
-            vgInventoryTimer.Stop();
-            vgInventoryTimer.Tick -= VGInventorySearchTick;
-            vgInventoryTimer.Dispose();
+            if (vgInventoryTimer != null)
+            {
+                vgInventoryTimer.Stop();
+                vgInventoryTimer.Tick -= VGInventorySearchTick;
+                vgInventoryTimer.Dispose();
+                vgInventoryTimer = null;
+            }
             SavedInventory.CancelSearch();
             vgInventoryHelp.Hit -= VGInventoryHelp_Hit;
             VGInventoryClipboard.Hit -= VGInventoryClipboard_Hit;

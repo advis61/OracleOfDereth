@@ -36,6 +36,7 @@ internal static class Program
         AssertNearbyFilters();
         AssertSettingsRecovery();
         SettingsFileTests.Run();
+        AssertPartialViewCleanup();
         AssertQuestState();
         AssertMyQuestsParsing();
         AssertQuestAccountFlag();
@@ -181,6 +182,26 @@ internal static class Program
             throw new InvalidOperationException("Expired trade split state was not cleared.");
         if (Trade.TradeStatus.IndexOf("manually", StringComparison.OrdinalIgnoreCase) < 0)
             throw new InvalidOperationException("Expired trade split did not fail closed.");
+    }
+
+    private static void AssertPartialViewCleanup()
+    {
+        ItemList.Init();
+        ItemList.Inventory.OnItemsListChanged = () => { };
+        ItemList.Inventory.OnQueueFinished = () => { };
+        ItemList.Trade.OnItemsListChanged = () => { };
+        Trade.OnChanged = () => { };
+        foreach (string name in new[] { "MainView", "TradeView", "TargetView" })
+        {
+            Type type = typeof(ItemList).Assembly.GetType("OracleOfDereth." + name, true);
+            var view = (IDisposable)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
+            // Represents a constructor that failed before its controls were assigned.
+            view.Dispose();
+            view.Dispose();
+        }
+        if (ItemList.Inventory.OnItemsListChanged != null || ItemList.Inventory.OnQueueFinished != null ||
+            ItemList.Trade.OnItemsListChanged != null || Trade.OnChanged != null)
+            throw new InvalidOperationException("Partial view cleanup retained model callbacks.");
     }
 
     private static void AssertSettingsRecovery()

@@ -145,7 +145,6 @@ namespace OracleOfDereth
 
                 // Display the view
                 view = new VirindiViewService.HudView(properties, controls);
-                if (view == null) { return; }
 
                 // Make the view resizable. Default max client area is the XML size, which caps
                 // how wide the Items tab can be dragged — raise it (other tabs stay width-locked
@@ -213,7 +212,13 @@ namespace OracleOfDereth
 
                 Update();
             }
-            catch (Exception ex) { Util.Log(ex); }
+            catch
+            {
+                // A failed constructor is never assigned to PluginCore, so clean up here.
+                try { Dispose(); }
+                catch (Exception cleanupError) { Util.Log(cleanupError); }
+                throw;
+            }
         }
 
         // Shutdown

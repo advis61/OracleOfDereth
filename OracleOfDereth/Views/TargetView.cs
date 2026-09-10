@@ -1,4 +1,4 @@
-﻿using Decal.Adapter;
+using Decal.Adapter;
 using Decal.Adapter.Wrappers;
 using Decal.Filters;
 using MyClasses.MetaViewWrappers;
@@ -59,7 +59,6 @@ namespace OracleOfDereth
 
                 // Display the view
                 view = new VirindiViewService.HudView(properties, controls);
-                if (view == null) { return; }
 
                 // Hide from Decal bar
                 view.ShowInBar = false;
@@ -107,7 +106,13 @@ namespace OracleOfDereth
 
                 Update();
             }
-            catch (Exception ex) { Util.Log(ex); }
+            catch
+            {
+                // A failed constructor is never assigned to PluginCore, so clean up here.
+                try { Dispose(); }
+                catch (Exception cleanupError) { Util.Log(cleanupError); }
+                throw;
+            }
         }
         public void Update()
         {

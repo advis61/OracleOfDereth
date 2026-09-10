@@ -64,7 +64,7 @@ namespace OracleOfDereth
                 parser.ParseFromResource("OracleOfDereth.tradeView.xml", out properties, out controls);
 
                 view = new VirindiViewService.HudView(properties, controls);
-                if (view == null) { return; }
+
 
                 // Hidden until a trade opens; never shown in the Decal bar.
                 view.ShowInBar = false;
@@ -154,7 +154,13 @@ namespace OracleOfDereth
                 TradeList.Click += List_Click;
                 TradeList.ClearRows();
             }
-            catch (Exception ex) { Util.Log(ex); }
+            catch
+            {
+                // A failed constructor is never assigned to PluginCore, so clean up here.
+                try { Dispose(); }
+                catch (Exception cleanupError) { Util.Log(cleanupError); }
+                throw;
+            }
         }
 
         public void Show()
