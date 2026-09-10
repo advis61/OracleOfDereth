@@ -103,6 +103,7 @@ namespace OracleOfDereth
 
             HudList.HudListRowAccessor row;
             int targetId = Target.GetCurrent().Id;
+            bool showWcid = Setting.ShowNearbyWcid.IsYes;
 
             List<IGrouping<string, NearbyItem>> grouped = items
                 .GroupBy(i => NearbySimpleList.Checked ? i.Item.Id.ToString() : i.GroupKey()).ToList();
@@ -125,7 +126,7 @@ namespace OracleOfDereth
                     AssignImage((HudPictureBox)row[0], item.Item.Icon);
                     AssignSelected(row, (item.Item.Id == targetId && !expanded), NearbyListColumns);
 
-                    SetText(row, 1, Setting.ShowNearbyWcid.IsYes
+                    SetText(row, 1, showWcid
                         ? $"[{item.Item.Type}] {group.Key} ({group.Count()})"
                         : $"{group.Key} ({group.Count()})");
                     SetText(row, 2, (expanded ? "[-]" : "[+]"));
@@ -142,7 +143,7 @@ namespace OracleOfDereth
                         index++;
 
                         AssignImage((HudPictureBox)row[0], (isGrouped ? 0 : item.Item.Icon));
-                        SetText(row, 1, Setting.ShowNearbyWcid.IsYes
+                        SetText(row, 1, showWcid
                             ? $"[{item.Item.Type}] {item.Item.Name}"
                             : item.Item.Name);
 

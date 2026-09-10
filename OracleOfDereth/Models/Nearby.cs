@@ -125,8 +125,8 @@ namespace OracleOfDereth
 
         public static void Remove(WorldObject item)
         {
-            if (item != null && Tracked.TryGetValue(item.Id, out TrackedObject tracked))
-                tracked.MissedScans = Math.Max(1, tracked.MissedScans);
+            // Release events keep tracking bounded even while the Nearby tab is hidden.
+            if (item != null) Tracked.Remove(item.Id);
         }
 
         public static void Tick()
@@ -140,18 +140,25 @@ namespace OracleOfDereth
             lastScanAt = DateTime.UtcNow;
             var seen = new HashSet<int>();
 
-            foreach (WorldObject item in CoreManager.Current.WorldFilter.GetLandscape())
+            using (var landscape = CoreManager.Current.WorldFilter.GetLandscape())
             {
-                if (item == null || item.Id == 0) continue;
-                seen.Add(item.Id);
-                Track(item);
+                foreach (WorldObject item in landscape)
+                {
+                    if (item == null || item.Id == 0) continue;
+                    seen.Add(item.Id);
+                    Track(item);
+                }
             }
 
-            foreach (int id in Tracked.Keys.ToList())
+            List<int> expired = null;
+            foreach (var entry in Tracked)
             {
-                if (seen.Contains(id)) continue;
-                if (++Tracked[id].MissedScans >= MaxMissedScans) Tracked.Remove(id);
+                if (seen.Contains(entry.Key)) continue;
+                if (++entry.Value.MissedScans >= MaxMissedScans)
+                    (expired ?? (expired = new List<int>())).Add(entry.Key);
             }
+            if (expired != null)
+                foreach (int id in expired) Tracked.Remove(id);
         }
 
         private static void Track(WorldObject item)

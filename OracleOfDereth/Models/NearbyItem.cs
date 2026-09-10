@@ -22,6 +22,11 @@ namespace OracleOfDereth
     public class NearbyItem
     {
         public WorldObject Item;
+        // NearbyItems creates new rows each repaint; these values never carry into the next update.
+        private double? distance;
+        private string fellowshipName;
+        private static readonly string[] InteractionWords = { "lever", "switch", "button", "pedestal", "altar" };
+        private static readonly string[] InterestWords = { "key", "gate", "door", "cache", "crystal", "orb", "idol", "fragment" };
 
         public static SortType CurrentSortType = SortType.Relevance;
 
@@ -84,7 +89,7 @@ namespace OracleOfDereth
         
         public bool IsMarker() { return Item.Name == "Exploration Marker"; }
         public bool IsCorpse() { return (Item.Behavior & 0x00002000) != 0; }
-        public double Distance() { return Util.GetDistanceFromPlayer(Item); }
+        public double Distance() => distance ?? (distance = Util.GetDistanceFromPlayer(Item)).Value;
 
         private double Relevance(bool uniqueName)
         {
@@ -106,9 +111,9 @@ namespace OracleOfDereth
 
             if (!IsPlayer() && !IsMonster() && !IsCorpse())
             {
-                string name = Item.Name.ToLowerInvariant();
-                if (new[] { "lever", "switch", "button", "pedestal", "altar" }.Any(name.Contains)) score += 900;
-                if (new[] { "key", "gate", "door", "cache", "crystal", "orb", "idol", "fragment" }.Any(name.Contains)) score += 650;
+                string name = Item.Name;
+                if (InteractionWords.Any(word => name.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0)) score += 900;
+                if (InterestWords.Any(word => name.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0)) score += 650;
             }
 
             if (!IsPlayer() && !IsMonster() && !IsCorpse() && age > 60)
@@ -133,10 +138,7 @@ namespace OracleOfDereth
         {
             if (!IsPlayer()) return "";
 
-            Fellow fellow = FellowshipTracker.Find(Item.Id);
-            if (fellow == null) return "";
-            
-            return fellow.FellowshipName;
+            return fellowshipName ?? (fellowshipName = FellowshipTracker.Find(Item.Id)?.FellowshipName ?? "");
         }
 
         public bool ForceGroup()

@@ -203,7 +203,6 @@ namespace OracleOfDereth
                 // shared identify channel.
                 FellowshipTracker.Update(suppressIdentify: mainView.IsItemsTabActive() || Trade.IsOpen);
                 Fellowship.AutoOpenFellow();
-                Nearby.Tick(); // reconcile tracked objects vs the world (drops any missed by ReleaseObject)
                 UpdateChecker.Tick();
                 QuestCatalogUpdater.Tick();
                 QuestFlagLookup.Tick();

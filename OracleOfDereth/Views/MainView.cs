@@ -454,7 +454,7 @@ namespace OracleOfDereth
             // Status Tab
             if (currentTab == 1_00) { UpdateHud(); }
             if (currentTab == 1_01) { UpdateBuffs(); }
-            if (currentTab == 1_02) { UpdateNearby(); } // If this changes update UpdateTarget() method below
+            if (currentTab == 1_02) { Nearby.Tick(); UpdateNearby(); } // If this changes update UpdateTarget() method below
             if (currentTab == 1_03) { UpdateFellowship(); } // If this changes update UpdateTarget() method below
             if (currentTab == 1_04) { UpdateItems(); }
 
