@@ -1189,6 +1189,8 @@ namespace OracleOfDereth
             AddPart(parts, GetWeaponOveragesString(workmanshipInScore));
             AddPart(parts, GetSummonString());
             AddPart(parts, GetFullSetName());
+            string ratings = GetRatingsString();
+            if (ratings.Length > 0) parts.Add("[" + ratings + "]");
             AddPart(parts, GetArmorLevelString());
             AddPart(parts, GetImbueString());
             AddPart(parts, GetTinksString());
@@ -1203,9 +1205,6 @@ namespace OracleOfDereth
             AddPart(parts, GetProtectionsString());
             AddPart(parts, GetValueString());
             AddPart(parts, GetBurdenString());
-
-            string ratings = GetRatingsString();
-            if (ratings.Length > 0) parts.Add("[" + ratings + "]");
 
             AddPart(parts, GetKeyringString());
 
