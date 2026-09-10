@@ -17,6 +17,7 @@ internal static class VGInventoryTests
     public static void Run()
     {
         Setting.Init();
+        AssertResultRelease();
         AssertObservations();
         AssertWeaponSubfilters();
         AssertWeaponDoubles();
@@ -118,6 +119,25 @@ internal static class VGInventoryTests
             "Server tabs are not in alphabetical order.");
         Check(layout.SelectNodes("//control[starts-with(@name,'VGInventoryFilter') and @progid='DecalControls.CheckBox']").Count == 10, "Inventory filters differ from Items.");
         Check(layout.SelectSingleNode("//control[@name='VGInventoryList']/column[1]").Attributes["name"].Value == "Character", "First column must be Character.");
+    }
+
+    private static void AssertResultRelease()
+    {
+        var inventory = new VGInventory();
+        inventory.List.CurrentSortType = ItemList.SortType.CharacterDescending;
+        var oldRows = inventory.List.Items;
+        oldRows.Add(new ItemListRow(new Item("Conquest", "Mule", 1, "Item", ObjectClass.MeleeWeapon)));
+        inventory.BeginRefresh("Conquest");
+        Check(oldRows.Count == 0 && inventory.List.Items.Count == 0 && !ReferenceEquals(oldRows, inventory.List.Items),
+            "Starting a search retained old observations or their backing array.");
+        inventory.ReleaseResults();
+        Check(!inventory.IsSearching && inventory.LoadedAt == null && inventory.MatchCount == 0 && inventory.ScannedCount == 0,
+            "Releasing results left a search or stale result metadata.");
+        Check(inventory.List.CurrentSortType == ItemList.SortType.CharacterDescending,
+            "Releasing results lost the user's sort.");
+        inventory.BeginRefresh("Conquest");
+        inventory.CancelSearch();
+        Check(inventory.List.Items.Count == 0, "Cancelling a new search restored stale results.");
     }
 
     private static void AssertMissingSQLite()
@@ -927,9 +947,9 @@ internal static class VGInventoryTests
             var previousRows = inventory.List.Items;
             inventory.BeginRefresh("Conquest", new ItemFilter { Text = "Mule 35" });
             Check(inventory.AdvanceSearch() && inventory.ScannedCount == 32, "Search did not yield after a bounded batch.");
-            Check(ReferenceEquals(previousRows, inventory.List.Items), "Partial results replaced the completed query.");
+            Check(previousRows.Count == 0 && inventory.List.Items.Count == 0, "A new search retained old results or published partial rows.");
             inventory.CancelSearch();
-            Check(!inventory.IsSearching && ReferenceEquals(previousRows, inventory.List.Items), "Cancellation published partial rows.");
+            Check(!inventory.IsSearching && inventory.List.Items.Count == 0, "Cancellation published partial rows.");
             using (DbConnection connection = Connection(provider, database, false))
             using (DbCommand command = connection.CreateCommand())
             {

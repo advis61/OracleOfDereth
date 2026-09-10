@@ -212,6 +212,7 @@ namespace OracleOfDereth
                 ItemList.TickAll();
                 Trade.Tick();
                 Bank.AutoDepositTick();
+                mainView.TickInventoryCleanup();
                 VVSBar.Tick();
                 WorldObjectVisibility.Tick();
 

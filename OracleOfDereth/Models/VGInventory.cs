@@ -38,16 +38,21 @@ namespace OracleOfDereth
             scan = null;
         }
 
+        // Keep search ordering, but release observations and their backing array.
+        public void ReleaseResults()
+        {
+            CancelSearch();
+            List.Items.Clear();
+            List.Items = new List<ItemListRow>();
+            LoadedAt = null;
+            UnreadableCount = MatchCount = TotalCount = ScannedCount = 0;
+            Error = "";
+        }
+
         // Run on the game thread: row calculations use Decal's spell metadata.
         public void BeginRefresh(string server, ItemFilter filter = null)
         {
-            CancelSearch();
-            if (ServerName != server)
-            {
-                List.Clear();
-                LoadedAt = null;
-                UnreadableCount = MatchCount = TotalCount = 0;
-            }
+            ReleaseResults();
             ServerName = server;
             Error = "";
             ScannedCount = 0;

@@ -14,6 +14,10 @@ namespace OracleOfDereth
         private System.Windows.Forms.Timer vgInventoryTimer;
         private List<ItemListRow> visibleVGInventory = new List<ItemListRow>();
         private ItemListRow selectedVGInventoryItem;
+        private DateTime? vgInventoryHiddenSince;
+        private bool vgInventoryResultsReleased;
+        private SavedInventorySelection hiddenInventorySelection;
+        private string hiddenInventorySelectionServer;
 
         public HudStaticText VGInventoryText { get; private set; }
         private HudButton vgInventoryHelp;
@@ -165,21 +169,50 @@ namespace OracleOfDereth
 
         public void UpdateVGInventory()
         {
+            vgInventoryHiddenSince = null;
             if (DateTime.UtcNow.Second % 2 == 0) PollSavedInventorySearch();
 
             if (SavedInventory.ServerName != Server.Name || (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value))
                 RefreshVGInventory(preserveSelection: true);
         }
 
+        private void TickVGInventory(bool isActive)
+        {
+            if (isActive)
+            {
+                vgInventoryHiddenSince = null;
+                return;
+            }
+            PauseVGInventorySearch();
+            if (!vgInventoryHiddenSince.HasValue) vgInventoryHiddenSince = DateTime.UtcNow;
+            if (vgInventoryResultsReleased || DateTime.UtcNow - vgInventoryHiddenSince.Value < TimeSpan.FromSeconds(30)) return;
+
+            hiddenInventorySelection = selectedVGInventoryItem == null ? null : new SavedInventorySelection(selectedVGInventoryItem.Item);
+            hiddenInventorySelectionServer = selectedVGInventoryItem?.Server;
+            SavedInventory.ReleaseResults();
+            visibleVGInventory = SavedInventory.List.Items;
+            selectedVGInventoryItem = null;
+            VGInventoryList.ClearRows();
+            vgInventorySearchDue = DateTime.UtcNow;
+            vgInventoryResultsReleased = true;
+        }
+
         private void RefreshVGInventory(bool preserveSelection = false)
         {
-            if (!preserveSelection) loadedInventorySelection = null;
+            if (!preserveSelection)
+            {
+                loadedInventorySelection = null;
+                hiddenInventorySelection = null;
+            }
+            vgInventoryResultsReleased = false;
             vgInventorySearchDue = null;
             SavedInventory.BeginRefresh(Server.Name, VGInventoryFilter());
             vgInventoryTimer.Start();
             selectedVGInventoryItem = null;
+            VGInventoryList.ClearRows();
             UpdateSavedInventorySearchButton(allowSave: vgInventorySavedSearch.Visible);
             UpdateVGInventoryList();
+            VGInventoryText.Text = "Searching...";
         }
 
         private void PauseVGInventorySearch()
@@ -201,7 +234,7 @@ namespace OracleOfDereth
                 vgInventoryTimer.Stop();
                 return;
             }
-            if (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value) RefreshVGInventory();
+            if (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value) RefreshVGInventory(preserveSelection: true);
             if (!SavedInventory.IsSearching) return;
             if (SavedInventory.ServerName != Server.Name) { RefreshVGInventory(); return; }
             var slice = System.Diagnostics.Stopwatch.StartNew();
@@ -214,6 +247,9 @@ namespace OracleOfDereth
             {
                 vgInventoryTimer.Stop();
                 selectedVGInventoryItem = null;
+                if (hiddenInventorySelection != null && hiddenInventorySelectionServer == Server.Name)
+                    selectedVGInventoryItem = SavedInventory.List.Items.FirstOrDefault(row => hiddenInventorySelection.Matches(row.Item, Server.Name));
+                hiddenInventorySelection = null;
                 RestoreSavedInventorySelection();
                 UpdateVGInventoryList();
                 if (selectedVGInventoryItem != null)
@@ -230,7 +266,7 @@ namespace OracleOfDereth
             if (SavedInventory.UnreadableCount > 0) status += " (" + SavedInventory.UnreadableCount + " saved details unavailable)";
 
             if (!string.IsNullOrEmpty(SavedInventory.Error))
-                status = SavedInventory.Error + (SavedInventory.LoadedAt.HasValue ? " — showing previous read." : "");
+                status = SavedInventory.Error;
 
             VGInventoryText.Text = status;
         }

@@ -487,6 +487,12 @@ namespace OracleOfDereth
             if (currentTab == 5_03) { UpdateHelp(); }
         }
 
+        // Called by PluginCore's background tick, including while the window is hidden.
+        public void TickInventoryCleanup()
+        {
+            TickVGInventory(view.Visible && CurrentTab() == 4_04);
+        }
+
         // The inventory scan has a faster timer; keep its tab dispatch here too.
         private void VGInventorySearchTick(object sender, EventArgs e)
         {

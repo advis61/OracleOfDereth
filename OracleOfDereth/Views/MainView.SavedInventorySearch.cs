@@ -28,6 +28,7 @@ namespace OracleOfDereth
         private void InventorySearchEdited()
         {
             loadedInventorySelection = null;
+            hiddenInventorySelection = null;
             UpdateSavedInventorySearchButton(allowSave: true);
         }
 
