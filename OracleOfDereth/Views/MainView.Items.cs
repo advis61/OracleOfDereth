@@ -51,7 +51,7 @@ namespace OracleOfDereth
         private void InitItems()
         {
             InventoryList.OnItemsListChanged = () => UpdateItemsList();
-            InventoryList.OnQueueFinished = () => { ItemsAddAll.Text = "Add All"; UpdateItemsList(); };
+            InventoryList.OnQueueFinished = () => UpdateItemsList();
 
             ItemsText = (HudStaticText)view["ItemsText"];
             ItemsText.FontHeight = 10;
@@ -196,6 +196,8 @@ namespace OracleOfDereth
 
         public void UpdateItemsList()
         {
+            if (!IsItemsTabActive()) return;
+            ItemsAddAll.Text = InventoryList.IsProcessingQueue ? "Adding..." : "Add All";
             ItemFilter filter = ItemsFilter();
             List<ItemListRow> items = InventoryList.Items.Where(filter.Matches).ToList();
 

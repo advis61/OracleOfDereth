@@ -90,6 +90,7 @@ namespace OracleOfDereth
 
         // Throttle list rebuilds during bulk identify (sort + repaint is O(n)).
         private DateTime _lastRefresh = DateTime.MinValue;
+        private bool refreshPending;
         private static readonly TimeSpan RefreshInterval = TimeSpan.FromMilliseconds(250);
 
         public bool AutoAddEnabled = false;
@@ -438,7 +439,7 @@ namespace OracleOfDereth
             }
 
             PumpQueue();
-            MaybeRefresh();
+            if (refreshPending) MaybeRefresh();
         }
 
         // Fill in any stub whose WorldObject already carries appraisal data. This makes the
@@ -496,6 +497,7 @@ namespace OracleOfDereth
         // Add All builds the list, or when the user clicks a column header.
         private void RefreshList()
         {
+            refreshPending = false;
             _lastRefresh = DateTime.UtcNow;
             OnItemsListChanged?.Invoke();
         }
@@ -518,6 +520,7 @@ namespace OracleOfDereth
         // rebuild the whole list on every single item.
         private void MaybeRefresh()
         {
+            refreshPending = true;
             if (DateTime.UtcNow - _lastRefresh < RefreshInterval) return;
             RefreshList();
         }

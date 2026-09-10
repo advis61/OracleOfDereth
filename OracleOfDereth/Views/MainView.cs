@@ -446,8 +446,8 @@ namespace OracleOfDereth
             // Runs for every tab, so a flashed Refresh label restores even if you switch away.
             if (FlashedButton != null && DateTime.UtcNow >= FlashedUntil) { RestoreFlashedButton(); }
 
-            // Runs every tick regardless of the active tab
-            Bank.AutoDepositTick();
+            // Background services run in PluginCore; only paint the displayed tab here.
+            if (!view.Visible) return;
 
             int currentTab = CurrentTab();
 
@@ -494,6 +494,7 @@ namespace OracleOfDereth
         // Selected target changed
         public void UpdateTarget()
         {
+            if (!view.Visible) return;
             int currentTab = CurrentTab();
             if (currentTab == 1_02) { UpdateNearbyList(); }
             if (currentTab == 1_03) { UpdateFellowshipButtons(); }
@@ -504,14 +505,7 @@ namespace OracleOfDereth
 
         public void UpdateQuestFlags()
         {
-            // Update anything that relies on quest flags
-            UpdateJohnList();
-            UpdateAugmentationQuestsList();
-            UpdateCreditsList();
-            UpdateFlagsList();
-            UpdateLuminanceList();
-            UpdateMarkersList();
-
+            // Each tab reads current quest data when displayed; no hidden-list repaints.
             if (QuestState.LastChangeWasFlag)
             {
                 Util.Chat($"Quest data updated. Found {QuestFlag.QuestFlags.Count} flags.", Util.ColorPink);

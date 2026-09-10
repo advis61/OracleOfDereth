@@ -196,7 +196,7 @@ namespace OracleOfDereth
 
         public void UpdateList()
         {
-            if (view == null) return;
+            if (view == null || !view.Visible) return;
 
             ItemFilter filter = Filter();
             List<ItemListRow> items = TradeItems.Items.Where(filter.Matches).ToList();

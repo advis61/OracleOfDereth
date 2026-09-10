@@ -212,6 +212,7 @@ namespace OracleOfDereth
                 QuestAccountFlag.Tick();
                 ItemList.TickAll();
                 Trade.Tick();
+                Bank.AutoDepositTick();
                 VVSBar.Tick();
                 WorldObjectVisibility.Tick();
 

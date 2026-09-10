@@ -37,6 +37,7 @@ internal static class Program
         AssertSettingsRecovery();
         SettingsFileTests.Run();
         AssertPartialViewCleanup();
+        AssertItemRefreshScheduling();
         AssertQuestState();
         AssertMyQuestsParsing();
         AssertQuestAccountFlag();
@@ -182,6 +183,27 @@ internal static class Program
             throw new InvalidOperationException("Expired trade split state was not cleared.");
         if (Trade.TradeStatus.IndexOf("manually", StringComparison.OrdinalIgnoreCase) < 0)
             throw new InvalidOperationException("Expired trade split did not fail closed.");
+    }
+
+    private static void AssertItemRefreshScheduling()
+    {
+        var list = new ItemList();
+        int refreshes = 0;
+        list.OnItemsListChanged = () => refreshes++;
+        list.Tick();
+        list.Tick();
+        if (refreshes != 0) throw new InvalidOperationException("Idle item lists still request repaints.");
+
+        var lastRefresh = typeof(ItemList).GetField("_lastRefresh", BindingFlags.NonPublic | BindingFlags.Instance);
+        lastRefresh.SetValue(list, DateTime.UtcNow.AddMinutes(1));
+        typeof(ItemList).GetMethod("MaybeRefresh", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(list, null);
+        if (refreshes != 0) throw new InvalidOperationException("Item refresh throttle was bypassed.");
+        lastRefresh.SetValue(list, DateTime.MinValue);
+        list.Tick();
+        if (refreshes != 1) throw new InvalidOperationException("A deferred item repaint was lost.");
+        lastRefresh.SetValue(list, DateTime.MinValue);
+        list.Tick();
+        if (refreshes != 1) throw new InvalidOperationException("A deferred repaint repeated without changes.");
     }
 
     private static void AssertPartialViewCleanup()
