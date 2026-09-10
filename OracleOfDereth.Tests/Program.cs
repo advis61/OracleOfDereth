@@ -17,6 +17,7 @@ internal static class Program
         VGInventoryTests.Run();
         ItemExportTests.Run();
         ItemTextSearchTests.Run();
+        AssertChatFilterLifecycle();
         if (args.Length == 2 && args[0] == "--vgi") VGInventoryTests.Audit(args[1]);
         AssertScreenshotBounds();
         AssertScreenshotPaths();
@@ -183,6 +184,38 @@ internal static class Program
             throw new InvalidOperationException("Expired trade split state was not cleared.");
         if (Trade.TradeStatus.IndexOf("manually", StringComparison.OrdinalIgnoreCase) < 0)
             throw new InvalidOperationException("Expired trade split did not fail closed.");
+    }
+
+    private static void AssertChatFilterLifecycle()
+    {
+        var previousSetting = Setting.SuppressPeriodicHealingChat;
+        var documentField = typeof(SettingsFile).GetField("_doc", BindingFlags.NonPublic | BindingFlags.Static);
+        var previousDocument = documentField.GetValue(null);
+        try
+        {
+            Setting.SuppressPeriodicHealingChat = null;
+            if (ChatFilter.ShouldSuppress(null) || ChatFilter.ShouldSuppress("") ||
+                ChatFilter.ShouldSuppress("You receive 0 points of periodic healing."))
+                throw new InvalidOperationException("Chat was suppressed before settings initialized.");
+
+            var document = new System.Xml.XmlDocument();
+            document.LoadXml("<Settings />");
+            documentField.SetValue(null, document);
+            Setting.SuppressPeriodicHealingChat = new Setting { Key = "TestChatFilter", DefaultValue = "Yes" };
+            if (!ChatFilter.ShouldSuppress("You receive 0 points of periodic healing.") ||
+                !ChatFilter.ShouldSuppress("[System] You receive 0 points of periodic healing.") ||
+                ChatFilter.ShouldSuppress("You receive 10 points of periodic healing.") ||
+                ChatFilter.ShouldSuppress("An unrelated message."))
+                throw new InvalidOperationException("Periodic healing suppression changed.");
+            Setting.SuppressPeriodicHealingChat.DefaultValue = "No";
+            if (ChatFilter.ShouldSuppress("You receive 0 points of periodic healing."))
+                throw new InvalidOperationException("Disabled chat filter suppressed a message.");
+        }
+        finally
+        {
+            Setting.SuppressPeriodicHealingChat = previousSetting;
+            documentField.SetValue(null, previousDocument);
+        }
     }
 
     private static void AssertItemRefreshScheduling()

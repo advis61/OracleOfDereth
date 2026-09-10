@@ -12,7 +12,7 @@ namespace OracleOfDereth
         {
             if (string.IsNullOrEmpty(text)) return false;
 
-            return Setting.SuppressPeriodicHealingChat.IsYes && PeriodicHealingRegex.IsMatch(text);
+            return Setting.SuppressPeriodicHealingChat?.IsYes == true && PeriodicHealingRegex.IsMatch(text);
         }
     }
 }

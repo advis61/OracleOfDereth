@@ -325,7 +325,8 @@ namespace OracleOfDereth
         }
         private void Current_ChatBoxMessage(object sender, ChatTextInterceptEventArgs e)
         {
-            if (e.Text == null) return;
+            // Chat can arrive after subscription but before settings and views are ready.
+            if (!didInit || e == null || e.Text == null) return;
 
             try
             {
