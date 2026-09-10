@@ -126,13 +126,13 @@ namespace OracleOfDereth
                 Title title = titles[x];
                 if (title.Name == "Blank") { continue; }
 
-                ((HudStaticText)row[1]).Text = title.Name;
+                SetText(row, 1, title.Name);
                 if (title.TitleId == 0) { continue; }
 
                 AssignImage((HudPictureBox)row[0], title.IsComplete());
-                ((HudStaticText)row[2]).Text = title.Level.ToString();
-                ((HudStaticText)row[3]).Text = title.Category;
-                ((HudStaticText)row[4]).Text = title.TitleId.ToString();
+                SetText(row, 2, title.Level.ToString());
+                SetText(row, 3, title.Category);
+                SetText(row, 4, title.TitleId.ToString());
             }
 
             // Trim stale rows left behind after unchecking "Display Unavailable".

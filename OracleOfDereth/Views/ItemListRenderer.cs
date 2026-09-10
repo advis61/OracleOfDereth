@@ -581,6 +581,12 @@ namespace OracleOfDereth
 
     public static class ItemListRenderer
     {
+        private static void SetText(HudList.HudListRowAccessor row, int column, string value)
+        {
+            var cell = (HudStaticText)row[column];
+            if (cell.Text != value) cell.Text = value;
+        }
+
         // Dim grey for rows still waiting on their appraisal details.
         private static readonly Color ColorLoading = Color.FromArgb(255, 150, 150, 150);
 
@@ -599,15 +605,15 @@ namespace OracleOfDereth
 
                 ItemListRow item = items[x];
 
-                if (showCharacter) ((HudStaticText)row[0]).Text = item.Character;
+                if (showCharacter) SetText(row, 0, item.Character);
                 else AssignImage((HudPictureBox)row[0], iconNotComplete);
                 AssignImage((HudPictureBox)row[1], item.Icon);
-                ((HudStaticText)row[2]).Text = item.DisplayName;
-                ((HudStaticText)row[3]).Text = item.SummaryCol1;
-                ((HudStaticText)row[4]).Text = item.SummaryCol2;
-                ((HudStaticText)row[5]).Text = item.SummaryCol3;
-                ((HudStaticText)row[6]).Text = item.SummaryCol4;
-                ((HudStaticText)row[7]).Text = item.Id.ToString();
+                SetText(row, 2, item.DisplayName);
+                SetText(row, 3, item.SummaryCol1);
+                SetText(row, 4, item.SummaryCol2);
+                SetText(row, 5, item.SummaryCol3);
+                SetText(row, 6, item.SummaryCol4);
+                SetText(row, 7, item.Id.ToString());
 
                 // Center the Effect and Info columns; the rest keep their default left alignment.
                 ((HudStaticText)row[4]).TextAlignment = VirindiViewService.WriteTextFormats.Center;

@@ -237,6 +237,19 @@ internal static class Program
         lastRefresh.SetValue(list, DateTime.MinValue);
         list.Tick();
         if (refreshes != 1) throw new InvalidOperationException("A deferred repaint repeated without changes.");
+
+        var complete = new ItemListRow(new Item("Conquest", "Atlas", 1, "Component", Decal.Adapter.Wrappers.ObjectClass.SpellComponent), completeWithoutAppraisal: true);
+        complete.Populate();
+        list.Items.Add(complete);
+        int completions = 0;
+        list.OnQueueFinished = () => completions++;
+        list.IsProcessingQueue = true;
+        list.Tick();
+        if (list.IsProcessingQueue || completions != 1 || refreshes != 2)
+            throw new InvalidOperationException("Completed-list shortcut lost queue completion.");
+        list.Tick();
+        if (completions != 1 || refreshes != 2)
+            throw new InvalidOperationException("Completed item list did not stay idle.");
     }
 
     private static void AssertPartialViewCleanup()

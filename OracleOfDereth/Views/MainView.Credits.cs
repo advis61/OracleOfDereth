@@ -54,15 +54,15 @@ namespace OracleOfDereth
                 QuestFlag.QuestFlags.TryGetValue(creditQuest.Flag, out QuestFlag questFlag);
 
                 AssignImage((HudPictureBox)row[0], creditQuest.IsComplete());
-                ((HudStaticText)row[1]).Text = creditQuest.Name;
+                SetText(row, 1, creditQuest.Name);
 
                 if(creditQuest.IsComplete()) {
-                    ((HudStaticText)row[2]).Text = "completed";
+                    SetText(row, 2, "completed");
                 } else {
-                    ((HudStaticText)row[2]).Text = "ready";
+                    SetText(row, 2, "ready");
                 }
 
-                ((HudStaticText)row[3]).Text = creditQuest.Flag;
+                SetText(row, 3, creditQuest.Flag);
             }
         }
 

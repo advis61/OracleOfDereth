@@ -129,10 +129,10 @@ namespace OracleOfDereth
                     && fships[x].Leader == fshipSelectedLeader;
                 AssignSelected(row, selected, columns);
 
-                ((HudStaticText)row[FshipColName]).Text = fships[x].Name;
-                ((HudStaticText)row[FshipColMembers]).Text = fships[x].Members;
-                ((HudStaticText)row[FshipColLocation]).Text = fships[x].Location;
-                ((HudStaticText)row[FshipColLeader]).Text = fships[x].Leader;
+                SetText(row, FshipColName, fships[x].Name);
+                SetText(row, FshipColMembers, fships[x].Members);
+                SetText(row, FshipColLocation, fships[x].Location);
+                SetText(row, FshipColLeader, fships[x].Leader);
             }
 
             while (ConquestFshipList.RowCount > fships.Count)

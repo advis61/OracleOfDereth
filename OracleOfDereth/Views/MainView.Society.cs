@@ -106,8 +106,8 @@ namespace OracleOfDereth
         private void AddStatusRow(string key, string value)
         {
             HudList.HudListRowAccessor row = SocietyStatusList.AddRow();
-            ((HudStaticText)row[0]).Text = key;
-            ((HudStaticText)row[1]).Text = value;
+            SetText(row, 0, key);
+            SetText(row, 1, value);
         }
 
         // Ribbons are turned in to raise rank until the cap (test range) is hit.
@@ -154,21 +154,21 @@ namespace OracleOfDereth
 
                 if (societyQuest.IsBlank()) {
                     AssignImage((HudPictureBox)row[0], 0);
-                    ((HudStaticText)row[1]).Text = "";
-                    ((HudStaticText)row[2]).Text = "";
-                    ((HudStaticText)row[3]).Text = "";
-                    ((HudStaticText)row[4]).Text = "";
-                    ((HudStaticText)row[5]).Text = "";
+                    SetText(row, 1, "");
+                    SetText(row, 2, "");
+                    SetText(row, 3, "");
+                    SetText(row, 4, "");
+                    SetText(row, 5, "");
                     continue;
                 }
 
                 if (societyQuest.IsHeader()) {
                     AssignImage((HudPictureBox)row[0], 0);
-                    ((HudStaticText)row[1]).Text = societyQuest.Name.Replace("Rank: ", "");
-                    ((HudStaticText)row[2]).Text = "";
-                    ((HudStaticText)row[3]).Text = "";
-                    ((HudStaticText)row[4]).Text = "";
-                    ((HudStaticText)row[5]).Text = "";
+                    SetText(row, 1, societyQuest.Name.Replace("Rank: ", ""));
+                    SetText(row, 2, "");
+                    SetText(row, 3, "");
+                    SetText(row, 4, "");
+                    SetText(row, 5, "");
                     continue;
                 }
 
@@ -176,24 +176,24 @@ namespace OracleOfDereth
                 QuestFlag.QuestFlags.TryGetValue(societyQuest.Flag, out QuestFlag questFlag);
 
                 AssignImage((HudPictureBox)row[0], societyQuest.IsComplete());
-                ((HudStaticText)row[1]).Text = societyQuest.Name;
-                ((HudStaticText)row[2]).Text = societyQuest.Area;
+                SetText(row, 1, societyQuest.Name);
+                SetText(row, 2, societyQuest.Area);
 
                 if (societyQuest.IsRankTest()) {
-                    ((HudStaticText)row[3]).Text = societyQuest.IsComplete() ? "completed" : "ready";
-                    ((HudStaticText)row[4]).Text = "";
+                    SetText(row, 3, societyQuest.IsComplete() ? "completed" : "ready");
+                    SetText(row, 4, "");
                 } else if (questFlag == null) {
-                    ((HudStaticText)row[3]).Text = "ready";
-                    ((HudStaticText)row[4]).Text = "";
+                    SetText(row, 3, "ready");
+                    SetText(row, 4, "");
                 } else if (societyQuest.IsOneTime()) {
-                    ((HudStaticText)row[3]).Text = "completed";
-                    ((HudStaticText)row[4]).Text = "";
+                    SetText(row, 3, "completed");
+                    SetText(row, 4, "");
                 } else {
-                    ((HudStaticText)row[3]).Text = questFlag.NextAvailable();
-                    ((HudStaticText)row[4]).Text = $"{questFlag.Solves}";
+                    SetText(row, 3, questFlag.NextAvailable());
+                    SetText(row, 4, $"{questFlag.Solves}");
                 }
 
-                ((HudStaticText)row[5]).Text = societyQuest.Flag;
+                SetText(row, 5, societyQuest.Flag);
             }
 
             // Filtering can shrink the visible count (e.g. after joining a society);

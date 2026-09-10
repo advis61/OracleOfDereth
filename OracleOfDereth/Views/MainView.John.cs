@@ -91,17 +91,17 @@ namespace OracleOfDereth
                 if (complete) { completed += 1; }
 
                 AssignImage((HudPictureBox)row[0], complete);
-                ((HudStaticText)row[1]).Text = johnQuest.Name;
+                SetText(row, 1, johnQuest.Name);
 
                 if (questFlag == null) {
-                    ((HudStaticText)row[2]).Text = "ready";
-                    ((HudStaticText)row[3]).Text = "";
+                    SetText(row, 2, "ready");
+                    SetText(row, 3, "");
                 } else {
-                    ((HudStaticText)row[2]).Text = questFlag.NextAvailable();
-                    ((HudStaticText)row[3]).Text = $"{questFlag.Solves}";
+                    SetText(row, 2, questFlag.NextAvailable());
+                    SetText(row, 3, $"{questFlag.Solves}");
                 }
 
-                ((HudStaticText)row[4]).Text = johnQuest.Flag;
+                SetText(row, 4, johnQuest.Flag);
             }
 
             // Update Text

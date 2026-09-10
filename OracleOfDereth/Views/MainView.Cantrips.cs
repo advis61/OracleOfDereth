@@ -86,14 +86,14 @@ namespace OracleOfDereth
                 // its stale content when the list shifts (e.g. after an in-game respec).
                 if (cantrip.Name == "Blank") {
                     AssignImage((HudPictureBox)row[0], 0);
-                    ((HudStaticText)row[1]).Text = "";
-                    ((HudStaticText)row[2]).Text = "";
+                    SetText(row, 1, "");
+                    SetText(row, 2, "");
                     continue;
                 }
 
                 AssignImage((HudPictureBox)row[0], cantrip.Icon());
-                ((HudStaticText)row[1]).Text = cantrip.Name;
-                ((HudStaticText)row[2]).Text = cantrip.Level();
+                SetText(row, 1, cantrip.Name);
+                SetText(row, 2, cantrip.Level());
             }
 
             while (CantripsList.RowCount > cantrips.Count()) { CantripsList.RemoveRow(CantripsList.RowCount-1); }

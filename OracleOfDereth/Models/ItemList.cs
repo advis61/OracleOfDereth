@@ -405,6 +405,14 @@ namespace OracleOfDereth
         // item — that's what used to leave grey rows after the "identifying" count hit 0.
         public void Tick()
         {
+            // Completed lists need only a cheap completeness check, not the appraisal passes.
+            // Keep checking rows so newly added stubs still wake the pipeline.
+            if (QueueCount == 0 && !Items.Any(item => !item.IsComplete))
+            {
+                UpdateProcessingState();
+                if (refreshPending) MaybeRefresh();
+                return;
+            }
             // Self-heal: fill any stub whose appraisal data is already available. Covers
             // identify responses that never reached us as a matching IdentReceived event —
             // notably trade items, where the appraisal can land before the row is queued.

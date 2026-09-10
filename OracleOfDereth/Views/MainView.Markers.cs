@@ -60,9 +60,9 @@ namespace OracleOfDereth
                 if (complete) { completed += 1; }
 
                 AssignImage((HudPictureBox)row[0], complete);
-                ((HudStaticText)row[1]).Text = marker.Number.ToString();
-                ((HudStaticText)row[2]).Text = marker.Name;
-                ((HudStaticText)row[3]).Text = marker.Location;
+                SetText(row, 1, marker.Number.ToString());
+                SetText(row, 2, marker.Name);
+                SetText(row, 3, marker.Location);
             }
 
             // Update Text

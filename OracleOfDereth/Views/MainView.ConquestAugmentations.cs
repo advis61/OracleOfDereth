@@ -108,9 +108,9 @@ namespace OracleOfDereth
                     ? ConquestEnlAugsList.AddRow()
                     : ConquestEnlAugsList[x];
 
-                ((HudStaticText)row[0]).Text = augs[x].Name;
-                ((HudStaticText)row[1]).Text = augs[x].Value;
-                ((HudStaticText)row[2]).Text = augs[x].Cost;
+                SetText(row, 0, augs[x].Name);
+                SetText(row, 1, augs[x].Value);
+                SetText(row, 2, augs[x].Cost);
             }
 
             while (ConquestEnlAugsList.RowCount > augs.Count)
@@ -132,10 +132,10 @@ namespace OracleOfDereth
                     ? ConquestAugsList.AddRow()
                     : ConquestAugsList[x];
 
-                ((HudStaticText)row[0]).Text = augs[x].Name;
-                ((HudStaticText)row[1]).Text = augs[x].Count.ToString();
-                ((HudStaticText)row[2]).Text = augs[x].Effect();
-                ((HudStaticText)row[3]).Text = augs[x].NextCostText();
+                SetText(row, 0, augs[x].Name);
+                SetText(row, 1, augs[x].Count.ToString());
+                SetText(row, 2, augs[x].Effect());
+                SetText(row, 3, augs[x].NextCostText());
             }
 
             while (ConquestAugsList.RowCount > augs.Count)

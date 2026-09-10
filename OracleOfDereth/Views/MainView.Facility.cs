@@ -56,20 +56,20 @@ namespace OracleOfDereth
                 FacilityQuest facilityQuest = facilityQuests[x];
 
                 AssignImage((HudPictureBox)row[0], facilityQuest.IsComplete());
-                ((HudStaticText)row[1]).Text = facilityQuest.Name;
+                SetText(row, 1, facilityQuest.Name);
 
-                ((HudStaticText)row[2]).Text = facilityQuest.Level.ToString();
+                SetText(row, 2, facilityQuest.Level.ToString());
 
                 if (facilityQuest.IsComplete())
                 {
-                    ((HudStaticText)row[3]).Text = "completed";
+                    SetText(row, 3, "completed");
                 }
                 else
                 {
-                    ((HudStaticText)row[3]).Text = "ready";
+                    SetText(row, 3, "ready");
                 }
 
-                ((HudStaticText)row[4]).Text = facilityQuest.Flag;
+                SetText(row, 4, facilityQuest.Flag);
             }
         }
 

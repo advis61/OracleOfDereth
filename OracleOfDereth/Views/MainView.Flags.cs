@@ -53,18 +53,18 @@ namespace OracleOfDereth
                 FlagQuest flagQuest = flagQuests[x];
 
                 AssignImage((HudPictureBox)row[0], flagQuest.IsComplete());
-                ((HudStaticText)row[1]).Text = flagQuest.Name;
+                SetText(row, 1, flagQuest.Name);
 
                 if (flagQuest.IsComplete())
                 {
-                    ((HudStaticText)row[2]).Text = "completed";
+                    SetText(row, 2, "completed");
                 }
                 else
                 {
-                    ((HudStaticText)row[2]).Text = "ready";
+                    SetText(row, 2, "ready");
                 }
 
-                ((HudStaticText)row[3]).Text = flagQuest.Flag;
+                SetText(row, 3, flagQuest.Flag);
             }
         }
 

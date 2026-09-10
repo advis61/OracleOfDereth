@@ -49,18 +49,18 @@ namespace OracleOfDereth
                 // Update
                 Recall recall = recalls[x];
                 AssignImage((HudPictureBox)row[0], recall.IsComplete());
-                ((HudStaticText)row[1]).Text = recall.Name;
+                SetText(row, 1, recall.Name);
 
                 if (recall.IsComplete())
                 {
-                    ((HudStaticText)row[2]).Text = "completed";
+                    SetText(row, 2, "completed");
                 }
                 else
                 {
-                    ((HudStaticText)row[2]).Text = "-";
+                    SetText(row, 2, "-");
                 }
 
-                ((HudStaticText)row[3]).Text = recall.SpellId.ToString();
+                SetText(row, 3, recall.SpellId.ToString());
             }
         }
 

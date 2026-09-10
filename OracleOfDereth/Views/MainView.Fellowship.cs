@@ -110,8 +110,8 @@ namespace OracleOfDereth
                 if (x >= FellowshipList.RowCount) { row = FellowshipList.AddRow(); } else { row = FellowshipList[x]; }
 
                 // Update
-                ((HudStaticText)row[0]).Text = items[x].Key;
-                ((HudStaticText)row[1]).Text = items[x].Value;
+                SetText(row, 0, items[x].Key);
+                SetText(row, 1, items[x].Value);
             }
 
             while (FellowshipList.RowCount > items.Count()) { FellowshipList.RemoveRow(FellowshipList.RowCount - 1); }
@@ -205,15 +205,15 @@ namespace OracleOfDereth
                 bool selected = (fellowId == selectedFellowId && fellowId != 0);
                 AssignSelected(row, selected, columns);
 
-                ((HudStaticText)row[0]).Text = items[x].Value;
+                SetText(row, 0, items[x].Value);
 
                 if (items[x].Key == 0) {
-                    ((HudStaticText)row[1]).Text = "";
+                    SetText(row, 1, "");
                 } else {
-                    ((HudStaticText)row[1]).Text = CoreManager.Current.WorldFilter[fellowId] == null ? "Out of Range" : "";
+                    SetText(row, 1, CoreManager.Current.WorldFilter[fellowId] == null ? "Out of Range" : "");
                 }
 
-                ((HudStaticText)row[2]).Text = fellowId.ToString();
+                SetText(row, 2, fellowId.ToString());
             }
 
             while (FellowsList.RowCount > items.Count()) { FellowsList.RemoveRow(FellowsList.RowCount - 1); }

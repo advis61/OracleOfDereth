@@ -80,12 +80,12 @@ namespace OracleOfDereth
             while (ConquestSummaryList.RowCount < 2) { ConquestSummaryList.AddRow(); }
 
             HudList.HudListRowAccessor level = ConquestSummaryList[0];
-            ((HudStaticText)level[0]).Text = CharacterXp.LevelLabel();
-            ((HudStaticText)level[1]).Text = CharacterXp.ProgressText();
+            SetText(level, 0, CharacterXp.LevelLabel());
+            SetText(level, 1, CharacterXp.ProgressText());
 
             HudList.HudListRowAccessor enl = ConquestSummaryList[1];
-            ((HudStaticText)enl[0]).Text = CharacterXp.EnlightenmentLabel();
-            ((HudStaticText)enl[1]).Text = CharacterXp.EnlightenmentProgressText();
+            SetText(enl, 0, CharacterXp.EnlightenmentLabel());
+            SetText(enl, 1, CharacterXp.EnlightenmentProgressText());
 
             while (ConquestSummaryList.RowCount > 2)
             {
@@ -103,8 +103,8 @@ namespace OracleOfDereth
                     ? ConquestBonusList.AddRow()
                     : ConquestBonusList[x];
 
-                ((HudStaticText)row[0]).Text = bonuses[x].Name;
-                ((HudStaticText)row[1]).Text = bonuses[x].Value;
+                SetText(row, 0, bonuses[x].Name);
+                SetText(row, 1, bonuses[x].Value);
             }
 
             while (ConquestBonusList.RowCount > bonuses.Count)

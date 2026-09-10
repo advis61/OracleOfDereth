@@ -60,8 +60,8 @@ namespace OracleOfDereth
             while (HelpStatusList.RowCount < status.GetLength(0)) HelpStatusList.AddRow();
             for (int i = 0; i < status.GetLength(0); i++)
             {
-                ((HudStaticText)HelpStatusList[i][0]).Text = status[i, 0];
-                ((HudStaticText)HelpStatusList[i][1]).Text = status[i, 1];
+                SetText(HelpStatusList[i], 0, status[i, 0]);
+                SetText(HelpStatusList[i], 1, status[i, 1]);
             }
 
             // Static content; only build the rows once.
@@ -71,8 +71,8 @@ namespace OracleOfDereth
             foreach (var cmd in HelpCommands)
             {
                 HudList.HudListRowAccessor row = HelpList.AddRow();
-                ((HudStaticText)row[0]).Text = cmd.Command;
-                ((HudStaticText)row[1]).Text = cmd.Description;
+                SetText(row, 0, cmd.Command);
+                SetText(row, 1, cmd.Description);
             }
         }
 

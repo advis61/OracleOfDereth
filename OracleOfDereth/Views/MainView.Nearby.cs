@@ -125,12 +125,12 @@ namespace OracleOfDereth
                     AssignImage((HudPictureBox)row[0], item.Item.Icon);
                     AssignSelected(row, (item.Item.Id == targetId && !expanded), NearbyListColumns);
 
-                    ((HudStaticText)row[1]).Text = Setting.ShowNearbyWcid.IsYes
+                    SetText(row, 1, Setting.ShowNearbyWcid.IsYes
                         ? $"[{item.Item.Type}] {group.Key} ({group.Count()})"
-                        : $"{group.Key} ({group.Count()})";
-                    ((HudStaticText)row[2]).Text = (expanded ? "[-]" : "[+]");
-                    ((HudStaticText)row[3]).Text = item.Item.Id.ToString();
-                    ((HudStaticText)row[4]).Text = group.Key;
+                        : $"{group.Key} ({group.Count()})");
+                    SetText(row, 2, (expanded ? "[-]" : "[+]"));
+                    SetText(row, 3, item.Item.Id.ToString());
+                    SetText(row, 4, group.Key);
                 }
 
                 // Maybe render items
@@ -142,23 +142,23 @@ namespace OracleOfDereth
                         index++;
 
                         AssignImage((HudPictureBox)row[0], (isGrouped ? 0 : item.Item.Icon));
-                        ((HudStaticText)row[1]).Text = Setting.ShowNearbyWcid.IsYes
+                        SetText(row, 1, Setting.ShowNearbyWcid.IsYes
                             ? $"[{item.Item.Type}] {item.Item.Name}"
-                            : item.Item.Name;
+                            : item.Item.Name);
 
                         if (item.Item.Id == targetId)
                         {
                             AssignSelected(row, true, NearbyListColumns);
-                            ((HudStaticText)row[2]).Text = ((int)item.Distance()).ToString();
+                            SetText(row, 2, ((int)item.Distance()).ToString());
                         }
                         else
                         {
                             AssignSelected(row, false, NearbyListColumns);
-                            ((HudStaticText)row[2]).Text = "";
+                            SetText(row, 2, "");
                         }
 
-                        ((HudStaticText)row[3]).Text = item.Item.Id.ToString();
-                        ((HudStaticText)row[4]).Text = "";
+                        SetText(row, 3, item.Item.Id.ToString());
+                        SetText(row, 4, "");
                     }
                 }
 
@@ -174,9 +174,9 @@ namespace OracleOfDereth
 
             if (index >= NearbyList.RowCount) { row = NearbyList.AddRow(); } else { row = NearbyList[index]; }
             AssignImage((HudPictureBox)row[0], 0);
-            ((HudStaticText)row[1]).Text = "";
-            ((HudStaticText)row[2]).Text = "";
-            ((HudStaticText)row[3]).Text = "";
+            SetText(row, 1, "");
+            SetText(row, 2, "");
+            SetText(row, 3, "");
 
             return (index + 1);
         }

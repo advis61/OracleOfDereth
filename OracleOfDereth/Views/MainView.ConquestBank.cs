@@ -158,8 +158,8 @@ namespace OracleOfDereth
                     ? ConquestBankList.AddRow()
                     : ConquestBankList[x];
 
-                ((HudStaticText)row[0]).Text = balances[x].Name;
-                ((HudStaticText)row[1]).Text = balances[x].Value;
+                SetText(row, 0, balances[x].Name);
+                SetText(row, 1, balances[x].Value);
             }
 
             while (ConquestBankList.RowCount > balances.Count)

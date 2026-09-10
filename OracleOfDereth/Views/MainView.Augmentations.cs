@@ -59,14 +59,14 @@ namespace OracleOfDereth
                 // Update
                 Augmentation augmentation = augmentations[x];
                 if (augmentation.Name == "Blank") { continue; }
-                if (augmentation.Id == 0) { ((HudStaticText)row[2]).Text = augmentation.Name; continue; }
+                if (augmentation.Id == 0) { SetText(row, 2, augmentation.Name); continue; }
 
                 AssignImage((HudPictureBox)row[0], augmentation.IsComplete());
-                ((HudStaticText)row[1]).Text = augmentation.Text();
-                ((HudStaticText)row[2]).Text = augmentation.Name;
-                ((HudStaticText)row[3]).Text = augmentation.Effect;
-                ((HudStaticText)row[4]).Text = augmentation.CostText();
-                ((HudStaticText)row[5]).Text = augmentation.Id.ToString();
+                SetText(row, 1, augmentation.Text());
+                SetText(row, 2, augmentation.Name);
+                SetText(row, 3, augmentation.Effect);
+                SetText(row, 4, augmentation.CostText());
+                SetText(row, 5, augmentation.Id.ToString());
             }
         }
 
@@ -113,17 +113,17 @@ namespace OracleOfDereth
                 QuestFlag.QuestFlags.TryGetValue(augQuest.Flag, out QuestFlag questFlag);
 
                 AssignImage((HudPictureBox)row[0], augQuest.IsComplete());
-                ((HudStaticText)row[1]).Text = augQuest.Name;
+                SetText(row, 1, augQuest.Name);
 
                 if (questFlag == null) {
-                    ((HudStaticText)row[2]).Text = "ready";
-                    ((HudStaticText)row[3]).Text = "";
+                    SetText(row, 2, "ready");
+                    SetText(row, 3, "");
                 } else {
-                    ((HudStaticText)row[2]).Text = questFlag.NextAvailable();
-                    ((HudStaticText)row[3]).Text = $"{questFlag.Solves}";
+                    SetText(row, 2, questFlag.NextAvailable());
+                    SetText(row, 3, $"{questFlag.Solves}");
                 }
 
-                ((HudStaticText)row[4]).Text = augQuest.Flag;
+                SetText(row, 4, augQuest.Flag);
             }
         }
 

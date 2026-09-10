@@ -42,8 +42,8 @@ namespace OracleOfDereth
                 }
 
                 Setting setting = settings[x];
-                ((HudStaticText)row[0]).Text = setting.Name;
-                ((HudStaticText)row[1]).Text = setting.Value;
+                SetText(row, 0, setting.Name);
+                SetText(row, 1, setting.Value);
             }
 
             while (SettingsList.RowCount > settings.Count)

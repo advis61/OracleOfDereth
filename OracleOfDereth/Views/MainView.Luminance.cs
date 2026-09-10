@@ -55,15 +55,15 @@ namespace OracleOfDereth
                 // Update
                 Augmentation augmentation = augmentations[x];
                 if (augmentation.Name == "Blank") { continue; }
-                if (augmentation.Id == 0) { ((HudStaticText)row[2]).Text = augmentation.Name; continue; }
+                if (augmentation.Id == 0) { SetText(row, 2, augmentation.Name); continue; }
 
                 AssignImage((HudPictureBox)row[0], augmentation.IsComplete());
-                ((HudStaticText)row[1]).Text = augmentation.Text();
-                ((HudStaticText)row[2]).Text = augmentation.Name;
-                ((HudStaticText)row[3]).Text = augmentation.Effect;
-                //((HudStaticText)row[3]).Text = $"{augmentation.LuminanceSpent():N0}";
-                ((HudStaticText)row[4]).Text = augmentation.CostText();
-                ((HudStaticText)row[5]).Text = augmentation.Id.ToString();
+                SetText(row, 1, augmentation.Text());
+                SetText(row, 2, augmentation.Name);
+                SetText(row, 3, augmentation.Effect);
+                //SetText(row, 3, $"{augmentation.LuminanceSpent():N0}");
+                SetText(row, 4, augmentation.CostText());
+                SetText(row, 5, augmentation.Id.ToString());
             }
         }
 

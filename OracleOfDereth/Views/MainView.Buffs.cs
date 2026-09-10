@@ -50,12 +50,12 @@ namespace OracleOfDereth
                 TimeSpan time = TimeSpan.FromSeconds(duration);
 
                 AssignImage((HudPictureBox)row[0], spell.IconId);
-                ((HudStaticText)row[1]).Text = enchantment.SpellId.ToString();
-                ((HudStaticText)row[2]).Text = string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds);
+                SetText(row, 1, enchantment.SpellId.ToString());
+                SetText(row, 2, string.Format("{0:D1}:{1:D2}:{2:D2}", time.Hours, time.Minutes, time.Seconds));
                 string name = spell.Name;
                 if (enchantment.SpellId == 4024) name = "Asheron's Lesser Benediction";
                 else if (enchantment.SpellId == 3811) name = "Blackmoor's Favor";
-                ((HudStaticText)row[3]).Text = name;
+                SetText(row, 3, name);
             }
 
             while (BuffsList.RowCount > enchantments.Count()) { BuffsList.RemoveRow(BuffsList.RowCount - 1); }

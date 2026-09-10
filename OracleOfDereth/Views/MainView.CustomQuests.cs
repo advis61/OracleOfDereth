@@ -57,20 +57,20 @@ namespace OracleOfDereth
                 QuestFlag.QuestFlags.TryGetValue(customQuest.Flag, out QuestFlag questFlag);
 
                 AssignImage((HudPictureBox)row[0], customQuest.IsComplete());
-                ((HudStaticText)row[1]).Text = customQuest.Name;
+                SetText(row, 1, customQuest.Name);
 
                 if (questFlag == null)
                 {
-                    ((HudStaticText)row[2]).Text = "ready";
-                    ((HudStaticText)row[3]).Text = "";
+                    SetText(row, 2, "ready");
+                    SetText(row, 3, "");
                 }
                 else
                 {
-                    ((HudStaticText)row[2]).Text = questFlag.NextAvailable();
-                    ((HudStaticText)row[3]).Text = $"{questFlag.Solves}";
+                    SetText(row, 2, questFlag.NextAvailable());
+                    SetText(row, 3, $"{questFlag.Solves}");
                 }
 
-                ((HudStaticText)row[4]).Text = customQuest.Flag;
+                SetText(row, 4, customQuest.Flag);
             }
 
             // Trim stale rows (e.g. if the list shrinks)
