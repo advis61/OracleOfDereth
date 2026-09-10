@@ -2,6 +2,9 @@ using Decal.Adapter.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using VirindiViewService.Controls;
 
 namespace OracleOfDereth
@@ -450,43 +453,114 @@ namespace OracleOfDereth
             return CountOccurrences(combined, "major") >= 2;
         }
 
-        private bool MatchesText(ItemListRow t)
+        private string parsedSearchText;
+        private string textSearchError;
+        public string SearchError
         {
-            string trimmed = (Text ?? "").Trim();
-            string[] terms = trimmed.Length > 0
-                ? trimmed.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                : new string[0];
-
-            if (terms.Length == 0) return true;
-            string combined = Combined(t) + " " + t.Character;
-            foreach (string term in terms)
+            get
             {
-                int requiredCount = 1;
-                string word = term;
-                int starIndex = term.LastIndexOf('*');
+                string current = Text ?? "";
+                if (parsedSearchText != current) ParseTextSearch(current);
+                return textSearchError;
+            }
+        }
 
-                if (starIndex > 0 && int.TryParse(term.Substring(starIndex + 1), out int n))
+        private readonly List<string> phrases = new List<string>();
+        private readonly List<(string Word, int Count)> terms = new List<(string, int)>();
+        private Regex pattern;
+
+
+        private void ParseTextSearch(string text)
+        {
+            parsedSearchText = text;
+            phrases.Clear();
+            terms.Clear();
+            pattern = null;
+            textSearchError = null;
+            var unquoted = new StringBuilder();
+            for (int i = 0; i < text.Length; i++)
+            {
+                // Keep escaped characters intact for the regex parser.
+                if (text[i] == '\\' && i + 1 < text.Length)
                 {
-                    word = term.Substring(0, starIndex);
-                    requiredCount = n;
+                    unquoted.Append(text[i]).Append(text[++i]);
+                    continue;
                 }
-                else if (term.Contains(".*"))
+                if (text[i] != '"') { unquoted.Append(text[i]); continue; }
+                int end = text.IndexOf('"', i + 1);
+                if (end < 0) { textSearchError = "Close the quoted search phrase."; return; }
+                string phrase = text.Substring(i + 1, end - i - 1);
+                if (phrase.Length > 0) phrases.Add(phrase);
+                unquoted.Append('\0'); // Keep explicit quotes as boundaries for automatic phrases.
+                i = end;
+            }
+
+            string query = unquoted.ToString().Trim();
+            // Preserve ordinary punctuation and the existing word*2 shorthand.
+            bool regex = query.IndexOfAny(new[] { '\\', '|', '(', ')', '[', ']', '{', '}', '^', '$' }) >= 0 ||
+                query.Contains(".*") || query.Contains(".+") || query.Contains(".?");
+            if (regex)
+            {
+                try
                 {
-                    string[] parts = term.Split(new[] { ".*" }, StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length == 0) continue;   // bare ".*" — no real term, impose no constraint
-                    requiredCount = parts.Length;
-                    word = parts[0];
-                    bool allSame = true;
-                    foreach (string p in parts) { if (!p.Equals(parts[0], StringComparison.OrdinalIgnoreCase)) { allSame = false; break; } }
-                    if (!allSame)
+                    pattern = new Regex(query.Replace('\0', ' ').Trim(), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant,
+                        TimeSpan.FromMilliseconds(25));
+                }
+                catch (ArgumentException) { textSearchError = "Invalid search regex."; }
+                return;
+            }
+            foreach (string segment in query.Split('\0'))
+            {
+                string[] words = segment.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < words.Length; i++)
+                {
+                    string term = words[i];
+                    if (i + 1 < words.Length && (term.Equals("legendary", StringComparison.OrdinalIgnoreCase) ||
+                        term.Equals("epic", StringComparison.OrdinalIgnoreCase) ||
+                        term.Equals("major", StringComparison.OrdinalIgnoreCase) ||
+                        term.Equals("minor", StringComparison.OrdinalIgnoreCase)))
                     {
-                        bool allFound = true;
-                        foreach (string p in parts) { if (combined.IndexOf(p, StringComparison.OrdinalIgnoreCase) < 0) { allFound = false; break; } }
-                        if (!allFound) return false;
+                        phrases.Add(term + " " + words[++i]);
                         continue;
                     }
+                    int star = term.LastIndexOf('*');
+                    if (star > 0 && int.TryParse(term.Substring(star + 1), out int count) && count > 0)
+                        terms.Add((term.Substring(0, star), count));
+                    else terms.Add((term, 1));
                 }
-                if (CountOccurrences(combined, word) < requiredCount) return false;
+            }
+        }
+
+        private bool MatchesText(ItemListRow row)
+        {
+            if (SearchError != null) return false;
+            if (phrases.Count == 0 && terms.Count == 0 && pattern == null) return true;
+            var columns = new[] { row.DisplayName, row.SummaryCol1, row.SummaryCol4,
+                row.SummaryCol2, row.SummaryCol3, row.Character };
+            foreach (string phrase in phrases)
+                if (!columns.Any(column => column != null && column.IndexOf(phrase, StringComparison.OrdinalIgnoreCase) >= 0))
+                    return false;
+
+            string combined = string.Join(" ", columns);
+            if (pattern != null)
+            {
+                try { return pattern.IsMatch(combined); }
+                catch (RegexMatchTimeoutException)
+                {
+                    // Disable this query after one timeout, rather than stalling on every row.
+                    textSearchError = "Search regex took too long; simplify the expression.";
+                    return false;
+                }
+            }
+            foreach (var term in terms)
+            {
+                int start = 0;
+                for (int count = 0; count < term.Count; count++)
+                {
+                    int index = combined.IndexOf(term.Word, start, StringComparison.OrdinalIgnoreCase);
+                    if (index < 0) return false;
+                    start = index + term.Word.Length;
+                }
             }
             return true;
         }

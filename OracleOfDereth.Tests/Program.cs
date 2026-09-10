@@ -14,6 +14,7 @@ internal static class Program
         SavedInventorySearchTests.Run();
         VGInventoryTests.Run();
         ItemExportTests.Run();
+        ItemTextSearchTests.Run();
         if (args.Length == 2 && args[0] == "--vgi") VGInventoryTests.Audit(args[1]);
         AssertScreenshotBounds();
         AssertScreenshotPaths();

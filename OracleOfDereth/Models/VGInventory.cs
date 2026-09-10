@@ -80,6 +80,7 @@ namespace OracleOfDereth
 
         private IEnumerable<bool> Scan(string server, ItemFilter filter, ItemList.SortType sort)
         {
+            if (filter.SearchError != null) throw new InvalidOperationException(filter.SearchError);
             if (string.IsNullOrWhiteSpace(server)) throw new InvalidOperationException("Log in to view this server's inventory.");
             if (server.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) throw new InvalidOperationException("Invalid server name.");
             string folder = directory ?? FindDirectory();
@@ -131,6 +132,7 @@ namespace OracleOfDereth
                             if (rows.Count >= ResultLimit + 256)
                                 rows = ItemList.OrderRows(rows, sort).Take(ResultLimit).ToList();
                         }
+                        if (filter.SearchError != null) throw new InvalidOperationException(filter.SearchError);
                         ScannedCount = total;
                         if (total % 32 == 0) yield return true;
                     }
