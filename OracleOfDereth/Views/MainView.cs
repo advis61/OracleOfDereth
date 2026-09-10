@@ -491,6 +491,13 @@ namespace OracleOfDereth
             if (currentTab == 5_03) { UpdateHelp(); }
         }
 
+        // The inventory scan has a faster timer; keep its tab dispatch here too.
+        private void VGInventorySearchTick(object sender, EventArgs e)
+        {
+            if (view.Visible && CurrentTab() == 4_04) AdvanceVGInventorySearch();
+            else PauseVGInventorySearch();
+        }
+
         // Selected target changed
         public void UpdateTarget()
         {

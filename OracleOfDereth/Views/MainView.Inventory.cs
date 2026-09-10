@@ -165,15 +165,15 @@ namespace OracleOfDereth
 
         public void UpdateVGInventory()
         {
-            if (view.Visible && DateTime.UtcNow.Second % 2 == 0) PollSavedInventorySearch();
+            if (DateTime.UtcNow.Second % 2 == 0) PollSavedInventorySearch();
 
             if (SavedInventory.ServerName != Server.Name || (vgInventorySearchDue.HasValue && DateTime.UtcNow >= vgInventorySearchDue.Value))
-                RefreshVGInventory();
+                RefreshVGInventory(preserveSelection: true);
         }
 
-        private void RefreshVGInventory()
+        private void RefreshVGInventory(bool preserveSelection = false)
         {
-            loadedInventorySelection = null;
+            if (!preserveSelection) loadedInventorySelection = null;
             vgInventorySearchDue = null;
             SavedInventory.BeginRefresh(Server.Name, VGInventoryFilter());
             vgInventoryTimer.Start();
@@ -182,7 +182,18 @@ namespace OracleOfDereth
             UpdateVGInventoryList();
         }
 
-        private void VGInventorySearchTick(object sender, EventArgs e)
+        private void PauseVGInventorySearch()
+        {
+            // Close SQLite while hidden; restart on return with the pending selection intact.
+            if (SavedInventory.IsSearching)
+            {
+                SavedInventory.CancelSearch();
+                vgInventorySearchDue = DateTime.UtcNow;
+            }
+            vgInventoryTimer.Stop();
+        }
+
+        private void AdvanceVGInventorySearch()
         {
             if (Decal.Adapter.CoreManager.Current.CharacterFilter.LoginStatus < 1)
             {
