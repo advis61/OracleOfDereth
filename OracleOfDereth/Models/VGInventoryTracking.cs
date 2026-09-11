@@ -23,10 +23,6 @@ namespace OracleOfDereth
         private const BindingFlags StaticMembers = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
         private enum Result { Waiting, AlreadyEnabled, Requested, Enabled, Unsupported }
-        private static Assembly viewAssembly;
-        private static FieldInfo viewWrapperField;
-        private static Type viewWrapperType;
-        private static FieldInfo hudViewField;
 
         public static bool ToggleView()
         {
@@ -39,7 +35,7 @@ namespace OracleOfDereth
         public static string OpenButtonText()
         {
             // Mirror VGI's own pending-ID title, including while its window is hidden.
-            // Missing or unsupported versions leave the ordinary Open VGI label.
+            // If the VGI window is unavailable, keep the ordinary Open VGI label.
             try
             {
                 string title = GetView()?.Title;
@@ -54,28 +50,18 @@ namespace OracleOfDereth
 
         private static VirindiViewService.HudView GetView()
         {
-            Assembly assembly = LoadedAssemblies.Find("VirindiGlobalInventory");
-            if (assembly == null) return null;
-            if (viewAssembly != assembly)
+            // VVS exposes live views, including hidden windows. Resolve the current
+            // window so character changes cannot leave us holding a disposed view.
+            // No VGI assembly lookup or obfuscated member names are needed here.
+            foreach (var hud in VirindiViewService.HudView.GetAllViews())
             {
-                viewAssembly = assembly;
-                string viewName = IntegrationTypes(assembly.GetName().Version).View;
-                viewWrapperField = viewName == null ? null : assembly.GetType(viewName)?.GetField("c", StaticMembers);
-                viewWrapperType = null;
-                hudViewField = null;
+                string title = hud.Title;
+                if (title == "Virindi Global Inventory" ||
+                    (title != null && title.StartsWith("Virindi Global Inventory (", StringComparison.Ordinal)
+                        && title.EndsWith(" to read)", StringComparison.Ordinal)))
+                    return hud;
             }
-            // VGI owns a view wrapper in static field c. Read its current HudView
-            // so visibility and status follow the window across character changes.
-            object wrapper = viewWrapperField?.GetValue(null);
-            if (wrapper == null) return null;
-            if (viewWrapperType != wrapper.GetType())
-            {
-                viewWrapperType = wrapper.GetType();
-                var fields = viewWrapperType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Where(f => f.FieldType == typeof(VirindiViewService.HudView)).ToArray();
-                hudViewField = fields.Length == 1 ? fields[0] : null;
-            }
-            return hudViewField?.GetValue(wrapper) as VirindiViewService.HudView;
+            return null;
         }
 
         public static void Init()
