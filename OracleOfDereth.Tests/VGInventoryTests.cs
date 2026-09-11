@@ -17,6 +17,8 @@ internal static class VGInventoryTests
     public static void Run()
     {
         Setting.Init();
+        AssertCurrentCharacterSort();
+        AssertMineOnlyFilter();
         AssertResultRelease();
         AssertObservations();
         AssertWeaponSubfilters();
@@ -27,6 +29,7 @@ internal static class VGInventoryTests
         AssertArmorSetSubfilters();
         AssertClothingSubfilters();
         AssertJewelrySubfilters();
+        AssertJewelryImbueFilters();
         AssertCloakSubfilters();
         AssertSummonSubfilters();
         AssertAetheriaSubfilters();
@@ -117,8 +120,50 @@ internal static class VGInventoryTests
         Check(tabs.Cast<XmlNode>().Select(tab => tab.Attributes["label"].Value).SequenceEqual(
             new[] { "Augs", "Bank", "Experience", "Fship", "Inventory", "Quests", "Top" }),
             "Server tabs are not in alphabetical order.");
-        Check(layout.SelectNodes("//control[starts-with(@name,'VGInventoryFilter') and @progid='DecalControls.CheckBox']").Count == 10, "Inventory filters differ from Items.");
+        Check(layout.SelectNodes("//control[starts-with(@name,'VGInventoryFilter') and @progid='DecalControls.CheckBox']").Count == 11, "Inventory must include its Mine only filter.");
         Check(layout.SelectSingleNode("//control[@name='VGInventoryList']/column[1]").Attributes["name"].Value == "Character", "First column must be Character.");
+    }
+
+    private static void AssertMineOnlyFilter()
+    {
+        var mine = new ItemListRow(new Item("Conquest", "Atlas", 1, "Sword", ObjectClass.MeleeWeapon));
+        var other = new ItemListRow(new Item("Conquest", "Atlas Mule", 1, "Sword", ObjectClass.MeleeWeapon));
+        var filter = new ItemFilter { MineOnly = true, CurrentCharacter = "Atlas" };
+        Check(filter.IsActive && filter.Matches(mine) && !filter.Matches(other), "Mine only must match the exact owner.");
+        filter.Text = "Bow";
+        Check(!filter.Matches(mine), "Mine only must combine with the text filter.");
+        filter.Text = "";
+        filter.CurrentCharacter = "Atlas Mule";
+        Check(!filter.Matches(mine) && filter.Matches(other), "Mine only must follow the current character.");
+        filter.CurrentCharacter = null;
+        Check(!filter.Matches(mine), "Mine only must not show another character when no character is known.");
+        filter.MineOnly = false;
+        Check(!filter.IsActive && filter.Matches(mine) && filter.Matches(other), "Clearing Mine only must restore all owners.");
+    }
+
+    private static void AssertCurrentCharacterSort()
+    {
+        var inventory = new VGInventory();
+        Check(inventory.List.CurrentSortType == ItemList.SortType.CurrentCharacterFirst,
+            "Saved inventory must default to the current character first.");
+        inventory.List.PriorityCharacter = "Zelda";
+        inventory.List.Items = new List<ItemListRow>
+        {
+            new ItemListRow(new Item("Conquest", "Aaron", 1, "Apple", ObjectClass.MeleeWeapon)),
+            new ItemListRow(new Item("Conquest", "Zelda", 2, "Zebra", ObjectClass.MeleeWeapon)),
+            new ItemListRow(new Item("Conquest", "Zelda", 3, "Bow", ObjectClass.MeleeWeapon)),
+            new ItemListRow(new Item("Conquest", "Aaron", 4, "Axe", ObjectClass.MeleeWeapon)),
+        };
+        inventory.List.Sort(inventory.List.CurrentSortType);
+        Check(inventory.List.Items.Select(row => row.Id).SequenceEqual(new[] { 3, 2, 1, 4 }),
+            "Current character must precede alphabetically earlier owners, with items sorted by name.");
+        inventory.List.Sort(ItemList.SortType.NameAscending);
+        Check(inventory.List.Items.Select(row => row.Id).SequenceEqual(new[] { 1, 4, 3, 2 }),
+            "Explicit name sorting must override current-character priority.");
+        inventory.List.PriorityCharacter = "Aaron";
+        inventory.List.Sort(ItemList.SortType.CurrentCharacterFirst);
+        Check(inventory.List.Items.Select(row => row.Id).SequenceEqual(new[] { 1, 4, 3, 2 }),
+            "Changing characters must update the priority.");
     }
 
     private static void AssertResultRelease()
@@ -210,7 +255,7 @@ internal static class VGInventoryTests
         var type = typeof(ItemFilter).Assembly.GetType("OracleOfDereth.ItemSubfilters", true);
         var definitions = (Array)type.GetField("Definitions", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
         var mainFields = new HashSet<string> { "Weapons", "Armor", "Clothing", "Jewelry", "Cloaks",
-            "Summons", "Aetheria", "Salvage", "Other", "Doubles" };
+            "Summons", "Aetheria", "Salvage", "Other", "Doubles", "MineOnly" };
         var booleanFields = typeof(ItemFilter).GetFields().Where(field => field.FieldType == typeof(bool)).ToList();
         var boundFields = new HashSet<string>();
         var boundSlots = ItemInfo.ArmorSlot.None;
@@ -441,6 +486,41 @@ internal static class VGInventoryTests
         weapon.PopulateStub();
         Check(new ItemFilter { Cloaks = true, Weapons = true, CloakLevel5 = true }.Matches(weapon),
             "Cloak subfilters hid another selected category.");
+    }
+
+    private static void AssertJewelryImbueFilters()
+    {
+        ItemListRow Jewel(int key = 179, int value = 0, bool identified = true, int slots = 0x40000)
+        {
+            var row = new ItemListRow(new Item("Conquest", "Mule", 1, "Jewel", ObjectClass.Jewelry,
+                new Dictionary<int, int> { [key] = value, [(int)LongValueKey.EquipableSlots] = slots },
+                hasIdData: identified));
+            row.PopulateStub(); return row;
+        }
+        var imbued = new ItemFilter { Jewelry = true, JewelryImbued = true };
+        var plain = new ItemFilter { Jewelry = true, JewelryNotImbued = true };
+        foreach (int key in new[] { 179, 303, 304, 305, 306 })
+        {
+            var spellbook = Jewel(key, 0x2000);
+            Check(imbued.Matches(spellbook) && !plain.Matches(spellbook),
+                "Spell-based imbues must be recognized in every appraisal imbue slot.");
+        }
+        Check(imbued.Matches(Jewel(value: 1)) && imbued.Matches(Jewel(value: unchecked((int)0x80000000))),
+            "Non-spell imbue flags must also count.");
+        Check(!imbued.Matches(Jewel()) && plain.Matches(Jewel()), "Identified unimbued jewelry was misclassified.");
+        Check(!imbued.Matches(Jewel(identified: false)) && !plain.Matches(Jewel(identified: false)),
+            "Unknown appraisal data must not be treated as confirmed unimbued jewelry.");
+        imbued.JewelryRing = true;
+        Check(imbued.Matches(Jewel(value: 0x2000)) && !imbued.Matches(Jewel(value: 0x2000, slots: 0x8000)),
+            "Imbue selection must combine with jewelry slot selection.");
+        imbued.JewelryRing = false;
+        imbued.JewelryNotImbued = true;
+        Check(imbued.Matches(Jewel()) && imbued.Matches(Jewel(value: 0x2000)) && imbued.Matches(Jewel(identified: false)),
+            "Selecting both imbue options must leave imbue status unrestricted.");
+        var weapon = new ItemListRow(new Item("Conquest", "Mule", 2, "Sword", ObjectClass.MeleeWeapon));
+        weapon.PopulateStub();
+        plain.Weapons = true;
+        Check(plain.Matches(weapon), "Jewelry imbue filters must not hide another selected category.");
     }
 
     private static void AssertJewelrySubfilters()
@@ -937,6 +1017,7 @@ internal static class VGInventoryTests
                 transaction.Commit();
             }
             long baseline = GC.GetTotalMemory(true);
+            inventory.List.CurrentSortType = ItemList.SortType.NameAscending;
             var timer = System.Diagnostics.Stopwatch.StartNew();
             Check(inventory.Refresh("Conquest"), inventory.Error);
             timer.Stop();
@@ -969,10 +1050,11 @@ internal static class VGInventoryTests
             }
             foreach (ItemList.SortType sort in Enum.GetValues(typeof(ItemList.SortType)))
             {
+                inventory.List.PriorityCharacter = "Mule 35";
                 inventory.List.CurrentSortType = sort;
                 Check(inventory.Refresh("Conquest"), inventory.Error);
                 Check(inventory.List.Items.Select(r => r.Character + ":" + r.Id).SequenceEqual(
-                    ItemList.OrderRows(expected, sort).Take(VGInventory.ResultLimit).Select(r => r.Character + ":" + r.Id)),
+                    ItemList.OrderRows(expected, sort, inventory.List.PriorityCharacter).Take(VGInventory.ResultLimit).Select(r => r.Character + ":" + r.Id)),
                     "Bounded search differs from full-list sorting: " + sort);
             }
             var query = new ItemFilter { Text = "Mule 35", Weapons = true, WeaponHW = true };

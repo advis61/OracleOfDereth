@@ -545,11 +545,12 @@
 						<control progid="DecalControls.PushButton" name="VGInventoryExportJson" left="1078" top="3" width="52" height="22" text="JSON"/>
 						<control progid="DecalControls.FixedLayout" name="VGInventorySubfilters" left="0" top="59" width="1135" height="16"/>
 						<control progid="DecalControls.FixedLayout" name="VGInventoryListSort" left="1" top="85" width="16" height="16"/>
-						<control progid="DecalControls.StaticText" name="VGInventoryListSortCharacter" left="19" top="81" width="142" height="17" text="Character"/>
+						<control progid="DecalControls.StaticText" name="VGInventoryListSortCharacter" left="19" top="81" width="70" height="17" text="Character"/>
+						<control progid="DecalControls.CheckBox" name="VGInventoryFilterMineOnly" left="84" top="84" width="90" height="16" text="Mine only" checked="false"/>
 						<control progid="DecalControls.StaticText" name="VGInventoryListSortName" left="193" top="81" width="210" height="17" text="Item Name"/>
 						<control progid="DecalControls.StaticText" name="VGInventoryListSortCol1" left="488" top="81" width="140" height="17" text="Type"/>
 						<control progid="DecalControls.StaticText" name="VGInventoryListSortCol2" left="685" top="81" width="60" height="17" text="Effect"/>
-						<control progid="DecalControls.StaticText" name="VGInventoryListSortCol3" left="860" top="81" width="50" height="17" text="Info"/>
+						<control progid="DecalControls.StaticText" name="VGInventoryListSortCol3" left="865" top="81" width="50" height="17" text="Info"/>
 						<control progid="DecalControls.StaticText" name="VGInventoryListSortCol4" left="984" top="81" width="360" height="17" text="Details"/>
 						<control progid="DecalControls.List" name="VGInventoryList" left="0" top="101" width="1920" height="2000">
 							<column progid="DecalControls.TextColumn" name="Character" fixedwidth="160" />

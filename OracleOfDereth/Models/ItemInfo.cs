@@ -697,6 +697,17 @@ namespace OracleOfDereth
         // Imbues & Tinks
         // ============================================================
 
+        public bool IsImbued()
+        {
+            // Spellbook (0x2000) covers spell-based tinkering as well as Hematite.
+            // Include the additional imbue slots exposed by item appraisal.
+            return item.Values(LongValueKey.Imbued, 0) != 0
+                || item.Values((LongValueKey)303, 0) != 0
+                || item.Values((LongValueKey)304, 0) != 0
+                || item.Values((LongValueKey)305, 0) != 0
+                || item.Values((LongValueKey)306, 0) != 0;
+        }
+
         public string GetImbueString()
         {
             var parts = new List<string>();

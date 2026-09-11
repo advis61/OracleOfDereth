@@ -45,6 +45,7 @@ namespace OracleOfDereth
         // Collection of Items
         public List<ItemListRow> Items = new List<ItemListRow>();
         public SortType CurrentSortType = SortType.NameAscending;
+        public string PriorityCharacter;
 
         public enum SortType
         {
@@ -63,6 +64,7 @@ namespace OracleOfDereth
             Col4Descending,
             CharacterAscending,
             CharacterDescending,
+            CurrentCharacterFirst,
         }
 
         // In-flight identify requests: item id -> when we sent it. Tracked so a dropped
@@ -615,14 +617,18 @@ namespace OracleOfDereth
         public void Sort(SortType sortType)
         {
             CurrentSortType = sortType;
-            Items = OrderRows(Items, sortType).ToList();
+            Items = OrderRows(Items, sortType, PriorityCharacter).ToList();
         }
 
-        public static IEnumerable<ItemListRow> OrderRows(IEnumerable<ItemListRow> items, SortType sortType)
+        public static IEnumerable<ItemListRow> OrderRows(IEnumerable<ItemListRow> items, SortType sortType, string priorityCharacter = null)
         {
 
             switch (sortType)
             {
+                case SortType.CurrentCharacterFirst:
+                    return items.OrderBy(t => !string.IsNullOrEmpty(priorityCharacter)
+                            && string.Equals(t.Character, priorityCharacter, StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+                        .ThenBy(t => t.Character).ThenBy(t => t.DisplayName);
                 case SortType.NameAscending:
                     return items.OrderBy(t => t.DisplayName);
                 case SortType.NameDescending:

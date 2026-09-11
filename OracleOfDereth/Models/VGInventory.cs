@@ -19,7 +19,7 @@ namespace OracleOfDereth
         public const int ResultLimit = 5000;
         public int MatchCount { get; private set; }
         public int TotalCount { get; private set; }
-        public ItemList List { get; } = new ItemList();
+        public ItemList List { get; } = new ItemList { CurrentSortType = ItemList.SortType.CurrentCharacterFirst };
         public string ServerName { get; private set; }
         public string Error { get; private set; } = "";
         public int UnreadableCount { get; private set; }
@@ -56,7 +56,7 @@ namespace OracleOfDereth
             ServerName = server;
             Error = "";
             ScannedCount = 0;
-            scan = Scan(server, filter ?? new ItemFilter(), List.CurrentSortType).GetEnumerator();
+            scan = Scan(server, filter ?? new ItemFilter(), List.CurrentSortType, List.PriorityCharacter).GetEnumerator();
         }
 
         // Each step processes at most 32 records; disposing cancels and closes SQLite.
@@ -83,7 +83,7 @@ namespace OracleOfDereth
             return string.IsNullOrEmpty(Error);
         }
 
-        private IEnumerable<bool> Scan(string server, ItemFilter filter, ItemList.SortType sort)
+        private IEnumerable<bool> Scan(string server, ItemFilter filter, ItemList.SortType sort, string priorityCharacter)
         {
             if (filter.SearchError != null) throw new InvalidOperationException(filter.SearchError);
             if (string.IsNullOrWhiteSpace(server)) throw new InvalidOperationException("Log in to view this server's inventory.");
@@ -135,7 +135,7 @@ namespace OracleOfDereth
                             rows.Add(row);
                             // Amortize sorting in small batches, retaining the global best results.
                             if (rows.Count >= ResultLimit + 256)
-                                rows = ItemList.OrderRows(rows, sort).Take(ResultLimit).ToList();
+                                rows = ItemList.OrderRows(rows, sort, priorityCharacter).Take(ResultLimit).ToList();
                         }
                         if (filter.SearchError != null) throw new InvalidOperationException(filter.SearchError);
                         ScannedCount = total;
@@ -143,7 +143,7 @@ namespace OracleOfDereth
                     }
                 }
             }
-            List.Items = ItemList.OrderRows(rows, sort).Take(ResultLimit).ToList();
+            List.Items = ItemList.OrderRows(rows, sort, priorityCharacter).Take(ResultLimit).ToList();
             MatchCount = matches;
             TotalCount = total;
             UnreadableCount = unreadable;

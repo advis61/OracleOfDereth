@@ -72,6 +72,8 @@ namespace OracleOfDereth
             new Definition("Jewelry", "Trinket", 89, 62, (filter, value) => { filter.JewelryTrinket = value; }),
             new Definition("Jewelry", "Bracelet", 159, 72, (filter, value) => { filter.JewelryBracelet = value; }),
             new Definition("Jewelry", "Ring", 239, 48, (filter, value) => { filter.JewelryRing = value; }),
+            new Definition("Jewelry", "Imbued", 303, 70, (filter, value) => { filter.JewelryImbued = value; }),
+            new Definition("Jewelry", "Not Imbued", 381, 95, (filter, value) => { filter.JewelryNotImbued = value; }),
             new Definition("Cloaks", "1", 5, 26, (filter, value) => { filter.CloakLevel1 = value; }),
             new Definition("Cloaks", "2", 35, 26, (filter, value) => { filter.CloakLevel2 = value; }),
             new Definition("Cloaks", "3", 65, 26, (filter, value) => { filter.CloakLevel3 = value; }),
