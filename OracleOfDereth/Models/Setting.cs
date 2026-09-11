@@ -36,6 +36,7 @@ namespace OracleOfDereth
         public static Setting CopyQuestDirections;
         public static Setting CopyQuestUrl;
         public static Setting OrderDecalPlugins;
+        public static Setting SetVGITrackAllItems;
         public static Setting ShowNearbyWcid;
         public static Setting ShowTradeWindow;
         public static Setting VoidTargetWindow;
@@ -64,6 +65,7 @@ namespace OracleOfDereth
             DeleteOtherPets = Register("Delete Other Players' Pets", "DeleteOtherPets", YesNo, "No");
             DeleteOtherSummons = Register("Delete Other Players' Summons", "DeleteOtherSummons", YesNo, "No");
             OrderDecalPlugins = Register("Order Decal Plugins on Startup", "OrderDecalPlugins", YesNo, "Yes");
+            SetVGITrackAllItems = Register("Set VGI Track All Items", "SetVGITrackAllItems", YesNo, "Yes");
             BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "NearbyWcid", YesNo, "No");

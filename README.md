@@ -217,6 +217,8 @@ Displays your buffs and debuffs with time remaining.
 ### Server Inventory (VGI)
 
 - Open **Server → Inventory** to browse VGI's saved items for every character on your current server.
+- **Set VGI Track All Items** defaults to **Yes** in Oracle's settings. It automatically enables **Track All Items** in VGI after each character logs in. Set it to **No** to stop automatic setup; this does not turn off tracking already saved in VGI. The DLL integration supports VGI 1.0.0.8 and 1.0.0.9 and leaves VGI optional.
+- Oracle confirms that the DLL request changes VGI's active tracking mode, with a database fallback if it cannot confirm within ten seconds. It also saves **Track All Items** for every known character on the current server, enrolling untracked characters from VGI's character records. Other characters pick up the setting on their next login; a chat message asks the current character to relog if immediate activation was unavailable. Database updates are verified in a transaction and retry briefly if VGI is busy or still initializing.
 - Uses the same item summaries, search, category checkboxes, Doubles filter, and sorting as Items, with a sortable Character column. Search also matches character names.
 - Plain text searches match all words anywhere in the row: `CD2 legendary frost`. Quoted phrases must occur within one column: `"Weapons Eveldan" "Bludgeon Ward"`. Quotes can be combined with ordinary terms or regex.
 - In plain searches, `legendary`, `epic`, `major`, and `minor` automatically pair with the next word as a phrase: `Advis Legendary Bludgeoning` means `Advis "Legendary Bludgeoning"`. A tier at the end stays a standalone term; explicit quotes and regex retain their own behavior.

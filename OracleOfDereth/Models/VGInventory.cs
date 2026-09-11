@@ -150,7 +150,7 @@ namespace OracleOfDereth
             LoadedAt = DateTime.Now;
         }
 
-        private static DbConnection OpenConnection(string folder, string path)
+        internal static DbConnection OpenConnection(string folder, string path, bool readOnly = true)
         {
             DbConnection connection = null;
             try
@@ -162,7 +162,7 @@ namespace OracleOfDereth
                 var settings = new DbConnectionStringBuilder
                 {
                     ["Data Source"] = path,
-                    ["Read Only"] = true,
+                    ["Read Only"] = readOnly,
                     ["FailIfMissing"] = true,
                     ["Pooling"] = false,
                     ["Default Timeout"] = 2
@@ -187,7 +187,7 @@ namespace OracleOfDereth
             public SQLiteProviderException(Exception inner) : base("Virindi Global Inventory's SQLite component is missing or could not load. Reinstall the VGI decal plugin", inner) { } 
         }
 
-        private static string FindDirectory()
+        internal static string FindDirectory()
         {
             Assembly vgi = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "VirindiGlobalInventory");
             if (vgi != null && !string.IsNullOrEmpty(vgi.Location)) return Path.GetDirectoryName(vgi.Location);

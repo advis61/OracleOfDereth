@@ -58,6 +58,7 @@ namespace OracleOfDereth
 
             Setting setting = Setting.All[row];
             setting.CycleValue();
+            if (setting == Setting.SetVGITrackAllItems) VGInventoryTracking.Init();
             if (setting == Setting.ShowWeaponWorkmanship || setting == Setting.ShowArmorWorkmanship)
             {
                 ItemList.RefreshAll();

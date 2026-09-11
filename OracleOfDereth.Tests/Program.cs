@@ -15,6 +15,8 @@ internal static class Program
             return SettingsFileTests.Write(args[1], args[2]);
         SavedInventorySearchTests.Run();
         VGInventoryTests.Run();
+        VGInventoryTrackingTests.Run();
+        if (args.Length == 2 && args[0] == "--vgi-tracking-db") VGInventoryTrackingTests.RunDatabase(args[1]);
         ItemExportTests.Run();
         ItemTextSearchTests.Run();
         AssertChatFilterLifecycle();

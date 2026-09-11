@@ -158,6 +158,7 @@ namespace OracleOfDereth
                 Title.Init();
                 ItemList.Init();
                 ItemCache.Init();
+                VGInventoryTracking.Init();
                 Trade.Init();
                 ConquestAugmentation.Init();
                 ConquestEnlAugmentation.Init();
@@ -210,6 +211,7 @@ namespace OracleOfDereth
                 QuestState.Tick();
                 QuestAccountFlag.Tick();
                 ItemList.TickAll();
+                VGInventoryTracking.Tick();
                 Trade.Tick();
                 Bank.AutoDepositTick();
                 mainView.TickInventoryCleanup();
@@ -267,6 +269,7 @@ namespace OracleOfDereth
             ShutdownComponent(QuestCatalogUpdater.Shutdown);
             ShutdownComponent(QuestFlagLookup.Shutdown);
             ShutdownComponent(QuestSubmit.Shutdown);
+            ShutdownComponent(VGInventoryTracking.Shutdown);
             ShutdownComponent(VVSBar.Shutdown);
 
             ShutdownComponent(() => tradeView?.Dispose());
