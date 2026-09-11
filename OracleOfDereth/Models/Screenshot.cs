@@ -156,9 +156,9 @@ namespace OracleOfDereth
         private static void HideImGui()
         {
             // Optional: use the loaded service, without requiring UtilityBelt to be installed.
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            var assembly = LoadedAssemblies.Find("UtilityBelt.Service");
+            if (assembly != null)
             {
-                if (assembly.GetName().Name != "UtilityBelt.Service") continue;
                 var service = assembly.GetType("UtilityBelt.Service.UBService");
                 var manager = service?.GetField("Huds", BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
                 if (manager == null) return;

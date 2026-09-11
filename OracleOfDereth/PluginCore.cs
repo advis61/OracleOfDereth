@@ -275,6 +275,7 @@ namespace OracleOfDereth
             ShutdownComponent(() => tradeView?.Dispose());
             ShutdownComponent(() => targetView?.Dispose());
             ShutdownComponent(() => mainView?.Dispose());
+            ShutdownComponent(LoadedAssemblies.Shutdown);
             worldObjectIdentifier = null;
             tradeView = null;
             targetView = null;

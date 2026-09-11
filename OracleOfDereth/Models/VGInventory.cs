@@ -156,7 +156,7 @@ namespace OracleOfDereth
             try
             {
                 // VGI supplies its SQLite provider. Keep it optional and reuse it if already loaded.
-                Assembly provider = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "System.Data.SQLite")
+                Assembly provider = LoadedAssemblies.Find("System.Data.SQLite")
                     ?? Assembly.LoadFrom(Path.Combine(folder, "System.Data.SQLite.dll"));
                 connection = (DbConnection)Activator.CreateInstance(provider.GetType("System.Data.SQLite.SQLiteConnection", true));
                 var settings = new DbConnectionStringBuilder
@@ -189,7 +189,7 @@ namespace OracleOfDereth
 
         internal static string FindDirectory()
         {
-            Assembly vgi = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "VirindiGlobalInventory");
+            Assembly vgi = LoadedAssemblies.Find("VirindiGlobalInventory");
             if (vgi != null && !string.IsNullOrEmpty(vgi.Location)) return Path.GetDirectoryName(vgi.Location);
             foreach (RegistryHive hive in new[] { RegistryHive.LocalMachine, RegistryHive.CurrentUser })
             {

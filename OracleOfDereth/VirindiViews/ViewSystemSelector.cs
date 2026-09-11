@@ -68,49 +68,17 @@ namespace MyClasses.MetaViewWrappers
         }
         static bool VirindiViewsPresent(Decal.Adapter.Wrappers.PluginHost pHost)
         {
-#if VVS_REFERENCED
-            System.Reflection.Assembly[] asms = AppDomain.CurrentDomain.GetAssemblies();
-
-            foreach (System.Reflection.Assembly a in asms)
-            {
-                AssemblyName nmm = a.GetName();
-                if ((nmm.Name == "VirindiViewService") && (nmm.Version >= new System.Version("1.0.0.37")))
-                {
-                    try
-                    {
-                        return Curtain_VVS_Running();
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return false;
-#else
-            return false;
-#endif
+            return VirindiViewsPresent(pHost, new Version("1.0.0.37"));
         }
         public static bool VirindiViewsPresent(Decal.Adapter.Wrappers.PluginHost pHost, Version minver)
         {
 #if VVS_REFERENCED
-            System.Reflection.Assembly[] asms = AppDomain.CurrentDomain.GetAssemblies();
+            var assembly = OracleOfDereth.LoadedAssemblies.Find("VirindiViewService", minver);
 
-            foreach (System.Reflection.Assembly a in asms)
+            if (assembly != null)
             {
-                AssemblyName nm = a.GetName();
-                if ((nm.Name == "VirindiViewService") && (nm.Version >= minver))
-                {
-                    try
-                    {
-                        return Curtain_VVS_Running();
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                }
+                try { return Curtain_VVS_Running(); }
+                catch { return false; }
             }
 
             return false;

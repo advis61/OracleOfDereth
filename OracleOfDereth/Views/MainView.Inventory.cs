@@ -285,7 +285,7 @@ namespace OracleOfDereth
         {
             try
             {
-                if (!VGInventoryTracking.OpenView())
+                if (!VGInventoryTracking.ToggleView())
                     Util.Chat("VGI: Could not open its window. Make sure Virindi Global Inventory is loaded, or open it from the Decal bar.", Util.ColorPink);
             }
             catch (Exception ex)

@@ -23,12 +23,16 @@ namespace OracleOfDereth
         private const BindingFlags StaticMembers = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
         private enum Result { Waiting, AlreadyEnabled, Requested, Enabled, Unsupported }
+        private static Assembly viewAssembly;
+        private static FieldInfo viewWrapperField;
+        private static Type viewWrapperType;
+        private static FieldInfo hudViewField;
 
-        public static bool OpenView()
+        public static bool ToggleView()
         {
             var hud = GetView();
             if (hud == null) return false;
-            hud.Visible = true;
+            hud.Visible = !hud.Visible;
             return true;
         }
 
@@ -50,19 +54,28 @@ namespace OracleOfDereth
 
         private static VirindiViewService.HudView GetView()
         {
-            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(a => a.GetName().Name == "VirindiGlobalInventory");
+            Assembly assembly = LoadedAssemblies.Find("VirindiGlobalInventory");
             if (assembly == null) return null;
-            string viewName = IntegrationTypes(assembly.GetName().Version).View;
-            if (viewName == null) return null;
-            // VGI owns a view wrapper in static field c. Use the wrapped HudView
-            // directly so repeated clicks open the window instead of toggling it.
-            object wrapper = assembly.GetType(viewName)?.GetField("c", StaticMembers)?.GetValue(null);
+            if (viewAssembly != assembly)
+            {
+                viewAssembly = assembly;
+                string viewName = IntegrationTypes(assembly.GetName().Version).View;
+                viewWrapperField = viewName == null ? null : assembly.GetType(viewName)?.GetField("c", StaticMembers);
+                viewWrapperType = null;
+                hudViewField = null;
+            }
+            // VGI owns a view wrapper in static field c. Read its current HudView
+            // so visibility and status follow the window across character changes.
+            object wrapper = viewWrapperField?.GetValue(null);
             if (wrapper == null) return null;
-            var fields = wrapper.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(f => f.FieldType == typeof(VirindiViewService.HudView)).ToArray();
-            if (fields.Length != 1) return null;
-            return fields[0].GetValue(wrapper) as VirindiViewService.HudView;
+            if (viewWrapperType != wrapper.GetType())
+            {
+                viewWrapperType = wrapper.GetType();
+                var fields = viewWrapperType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where(f => f.FieldType == typeof(VirindiViewService.HudView)).ToArray();
+                hudViewField = fields.Length == 1 ? fields[0] : null;
+            }
+            return hudViewField?.GetValue(wrapper) as VirindiViewService.HudView;
         }
 
         public static void Init()
@@ -114,8 +127,7 @@ namespace OracleOfDereth
 
         private static void TickDll()
         {
-            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
-                .FirstOrDefault(a => a.GetName().Name == "VirindiGlobalInventory");
+            Assembly assembly = LoadedAssemblies.Find("VirindiGlobalInventory");
             if (assembly == null)
             {
                 if (DateTime.UtcNow - phaseStarted.Value > TimeSpan.FromMinutes(1)) Shutdown();

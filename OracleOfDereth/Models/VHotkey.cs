@@ -16,9 +16,8 @@ namespace OracleOfDereth
             if (unregisterVistaShot != null || unregisterScreenshot != null) return;
             try
             {
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                if (LoadedAssemblies.Find("VirindiHotkeySystem") != null)
                 {
-                    if (assembly.GetName().Name != "VirindiHotkeySystem") continue;
                     unregisterScreenshot = RegisterScreenshot();
                     unregisterVistaShot = RegisterVistaShot();
                     return;
