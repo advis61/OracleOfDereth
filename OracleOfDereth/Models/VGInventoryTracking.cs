@@ -24,6 +24,47 @@ namespace OracleOfDereth
 
         private enum Result { Waiting, AlreadyEnabled, Requested, Enabled, Unsupported }
 
+        public static bool OpenView()
+        {
+            var hud = GetView();
+            if (hud == null) return false;
+            hud.Visible = true;
+            return true;
+        }
+
+        public static string OpenButtonText()
+        {
+            // Mirror VGI's own pending-ID title, including while its window is hidden.
+            // Missing or unsupported versions leave the ordinary Open VGI label.
+            try
+            {
+                string title = GetView()?.Title;
+                const string prefix = "Virindi Global Inventory";
+                if (title != null && title.StartsWith(prefix + " (", StringComparison.Ordinal)
+                    && title.EndsWith(" to read)", StringComparison.Ordinal))
+                    return "VGI" + title.Substring(prefix.Length);
+            }
+            catch { } // Optional plugin may be initializing or shutting down.
+            return "Open VGI";
+        }
+
+        private static VirindiViewService.HudView GetView()
+        {
+            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(a => a.GetName().Name == "VirindiGlobalInventory");
+            if (assembly == null) return null;
+            string viewName = IntegrationTypes(assembly.GetName().Version).View;
+            if (viewName == null) return null;
+            // VGI owns a view wrapper in static field c. Use the wrapped HudView
+            // directly so repeated clicks open the window instead of toggling it.
+            object wrapper = assembly.GetType(viewName)?.GetField("c", StaticMembers)?.GetValue(null);
+            if (wrapper == null) return null;
+            var fields = wrapper.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(f => f.FieldType == typeof(VirindiViewService.HudView)).ToArray();
+            if (fields.Length != 1) return null;
+            return fields[0].GetValue(wrapper) as VirindiViewService.HudView;
+        }
+
         public static void Init()
         {
             Shutdown();

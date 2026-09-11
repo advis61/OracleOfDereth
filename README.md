@@ -221,6 +221,7 @@ Displays your buffs and debuffs with time remaining.
 ### Server Inventory (VGI)
 
 - Works with Virindi Global Inventory to display all your items account wide
+- Open VGI directly from the inventory toolbar; the button shows VGI's remaining item count while it identifies items
 - Filter and Sort
 - Save search and load search on that character to quickly retrieve items.
 - Export to clipboard, text, csv and json

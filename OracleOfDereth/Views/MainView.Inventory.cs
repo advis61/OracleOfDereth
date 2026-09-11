@@ -21,6 +21,7 @@ namespace OracleOfDereth
 
         public HudStaticText VGInventoryText { get; private set; }
         private HudButton vgInventoryHelp;
+        private HudButton vgInventoryOpen;
         public HudButton VGInventoryClipboard { get; private set; }
         public HudButton VGInventoryExportText { get; private set; }
         public HudButton VGInventoryExportCsv { get; private set; }
@@ -52,6 +53,8 @@ namespace OracleOfDereth
             VGInventoryText.FontHeight = 10;
             vgInventoryHelp = (HudButton)view["VGInventoryHelp"];
             vgInventoryHelp.Hit += VGInventoryHelp_Hit;
+            vgInventoryOpen = (HudButton)view["VGInventoryOpen"];
+            vgInventoryOpen.Hit += VGInventoryOpen_Hit;
             VGInventoryClipboard = (HudButton)view["VGInventoryClipboard"];
             VGInventoryClipboard.Hit += VGInventoryClipboard_Hit;
             VGInventoryExportText = (HudButton)view["VGInventoryExportText"];
@@ -123,6 +126,7 @@ namespace OracleOfDereth
             }
             SavedInventory.CancelSearch();
             vgInventoryHelp.Hit -= VGInventoryHelp_Hit;
+            vgInventoryOpen.Hit -= VGInventoryOpen_Hit;
             VGInventoryClipboard.Hit -= VGInventoryClipboard_Hit;
             VGInventoryExportText.Hit -= VGInventoryExportText_Hit;
             VGInventoryExportCsv.Hit -= VGInventoryExportCsv_Hit;
@@ -169,6 +173,7 @@ namespace OracleOfDereth
 
         public void UpdateVGInventory()
         {
+            vgInventoryOpen.Text = VGInventoryTracking.OpenButtonText();
             vgInventoryHiddenSince = null;
             if (DateTime.UtcNow.Second % 2 == 0) PollSavedInventorySearch();
 
@@ -274,6 +279,20 @@ namespace OracleOfDereth
                 status = "VGI: Enable Track All Items from the Virindi Global Inventory decal plugin to begin";
 
             VGInventoryText.Text = status;
+        }
+
+        private void VGInventoryOpen_Hit(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!VGInventoryTracking.OpenView())
+                    Util.Chat("VGI: Could not open its window. Make sure Virindi Global Inventory is loaded, or open it from the Decal bar.", Util.ColorPink);
+            }
+            catch (Exception ex)
+            {
+                Util.Log(ex);
+                Util.Chat("VGI: Could not open its window. Open it from the Decal bar.", Util.ColorPink);
+            }
         }
 
         private void VGInventoryHelp_Hit(object sender, EventArgs e)
