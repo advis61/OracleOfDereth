@@ -280,10 +280,31 @@ namespace OracleOfDereth
                     // pack don't count. Matches ItemInfo.IsEquipped.
                     if (item.Values((LongValueKey)10, 0) <= 0) { continue; }
 
-                    string name = null;
+                    var spellIds = new HashSet<int>();
                     for (int i = 0; i < item.SpellCount; i++)
                     {
-                        int spellId = item.Spell(i);
+                        spellIds.Add(item.Spell(i));
+                    }
+
+                    // Purple Society Band also grants these hidden legendary cantrips,
+                    // which are missing from its innate spell list. Deduplicate in case
+                    // a server includes them explicitly.
+                    if (string.Equals(item.Name, "Purple Society Band", StringComparison.OrdinalIgnoreCase))
+                    {
+                        spellIds.Add(6063); // Legendary Magic Resistance (Magic Defense)
+                        spellIds.Add(6054); // Legendary Impregnability (Missile Defense)
+                    }
+
+                    // These rings also grant hidden Legendary Endurance.
+                    if (string.Equals(item.Name, "Red Society Band", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(item.Name, "Legendary Black Ring", StringComparison.OrdinalIgnoreCase))
+                    {
+                        spellIds.Add(6104); // Legendary Endurance
+                    }
+
+                    string name = null;
+                    foreach (int spellId in spellIds)
+                    {
                         if (spellId <= 0) { continue; }
 
                         counts.TryGetValue(spellId, out var source);
