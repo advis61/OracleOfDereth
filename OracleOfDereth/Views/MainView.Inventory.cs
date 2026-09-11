@@ -267,6 +267,8 @@ namespace OracleOfDereth
 
             if (!string.IsNullOrEmpty(SavedInventory.Error))
                 status = SavedInventory.Error;
+            else if (SavedInventory.LoadedAt.HasValue && SavedInventory.TotalCount == 0)
+                status = "VGI: Enable Track All Items from the Virindi Global Inventory decal plugin to begin";
 
             VGInventoryText.Text = status;
         }
