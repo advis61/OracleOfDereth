@@ -49,6 +49,10 @@ Fellowship
 
 ![Fellowship](./docs/Fellowship.png)
 
+Inventory
+
+![Inventory](./docs/Inventory.png)
+
 Items
 
 ![Items](./docs/Items.png)
@@ -216,26 +220,10 @@ Displays your buffs and debuffs with time remaining.
 
 ### Server Inventory (VGI)
 
-- Open **Server → Inventory** to browse VGI's saved items for every character on your current server.
-- **Set VGI Track All Items** defaults to **Yes** in Oracle's settings. It automatically enables **Track All Items** in VGI after each character logs in. Set it to **No** to stop automatic setup; this does not turn off tracking already saved in VGI. The DLL integration supports VGI 1.0.0.8 and 1.0.0.9 and leaves VGI optional.
-- Oracle confirms that the DLL request changes VGI's active tracking mode, with a database fallback if it cannot confirm within ten seconds. It also saves **Track All Items** for every known character on the current server, enrolling untracked characters from VGI's character records. Other characters pick up the setting on their next login; a chat message asks the current character to relog if immediate activation was unavailable. Database updates are verified in a transaction and retry briefly if VGI is busy or still initializing.
-- Uses the same item summaries, search, category checkboxes, Doubles filter, and sorting as Items, with a sortable Character column. Search also matches character names.
-- Plain text searches match all words anywhere in the row: `CD2 legendary frost`. Quoted phrases must occur within one column: `"Weapons Eveldan" "Bludgeon Ward"`. Quotes can be combined with ordinary terms or regex.
-- In plain searches, `legendary`, `epic`, `major`, and `minor` automatically pair with the next word as a phrase: `Advis Legendary Bludgeoning` means `Advis "Legendary Bludgeoning"`. A tier at the end stays a standalone term; explicit quotes and regex retain their own behavior.
-- Regex syntax is detected automatically for expressions such as `legendary.*legendary`, `legendary (frost|flame|acid)`, `legendary frost.*legendary acid`, `legendary (frost|flame|acid).+adept`, and `legendary acid.*Adept`. Regex searches are case-insensitive and follow name, type, spells, set/effect, info/ratings, then character order. Use rating labels such as `legendary.*CD2`; `+N` is not a rating alias. Within spells, regex order follows the displayed spell order. The existing `legendary*2` shorthand also works. Invalid or overly slow regex shows a search error with an empty result list in VGI.
-- The subfilter row follows the most recently enabled category. Weapons offers HW (Heavy), FW (Finesse), LW (Light), 2H (Two Handed), War, Void, TW (Thrown), Bow, and Xbow (Crossbow). Multiple selections are alternatives; none means all weapons. Switching categories preserves subfilter selections, and Reset clears them.
-- Weapon elements appear on the right: Slash, Pierce, Bludge, Fire, Frost, Storm, Acid, and Nether. They search the Type summary, including Fire/Flame, Frost/Cold, Storm/Lightning, and Nether/Void aliases. Elements combine with weapon types; multiple elements match any selected value.
-- Searches scan the current server and display the best **5,000 matches** for the selected sort. The count includes matches beyond the limit; narrow your filters to find specific items. Clipboard and Text/CSV/JSON exports include the displayed results, up to 5,000 items.
-- CSV and JSON share the same fields, including unsigned numeric Item ID, Material, Element, Quantity, Uses Remaining, and Keys Held. Numeric Workmanship replaces the formatted Craft column and preserves fractional salvage workmanship. New numeric fields are numbers in JSON; unavailable quantities/uses/workmanship are blank in CSV and null in JSON. Rating headers remain D, DR, C, CR, CD, CDR, HB, and V.
-- Text exports, inventory clipboard descriptions, and saved-item chat descriptions end with `(Last on Character)` when an owner is known.
-- Changing filters or sorting reruns the search; typing waits briefly before searching. Starting a search releases the previous results. Scans run in short steps, and a newer search cancels the previous one.
-- Inventory loads automatically when opened. After the tab or window has been hidden for 30 seconds, item data and displayed rows are released to save memory. Returning automatically reruns the search with the same text, filters, and sorting, and restores the highlighted item when it still matches. Brief tab switches keep completed results.
-- Searches reread the saved database. Offline characters reflect their last VGI scan; this does not request identification or modify VGI's data.
-- Click a row to print its saved description. Copy, Text, CSV, and JSON use the filtered list and include character ownership.
-- Changing a filter or selecting an item reveals **Save Search**. It saves the text, all filters and subfilters, sorting, and the selected item (optional). Other characters on the same server see **Load Search** when viewing **Server > Inventory**; polling runs only on that tab, on even-numbered seconds. Loading restores the search, highlights the saved item if present, and selects it in game when it is still in that character's inventory, then moves the full item or stack to the first slot of the main pack without merging. The save is consumed once and the button disappears until you edit the search or select an item again.
-- There is one pending search per server; saving again replaces it. Clients under the same Windows user share a small file in `Documents\Decal Plugins\Oracle of Dereth\saved-inventory-search`. Loading reads and deletes it under a shared lock, so only one client can consume it. No request list or additional polling timer is used.
-- VGI is optional. Without its database, continue using the existing Items tab to add and identify items.
-- Equipped snapshots do not show OD/OA/OM because VGI does not save the active-buff list needed to resolve their overages reliably.
+- Works with Virindi Global Inventory to display all your items account wide
+- Filter and Sort
+- Save search and load search on that character to quickly retrieve items.
+- Export to clipboard, text, csv and json
 
 ### XP Augmentations
 
@@ -383,16 +371,13 @@ Use this screen to set the display order of plugins on the VVS decal plugins bar
 
 Type `/od` to print the version number.
 
-Type `/myquests` to manually refresh the John tracker.
-
-Type `/od questflag` when selecting an NPC to lookup their quest flag info.
+See the ingame ? -> Help screen for a list of commands
 
 
 ## Technicals
 
 This plugin builds against .NET Framework 4.8 and uses VirindiViewService.
 
-Inventory data follows one path: `new Item(worldObject)` captures Decal's `WorldObject`, or `VGInventory` decodes a saved record, into an immutable `Item`. `ItemInfo` provides calculations and identification helpers; `ItemListRow` populates and caches display fields from an `Item`. `ItemList` holds those rows and manages sorting and the live identification queue. A new appraisal replaces the observation. Unknown active spells and holder levels stay explicitly unknown, and saved calculations never resolve object IDs against the live world. Clicking a saved row can select a live object only when its server, owner, name, class, and icon match.
 
 ## License
 

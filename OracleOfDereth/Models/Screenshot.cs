@@ -189,6 +189,9 @@ namespace OracleOfDereth
 
         private static void Capture(object sender, EventArgs e)
         {
+            // A queued timer callback can arrive after cancellation or after a new
+            // capture starts. It must not capture or cancel that newer operation.
+            if (timer == null || !ReferenceEquals(sender, timer)) return;
             // Allow complete frames to reach the screen before copying the window.
             if (elapsed.ElapsedMilliseconds < 500) return;
             if (frames < 2 && elapsed.ElapsedMilliseconds < 3000) return;
@@ -247,12 +250,20 @@ namespace OracleOfDereth
         // leave the interface hidden. Restore each system even if the other restore fails.
         public static void Cancel()
         {
-            timer?.Stop();
-            timer?.Dispose();
+            var pendingTimer = timer;
             timer = null;
             elapsed.Stop();
-            if (core != null) core.RenderFrame -= OnFrame;
-            Service.DeviceLost -= OnDeviceLost;
+            // Detach each resource independently so one disposed service cannot
+            // interrupt the remaining cleanup and leave the interface hidden.
+            Cleanup(() => pendingTimer?.Stop());
+            Cleanup(() =>
+            {
+                if (pendingTimer == null) return;
+                pendingTimer.Tick -= Capture;
+                pendingTimer.Dispose();
+            });
+            Cleanup(() => { if (core != null) core.RenderFrame -= OnFrame; });
+            Cleanup(() => Service.DeviceLost -= OnDeviceLost);
             try { RestoreClientUi(); }
             catch (Exception ex) { Util.Log(ex); }
             finally
@@ -274,6 +285,12 @@ namespace OracleOfDereth
                 restoreHuds = false;
                 core = null;
             }
+        }
+
+        private static void Cleanup(Action action)
+        {
+            try { action(); }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         private static Rectangle CaptureBounds()
@@ -328,24 +345,33 @@ namespace OracleOfDereth
             if (!GetClientRect(core.Decal.Hwnd, out Rect rect))
                 throw new InvalidOperationException("Could not locate the game window.");
             foreach (var panel in clientPanels)
+            {
+                if (actions.UIElementLookup(panel.Element) != panel.Address)
+                    throw new InvalidOperationException("The game interface changed; try the screenshot again.");
                 MovePanel(panel.Address, rect.Right + 4096, rect.Bottom + 4096, 0);
+            }
         }
 
         private static void RestoreClientUi()
         {
             if (clientPanels.Count == 0) return;
-            var actions = core.Actions;
-            foreach (var panel in clientPanels)
+            try
             {
-                try
+                // Decal's native UI structures may already be gone at character select.
+                if (core == null || core.CharacterFilter.LoginStatus < 1) return;
+                var actions = core.Actions;
+                foreach (var panel in clientPanels)
                 {
-                    // A portal/logout can recreate panels. Never restore an obsolete instance.
-                    if (actions.UIElementLookup(panel.Element) == panel.Address)
-                        MovePanel(panel.Address, panel.Position.X, panel.Position.Y, panel.Clamp);
+                    try
+                    {
+                        // A portal/logout can recreate panels. Never restore an obsolete instance.
+                        if (actions.UIElementLookup(panel.Element) == panel.Address)
+                            MovePanel(panel.Address, panel.Position.X, panel.Position.Y, panel.Clamp);
+                    }
+                    catch (Exception ex) { Util.Log(ex); } // Still restore every other panel.
                 }
-                catch (Exception ex) { Util.Log(ex); } // Still restore every other panel.
             }
-            clientPanels.Clear();
+            finally { clientPanels.Clear(); }
         }
 
         private static unsafe void MovePanel(IntPtr address, int x, int y, uint restoreClamp)

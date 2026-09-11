@@ -22,6 +22,7 @@ internal static class Program
         AssertChatFilterLifecycle();
         if (args.Length == 2 && args[0] == "--vgi") VGInventoryTests.Audit(args[1]);
         AssertScreenshotBounds();
+        ScreenshotLifecycleTests.Run();
         AssertScreenshotPaths();
         AssertSummonOwnership();
         AssertJson(null, "null");
