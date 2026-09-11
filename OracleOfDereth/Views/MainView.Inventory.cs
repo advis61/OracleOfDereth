@@ -37,7 +37,6 @@ namespace OracleOfDereth
         public HudCheckBox VGInventoryFilterSalvage { get; private set; }
         public HudCheckBox VGInventoryFilterOther { get; private set; }
         public HudCheckBox VGInventoryFilterDoubles { get; private set; }
-        private HudCheckBox VGInventoryFilterMineOnly;
         private HudPictureBox vgInventorySortIcon;
         public HudStaticText VGInventoryListSortCharacter { get; private set; }
         public HudStaticText VGInventoryListSortName { get; private set; }
@@ -85,8 +84,6 @@ namespace OracleOfDereth
             VGInventoryFilterOther.Change += VGInventoryFilter_Change;
             VGInventoryFilterDoubles = (HudCheckBox)view["VGInventoryFilterDoubles"];
             VGInventoryFilterDoubles.Change += VGInventoryFilter_Change;
-            VGInventoryFilterMineOnly = (HudCheckBox)view["VGInventoryFilterMineOnly"];
-            VGInventoryFilterMineOnly.Change += VGInventoryFilter_Change;
             vgInventorySubfilters = new ItemSubfilters((HudFixedLayout)view["VGInventorySubfilters"],
                 category => (HudCheckBox)view["VGInventoryFilter" + category], VGInventoryFilter_Change);
 
@@ -142,7 +139,6 @@ namespace OracleOfDereth
             VGInventoryFilterSalvage.Change -= VGInventoryFilter_Change;
             VGInventoryFilterOther.Change -= VGInventoryFilter_Change;
             VGInventoryFilterDoubles.Change -= VGInventoryFilter_Change;
-            VGInventoryFilterMineOnly.Change -= VGInventoryFilter_Change;
             vgInventorySortIcon.Hit -= VGInventoryListSortCharacter_Click;
             VGInventoryListSortCharacter.Hit -= VGInventoryListSortCharacter_Click;
             VGInventoryListSortName.Hit -= VGInventoryListSortName_Click;
@@ -159,8 +155,6 @@ namespace OracleOfDereth
         private ItemFilter VGInventoryFilter() => vgInventorySubfilters.Apply(new ItemFilter
         {
             Text = VGInventoryFilterText.Text,
-            MineOnly = VGInventoryFilterMineOnly.Checked,
-            CurrentCharacter = Decal.Adapter.CoreManager.Current.CharacterFilter.Name,
             Weapons = VGInventoryFilterWeapons.Checked,
             Armor = VGInventoryFilterArmor.Checked,
             Clothing = VGInventoryFilterClothing.Checked,
@@ -315,7 +309,6 @@ namespace OracleOfDereth
             VGInventoryFilterSalvage.Checked = false;
             VGInventoryFilterOther.Checked = false;
             VGInventoryFilterDoubles.Checked = false;
-            VGInventoryFilterMineOnly.Checked = false;
             suppressVGInventoryFilter = false;
             InventorySearchEdited();
             RefreshVGInventory();

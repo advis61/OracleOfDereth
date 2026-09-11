@@ -18,7 +18,6 @@ internal static class VGInventoryTests
     {
         Setting.Init();
         AssertCurrentCharacterSort();
-        AssertMineOnlyFilter();
         AssertResultRelease();
         AssertObservations();
         AssertWeaponSubfilters();
@@ -120,25 +119,8 @@ internal static class VGInventoryTests
         Check(tabs.Cast<XmlNode>().Select(tab => tab.Attributes["label"].Value).SequenceEqual(
             new[] { "Augs", "Bank", "Experience", "Fship", "Inventory", "Quests", "Top" }),
             "Server tabs are not in alphabetical order.");
-        Check(layout.SelectNodes("//control[starts-with(@name,'VGInventoryFilter') and @progid='DecalControls.CheckBox']").Count == 11, "Inventory must include its Mine only filter.");
+        Check(layout.SelectNodes("//control[starts-with(@name,'VGInventoryFilter') and @progid='DecalControls.CheckBox']").Count == 10, "Inventory filters differ from Items.");
         Check(layout.SelectSingleNode("//control[@name='VGInventoryList']/column[1]").Attributes["name"].Value == "Character", "First column must be Character.");
-    }
-
-    private static void AssertMineOnlyFilter()
-    {
-        var mine = new ItemListRow(new Item("Conquest", "Atlas", 1, "Sword", ObjectClass.MeleeWeapon));
-        var other = new ItemListRow(new Item("Conquest", "Atlas Mule", 1, "Sword", ObjectClass.MeleeWeapon));
-        var filter = new ItemFilter { MineOnly = true, CurrentCharacter = "Atlas" };
-        Check(filter.IsActive && filter.Matches(mine) && !filter.Matches(other), "Mine only must match the exact owner.");
-        filter.Text = "Bow";
-        Check(!filter.Matches(mine), "Mine only must combine with the text filter.");
-        filter.Text = "";
-        filter.CurrentCharacter = "Atlas Mule";
-        Check(!filter.Matches(mine) && filter.Matches(other), "Mine only must follow the current character.");
-        filter.CurrentCharacter = null;
-        Check(!filter.Matches(mine), "Mine only must not show another character when no character is known.");
-        filter.MineOnly = false;
-        Check(!filter.IsActive && filter.Matches(mine) && filter.Matches(other), "Clearing Mine only must restore all owners.");
     }
 
     private static void AssertCurrentCharacterSort()
@@ -255,7 +237,7 @@ internal static class VGInventoryTests
         var type = typeof(ItemFilter).Assembly.GetType("OracleOfDereth.ItemSubfilters", true);
         var definitions = (Array)type.GetField("Definitions", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
         var mainFields = new HashSet<string> { "Weapons", "Armor", "Clothing", "Jewelry", "Cloaks",
-            "Summons", "Aetheria", "Salvage", "Other", "Doubles", "MineOnly" };
+            "Summons", "Aetheria", "Salvage", "Other", "Doubles" };
         var booleanFields = typeof(ItemFilter).GetFields().Where(field => field.FieldType == typeof(bool)).ToList();
         var boundFields = new HashSet<string>();
         var boundSlots = ItemInfo.ArmorSlot.None;

@@ -17,10 +17,6 @@ namespace OracleOfDereth
     public class ItemFilter
     {
         public string Text = "";
-        public bool MineOnly = false;
-        // Resolve against the character using the screen, including after loading a saved search.
-        [System.Xml.Serialization.XmlIgnore]
-        public string CurrentCharacter { get; set; }
         public bool Weapons = false;
         public bool WeaponHW = false;
         public bool WeaponFW = false;
@@ -128,12 +124,10 @@ namespace OracleOfDereth
         public bool Doubles = false;
 
         // True when the filter actually narrows the list (some category ticked, text typed, or Doubles set).
-        public bool IsActive => AnyCategorySelected() || !string.IsNullOrWhiteSpace(Text) || Doubles || MineOnly;
+        public bool IsActive => AnyCategorySelected() || !string.IsNullOrWhiteSpace(Text) || Doubles;
 
         public bool Matches(ItemListRow t)
         {
-            if (MineOnly && (string.IsNullOrEmpty(CurrentCharacter)
-                || !string.Equals(t.Character, CurrentCharacter, StringComparison.OrdinalIgnoreCase))) return false;
             if (!IsCategoryVisible(t.SortCategory)) return false;
             if (Armor && t.SortCategory == ItemCategory.Armor && ArmorSlots != ItemInfo.ArmorSlot.None &&
                 (new ItemInfo(t.Item).GetArmorSlots() & ArmorSlots) == 0) return false;

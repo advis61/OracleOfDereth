@@ -96,7 +96,6 @@ namespace OracleOfDereth
                 try
                 {
                     VGInventoryFilterText.Text = saved.Filter.Text ?? "";
-                    VGInventoryFilterMineOnly.Checked = saved.Filter.MineOnly;
                     foreach (string name in InventoryCategoryNames)
                         ((HudCheckBox)view["VGInventoryFilter" + name]).Checked =
                             (bool)typeof(ItemFilter).GetField(name).GetValue(saved.Filter);
