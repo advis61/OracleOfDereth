@@ -43,6 +43,7 @@ namespace OracleOfDereth
         public static Setting SuppressPluginRefreshChat;
         public static Setting SuppressPeriodicHealingChat;
         public static Setting SummonScore;
+        public static Setting ShowTreasureMapCoordinates;
         public static Setting DeleteOtherSummons;
         public static Setting DeleteOtherPets;
         public static Setting WeaponScore;
@@ -69,6 +70,7 @@ namespace OracleOfDereth
             SetVGITrackAllItems = Register("Set VGI Track All Items", "SetVGITrackAllItems", YesNo, "Yes");
             BuffsRemaining = Register("Show Remaining Buff Time", "BuffsRemaining", YesNo, "Yes");
             SummonScore = Register("Show Summons Score", "SummonScore", YesNo, "Yes");
+            ShowTreasureMapCoordinates = Register("Show Treasure Map Coordinates", "ShowTreasureMapCoordinates", YesNo, "Yes");
             ShowNearbyWcid = Register("Show WCID on Nearby Tab", "NearbyWcid", YesNo, "No");
             WeaponScore = Register("Show Weapon Score", "WeaponScore", YesNo, "Yes");
             ShowArmorWorkmanship = Register("Show Workmanship: Armor", "ShowArmorWorkmanship", YesNo, "No");

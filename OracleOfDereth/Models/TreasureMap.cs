@@ -12,6 +12,7 @@ namespace OracleOfDereth
 
         public static void Identified(WorldObject item)
         {
+            if (Setting.ShowTreasureMapCoordinates?.IsNo == true) return;
             if (item == null || !item.HasIdData || !IsMap(item.Name, item.ObjectClass)) return;
             // Missing properties must not turn into a bogus 0.0N 0.0E destination.
             if (!item.DoubleKeys.Contains(NorthSouthKey) || !item.DoubleKeys.Contains(EastWestKey)) return;
