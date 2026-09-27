@@ -119,9 +119,11 @@ namespace OracleOfDereth
             if (!IsPlayer() && !IsMonster() && !IsCorpse() && age > 60)
                 score -= Math.Min(500, (age - 60) * 2);
 
-            // Only inspect native ownership when deletion is enabled for this category.
-            // With it disabled, pets/summons use the ordinary relevance score.
-            if (WorldObjectVisibility.IsPlayerOwnedCreature(Item)) score -= 2500;
+            // Named legendary summons get the same penalty as owned creatures, regardless of deletion settings.
+            // This name check needs no native ownership lookup.
+            if (Item.Name.IndexOf("'s Legendary", StringComparison.OrdinalIgnoreCase) >= 0) score -= 2500;
+            // Other pets/summons still use the existing, opt-in native ownership check.
+            else if (WorldObjectVisibility.IsPlayerOwnedCreature(Item)) score -= 2500;
 
             // A gradual proximity boost: +400 at zero distance, +200 at 20, +67 at 100.
             return score + (400 / (1 + Math.Max(0, Distance()) / 20));
