@@ -6,8 +6,29 @@ using OracleOfDereth;
 
 internal static class InterfaceVisibilityTests
 {
+    private delegate void RadarTimeout(object timer);
+    private sealed class RadarTimer
+    {
+        public event RadarTimeout Timeout;
+        public void Tick() => Timeout?.Invoke(this);
+    }
+
     public static void Run()
     {
+        // A redraw after RenderFrame must still end with the HUD hidden. Exercise
+        // the reflection/delegate path used for the optional Radar COM timer.
+        var radarTimer = new RadarTimer();
+        bool radarVisible = false;
+        radarTimer.Timeout += timer => radarVisible = true;
+        var timeout = typeof(RadarTimer).GetEvent("Timeout");
+        var callback = InterfaceVisibility.CreateCallback(timeout.EventHandlerType, () => radarVisible = false);
+        timeout.AddEventHandler(radarTimer, callback);
+        radarTimer.Tick();
+        Assert(!radarVisible, "Radar redraw escaped UI hiding.");
+        timeout.RemoveEventHandler(radarTimer, callback);
+        radarTimer.Tick();
+        Assert(radarVisible, "Radar hide callback remained attached after restoration.");
+
         var panels = new UiPanelStates();
         var elements = new[] { UIElementType.Chat, UIElementType.Radar };
         var addresses = new Dictionary<UIElementType, IntPtr>

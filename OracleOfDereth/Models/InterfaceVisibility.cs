@@ -3,6 +3,7 @@ using Decal.Adapter.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -253,6 +254,8 @@ namespace OracleOfDereth
                 }
             }
 
+            HideRadarOverlay();
+
             var plugins = typeof(CoreManager).GetField("myPlugins", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.GetValue(core) as Dictionary<string, PluginBase>;
             if (plugins == null) return;
@@ -274,6 +277,71 @@ namespace OracleOfDereth
                 restore.Add(() => setAlpha(original));
                 setAlpha(0);
             }
+        }
+
+        private static void HideRadarOverlay()
+        {
+            var type = LoadedAssemblies.Find("RadarService")?.GetType("RadarService.Radar");
+            var instance = type?.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
+            var radar = instance?.GetValue(null);
+            if (radar == null) return;
+            var field = type.GetField("_hudRadar", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (field?.FieldType != typeof(Decal.Adapter.Wrappers.Hud))
+                throw new InvalidOperationException("This Radar version does not support UI hiding.");
+            var timer = type.GetField("_tmrTicker", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(radar);
+            var timeout = timer?.GetType().GetEvent("Timeout");
+            if (timeout == null)
+                throw new InvalidOperationException("This Radar version does not expose its redraw timer.");
+
+            Decal.Adapter.Wrappers.Hud savedHud = null;
+            bool enabled = false;
+            var subscribedCore = core;
+            Action hide = () =>
+            {
+                if (!ReferenceEquals(instance.GetValue(null), radar)) return;
+                var hud = field.GetValue(radar) as Decal.Adapter.Wrappers.Hud;
+                if (!ReferenceEquals(hud, savedHud))
+                {
+                    savedHud = hud;
+                    enabled = hud?.Enabled ?? false;
+                }
+                if (hud == null) return;
+                // Radar's timer enables this HUD on every redraw. Remember that intent
+                // so showing the UI restores a HUD first created while we were hidden.
+                if (hud.Enabled) { enabled = true; hud.Enabled = false; }
+            };
+            Action hideSafely = () =>
+            {
+                if (restoring) return;
+                try { hide(); }
+                catch (Exception ex) { Util.Log(ex); Show(); }
+            };
+            EventHandler<EventArgs> onFrame = (sender, e) => hideSafely();
+            // Run after Radar's existing Timeout handler, not just on RenderFrame:
+            // its timer can redraw/re-enable the HUD after our frame handler runs.
+            // Adapt its COM timer delegate without taking a Radar/Input DLL dependency.
+            var afterRedraw = CreateCallback(timeout.EventHandlerType, hideSafely);
+            restore.Add(() =>
+            {
+                // Graphics resets/logout can replace or remove the HUD. Never restore
+                // a stale graphics object, or hold onto one after recovery.
+                if (savedHud != null && ReferenceEquals(instance.GetValue(null), radar)
+                    && ReferenceEquals(field.GetValue(radar), savedHud))
+                    savedHud.Enabled = enabled;
+                savedHud = null;
+            });
+            restore.Add(() => subscribedCore.RenderFrame -= onFrame);
+            restore.Add(() => timeout.RemoveEventHandler(timer, afterRedraw));
+            timeout.AddEventHandler(timer, afterRedraw);
+            subscribedCore.RenderFrame += onFrame;
+            hide();
+        }
+
+        internal static Delegate CreateCallback(Type delegateType, Action callback)
+        {
+            var parameters = Array.ConvertAll(delegateType.GetMethod("Invoke").GetParameters(),
+                parameter => Expression.Parameter(parameter.ParameterType, parameter.Name));
+            return Expression.Lambda(delegateType, Expression.Invoke(Expression.Constant(callback)), parameters).Compile();
         }
 
         private static void SetField(FieldInfo field, object instance, object value)
