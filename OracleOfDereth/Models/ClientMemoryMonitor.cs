@@ -67,7 +67,7 @@ namespace OracleOfDereth
             try
             {
                 Snapshot sample = Capture();
-                Util.Chat(FormatStatus(sample, History.Count > 0 ? History.Peek() : null));
+                Util.Chat(FormatStatus(sample, History.Count > 0 ? History.Peek() : null), Util.ColorPink);
             }
             catch (Exception ex) { Util.Chat("Unable to read client memory: " + ex.Message, Util.ColorPink); }
         }
