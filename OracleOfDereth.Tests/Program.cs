@@ -27,6 +27,7 @@ internal static class Program
         AssertScreenshotPaths();
         AssertSummonOwnership();
         NearbySafetyTests.Run();
+        HudImageReuseTests.Run();
         ClientMemoryMonitorTests.Run();
         AssertJson(null, "null");
         AssertJson("", "\"\"");

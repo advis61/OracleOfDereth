@@ -36,7 +36,6 @@ namespace OracleOfDereth
         // move-down columns.
         readonly int IconArrowUp = 0x60028FC;
         readonly int IconArrowDown = 0x60028FD;
-        readonly ACImage ImageDisabled = new ACImage(Color.FromArgb(255, 75, 75, 75));
         internal static readonly Color ColorSelected = Color.Orange;
 
         public HudTabView MainViewNotebook { get; private set; }
@@ -378,7 +377,10 @@ namespace OracleOfDereth
         {
             // A cleared box reads back as null rather than 0, which is the same "no image".
             int current = row.Image == null ? 0 : row.Image.PortalImageID;
-            if (current == icon) return;
+            // ACImage stores the full portal resource ID even when given a short icon ID.
+            // Compare like-for-like or every repaint disposes and recreates unchanged images.
+            int requested = icon == 0 ? 0 : icon | 0x06000000;
+            if (current == requested) return;
 
             if (icon == 0) {
                 row.Image = null;

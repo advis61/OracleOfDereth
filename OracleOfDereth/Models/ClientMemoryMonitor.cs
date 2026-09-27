@@ -24,6 +24,7 @@ namespace OracleOfDereth
             public ulong FreeVirtual;
             public ulong LargestFreeBlock;
             public ulong AvailableCommit;
+            public ulong TotalCommit;
         }
 
         public static void Reset()
@@ -65,18 +66,30 @@ namespace OracleOfDereth
             try
             {
                 Snapshot sample = Capture();
-                Util.Chat($"Client memory: private {sample.PrivateBytes / (double)MiB:0} MiB; resident {sample.WorkingSet / (double)MiB:0} MiB. {Headroom(sample)}.");
-                if (History.Count > 0)
-                {
-                    Snapshot baseline = History.Peek();
-                    double minutes = (sample.Time - baseline.Time).TotalMinutes;
-                    if (minutes >= 1)
-                        Util.Chat($"Private memory change over {minutes:0} min: {(sample.PrivateBytes - baseline.PrivateBytes) / (double)MiB:+0;-0;0} MiB. Growth alone does not prove a leak.");
-                }
-                Util.Chat("Memory warnings are estimates of allocation pressure, not a crash countdown.");
+                Util.Chat(FormatStatus(sample, History.Count > 0 ? History.Peek() : null));
             }
             catch (Exception ex) { Util.Chat("Unable to read client memory: " + ex.Message, Util.ColorPink); }
         }
+
+        private static string FormatStatus(Snapshot sample, Snapshot baseline)
+        {
+            string text = $"Memory: address space {Percent(sample.TotalVirtual - Math.Min(sample.FreeVirtual, sample.TotalVirtual), sample.TotalVirtual)} used"
+                + $" | largest block {Percent(sample.LargestFreeBlock, sample.TotalVirtual)} of space"
+                + $" | private {sample.PrivateBytes / (double)MiB:0} MiB | resident {sample.WorkingSet / (double)MiB:0} MiB"
+                + $" | commit {Percent(sample.AvailableCommit, sample.TotalCommit)} free";
+            if (baseline != null && baseline.PrivateBytes > 0)
+            {
+                double minutes = (sample.Time - baseline.Time).TotalMinutes;
+                if (minutes >= 1)
+                {
+                    double change = 100.0 * (sample.PrivateBytes - baseline.PrivateBytes) / baseline.PrivateBytes;
+                    text += $" | private change {change:+0.#;-0.#;0}% / {minutes:0} min";
+                }
+            }
+            return text;
+        }
+
+        private static string Percent(ulong value, ulong total) => total == 0 ? "n/a" : $"{100.0 * value / total:0.#}%";
 
         private static string Headroom(Snapshot sample) =>
             $"Address space free {sample.FreeVirtual / MiB} / {sample.TotalVirtual / MiB} MiB; largest free block {sample.LargestFreeBlock / MiB} MiB; commit headroom {sample.AvailableCommit / MiB} MiB";
@@ -117,6 +130,7 @@ namespace OracleOfDereth
                     TotalVirtual = status.TotalVirtual,
                     FreeVirtual = status.AvailableVirtual,
                     AvailableCommit = status.AvailablePageFile,
+                    TotalCommit = status.TotalPageFile,
                     LargestFreeBlock = FindLargestFreeBlock()
                 };
             }

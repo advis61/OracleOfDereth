@@ -148,12 +148,26 @@ namespace OracleOfDereth
             FellowshipDismiss.Visible = isInFellowship;
             FellowshipDisband.Visible = isInFellowship;
 
-            FellowshipLeader.Image = (FellowshipLeaderEnabled()) ? null : ImageDisabled;
-            FellowshipOpen.Image = (FellowshipOpenEnabled()) ? null : ImageDisabled;
-            FellowshipClose.Image = (FellowshipCloseEnabled()) ? null : ImageDisabled;
-            FellowshipRecruit.Image = (FellowshipRecruitEnabled()) ? null : ImageDisabled;
-            FellowshipDismiss.Image = (FellowshipDismissEnabled()) ? null : ImageDisabled;
-            FellowshipDisband.Image = (FellowshipDisbandEnabled()) ? null : ImageDisabled;
+            SetFellowshipButtonEnabled(FellowshipLeader, FellowshipLeaderEnabled());
+            SetFellowshipButtonEnabled(FellowshipOpen, FellowshipOpenEnabled());
+            SetFellowshipButtonEnabled(FellowshipClose, FellowshipCloseEnabled());
+            SetFellowshipButtonEnabled(FellowshipRecruit, FellowshipRecruitEnabled());
+            SetFellowshipButtonEnabled(FellowshipDismiss, FellowshipDismissEnabled());
+            SetFellowshipButtonEnabled(FellowshipDisband, FellowshipDisbandEnabled());
+        }
+
+        private static void SetFellowshipButtonEnabled(HudButton button, bool enabled)
+        {
+            // VVS owns and disposes an assigned image. Give each button its own overlay
+            // and only replace it when the state changes; never share disposed ACImages.
+            if (enabled)
+            {
+                if (button.Image != null) button.Image = null;
+            }
+            else if (button.Image == null)
+            {
+                button.Image = new VirindiViewService.ACImage(System.Drawing.Color.FromArgb(255, 75, 75, 75));
+            }
         }
 
 

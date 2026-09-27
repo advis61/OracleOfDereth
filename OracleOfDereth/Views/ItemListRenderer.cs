@@ -666,7 +666,9 @@ namespace OracleOfDereth
         {
             // A cleared box reads back as null rather than 0, which is the same "no image".
             int current = box.Image == null ? 0 : box.Image.PortalImageID;
-            if (current == icon) return;
+            // ACImage returns a full resource ID; item snapshots can contain short IDs.
+            int requested = icon == 0 ? 0 : icon | 0x06000000;
+            if (current == requested) return;
 
             if (icon == 0)
             {
