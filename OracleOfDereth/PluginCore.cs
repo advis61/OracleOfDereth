@@ -267,7 +267,7 @@ namespace OracleOfDereth
 
             ShutdownComponent(() => worldObjectIdentifier?.Dispose());
             ShutdownComponent(VHotkey.Shutdown);
-            ShutdownComponent(InterfaceVisibility.Show);
+            ShutdownComponent(InterfaceVisibility.Shutdown);
             ShutdownComponent(Screenshot.Cancel);
             ShutdownComponent(UpdateChecker.Shutdown);
             ShutdownComponent(QuestCatalogUpdater.Shutdown);

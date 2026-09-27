@@ -20,6 +20,8 @@ namespace OracleOfDereth
         private static Timer watchdog;
         private static int characterId;
         private static bool restoring;
+        private static bool inRestore;
+        private static bool shutdownRequested;
         private static readonly HashSet<IntPtr> notificationPanels = new();
         private static readonly UiPanelStates panelStates = new();
         // gmPaperDollUI::PostInit looks up 0x100001D5 as its UIElement_Viewport.
@@ -43,7 +45,7 @@ namespace OracleOfDereth
 
         public static void Hide()
         {
-            if (restore.Count != 0) return;
+            if (inRestore || shutdownRequested || restore.Count != 0) return;
             notificationPanels.Clear();
             if (Screenshot.IsPending) return;
             try
@@ -75,27 +77,57 @@ namespace OracleOfDereth
         public static void Show()
         {
             restoring = true;
-            restore.Restore(ex => Util.Log(ex));
-            // Keep recovery hooks if a managed overlay temporarily failed to restore.
-            if (restore.Count != 0) return;
-            if (watchdog != null)
+            if (inRestore) return;
+            inRestore = true;
+            try { restore.Restore(ex => Util.Log(ex)); }
+            finally
             {
-                watchdog.Stop();
-                watchdog.Tick -= OnWatchdog;
-                watchdog.Dispose();
-                watchdog = null;
+                try
+                {
+                    // Normal recovery can retry; unloading must release all callbacks and
+                    // closures even if an overlay is already disposed and cannot restore.
+                    if (shutdownRequested || restore.Count == 0) ReleaseResources();
+                }
+                finally { inRestore = false; }
             }
-            if (core != null)
-            {
-                core.WindowMessage -= OnWindowMessage;
-                core.CharacterFilter.Logoff -= OnLogoff;
-                Service.DeviceLost -= OnDeviceLost;
-                core = null;
-            }
+        }
+
+        public static void Shutdown()
+        {
+            // A shutdown triggered inside a restore callback is completed by Show's finally.
+            shutdownRequested = true;
+            Show();
+        }
+
+        private static void ReleaseResources()
+        {
+            var oldTimer = watchdog;
+            var oldCore = core;
+            watchdog = null;
+            core = null;
+            Cleanup(() => oldTimer?.Stop());
+            Cleanup(() => { if (oldTimer != null) oldTimer.Tick -= OnWatchdog; });
+            Cleanup(() => oldTimer?.Dispose());
+            Cleanup(() => { if (oldCore != null) oldCore.WindowMessage -= OnWindowMessage; });
+            Cleanup(() => { if (oldCore != null) oldCore.CharacterFilter.Logoff -= OnLogoff; });
+            Cleanup(() => { if (oldCore != null) Service.DeviceLost -= OnDeviceLost; });
+            restore.Clear();
+            panelStates.Clear();
+            notificationPanels.Clear();
+            characterId = 0;
+            restoring = false;
+            shutdownRequested = false;
+        }
+
+        private static void Cleanup(Action action)
+        {
+            try { action(); }
+            catch (Exception ex) { Util.Log(ex); }
         }
 
         public static void TakeScreenshot(bool vista)
         {
+            if (inRestore || shutdownRequested) return;
             Show();
             if (restore.Count != 0) return;
             if (vista) Screenshot.TakeVista();
@@ -255,15 +287,23 @@ namespace OracleOfDereth
     internal sealed class UiRestoreActions
     {
         private readonly List<Action> actions = new();
+        private bool running;
         public int Count => actions.Count;
         public void Add(Action action) => actions.Add(action);
+        public void Clear() => actions.Clear();
         public void Restore(Action<Exception> report)
         {
-            for (int i = actions.Count - 1; i >= 0; i--)
+            if (running) return;
+            running = true;
+            try
             {
-                try { actions[i](); actions.RemoveAt(i); }
-                catch (Exception ex) { report(ex); }
+                for (int i = actions.Count - 1; i >= 0; i--)
+                {
+                    try { actions[i](); actions.RemoveAt(i); }
+                    catch (Exception ex) { report(ex); }
+                }
             }
+            finally { running = false; }
         }
     }
 

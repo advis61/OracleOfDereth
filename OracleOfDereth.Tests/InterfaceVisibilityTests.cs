@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Decal.Adapter.Wrappers;
 using OracleOfDereth;
 
@@ -98,6 +99,12 @@ internal static class InterfaceVisibilityTests
         undo.Restore(ex => errors++);
         Assert(restored == 3 && undo.Count == 0, "Restore repeated an already completed action.");
 
+        int reentries = 0;
+        undo.Add(() => { reentries++; undo.Restore(ex => errors++); });
+        undo.Restore(ex => errors++);
+        Assert(reentries == 1 && undo.Count == 0, "Nested restore ran an action recursively.");
+        AssertShutdownCleanup();
+
         Assert(InterfaceVisibility.IsEscape(0x100, 27) && InterfaceVisibility.IsEscape(0x104, 27), "Escape recovery was not recognized.");
         Assert(!InterfaceVisibility.IsEscape(0x101, 27) && !InterfaceVisibility.IsEscape(0x100, 65), "Recovery intercepted an unrelated key.");
     }
@@ -105,5 +112,61 @@ internal static class InterfaceVisibilityTests
     private static void Assert(bool condition, string message)
     {
         if (!condition) throw new InvalidOperationException(message);
+    }
+
+    private static void AssertShutdownCleanup()
+    {
+        const BindingFlags flags = BindingFlags.Static | BindingFlags.NonPublic;
+        var type = typeof(InterfaceVisibility);
+        var actions = (UiRestoreActions)type.GetField("restore", flags).GetValue(null);
+        var snapshots = (UiPanelStates)type.GetField("panelStates", flags).GetValue(null);
+        var pointers = (HashSet<IntPtr>)type.GetField("notificationPanels", flags).GetValue(null);
+        var timerField = type.GetField("watchdog", flags);
+        var timer = new System.Windows.Forms.Timer { Interval = 250 };
+        try
+        {
+            timer.Start();
+            timerField.SetValue(null, timer);
+            snapshots.Hide(new[] { UIElementType.Chat }, element => new IntPtr(123), address => true,
+                (address, value) => { });
+            pointers.Add(new IntPtr(123));
+            int calls = 0;
+            actions.Add(() =>
+            {
+                calls++;
+                if (calls > 1) throw new Exception("Restore recursed.");
+                InterfaceVisibility.Show();
+                throw new InvalidOperationException("Simulated disposed overlay.");
+            });
+            InterfaceVisibility.Show();
+            Assert(calls == 1 && actions.Count == 1 && ReferenceEquals(timerField.GetValue(null), timer),
+                "Normal failed restoration lost its retry state or reentered cleanup.");
+
+            int otherRestored = 0;
+            actions.Add(() => otherRestored++);
+            InterfaceVisibility.Shutdown();
+            Assert(otherRestored == 1 && actions.Count == 0, "Shutdown retained a failed closure or skipped another restore.");
+            Assert(timerField.GetValue(null) == null && !timer.Enabled && snapshots.Count == 0 && pointers.Count == 0,
+                "Shutdown retained its timer or native snapshots after a restore failure.");
+            type.GetMethod("OnWatchdog", flags).Invoke(null, new object[] { timer, EventArgs.Empty });
+
+            // Shutdown may arrive synchronously from a native visibility callback.
+            actions.Add(() => otherRestored++);
+            actions.Add(() =>
+            {
+                InterfaceVisibility.Shutdown();
+                Assert(actions.Count == 2, "Nested shutdown cleared the active restore iteration.");
+            });
+            InterfaceVisibility.Show();
+            Assert(otherRestored == 2 && actions.Count == 0, "Deferred shutdown skipped an outstanding restore.");
+            Assert(!(bool)type.GetField("inRestore", flags).GetValue(null), "The restoration guard stayed locked.");
+            InterfaceVisibility.Shutdown();
+        }
+        finally
+        {
+            actions.Clear();
+            InterfaceVisibility.Shutdown();
+            timer.Dispose();
+        }
     }
 }
