@@ -20,6 +20,7 @@ namespace OracleOfDereth
             public DateTime Time;
             public long PrivateBytes;
             public long WorkingSet;
+            public long ManagedBytes;
             public ulong TotalVirtual;
             public ulong FreeVirtual;
             public ulong LargestFreeBlock;
@@ -73,17 +74,26 @@ namespace OracleOfDereth
 
         private static string FormatStatus(Snapshot sample, Snapshot baseline)
         {
-            string text = $"Memory: address space {Percent(sample.TotalVirtual - Math.Min(sample.FreeVirtual, sample.TotalVirtual), sample.TotalVirtual)} used"
-                + $" | largest block {Percent(sample.LargestFreeBlock, sample.TotalVirtual)} of space"
-                + $" | private {sample.PrivateBytes / (double)MiB:0} MiB | resident {sample.WorkingSet / (double)MiB:0} MiB"
-                + $" | commit {Percent(sample.AvailableCommit, sample.TotalCommit)} free";
+            // Game Total includes plugins. The shared managed heap is only an estimate of
+            // plugin memory: it includes runtime objects and excludes native resources.
+            ulong used = sample.TotalVirtual - Math.Min(sample.FreeVirtual, sample.TotalVirtual);
+            string text = $"Memory limit: {Percent(used, sample.TotalVirtual)} used"
+                + $" | Game total: {sample.PrivateBytes / (double)MiB:0} MiB"
+                + $" | Decal plugins: {sample.ManagedBytes / (double)MiB:0} MiB";
             if (baseline != null && baseline.PrivateBytes > 0)
             {
                 double minutes = (sample.Time - baseline.Time).TotalMinutes;
                 if (minutes >= 1)
                 {
                     double change = 100.0 * (sample.PrivateBytes - baseline.PrivateBytes) / baseline.PrivateBytes;
-                    text += $" | private change {change:+0.#;-0.#;0}% / {minutes:0} min";
+                    double changeMiB = (sample.PrivateBytes - baseline.PrivateBytes) / (double)MiB;
+                    text += $" | Change ({minutes:0} min): game {changeMiB:+0.#;-0.#;0} MiB ({change:+0.#;-0.#;0}%)";
+                    if (baseline.ManagedBytes > 0)
+                    {
+                        double managedChange = 100.0 * (sample.ManagedBytes - baseline.ManagedBytes) / baseline.ManagedBytes;
+                        double managedChangeMiB = (sample.ManagedBytes - baseline.ManagedBytes) / (double)MiB;
+                        text += $", plugins {managedChangeMiB:+0.#;-0.#;0} MiB ({managedChange:+0.#;-0.#;0}%)";
+                    }
                 }
             }
             return text;
@@ -127,6 +137,9 @@ namespace OracleOfDereth
                     Time = DateTime.UtcNow,
                     PrivateBytes = process.PrivateMemorySize64,
                     WorkingSet = process.WorkingSet64,
+                    // Shared CLR heap, not Oracle-only usage. Observe without forcing a collection
+                    // or disturbing the allocation pattern we are trying to diagnose.
+                    ManagedBytes = GC.GetTotalMemory(false),
                     TotalVirtual = status.TotalVirtual,
                     FreeVirtual = status.AvailableVirtual,
                     AvailableCommit = status.AvailablePageFile,

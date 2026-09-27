@@ -17,6 +17,11 @@ namespace OracleOfDereth
 
         private readonly List<int> NearbyListColumns = new List<int> { 1, 2, 3 };
         private const string NearbySortSetting = "NearbySort";
+        private string nearbyClickGroup;
+        private int nearbyClickRow;
+        private int nearbyClickColumn;
+        private long nearbyClickTime;
+        private System.Drawing.Point nearbyClickPosition;
         public static Dictionary<string, bool> NearbyListExpanded = new Dictionary<string, bool>();
 
         private void InitNearby()
@@ -84,15 +89,14 @@ namespace OracleOfDereth
             UpdateNearbyList();
         }
 
-        private void UpdateNearbyList()
-        {
-            int index = 0;
-            List<NearbyItem> items = NearbyItem.NearbyItems()
+        private List<NearbyItem> FilteredNearbyItems() => NearbyItem.NearbyItems()
                 .Where(item => NearbyItem.MatchesFilter(item.IsPlayer(), item.IsMonster(),
                     NearbyFilterPlayers.Checked, NearbyFilterMonsters.Checked, NearbyFilterOther.Checked))
                 .ToList();
 
-            index = NearbyListAdd(items, index);
+        private void UpdateNearbyList()
+        {
+            int index = NearbyListAdd(FilteredNearbyItems(), 0);
 
             while (NearbyList.RowCount > index) { NearbyList.RemoveRow(NearbyList.RowCount - 1); }
         }
@@ -124,7 +128,7 @@ namespace OracleOfDereth
                     NearbyItem item = groupItems.First();
 
                     AssignImage((HudPictureBox)row[0], item.Item.Icon);
-                    AssignSelected(row, (item.Item.Id == targetId && !expanded), NearbyListColumns);
+                    AssignSelected(row, (!expanded && groupItems.Any(i => i.Item.Id == targetId)), NearbyListColumns);
 
                     SetText(row, 1, showWcid
                         ? $"[{item.Item.Type}] {group.Key} ({group.Count()})"
@@ -178,24 +182,54 @@ namespace OracleOfDereth
             SetText(row, 1, "");
             SetText(row, 2, "");
             SetText(row, 3, "");
+            SetText(row, 4, "");
 
             return (index + 1);
         }
 
         private void NearbyList_Click(object sender, int row, int col)
         {
+            if (row < 0 || row >= NearbyList.RowCount) return;
             string group = ((HudStaticText)NearbyList[row][4]).Text;
 
-            string id = ((HudStaticText)NearbyList[row][3]).Text;
-            if (id == null || id.Length < 1) { return; }
+            if (!int.TryParse(((HudStaticText)NearbyList[row][3]).Text, out int id))
+            {
+                nearbyClickGroup = null;
+                return;
+            }
 
-            if (group.Length > 0)
+            long now = System.Diagnostics.Stopwatch.GetTimestamp();
+            var position = System.Windows.Forms.Cursor.Position;
+            var doubleClickSize = System.Windows.Forms.SystemInformation.DoubleClickSize;
+            bool doubleClick = !string.IsNullOrEmpty(group) && group == nearbyClickGroup &&
+                row == nearbyClickRow && col == nearbyClickColumn &&
+                (now - nearbyClickTime) * 1000.0 / System.Diagnostics.Stopwatch.Frequency <=
+                    System.Windows.Forms.SystemInformation.DoubleClickTime &&
+                Math.Abs(position.X - nearbyClickPosition.X) <= doubleClickSize.Width / 2 &&
+                Math.Abs(position.Y - nearbyClickPosition.Y) <= doubleClickSize.Height / 2;
+
+            // Consume the pair so a third click starts a new gesture. The toggle column
+            // already works with one click and must not prime a double-click on the name.
+            nearbyClickGroup = doubleClick || col == 2 ? null : group;
+            nearbyClickRow = row;
+            nearbyClickColumn = col;
+            nearbyClickTime = now;
+            nearbyClickPosition = position;
+
+            if (!string.IsNullOrEmpty(group) && (col == 2 || doubleClick))
             {
                 NearbyListExpanded.TryGetValue(group, out bool expanded);
                 NearbyListExpanded[group] = !expanded;
             } else {
-                // Otherwise select item
-                CoreManager.Current.Actions.SelectItem(int.Parse(id));
+                if (!string.IsNullOrEmpty(group))
+                {
+                    // Resolve at click time so movement and list sorting cannot pick a farther item.
+                    NearbyItem closest = FilteredNearbyItems().Where(i => i.GroupKey() == group)
+                        .OrderBy(i => i.Distance()).FirstOrDefault();
+                    if (closest == null) return;
+                    id = closest.Item.Id;
+                }
+                CoreManager.Current.Actions.SelectItem(id);
             }
 
             UpdateNearbyList();
