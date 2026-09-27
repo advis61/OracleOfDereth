@@ -47,6 +47,12 @@ namespace OracleOfDereth
         public string DescriptionWithOwner => string.IsNullOrEmpty(Character) ? Description
             : Description + " (Last on " + Character + ")";
 
+        private string WithStackCount(string name)
+        {
+            int count = Item.Values(LongValueKey.StackCount);
+            return count > 1 ? name + " (" + count.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")" : name;
+        }
+
         public ItemListRow(WorldObject worldObject) : this(new Item(worldObject)) { }
 
         public ItemListRow(Item item, bool completeWithoutAppraisal = false)
@@ -54,7 +60,7 @@ namespace OracleOfDereth
             Item = item ?? throw new ArgumentNullException(nameof(item));
             this.completeWithoutAppraisal = completeWithoutAppraisal;
             AetheriaSurge = "";
-            DisplayName = Item.Name;
+            DisplayName = WithStackCount(Item.Name);
         }
 
         // Fill the base data available before ID. Type and category are derivable without
@@ -65,7 +71,7 @@ namespace OracleOfDereth
             ItemInfo info = new ItemInfo(Item);
 
             AetheriaSurge = "";
-            DisplayName = Item.Name;
+            DisplayName = WithStackCount(Item.Name);
             SummaryCol1 = GetSummaryCol1(info);
             SummaryCol2 = SummaryCol3 = SummaryCol4 = "";
             SortCol2 = SortCol3OD = SortCol3 = SortCol3Melee = SortCol3Work = SortCol4 = 0;
@@ -80,7 +86,7 @@ namespace OracleOfDereth
             if (!Item.HasIdData && !completeWithoutAppraisal) { PopulateStub(); return; }
             ItemInfo info = new ItemInfo(Item);
             AetheriaSurge = info.IsAetheria ? info.GetAetheriaSurge() : "";
-            DisplayName = info.GetName();
+            DisplayName = WithStackCount(info.GetName());
             SortCategory = GetSortCategory(info);
             SummaryCol1 = GetSummaryCol1(info);
             SummaryCol2 = GetSummaryCol2(info);
