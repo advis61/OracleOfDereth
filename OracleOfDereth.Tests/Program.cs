@@ -43,6 +43,7 @@ internal static class Program
         AssertNetworkStateReset();
         AssertSubmitCallbackCannotLeaveBusy();
         AssertTradePriceBounds();
+        TradeQuantityTests.Run();
         AssertTradeSplitExpiresClosed();
         AssertBankTransferTranslation();
         AssertNearbyFilters();

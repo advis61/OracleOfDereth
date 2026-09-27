@@ -3,6 +3,7 @@ using Decal.Adapter.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace OracleOfDereth
@@ -89,7 +90,17 @@ namespace OracleOfDereth
         // added item lands; PendingSplit is the stack split we're waiting on.
         private static int LastCheckId = 0;
         private static int LastCheckNotes = 0;
+        private static int LastCheckQuantity = 1;
+        private static string LastCheckName = "";
+        private static string quantityName = "";
+        private static int quantityType;
+        private static int quantityRequested;
+        private static readonly Dictionary<int, int> quantityReceived = new();
+        public static bool PurchasePending => quantityRequested > 0 || PayNotes > 0 || PendingSplit != null;
+        public static bool HasQuoteFor(int itemId, int quantity) => LastCheckId == itemId &&
+            LastCheckQuantity == quantity && PricePoints.Length > 0;
         private static int PayNotes = 0;
+        private static DateTime paymentExpires = DateTime.MinValue;
         private static readonly TimeSpan SplitTimeout = TimeSpan.FromSeconds(5);
 
         private sealed class SplitRequest
@@ -149,6 +160,7 @@ namespace OracleOfDereth
         // (Does NOT clear the auto-pay state — the bot resets mid-purchase, then adds the item.)
         public static void Reset()
         {
+            quantityReceived.Clear();
             ItemList.Trade.Clear();
             OnChanged?.Invoke();
         }
@@ -158,39 +170,119 @@ namespace OracleOfDereth
         public static void AddItem(int itemId)
         {
             if (!IsOpen) return;
-            if (IsOurs(CoreManager.Current.WorldFilter[itemId])) return;
+            var offered = CoreManager.Current.WorldFilter[itemId];
+            if (offered == null || IsOurs(offered)) return;
 
             ItemList.Trade.AddTradeItem(itemId);
+
+            if (quantityRequested > 0)
+            {
+                string offeredName = ItemInfo.GetName(offered.Name, offered.Values(LongValueKey.Material));
+                if (!ReceiveQuantity(itemId, offeredName, offered.Values(LongValueKey.Type), StackCount(offered))) return;
+                ClearQuantity();
+                OnChanged?.Invoke();
+            }
 
             if (PayNotes > 0)
             {
                 int notes = PayNotes;
                 PayNotes = 0;
-                PayWithNotes(notes);
+                try
+                {
+                    if (DateTime.UtcNow <= paymentExpires) PayWithNotes(notes);
+                    else TradeStatus = "Payment request expired; check the offered items and pay manually.";
+                }
+                finally { OnChanged?.Invoke(); }
             }
         }
 
         // Add the item to the trade window. No price check here — selecting the item already did
         // one. If that check showed we can afford it, pay the notes when it lands; otherwise add
-        // it without dragging any notes in and let the player sort out the funds. Add by item id
-        // (exact, unlike a name which can match several items).
-        public static void Add(int itemId)
+        // it without dragging any notes in and let the player sort out the funds. Bulk requests
+        // use CyTrader's exact-name regex and wait for the complete quantity before paying.
+        public static bool Add(int itemId, int quantity = 1)
         {
-            SendCommand("add " + itemId);
-            PayNotes = (CanCheckout && LastCheckId == itemId) ? LastCheckNotes : 0;
+            if (!IsOpen || !IsCyTrader || PurchasePending) return false;
+            var row = ItemList.Trade.Items.FirstOrDefault(item => item.Id == itemId);
+            if (row == null || !ValidQuantity(row.Item, quantity)) return false;
+            PayNotes = (CanCheckout && LastCheckId == itemId && LastCheckQuantity == quantity) ? LastCheckNotes : 0;
+            StartQuantity(new ItemInfo(row.Item).GetName(), row.Item.Values(LongValueKey.Type), quantity);
+            try { SendCommand(AddCommand(row.Item, quantity)); }
+            catch { PayNotes = 0; ClearQuantity(); throw; }
+            OnChanged?.Invoke();
+            return true;
+        }
+
+        internal static void StartQuantity(string name, int type, int quantity)
+        {
+            quantityReceived.Clear();
+            quantityName = name;
+            quantityType = type;
+            quantityRequested = quantity > 1 ? quantity : 0;
+            paymentExpires = DateTime.UtcNow.AddSeconds(30);
+        }
+
+        private static void ClearQuantity()
+        {
+            quantityReceived.Clear();
+            quantityName = "";
+            quantityType = 0;
+            quantityRequested = 0;
+        }
+
+        // Count arrivals for this purchase, not the initial catalog. Never pay for a short fill.
+        internal static bool ReceiveQuantity(int id, string name, int type, int count)
+        {
+            if (quantityRequested == 0 || DateTime.UtcNow > paymentExpires || id == 0 || count <= 0 ||
+                name != quantityName || type != quantityType) return false;
+            quantityReceived[id] = count;
+            long total = 0;
+            foreach (int amount in quantityReceived.Values) total += amount;
+            return total == quantityRequested;
+        }
+
+        internal static bool SupportsQuantity(Item item) => item != null && item.ObjectClass != ObjectClass.Salvage &&
+            (item.Values(LongValueKey.StackMax) > 1 || item.Values(LongValueKey.StackCount) > 1);
+
+        internal static bool ValidQuantity(Item item, int quantity) => item != null && quantity > 0 &&
+            (quantity == 1 || SupportsQuantity(item));
+
+        internal static string AddCommand(Item item, int quantity)
+        {
+            if (!ValidQuantity(item, quantity)) throw new ArgumentOutOfRangeException(nameof(quantity));
+            // CyTrader's bulk branch takes a name REGEX, not an object id. Anchor and
+            // escape the original material/name, never the display's stack-count suffix.
+            return quantity == 1 ? "add " + item.Id :
+                "add ^" + Regex.Escape(new ItemInfo(item).GetName()) + "$ * " + quantity.ToString(CultureInfo.InvariantCulture);
         }
 
         // Price-check an item (e.g. when it's selected). The reply (NotePriceTell) updates the
         // status, the affordability flag, and the note count Add will use. Debounced so re-
         // clicking the same item doesn't spam the bot — a different item, or the same one after
         // the debounce window, goes through.
-        public static void CheckPrice(int itemId)
+        public static void CheckPrice(int itemId, int quantity = 1)
         {
+            if (PurchasePending) return;
+            var row = ItemList.Trade.Items.FirstOrDefault(item => item.Id == itemId);
+            if (row == null || !ValidQuantity(row.Item, quantity)) return;
+            if (itemId == LastCheckId && quantity != LastCheckQuantity)
+            {
+                LastCheckQuantity = quantity;
+                if (PricePoints.Length > 0) { EvaluateQuote(); return; }
+            }
             if (itemId == LastCheckId && (DateTime.UtcNow - LastCheckTime) < CheckDebounce) return;
 
             LastCheckId = itemId;
+            LastCheckQuantity = quantity;
+            LastCheckName = new ItemInfo(row.Item).GetName();
+            PricePoints = "";
+            LastCheckNotes = 0;
+            CanCheckout = false;
+            MmdShortfall = 0;
+            TradeStatus = "Checking price...";
             LastCheckTime = DateTime.UtcNow;
             SendCommand("check " + itemId);
+            OnChanged?.Invoke();
         }
 
         // The bot's "// Adding ..." opening tell — flag it as a CyTrader bot. This isn't
@@ -236,11 +328,16 @@ namespace OracleOfDereth
 
             Match m = PartnerMatch(CheckPriceRegex, chatText);
             if (m == null) return;
+            if (LastCheckId == 0 || !string.Equals(NormalizeName(m.Groups[2].Value), NormalizeName(LastCheckName), StringComparison.OrdinalIgnoreCase)) return;
 
             PricedItem = m.Groups[2].Value;
             PricePoints = m.Groups[3].Value;
+            EvaluateQuote();
+        }
 
-            if (!ParsePoints(PricePoints, out double price) || !TryMmdsFor(price, out int mmdsNeeded))
+        private static void EvaluateQuote()
+        {
+            if (!ParsePoints(PricePoints, out double price) || !TryQuantityPrice(price, LastCheckQuantity, out int mmdsNeeded))
             {
                 LastCheckNotes = 0;
                 CanCheckout = false;
@@ -340,6 +437,13 @@ namespace OracleOfDereth
         // closed so an unrelated note stack created later cannot satisfy stale split state.
         public static void Tick()
         {
+            if ((quantityRequested > 0 || PayNotes > 0) && DateTime.UtcNow > paymentExpires)
+            {
+                ClearQuantity();
+                PayNotes = 0;
+                TradeStatus = "Could not verify the requested quantity; check the bot's offered items and pay manually.";
+                OnChanged?.Invoke();
+            }
             if (PendingSplit == null) return;
             if (DateTime.UtcNow > PendingSplit.Expires)
             {
@@ -392,6 +496,12 @@ namespace OracleOfDereth
             return true;
         }
 
+        internal static bool TryQuantityPrice(double unitPoints, int quantity, out int mmds)
+        {
+            mmds = 0;
+            return quantity > 0 && TryMmdsFor(unitPoints * quantity, out mmds);
+        }
+
         // "<points> points (<n> MMD)" — the MMD part is dropped when the rate is unknown.
         public static string PointsLabel(double points)
         {
@@ -410,7 +520,8 @@ namespace OracleOfDereth
         {
             if (PricePoints.Length == 0) return "";
             if (!ParsePoints(PricePoints, out double p)) return $"{PricedItem}: invalid price";
-            return $"{PricedItem}: {PointsLabel(p)}";
+            string quantity = LastCheckQuantity > 1 ? $" x{LastCheckQuantity}" : "";
+            return $"{PricedItem}{quantity}: {PointsLabel(p * LastCheckQuantity)}";
         }
 
         // Our trade notes in inventory; `total` is their combined count (i.e. MMDs on hand).
@@ -542,7 +653,11 @@ namespace OracleOfDereth
             MmdShortfall = 0;
             LastCheckId = 0;
             LastCheckNotes = 0;
+            LastCheckQuantity = 1;
+            LastCheckName = "";
+            ClearQuantity();
             LastCheckTime = DateTime.MinValue;
+            paymentExpires = DateTime.MinValue;
             PayNotes = 0;
             ClearPendingSplit();
             OnChanged?.Invoke();

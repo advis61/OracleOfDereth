@@ -22,6 +22,10 @@ namespace OracleOfDereth
 
         public HudStaticText TradeText { get; private set; }
         public HudButton TradeAddButton { get; private set; }
+        public HudTextBox TradeQuantity { get; private set; }
+        public HudStaticText TradeQuantityLabel { get; private set; }
+        private int quantityItemId;
+        private bool suppressQuantity;
         public HudButton TradeWithdrawBank { get; private set; }
         public HudStaticText TradeStatusText { get; private set; }
         public HudButton TradeClipboard { get; private set; }
@@ -83,6 +87,9 @@ namespace OracleOfDereth
                 TradeText.FontHeight = 10;
 
                 TradeAddButton = (HudButton)view["TradeAddButton"];
+                TradeQuantity = (HudTextBox)view["TradeQuantity"];
+                TradeQuantityLabel = (HudStaticText)view["TradeQuantityLabel"];
+                TradeQuantity.Change += Quantity_Change;
                 TradeAddButton.Hit += AddButton_Hit;
 
                 TradeWithdrawBank = (HudButton)view["TradeWithdrawBank"];
@@ -166,6 +173,8 @@ namespace OracleOfDereth
         public void Show()
         {
             if (view == null) return;
+            quantityItemId = 0;
+            ResetQuantity();
             view.Visible = true;
             UpdateList();
         }
@@ -210,6 +219,14 @@ namespace OracleOfDereth
 
             // Track the in-game selection so its row is highlighted (the buttons act on it).
             int selectedId = Target.CurrentTargetId;
+            var selected = TradeItems.Items.FirstOrDefault(item => item.Id == selectedId);
+            if (quantityItemId != selectedId && !Trade.PurchasePending)
+            {
+                quantityItemId = selectedId;
+                ResetQuantity();
+            }
+            bool stackable = Trade.IsCyTrader && Trade.SupportsQuantity(selected?.Item);
+            TradeQuantity.Visible = TradeQuantityLabel.Visible = stackable && !Trade.PurchasePending;
 
             // Pass 0 for the column-0 icon: the trade view has no row-delete, so no red circle.
             ItemListRenderer.Render(TradeList, items, 0, selectedId);
@@ -229,12 +246,14 @@ namespace OracleOfDereth
 
             // The Add button only applies to a bot trade; hide it otherwise. It reads "Checkout"
             // once a check shows we can afford the selected item.
-            TradeAddButton.Visible = Trade.IsCyTrader;
-            TradeAddButton.Text = Trade.CanCheckout ? "Checkout" : "Add to Trade";
+            bool validQuantity = TryQuantity(selected, out int requested);
+            bool currentQuote = validQuantity && Trade.HasQuoteFor(selectedId, requested);
+            TradeAddButton.Visible = Trade.IsCyTrader && validQuantity && !Trade.PurchasePending;
+            TradeAddButton.Text = Trade.CanCheckout && currentQuote ? "Checkout" : "Add to Trade";
 
             // Offer a one-click bank withdrawal when this server has bank and the last price check
             // left us short on notes. Withdraws exactly the shortfall in MMDs.
-            TradeWithdrawBank.Visible = Bank.IsSupported && Trade.MmdShortfall > 0;
+            TradeWithdrawBank.Visible = Bank.IsSupported && Trade.MmdShortfall > 0 && currentQuote && !Trade.PurchasePending;
             if (TradeWithdrawBank.Visible)
                 TradeWithdrawBank.Text = $"Withdraw {Trade.MmdShortfall} MMD from Bank";
         }
@@ -281,7 +300,8 @@ namespace OracleOfDereth
                 CoreManager.Current.Actions.RequestId(id);
 
                 // Price-check the clicked item right away when trading with a bot.
-                if (Trade.IsCyTrader) Trade.CheckPrice(id);
+                var selected = TradeItems.Items.FirstOrDefault(item => item.Id == id);
+                if (Trade.IsCyTrader && TryQuantity(selected, out int quantity)) Trade.CheckPrice(id, quantity);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -295,8 +315,13 @@ namespace OracleOfDereth
             {
                 ItemListRow item = RequireSelectedTradeItem();
                 if (item == null) return;
-                Trade.Add(item.Id);
-                Util.Chat($"Adding {item.DisplayName} from {Trade.PartnerName}", Util.ColorPink);
+                if (!TryQuantity(item, out int quantity))
+                {
+                    Util.Chat("Enter a positive whole-number quantity.", Util.ColorPink);
+                    return;
+                }
+                if (Trade.Add(item.Id, quantity))
+                    Util.Chat($"Adding {new ItemInfo(item.Item).GetName()} x{quantity} from {Trade.PartnerName}", Util.ColorPink);
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -306,6 +331,34 @@ namespace OracleOfDereth
         private void WithdrawBankButton_Hit(object sender, EventArgs e)
         {
             try { Trade.WithdrawShortfall(); }
+            catch (Exception ex) { Util.Log(ex); }
+        }
+
+        private void ResetQuantity()
+        {
+            suppressQuantity = true;
+            try { TradeQuantity.Text = "1"; }
+            finally { suppressQuantity = false; }
+        }
+
+        private bool TryQuantity(ItemListRow item, out int quantity)
+        {
+            quantity = 1;
+            if (item == null) return false;
+            if (!Trade.SupportsQuantity(item.Item)) return true;
+            return int.TryParse(TradeQuantity.Text, System.Globalization.NumberStyles.None,
+                System.Globalization.CultureInfo.InvariantCulture, out quantity) && Trade.ValidQuantity(item.Item, quantity);
+        }
+
+        private void Quantity_Change(object sender, EventArgs e)
+        {
+            if (suppressQuantity) return;
+            try
+            {
+                var item = TradeItems.Items.FirstOrDefault(row => row.Id == Target.CurrentTargetId);
+                if (Trade.IsCyTrader && TryQuantity(item, out int quantity)) Trade.CheckPrice(item.Id, quantity);
+                UpdateList();
+            }
             catch (Exception ex) { Util.Log(ex); }
         }
 
@@ -403,6 +456,7 @@ namespace OracleOfDereth
             if (TradeList != null) TradeList.Click -= List_Click;
 
             if (TradeAddButton != null) TradeAddButton.Hit -= AddButton_Hit;
+            if (TradeQuantity != null) TradeQuantity.Change -= Quantity_Change;
             if (TradeWithdrawBank != null) TradeWithdrawBank.Hit -= WithdrawBankButton_Hit;
             if (TradeClipboard != null) TradeClipboard.Hit -= ClipboardButton_Hit;
             if (TradeExportText != null) TradeExportText.Hit -= ExportTextButton_Hit;
