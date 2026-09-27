@@ -267,6 +267,7 @@ namespace OracleOfDereth
 
             ShutdownComponent(() => worldObjectIdentifier?.Dispose());
             ShutdownComponent(VHotkey.Shutdown);
+            ShutdownComponent(InterfaceVisibility.Show);
             ShutdownComponent(Screenshot.Cancel);
             ShutdownComponent(UpdateChecker.Shutdown);
             ShutdownComponent(QuestCatalogUpdater.Shutdown);
@@ -304,8 +305,10 @@ namespace OracleOfDereth
                 else if (cmd == "/od vtank") { VTank.Debug(); }
                 else if (cmd == "/od memory") { ClientMemoryMonitor.ShowStatus(); }
                 else if (cmd == "/od coords") { Util.AnnounceCoordinates(); }
-                else if (cmd == "/od screenshot") { Screenshot.Take(); }
-                else if (cmd == "/od vistashot") { Screenshot.TakeVista(); }
+                else if (cmd == "/od ui off") { InterfaceVisibility.Hide(); }
+                else if (cmd == "/od ui on") { InterfaceVisibility.Show(); }
+                else if (cmd == "/od screenshot") { InterfaceVisibility.TakeScreenshot(false); }
+                else if (cmd == "/od vistashot") { InterfaceVisibility.TakeScreenshot(true); }
                 else if (cmd == "/od deletesummons" || cmd.StartsWith("/od deletesummons ")) { WorldObjectVisibility.Command(cmd); }
                 else if (cmd == "/od deletepets" || cmd.StartsWith("/od deletepets ")) { WorldObjectVisibility.Command(cmd); }
                 else if (cmd == "/od landblock") { Util.Chat($"Current landblock: {Util.CurrentLandblockHex()} (block 0x{Util.CurrentLandblock():X4})"); }

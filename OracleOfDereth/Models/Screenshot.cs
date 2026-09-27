@@ -43,6 +43,7 @@ namespace OracleOfDereth
 
         public static void Take() => Start(false);
         public static void TakeVista() => Start(true);
+        internal static bool IsPending => timer != null;
 
         private static void Start(bool hideInterface)
         {
@@ -226,11 +227,15 @@ namespace OracleOfDereth
             else
             {
                 Util.Chat("Screenshot saved: " + path, Util.ColorPink);
-                try { Clipboard.SetText(path); }
+                try
+                {
+                    using var image = new Bitmap(path);
+                    Clipboard.SetImage(image);
+                }
                 catch (Exception ex)
                 {
                     Util.Log(ex);
-                    Util.Chat("Could not copy the screenshot filepath to the clipboard.", Util.ColorPink);
+                    Util.Chat("Screenshot saved, but could not copy the image to the clipboard.", Util.ColorPink);
                 }
             }
         }

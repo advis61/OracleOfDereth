@@ -26,6 +26,7 @@ internal static class Program
         if (args.Length == 2 && args[0] == "--vgi") VGInventoryTests.Audit(args[1]);
         AssertScreenshotBounds();
         ScreenshotLifecycleTests.Run();
+        InterfaceVisibilityTests.Run();
         AssertScreenshotPaths();
         AssertSummonOwnership();
         NearbySafetyTests.Run();

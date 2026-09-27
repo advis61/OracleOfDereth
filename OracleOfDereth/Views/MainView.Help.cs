@@ -15,6 +15,8 @@ namespace OracleOfDereth
         {
             ("/od",                       "Show plugin version"),
             ("/od coords",                "Share your coordinates in allegiance chat"),
+            ("/od ui off",                "Hide UI until restored; Escape brings it back"),
+            ("/od ui on",                 "Restore the hidden UI"),
             ("/od deletesummons on|off",   "Delete other players' summons locally"),
             ("/od deletepets on|off",      "Delete other players' pets locally"),
             ("/od fellow create",         "Create a new fellowship"),
