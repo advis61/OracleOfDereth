@@ -46,6 +46,7 @@ namespace OracleOfDereth
         public static Setting DeleteOtherSummons;
         public static Setting DeleteOtherPets;
         public static Setting WeaponScore;
+        public static Setting WarnAboutClientMemory;
         public static Setting ShowWeaponWorkmanship;
         public static Setting ShowArmorWorkmanship;
         public static Setting WikiSource;
@@ -76,6 +77,7 @@ namespace OracleOfDereth
             SuppressPluginRefreshChat = Register("Suppress Plugin Refresh Chat", "SuppressPluginRefreshChat", YesNo, "Yes");
             ShowTradeWindow = Register("Use Trade Window", "TradeWindow", YesNo, "Yes");
             VoidTargetWindow = Register("Use Void Target Window", "VoidTargetWindow", YesNo, "Yes");
+            WarnAboutClientMemory = Register("Warn About Client Memory", "WarnAboutClientMemory", YesNo, "Yes");
             WikiSource = Register("Wiki Source", "WikiSource", new List<string> { "Levistras", "ACPedia", "Fandom" }, "Levistras");
         }
 

@@ -134,6 +134,7 @@ namespace OracleOfDereth
                 // Initialize Settings
                 SettingsFile.Init();
                 Setting.Init();
+                ClientMemoryMonitor.Reset();
 
                 // Initialize Collection
                 Augmentation.Init();
@@ -198,6 +199,7 @@ namespace OracleOfDereth
             {
                 if (CoreManager.Current.CharacterFilter.LoginStatus < 1) return;
 
+                ClientMemoryMonitor.Tick();
                 Target.RemoveAllExpired();
                 // Pause player identify requests while the Items tab or a trade window is open,
                 // so they don't compete with the item/trade appraisal queue for the server's
@@ -230,6 +232,7 @@ namespace OracleOfDereth
         protected override void Shutdown()
         {
             didInit = false;
+            ClientMemoryMonitor.Reset();
             ShutdownComponent(() =>
             {
                 CoreManager.Current.CommandLineText -= Current_CommandLineText;
@@ -299,6 +302,7 @@ namespace OracleOfDereth
                 else if (cmd == "/od exception") { throw new InvalidOperationException("An error occurred."); }
                 else if (cmd == "/od targetdebug") { TargetDebug.Run(); }
                 else if (cmd == "/od vtank") { VTank.Debug(); }
+                else if (cmd == "/od memory") { ClientMemoryMonitor.ShowStatus(); }
                 else if (cmd == "/od screenshot") { Screenshot.Take(); }
                 else if (cmd == "/od vistashot") { Screenshot.TakeVista(); }
                 else if (cmd == "/od deletesummons" || cmd.StartsWith("/od deletesummons ")) { WorldObjectVisibility.Command(cmd); }
@@ -458,9 +462,9 @@ namespace OracleOfDereth
         {
             try
             {
+                Nearby.ChangePortalMode(e.Type);
                 Screenshot.Cancel();
                 ItemCache.Clear();
-                if (e.Type.ToString() == "EnterPortal") { Nearby.ClearObjects(); }
                 Fellowship.NoteZoned();
             }
             catch (Exception ex) { Util.Log(ex); }

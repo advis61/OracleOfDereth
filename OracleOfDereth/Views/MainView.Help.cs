@@ -24,6 +24,7 @@ namespace OracleOfDereth
             ("/od fellow recruit <name>", "Recruit a nearby player by name"),
             ("/od landblock",             "Print the current landblock ID"),
             ("/od logout",                "Log out of the game"),
+            ("/od memory",                "Show client memory usage and remaining headroom"),
             ("/od questflag",             "Look up quest info for the selected NPC"),
             ("/od quests update",         "Download and reload the latest quest list"),
             ("/od quests reset",          "Delete the downloaded list and reload the bundled list"),

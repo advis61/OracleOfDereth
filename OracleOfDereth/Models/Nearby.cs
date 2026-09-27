@@ -36,9 +36,10 @@ namespace OracleOfDereth
         private static readonly TimeSpan ScanInterval = TimeSpan.FromSeconds(2);
         private const int MaxMissedScans = 3;
         private static DateTime lastScanAt = DateTime.MinValue;
+        internal static bool IsInPortal { get; private set; }
 
         // Preserve the old read API for callers, but resolve fresh wrappers from WorldFilter.
-        public static List<WorldObject> Objects => Tracked.Keys
+        public static List<WorldObject> Objects => IsInPortal ? new List<WorldObject>() : Tracked.Keys
             .Select(id => CoreManager.Current.WorldFilter[id])
             .Where(item => item != null)
             .ToList();
@@ -49,6 +50,7 @@ namespace OracleOfDereth
         public static void Init()
         {
             Nearbys.Clear();
+            IsInPortal = false;
             Tracked.Clear();
             lastScanAt = DateTime.MinValue;
             LoadNearbysCSV();
@@ -61,6 +63,15 @@ namespace OracleOfDereth
         {
             Tracked.Clear();
             lastScanAt = DateTime.MinValue;
+        }
+
+        internal static void ChangePortalMode(PortalEventType mode)
+        {
+            if (mode != PortalEventType.EnterPortal && mode != PortalEventType.ExitPortal) return;
+            IsInPortal = mode == PortalEventType.EnterPortal;
+            // Do not repopulate from the old landscape while zoning. After arrival, the
+            // next visible-tab tick reconciles objects whose creation events we skipped.
+            ClearObjects();
         }
 
         public static List<WorldObject> All() {
@@ -110,6 +121,7 @@ namespace OracleOfDereth
 
         public static void Add(WorldObject item)
         {
+            if (IsInPortal) return;
             if (item == null || item.Id == 0) return;
             Track(item);
 
@@ -131,6 +143,7 @@ namespace OracleOfDereth
 
         public static void Tick()
         {
+            if (IsInPortal) return;
             if (DateTime.UtcNow - lastScanAt < ScanInterval) return;
             Reconcile();
         }

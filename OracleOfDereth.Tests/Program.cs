@@ -26,6 +26,8 @@ internal static class Program
         ScreenshotLifecycleTests.Run();
         AssertScreenshotPaths();
         AssertSummonOwnership();
+        NearbySafetyTests.Run();
+        ClientMemoryMonitorTests.Run();
         AssertJson(null, "null");
         AssertJson("", "\"\"");
         string quoteSlash = "quote " + (char)34 + " slash " + (char)92;

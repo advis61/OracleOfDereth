@@ -119,7 +119,8 @@ namespace OracleOfDereth
             if (!IsPlayer() && !IsMonster() && !IsCorpse() && age > 60)
                 score -= Math.Min(500, (age - 60) * 2);
 
-            // Player-owned pets and summons should stay low even when newly spawned and close.
+            // Only inspect native ownership when deletion is enabled for this category.
+            // With it disabled, pets/summons use the ordinary relevance score.
             if (WorldObjectVisibility.IsPlayerOwnedCreature(Item)) score -= 2500;
 
             // A gradual proximity boost: +400 at zero distance, +200 at 20, +67 at 100.

@@ -38,7 +38,7 @@ namespace OracleOfDereth
             bool summons = Setting.DeleteOtherSummons?.IsYes == true;
             bool pets = Setting.DeleteOtherPets?.IsYes == true;
 
-            if (!summons && !pets) return;
+            if (Nearby.IsInPortal || (!summons && !pets)) return;
             if (IntPtr.Size != 4) return;
 
             var core = CoreManager.Current;
@@ -70,7 +70,7 @@ namespace OracleOfDereth
             {
                 // Resolve again after previous deletions; never retain a native pointer.
                 if (core.WorldFilter[id]?.ObjectClass != category || !core.Actions.IsValidObject(id) || core.Actions.Underlying.GetPhysicsObjectPtr(id) == 0) continue;
-                DeleteWeenie(id, playerId);
+                DeleteWeenie(id, playerId, category);
             }
 
         }
@@ -80,17 +80,30 @@ namespace OracleOfDereth
         internal static bool IsPlayerOwnedCreature(ObjectClass category, uint ownerId) =>
             ownerId != 0 && (category == ObjectClass.Monster || category == ObjectClass.Npc);
 
+        internal static bool ShouldCheckOwnership(ObjectClass category, bool summons, bool pets) =>
+            (category == ObjectClass.Monster && summons) || (category == ObjectClass.Npc && pets);
+
         internal static bool IsPlayerOwnedCreature(WorldObject creature)
         {
-            if (creature == null || (creature.ObjectClass != ObjectClass.Monster && creature.ObjectClass != ObjectClass.Npc))
+            // Nearby sorting must respect the same opt-in as deletion. In particular,
+            // with both features off, do not even inspect a potentially stale wrapper.
+            if (Nearby.IsInPortal || creature == null ||
+                (Setting.DeleteOtherSummons?.IsYes != true && Setting.DeleteOtherPets?.IsYes != true))
                 return false;
-            return IsPlayerOwnedCreature(creature.ObjectClass, GetPetOwner(creature.Id));
+            ObjectClass category = creature.ObjectClass;
+            if (!ShouldCheckOwnership(category, Setting.DeleteOtherSummons?.IsYes == true, Setting.DeleteOtherPets?.IsYes == true))
+                return false;
+            return IsPlayerOwnedCreature(category, GetPetOwner(creature.Id, category));
         }
 
-        private static unsafe uint GetPetOwner(int id)
+        private static unsafe uint GetPetOwner(int id, ObjectClass category)
         {
+            // Guard the native entry point too, so callers cannot bypass the setting
+            // or inspect objects while the game is tearing down a landblock.
+            if (Nearby.IsInPortal || !ShouldCheckOwnership(category,
+                Setting.DeleteOtherSummons?.IsYes == true, Setting.DeleteOtherPets?.IsYes == true)) return 0;
             var core = CoreManager.Current;
-            if (IntPtr.Size != 4 || core == null || core.CharacterFilter.LoginStatus < 1 ||
+            if (id == 0 || IntPtr.Size != 4 || core == null || core.CharacterFilter.LoginStatus < 1 ||
                 !core.Actions.IsValidObject(id) || core.Actions.Underlying.GetPhysicsObjectPtr(id) == 0) return 0;
 
             // Retail x86 client bindings verified against UtilityBelt.Service 3.0.11:
@@ -108,9 +121,9 @@ namespace OracleOfDereth
             return *(uint*)(weenie + 0x98 + 0xA8);
         }
 
-        private static unsafe void DeleteWeenie(int id, int playerId)
+        private static unsafe void DeleteWeenie(int id, int playerId, ObjectClass category)
         {
-            uint ownerId = GetPetOwner(id);
+            uint ownerId = GetPetOwner(id, category);
             if (!ShouldDeletePet(ownerId, unchecked((uint)playerId))) return;
 
             void* objects = *(void**)0x842ADC;
