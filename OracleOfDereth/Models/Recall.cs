@@ -77,10 +77,9 @@ namespace OracleOfDereth
 
         public bool IsComplete()
         {
-            int id = CoreManager.Current.CharacterFilter.SpellBook.FirstOrDefault(x => x == SpellId);
-            if (id == 0) { return false; }
-
-            return true;
+            // SpellBook is cached by Decal and can miss spells learned after its first
+            // read. IsSpellKnown queries the current learned-spell state instead.
+            return SpellId > 0 && CoreManager.Current.CharacterFilter.IsSpellKnown(SpellId);
         }
     }
 }

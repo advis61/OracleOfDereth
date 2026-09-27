@@ -48,10 +48,11 @@ namespace OracleOfDereth
 
                 // Update
                 Recall recall = recalls[x];
-                AssignImage((HudPictureBox)row[0], recall.IsComplete());
+                bool complete = recall.IsComplete();
+                AssignImage((HudPictureBox)row[0], complete);
                 SetText(row, 1, recall.Name);
 
-                if (recall.IsComplete())
+                if (complete)
                 {
                     SetText(row, 2, "completed");
                 }
