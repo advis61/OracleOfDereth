@@ -550,6 +550,7 @@ namespace OracleOfDereth
         {
             Summon.Identified(item);
             ItemInfo.WeaponIdentified(item);
+            TreasureMap.Identified(item);
         }
 
         // https://github.com/ACEmulator/ACE/blob/master/Source/ACE.Server/Network/GameEvent/GameEventType.cs

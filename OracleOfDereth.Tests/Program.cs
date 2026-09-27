@@ -22,6 +22,7 @@ internal static class Program
         ItemTextSearchTests.Run();
         ItemCacheTests.Run();
         RecallTests.Run();
+        TreasureMapTests.Run();
         AssertChatFilterLifecycle();
         if (args.Length == 2 && args[0] == "--vgi") VGInventoryTests.Audit(args[1]);
         AssertScreenshotBounds();
