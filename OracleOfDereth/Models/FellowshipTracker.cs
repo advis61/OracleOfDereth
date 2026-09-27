@@ -63,7 +63,6 @@ namespace OracleOfDereth
 
             Fellow fellow = new Fellow
             {
-                Item = item,
                 Id = item.Id,
                 Name = item.Name,
                 FellowshipName = fellowshipName

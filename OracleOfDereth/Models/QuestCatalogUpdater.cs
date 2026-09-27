@@ -124,16 +124,22 @@ namespace OracleOfDereth
             }
             catch (Exception ex)
             {
-                if (requestGeneration == Volatile.Read(ref generation))
+                if (ex is WebException web) web.Response?.Close();
+                lock (lifecycleLock)
                 {
-                    pendingException = ex;
-                    if (verbose) pendingMessage = "Oracle of Dereth quest list update failed. See errors.txt for details.";
+                    if (requestGeneration == generation)
+                    {
+                        pendingException = ex;
+                        if (verbose) pendingMessage = "Oracle of Dereth quest list update failed. See errors.txt for details.";
+                    }
                 }
             }
             finally
             {
-                if (requestGeneration == Volatile.Read(ref generation))
-                    Interlocked.Exchange(ref running, 0);
+                lock (lifecycleLock)
+                {
+                    if (requestGeneration == generation) Interlocked.Exchange(ref running, 0);
+                }
             }
         }
 
@@ -148,8 +154,8 @@ namespace OracleOfDereth
                 pendingVersion = null;
                 pendingMessage = null;
                 pendingException = null;
+                Interlocked.Exchange(ref running, 0);
             }
-            Interlocked.Exchange(ref running, 0);
         }
 
         private static string Fetch()

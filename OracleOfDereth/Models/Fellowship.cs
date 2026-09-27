@@ -243,10 +243,12 @@ namespace OracleOfDereth
 
         public unsafe static void Create(string name = "")
         {
+            if (CoreManager.Current == null || CoreManager.Current.CharacterFilter.LoginStatus < 1) return;
             if (name == "") { name = FellowshipNames[random.Next(FellowshipNames.Count)]; }
 
             AcClient.PStringBase<char> pStringBase = name.TrimEnd('\0') + '\0';
-            ((delegate* unmanaged[Cdecl]<AcClient.PStringBase<char>*, int, byte>)6977280)(&pStringBase, 1);
+            try { ((delegate* unmanaged[Cdecl]<AcClient.PStringBase<char>*, int, byte>)6977280)(&pStringBase, 1); }
+            finally { pStringBase.ReleaseOwnedBuffer(); }
 
             Open();
         }
@@ -335,7 +337,7 @@ namespace OracleOfDereth
             for (int x = 0; x < FellowCount(); x++)
             {
                 var fellow = (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table.GetByIndex(x);
-
+                if (fellow == null) continue;
                 int id = (int)fellow->_key;
                 string name = fellow->_data._name.ToString();
 
@@ -353,6 +355,7 @@ namespace OracleOfDereth
 
         public unsafe static bool IsInFellowship()
         {
+            if (CoreManager.Current == null || CoreManager.Current.CharacterFilter.LoginStatus < 1) return false;
             if (*ClientFellowshipSystem.s_pFellowshipSystem == null) return false;
             return (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship != null;
         }
@@ -375,7 +378,7 @@ namespace OracleOfDereth
             for (int x = 0; x < FellowCount(); x++)
             {
                 var fellow = (*ClientFellowshipSystem.s_pFellowshipSystem)->m_pFellowship->a0._fellowship_table.GetByIndex(x);
-                if (fellow->_key == LeaderId()) { return fellow->_data._name.ToString(); }
+                if (fellow != null && fellow->_key == LeaderId()) { return fellow->_data._name.ToString(); }
             }
 
             return "";

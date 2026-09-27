@@ -138,9 +138,12 @@ namespace OracleOfDereth
 
         private void DisposeItems()
         {
+            if (InventoryList != null)
+            {
+                InventoryList.OnItemsListChanged = null;
+                InventoryList.OnQueueFinished = null;
+            }
             itemsSubfilters?.Dispose();
-            InventoryList.OnItemsListChanged = null;
-            InventoryList.OnQueueFinished = null;
             ItemsAddSelected.Change -= ItemsAddSelected_Change;
             ItemsAdd.Hit -= ItemsAdd_Hit;
             ItemsAddAll.Hit -= ItemsAddAll_Hit;

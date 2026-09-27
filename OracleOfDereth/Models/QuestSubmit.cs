@@ -137,28 +137,41 @@ namespace OracleOfDereth
             }
             catch (Exception ex)
             {
+                if (ex is WebException web) web.Response?.Close();
                 result.Exception = ex;
                 result.Reason = "couldn't reach Discord - see errors.txt";
             }
             finally
             {
-                if (result.Generation == Volatile.Read(ref generation))
-                    Interlocked.Exchange(ref pendingResult, result);
+                PublishResult(result);
+            }
+        }
+
+        private static readonly object lifecycleLock = new object();
+
+        private static void PublishResult(SendResult result)
+        {
+            lock (lifecycleLock)
+            {
+                if (result.Generation == generation) Interlocked.Exchange(ref pendingResult, result);
             }
         }
 
         public static void Shutdown()
         {
-            Interlocked.Increment(ref generation);
-            Interlocked.Exchange(ref pendingResult, null);
-            Interlocked.Exchange(ref sending, 0);
+            lock (lifecycleLock)
+            {
+                Interlocked.Increment(ref generation);
+                Interlocked.Exchange(ref pendingResult, null);
+                Interlocked.Exchange(ref sending, 0);
+            }
         }
 
         // The export goes up as an attachment, not message text: Discord caps content at 2000
         // characters, which a few hundred flag lines blows straight past.
         private static byte[] BuildMultipart(string boundary, string fileName, string content, string summary)
         {
-            var stream = new MemoryStream();
+            using var stream = new MemoryStream();
 
             void Part(string text)
             {

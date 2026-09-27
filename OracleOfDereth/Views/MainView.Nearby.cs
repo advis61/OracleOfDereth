@@ -58,6 +58,8 @@ namespace OracleOfDereth
 
         private void DisposeNearby()
         {
+            NearbyListExpanded.Clear();
+            nearbyClickGroup = null;
             NearbySort.Change -= NearbySort_Change;
             NearbySimpleList.Change -= NearbySimpleList_Change;
             NearbyFilterPlayers.Change -= NearbyFilter_Change;
@@ -103,7 +105,7 @@ namespace OracleOfDereth
 
         private int NearbyListAdd(List<NearbyItem> items, int index)
         {
-            if (items.Count() == 0) { return index; }
+            if (items.Count == 0) { NearbyListExpanded.Clear(); return index; }
 
             HudList.HudListRowAccessor row;
             int targetId = Target.GetCurrent().Id;
@@ -111,6 +113,12 @@ namespace OracleOfDereth
 
             List<IGrouping<string, NearbyItem>> grouped = items
                 .GroupBy(i => NearbySimpleList.Checked ? i.Item.Id.ToString() : i.GroupKey()).ToList();
+
+            // Discard expansion state for groups no longer displayed instead of retaining
+            // every creature/fellowship name encountered during a long session.
+            var currentGroups = new HashSet<string>(grouped.Select(group => group.Key));
+            foreach (string key in NearbyListExpanded.Keys.Where(key => !currentGroups.Contains(key)).ToArray())
+                NearbyListExpanded.Remove(key);
 
             foreach (var group in grouped)
             {

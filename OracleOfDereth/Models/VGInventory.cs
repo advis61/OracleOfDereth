@@ -34,8 +34,9 @@ namespace OracleOfDereth
 
         public void CancelSearch()
         {
-            scan?.Dispose();
+            var oldScan = scan;
             scan = null;
+            oldScan?.Dispose();
         }
 
         // Keep search ordering, but release observations and their backing array.

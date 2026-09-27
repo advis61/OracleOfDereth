@@ -498,6 +498,7 @@ namespace OracleOfDereth
         // The inventory scan has a faster timer; keep its tab dispatch here too.
         private void VGInventorySearchTick(object sender, EventArgs e)
         {
+            if (vgInventoryTimer == null || !ReferenceEquals(sender, vgInventoryTimer)) return;
             if (view.Visible && CurrentTab() == 4_04) AdvanceVGInventorySearch();
             else PauseVGInventorySearch();
         }

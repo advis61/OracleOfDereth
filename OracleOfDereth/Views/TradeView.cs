@@ -448,42 +448,43 @@ namespace OracleOfDereth
         protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
-            tradeSubfilters?.Dispose();
-
             if (TradeItems != null) TradeItems.OnItemsListChanged = null;
             Trade.OnChanged = null;
+            try
+            {
+                tradeSubfilters?.Dispose();
+                if (TradeList != null) TradeList.Click -= List_Click;
 
-            if (TradeList != null) TradeList.Click -= List_Click;
+                if (TradeAddButton != null) TradeAddButton.Hit -= AddButton_Hit;
+                if (TradeQuantity != null) TradeQuantity.Change -= Quantity_Change;
+                if (TradeWithdrawBank != null) TradeWithdrawBank.Hit -= WithdrawBankButton_Hit;
+                if (TradeClipboard != null) TradeClipboard.Hit -= ClipboardButton_Hit;
+                if (TradeExportText != null) TradeExportText.Hit -= ExportTextButton_Hit;
+                if (TradeExportCsv != null) TradeExportCsv.Hit -= ExportCsvButton_Hit;
+                if (TradeExportJson != null) TradeExportJson.Hit -= ExportJsonButton_Hit;
 
-            if (TradeAddButton != null) TradeAddButton.Hit -= AddButton_Hit;
-            if (TradeQuantity != null) TradeQuantity.Change -= Quantity_Change;
-            if (TradeWithdrawBank != null) TradeWithdrawBank.Hit -= WithdrawBankButton_Hit;
-            if (TradeClipboard != null) TradeClipboard.Hit -= ClipboardButton_Hit;
-            if (TradeExportText != null) TradeExportText.Hit -= ExportTextButton_Hit;
-            if (TradeExportCsv != null) TradeExportCsv.Hit -= ExportCsvButton_Hit;
-            if (TradeExportJson != null) TradeExportJson.Hit -= ExportJsonButton_Hit;
+                if (TradeFilterText != null) TradeFilterText.Change -= Filter_Change;
+                if (TradeFilterReset != null) TradeFilterReset.Hit -= FilterReset_Hit;
+                if (TradeFilterWeapons != null) TradeFilterWeapons.Change -= Filter_Change;
+                if (TradeFilterArmor != null) TradeFilterArmor.Change -= Filter_Change;
+                if (TradeFilterClothing != null) TradeFilterClothing.Change -= Filter_Change;
+                if (TradeFilterJewelry != null) TradeFilterJewelry.Change -= Filter_Change;
+                if (TradeFilterCloaks != null) TradeFilterCloaks.Change -= Filter_Change;
+                if (TradeFilterSummons != null) TradeFilterSummons.Change -= Filter_Change;
+                if (TradeFilterAetheria != null) TradeFilterAetheria.Change -= Filter_Change;
+                if (TradeFilterSalvage != null) TradeFilterSalvage.Change -= Filter_Change;
+                if (TradeFilterOther != null) TradeFilterOther.Change -= Filter_Change;
+                if (TradeFilterDoubles != null) TradeFilterDoubles.Change -= Filter_Change;
 
-            if (TradeFilterText != null) TradeFilterText.Change -= Filter_Change;
-            if (TradeFilterReset != null) TradeFilterReset.Hit -= FilterReset_Hit;
-            if (TradeFilterWeapons != null) TradeFilterWeapons.Change -= Filter_Change;
-            if (TradeFilterArmor != null) TradeFilterArmor.Change -= Filter_Change;
-            if (TradeFilterClothing != null) TradeFilterClothing.Change -= Filter_Change;
-            if (TradeFilterJewelry != null) TradeFilterJewelry.Change -= Filter_Change;
-            if (TradeFilterCloaks != null) TradeFilterCloaks.Change -= Filter_Change;
-            if (TradeFilterSummons != null) TradeFilterSummons.Change -= Filter_Change;
-            if (TradeFilterAetheria != null) TradeFilterAetheria.Change -= Filter_Change;
-            if (TradeFilterSalvage != null) TradeFilterSalvage.Change -= Filter_Change;
-            if (TradeFilterOther != null) TradeFilterOther.Change -= Filter_Change;
-            if (TradeFilterDoubles != null) TradeFilterDoubles.Change -= Filter_Change;
+                if (TradeListSortCompleteIcon != null) TradeListSortCompleteIcon.Hit -= SortName_Click;
+                if (TradeListSortName != null) TradeListSortName.Hit -= SortName_Click;
+                if (TradeListSortCol1 != null) TradeListSortCol1.Hit -= SortCol1_Click;
+                if (TradeListSortCol2 != null) TradeListSortCol2.Hit -= SortCol2_Click;
+                if (TradeListSortCol3 != null) TradeListSortCol3.Hit -= SortCol3_Click;
+                if (TradeListSortCol4 != null) TradeListSortCol4.Hit -= SortCol4_Click;
 
-            if (TradeListSortCompleteIcon != null) TradeListSortCompleteIcon.Hit -= SortName_Click;
-            if (TradeListSortName != null) TradeListSortName.Hit -= SortName_Click;
-            if (TradeListSortCol1 != null) TradeListSortCol1.Hit -= SortCol1_Click;
-            if (TradeListSortCol2 != null) TradeListSortCol2.Hit -= SortCol2_Click;
-            if (TradeListSortCol3 != null) TradeListSortCol3.Hit -= SortCol3_Click;
-            if (TradeListSortCol4 != null) TradeListSortCol4.Hit -= SortCol4_Click;
-
-            view?.Dispose();
+            }
+            finally { view?.Dispose(); }
         }
     }
 }

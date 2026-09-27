@@ -27,6 +27,7 @@ namespace OracleOfDereth
         private static LookupResult pending;
         private static int running;
         private static int generation;
+        private static readonly object lifecycleLock = new object();
 
         private sealed class LookupResult
         {
@@ -108,16 +109,26 @@ namespace OracleOfDereth
             }
             finally
             {
-                if (result.Generation == Volatile.Read(ref generation))
-                    Interlocked.Exchange(ref pending, result);
+                PublishResult(result);
+            }
+        }
+
+        private static void PublishResult(LookupResult result)
+        {
+            lock (lifecycleLock)
+            {
+                if (result.Generation == generation) Interlocked.Exchange(ref pending, result);
             }
         }
 
         public static void Shutdown()
         {
-            Interlocked.Increment(ref generation);
-            Interlocked.Exchange(ref pending, null);
-            Interlocked.Exchange(ref running, 0);
+            lock (lifecycleLock)
+            {
+                Interlocked.Increment(ref generation);
+                Interlocked.Exchange(ref pending, null);
+                Interlocked.Exchange(ref running, 0);
+            }
         }
 
         private static string UseSelectedWiki(string message)
@@ -245,10 +256,16 @@ namespace OracleOfDereth
             request.UserAgent = "OracleOfDereth-Plugin";
             request.Timeout = 15000;
             request.ReadWriteTimeout = 15000;
-            using (var response = request.GetResponse())
-            using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
+            try
             {
-                return reader.ReadToEnd();
+                using (var response = request.GetResponse())
+                using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
+                    return reader.ReadToEnd();
+            }
+            catch (WebException ex)
+            {
+                ex.Response?.Close();
+                throw;
             }
         }
     }

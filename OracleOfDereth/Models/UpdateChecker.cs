@@ -21,6 +21,7 @@ namespace OracleOfDereth
         private static bool ran;
         private static int running;
         private static int generation;
+        private static readonly object lifecycleLock = new object();
 
         // Results produced on the background fetch thread, drained on the main thread in Tick().
         // The client (chat/log) must only ever be touched on the game's main thread — calling it
@@ -81,10 +82,15 @@ namespace OracleOfDereth
                 Match a = AssetUrlRegex.Match(json);
                 if (a.Success) downloadUrl = a.Groups[1].Value;
             }
-            catch (Exception ex) { exception = ex; }
-
-            if (requestGeneration == Volatile.Read(ref generation))
+            catch (Exception ex)
             {
+                if (ex is WebException web) web.Response?.Close();
+                exception = ex;
+            }
+
+            lock (lifecycleLock)
+            {
+                if (requestGeneration != generation) return;
                 pendingException = exception;
                 if (remote == null)
                 {
@@ -98,21 +104,22 @@ namespace OracleOfDereth
                     else if (verbose)
                         pendingMessage = $"Oracle of Dereth is up to date (v{local})";
                 }
-            }
-
-            if (requestGeneration == Volatile.Read(ref generation))
                 Interlocked.Exchange(ref running, 0);
+            }
         }
 
         public static void Shutdown()
         {
-            Interlocked.Increment(ref generation);
-            armedAt = null;
-            ran = false;
-            pendingMessage = null;
-            pendingException = null;
-            pendingChecked = false;
-            Interlocked.Exchange(ref running, 0);
+            lock (lifecycleLock)
+            {
+                Interlocked.Increment(ref generation);
+                armedAt = null;
+                ran = false;
+                pendingMessage = null;
+                pendingException = null;
+                pendingChecked = false;
+                Interlocked.Exchange(ref running, 0);
+            }
         }
 
         private static string Fetch(string url)

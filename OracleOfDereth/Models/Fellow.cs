@@ -6,7 +6,6 @@ namespace OracleOfDereth
 {
     public class Fellow
     {
-        public WorldObject Item;
         public int Id;
         public string Name = "";
         public string FellowshipName = "";

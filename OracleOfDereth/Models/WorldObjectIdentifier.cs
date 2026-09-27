@@ -19,16 +19,22 @@ namespace OracleOfDereth.Models
     public class WorldObjectIdentifier : IDisposable
     {
         public event EventHandler<WorldObject> Identified;
+        private CoreManager core;
 
         public WorldObjectIdentifier()
         {
             try
             {
-                CoreManager.Current.WindowMessage += new EventHandler<WindowMessageEventArgs>(Current_WindowMessage);
-                CoreManager.Current.ItemSelected += new EventHandler<ItemSelectedEventArgs>(Current_ItemSelected);
-                CoreManager.Current.WorldFilter.ChangeObject += new EventHandler<ChangeObjectEventArgs>(WorldFilter_ChangeObject);
+                core = CoreManager.Current;
+                core.WindowMessage += Current_WindowMessage;
+                core.ItemSelected += Current_ItemSelected;
+                core.WorldFilter.ChangeObject += WorldFilter_ChangeObject;
             }
-            catch (Exception ex) { Util.Log(ex); }
+            catch
+            {
+                Dispose();
+                throw;
+            }
         }
 
         private bool disposed;
@@ -41,19 +47,20 @@ namespace OracleOfDereth.Models
 
         protected virtual void Dispose(bool disposing)
         {
-            // If you need thread safety, use a lock around these
-            // operations, as well as in your methods that use the resource.
-            if (!disposed)
+            if (disposed) return;
+            disposed = true;
+            var subscribedCore = core;
+            core = null;
+            Identified = null;
+            itemsSelected.Clear();
+            if (disposing && subscribedCore != null)
             {
-                if (disposing)
-                {
-                    CoreManager.Current.WindowMessage -= new EventHandler<WindowMessageEventArgs>(Current_WindowMessage);
-                    CoreManager.Current.ItemSelected -= new EventHandler<ItemSelectedEventArgs>(Current_ItemSelected);
-                    CoreManager.Current.WorldFilter.ChangeObject -= new EventHandler<ChangeObjectEventArgs>(WorldFilter_ChangeObject);
-                }
-
-                // Indicate that the instance has been disposed.
-                disposed = true;
+                try { subscribedCore.WindowMessage -= Current_WindowMessage; }
+                catch (Exception ex) { Util.Log(ex); }
+                try { subscribedCore.ItemSelected -= Current_ItemSelected; }
+                catch (Exception ex) { Util.Log(ex); }
+                try { subscribedCore.WorldFilter.ChangeObject -= WorldFilter_ChangeObject; }
+                catch (Exception ex) { Util.Log(ex); }
             }
         }
 
@@ -63,6 +70,7 @@ namespace OracleOfDereth.Models
 
         void Current_WindowMessage(object sender, WindowMessageEventArgs e)
         {
+            if (disposed) return;
             try
             {
                 if (e.Msg == WM_LBUTTONDOWN)
@@ -73,10 +81,18 @@ namespace OracleOfDereth.Models
 
         readonly Dictionary<int, DateTime> itemsSelected = new Dictionary<int, DateTime>();
 
+        internal void ExpireSelections(DateTime now)
+        {
+            foreach (int id in itemsSelected.Where(pair => now - pair.Value > TimeSpan.FromSeconds(10))
+                .Select(pair => pair.Key).ToArray()) itemsSelected.Remove(id);
+        }
+
         void Current_ItemSelected(object sender, ItemSelectedEventArgs e)
         {
+            if (disposed) return;
             try
             {
+                ExpireSelections(DateTime.UtcNow);
                 if (e.ItemGuid == 0)
                     return;
 
@@ -96,30 +112,13 @@ namespace OracleOfDereth.Models
 
         void WorldFilter_ChangeObject(object sender, ChangeObjectEventArgs e)
         {
+            if (disposed) return;
             try
             {
                 if (e.Change != WorldChangeType.IdentReceived)
                     return;
 
-                // Remove id's that have been selected more than 10 seconds ago
-                while (true)
-                {
-                    int idToRemove = 0;
-
-                    foreach (KeyValuePair<int, DateTime> pair in itemsSelected)
-                    {
-                        if (pair.Value + TimeSpan.FromSeconds(10) < DateTime.UtcNow)
-                        {
-                            idToRemove = pair.Key;
-                            break;
-                        }
-                    }
-
-                    if (idToRemove == 0)
-                        break;
-
-                    itemsSelected.Remove(idToRemove);
-                }
+                ExpireSelections(DateTime.UtcNow);
 
                 if (!itemsSelected.ContainsKey(e.Changed.Id))
                     return;

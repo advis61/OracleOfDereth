@@ -97,6 +97,14 @@ namespace OracleOfDereth
         // handler can suppress it without touching a "/fship list" you typed yourself.
         private static readonly ChatRequest Request = new ChatRequest();
 
+        public static void Init()
+        {
+            All.Clear();
+            CurrentSort = SortType.NameAsc;
+            LastRefresh = DateTime.MinValue;
+            Request.Clear();
+        }
+
         // Ask the server to reprint the recruiting list so we can reparse it. Conquest-only.
         // Returns true when the command actually went out, which the view uses to acknowledge it
         // on the Refresh button.

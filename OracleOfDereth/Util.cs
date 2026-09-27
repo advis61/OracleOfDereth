@@ -301,7 +301,8 @@ namespace OracleOfDereth
         {
             WorldObject closest = null;
 
-            foreach (WorldObject obj in CoreManager.Current.WorldFilter.GetLandscape())
+            using var landscape = CoreManager.Current.WorldFilter.GetLandscape();
+            foreach (WorldObject obj in landscape)
             {
                 if (obj.ObjectClass != objectClass) continue;
                 if (closest == null || GetDistanceFromPlayer(obj) < GetDistanceFromPlayer(closest)) closest = obj;
@@ -314,7 +315,8 @@ namespace OracleOfDereth
         {
             WorldObject closest = null;
 
-            foreach (WorldObject obj in CoreManager.Current.WorldFilter.GetLandscape())
+            using var landscape = CoreManager.Current.WorldFilter.GetLandscape();
+            foreach (WorldObject obj in landscape)
             {
                 if (!partialMatch && String.Compare(obj.Name, objectName, StringComparison.OrdinalIgnoreCase) != 0) continue;
                 if (partialMatch && !obj.Name.ToLower().Contains(objectName.ToLower())) continue;

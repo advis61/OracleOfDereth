@@ -51,6 +51,7 @@ internal static class Program
         AssertSettingsRecovery();
         SettingsFileTests.Run();
         AssertPartialViewCleanup();
+        LifecycleAuditTests.Run();
         AssertItemRefreshScheduling();
         AssertQuestState();
         AssertMyQuestsParsing();

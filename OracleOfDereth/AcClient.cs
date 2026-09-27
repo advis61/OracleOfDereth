@@ -14,6 +14,19 @@ public struct PStringBase<T> where T : unmanaged
 {
     public unsafe PSRefBuffer<T>* m_buffer;
 
+    // Only for an owned temporary created by the native constructor; never call on
+    // borrowed fellowship names. Matches the release in retail PStringBase<char>::clear
+    // at 0x4AB990: decrement the count at +4, then invoke the scalar deleting destructor.
+    // Unlike clear(), disposal does not acquire a reference to the shared empty buffer.
+    internal unsafe void ReleaseOwnedBuffer()
+    {
+        var buffer = m_buffer;
+        m_buffer = null;
+        if (buffer == null || System.Threading.Interlocked.Decrement(ref *(int*)&buffer->_ref.m_cRef) != 0) return;
+        var destroy = (delegate* unmanaged[Thiscall]<void*, uint, void*>)(*(IntPtr*)buffer->_ref.vfptr);
+        destroy(buffer, 1);
+    }
+
     public unsafe static delegate* unmanaged[Thiscall]<PStringBase<ushort>*, ushort[], void> __Ctor_16 = (delegate* unmanaged[Thiscall]<PStringBase<ushort>*, ushort[], void>)5522640;
 
     public unsafe static delegate* unmanaged[Thiscall]<PStringBase<char>*, char[], void> __Ctor_ = (delegate* unmanaged[Thiscall]<PStringBase<char>*, char[], void>)4768736;

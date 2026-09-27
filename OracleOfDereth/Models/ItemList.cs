@@ -28,6 +28,19 @@ namespace OracleOfDereth
             Trade?.Tick();
         }
 
+        public static void Shutdown()
+        {
+            foreach (var list in new[] { Inventory, Trade })
+            {
+                if (list == null) continue;
+                list.OnItemsListChanged = null;
+                list.OnQueueFinished = null;
+                list.Clear();
+            }
+            Inventory = null;
+            Trade = null;
+        }
+
         // An identify arrived: offer it to every list. Each one no-ops unless the id was
         // in its own pending/queue, so this is safe to broadcast.
         public static void IdentReceivedAll(WorldObject changed)

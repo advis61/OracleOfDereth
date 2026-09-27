@@ -23,6 +23,13 @@ namespace OracleOfDereth
         private static List<string> flags;
         private static string filePath;
 
+        // Forget the cached server path, without changing the saved favorites file.
+        public static void Reset()
+        {
+            flags = null;
+            filePath = null;
+        }
+
         private static List<string> Flags()
         {
             if (flags != null) { return flags; }

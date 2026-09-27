@@ -115,16 +115,17 @@ namespace OracleOfDereth
 
         private void DisposeVGInventory()
         {
-            DisposeSavedInventorySearch();
-            vgInventorySubfilters?.Dispose();
-            if (vgInventoryTimer != null)
-            {
-                vgInventoryTimer.Stop();
-                vgInventoryTimer.Tick -= VGInventorySearchTick;
-                vgInventoryTimer.Dispose();
-                vgInventoryTimer = null;
-            }
-            SavedInventory.CancelSearch();
+            var oldTimer = vgInventoryTimer;
+            vgInventoryTimer = null;
+            vgInventorySearchDue = null;
+            DisposeComponent(() => oldTimer?.Stop());
+            DisposeComponent(() => { if (oldTimer != null) oldTimer.Tick -= VGInventorySearchTick; });
+            DisposeComponent(() => oldTimer?.Dispose());
+            DisposeComponent(() => SavedInventory?.ReleaseResults());
+            visibleVGInventory?.Clear();
+            selectedVGInventoryItem = null;
+            DisposeComponent(DisposeSavedInventorySearch);
+            DisposeComponent(() => vgInventorySubfilters?.Dispose());
             vgInventoryHelp.Hit -= VGInventoryHelp_Hit;
             vgInventoryOpen.Hit -= VGInventoryOpen_Hit;
             VGInventoryClipboard.Hit -= VGInventoryClipboard_Hit;

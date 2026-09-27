@@ -52,6 +52,7 @@ namespace OracleOfDereth
         }
 
         private WindowsTimer timer;
+        private CoreManager subscribedCore;
 
         // Tools
         private WorldObjectIdentifier worldObjectIdentifier;
@@ -68,6 +69,7 @@ namespace OracleOfDereth
         {
             try
             {
+                subscribedCore = CoreManager.Current;
                 CoreManager.Current.CommandLineText += Current_CommandLineText;
                 CoreManager.Current.ChatBoxMessage += Current_ChatBoxMessage;
                 CoreManager.Current.ItemSelected += Current_ItemSelected;
@@ -94,7 +96,11 @@ namespace OracleOfDereth
                     CoreManager.Current.CharacterFilter.Login += CharacterFilter_Login;
                 }
             }
-            catch (Exception ex) { Util.Log(ex); }
+            catch (Exception ex)
+            {
+                Shutdown();
+                Util.Log(ex);
+            }
         }
 
         private void CharacterFilter_Login(object sender, EventArgs e)
@@ -133,6 +139,7 @@ namespace OracleOfDereth
             {
                 // Initialize Settings
                 SettingsFile.Init();
+                QuestFavorite.Reset();
                 Setting.Init();
                 ClientMemoryMonitor.Reset();
 
@@ -164,6 +171,7 @@ namespace OracleOfDereth
                 ConquestAugmentation.Init();
                 ConquestEnlAugmentation.Init();
                 ConquestBank.Init();
+                ConquestFship.Init();
                 ConquestBonus.Init();
                 TopBoard.Init();
 
@@ -200,6 +208,7 @@ namespace OracleOfDereth
                 if (CoreManager.Current.CharacterFilter.LoginStatus < 1) return;
 
                 ClientMemoryMonitor.Tick();
+                worldObjectIdentifier?.ExpireSelections(DateTime.UtcNow);
                 Target.RemoveAllExpired();
                 // Pause player identify requests while the Items tab or a trade window is open,
                 // so they don't compete with the item/trade appraisal queue for the server's
@@ -233,37 +242,31 @@ namespace OracleOfDereth
         {
             didInit = false;
             ClientMemoryMonitor.Reset();
-            ShutdownComponent(() =>
+            var core = subscribedCore;
+            subscribedCore = null;
+            if (core != null)
             {
-                CoreManager.Current.CommandLineText -= Current_CommandLineText;
-                CoreManager.Current.ChatBoxMessage -= Current_ChatBoxMessage;
-                CoreManager.Current.ItemSelected -= Current_ItemSelected;
-                CoreManager.Current.CharacterFilter.Login -= CharacterFilter_Login;
-                CoreManager.Current.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete;
-                CoreManager.Current.CharacterFilter.SpellCast -= CharacterFilter_SpellCast;
-                CoreManager.Current.CharacterFilter.ChangePortalMode -= CharacterFilter_ChangePortalMode;
-                CoreManager.Current.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch;
-                CoreManager.Current.WorldFilter.CreateObject -= WorldFilter_CreateObject;
-                CoreManager.Current.WorldFilter.ReleaseObject -= WorldFilter_ReleaseObject;
-                CoreManager.Current.WorldFilter.ChangeObject -= WorldFilter_ChangeObject;
-                CoreManager.Current.WorldFilter.EnterTrade -= WorldFilter_EnterTrade;
-                CoreManager.Current.WorldFilter.EndTrade -= WorldFilter_EndTrade;
-                CoreManager.Current.WorldFilter.AddTradeItem -= WorldFilter_AddTradeItem;
-                CoreManager.Current.WorldFilter.ResetTrade -= WorldFilter_ResetTrade;
-                if (worldObjectIdentifier != null)
-                    worldObjectIdentifier.Identified -= WorldObjectIdentifier_Identified;
-            });
-
-            ShutdownComponent(() =>
-            {
-                if (timer != null)
-                {
-                    timer.Stop();
-                    timer.Tick -= Tick;
-                    timer.Dispose();
-                    timer = null;
-                }
-            });
+                ShutdownComponent(() => core.CommandLineText -= Current_CommandLineText);
+                ShutdownComponent(() => core.ChatBoxMessage -= Current_ChatBoxMessage);
+                ShutdownComponent(() => core.ItemSelected -= Current_ItemSelected);
+                ShutdownComponent(() => core.CharacterFilter.Login -= CharacterFilter_Login);
+                ShutdownComponent(() => core.CharacterFilter.LoginComplete -= CharacterFilter_LoginComplete);
+                ShutdownComponent(() => core.CharacterFilter.SpellCast -= CharacterFilter_SpellCast);
+                ShutdownComponent(() => core.CharacterFilter.ChangePortalMode -= CharacterFilter_ChangePortalMode);
+                ShutdownComponent(() => core.EchoFilter.ServerDispatch -= EchoFilter_ServerDispatch);
+                ShutdownComponent(() => core.WorldFilter.CreateObject -= WorldFilter_CreateObject);
+                ShutdownComponent(() => core.WorldFilter.ReleaseObject -= WorldFilter_ReleaseObject);
+                ShutdownComponent(() => core.WorldFilter.ChangeObject -= WorldFilter_ChangeObject);
+                ShutdownComponent(() => core.WorldFilter.EnterTrade -= WorldFilter_EnterTrade);
+                ShutdownComponent(() => core.WorldFilter.EndTrade -= WorldFilter_EndTrade);
+                ShutdownComponent(() => core.WorldFilter.AddTradeItem -= WorldFilter_AddTradeItem);
+                ShutdownComponent(() => core.WorldFilter.ResetTrade -= WorldFilter_ResetTrade);
+            }
+            var oldTimer = timer;
+            timer = null;
+            ShutdownComponent(() => oldTimer?.Stop());
+            ShutdownComponent(() => { if (oldTimer != null) oldTimer.Tick -= Tick; });
+            ShutdownComponent(() => oldTimer?.Dispose());
 
             ShutdownComponent(() => worldObjectIdentifier?.Dispose());
             ShutdownComponent(VHotkey.Shutdown);
@@ -279,6 +282,14 @@ namespace OracleOfDereth
             ShutdownComponent(() => tradeView?.Dispose());
             ShutdownComponent(() => targetView?.Dispose());
             ShutdownComponent(() => mainView?.Dispose());
+            ShutdownComponent(ItemList.Shutdown);
+            ShutdownComponent(ItemCache.Clear);
+            ShutdownComponent(FellowshipTracker.Init);
+            ShutdownComponent(Nearby.ClearObjects);
+            ShutdownComponent(Target.Init);
+            ShutdownComponent(Trade.Init);
+            ShutdownComponent(ConquestFship.Init);
+            ShutdownComponent(QuestFavorite.Reset);
             ShutdownComponent(LoadedAssemblies.Shutdown);
             worldObjectIdentifier = null;
             tradeView = null;
