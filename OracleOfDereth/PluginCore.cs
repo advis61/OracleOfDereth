@@ -303,6 +303,7 @@ namespace OracleOfDereth
                 else if (cmd == "/od targetdebug") { TargetDebug.Run(); }
                 else if (cmd == "/od vtank") { VTank.Debug(); }
                 else if (cmd == "/od memory") { ClientMemoryMonitor.ShowStatus(); }
+                else if (cmd == "/od coords") { Util.AnnounceCoordinates(); }
                 else if (cmd == "/od screenshot") { Screenshot.Take(); }
                 else if (cmd == "/od vistashot") { Screenshot.TakeVista(); }
                 else if (cmd == "/od deletesummons" || cmd.StartsWith("/od deletesummons ")) { WorldObjectVisibility.Command(cmd); }

@@ -14,6 +14,7 @@ namespace OracleOfDereth
         private static readonly List<(string Command, string Description)> HelpCommands = new List<(string, string)>
         {
             ("/od",                       "Show plugin version"),
+            ("/od coords",                "Share your coordinates in allegiance chat"),
             ("/od deletesummons on|off",   "Delete other players' summons locally"),
             ("/od deletepets on|off",      "Delete other players' pets locally"),
             ("/od fellow create",         "Create a new fellowship"),

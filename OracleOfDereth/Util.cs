@@ -148,6 +148,24 @@ namespace OracleOfDereth
             CoreManager.Current.Actions.InvokeChatParser(message);
         }
 
+        public static void AnnounceCoordinates()
+        {
+            var core = CoreManager.Current;
+            int id = core.CharacterFilter.Id;
+            var coords = id == 0 || Nearby.IsInPortal ? null : core.WorldFilter[id]?.Coordinates();
+            if (coords == null)
+            {
+                Chat("Your coordinates are currently unavailable.");
+                return;
+            }
+
+            string northSouth = Math.Abs(coords.NorthSouth).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
+                + (coords.NorthSouth < 0 ? "S" : "N");
+            string eastWest = Math.Abs(coords.EastWest).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
+                + (coords.EastWest < 0 ? "W" : "E");
+            Command($"/a My Coords: {northSouth} {eastWest}");
+        }
+
         // Outputs a message, normally as a /tell to self ("think"). Holding a
         // modifier key reroutes it to a channel instead:
         //   ALT   -> /a  (allegiance)
