@@ -20,6 +20,7 @@ namespace OracleOfDereth
             public HudButton Refresh;
             public HudStaticText[] Headers; // the column headers, only ever shown or hidden together
             public HudList List;
+            public string SelectedName;
         }
 
         private readonly List<TopPage> TopPages = new List<TopPage>();
@@ -28,6 +29,7 @@ namespace OracleOfDereth
         private const int TopColRank = 0;
         private const int TopColName = 1;
         private const int TopColValue = 2;
+        private static readonly List<int> TopColumns = new List<int> { TopColRank, TopColName, TopColValue };
 
         private void InitTop()
         {
@@ -57,6 +59,7 @@ namespace OracleOfDereth
                 page.Heading.FontHeight = 10;
 
                 page.Refresh.Hit += TopRefresh_Hit;
+                page.List.Click += TopList_Click;
                 page.List.ClearRows();
 
                 TopPages.Add(page);
@@ -65,7 +68,11 @@ namespace OracleOfDereth
 
         private void DisposeTop()
         {
-            foreach (TopPage page in TopPages) { page.Refresh.Hit -= TopRefresh_Hit; }
+            foreach (TopPage page in TopPages)
+            {
+                page.Refresh.Hit -= TopRefresh_Hit;
+                page.List.Click -= TopList_Click;
+            }
 
             // Drop the references so nothing here outlives the view being disposed.
             TopPages.Clear();
@@ -126,10 +133,26 @@ namespace OracleOfDereth
                 SetText(row, TopColRank, $"{players[x].Rank}");
                 SetText(row, TopColName, players[x].Name);
                 SetText(row, TopColValue, players[x].Value);
+                AssignSelected(row, players[x].Name == page.SelectedName, TopColumns);
             }
 
             // Trim stale rows (a shorter board than the one previously shown here).
             while (page.List.RowCount > players.Count) { page.List.RemoveRow(page.List.RowCount - 1); }
+        }
+
+        private void TopList_Click(object sender, int row, int col)
+        {
+            TopPage page = TopPages.FirstOrDefault(p => ReferenceEquals(p.List, sender));
+            if (page == null || row < 0 || row >= page.List.RowCount) return;
+
+            string name = ((HudStaticText)page.List[row][TopColName]).Text;
+            if (string.IsNullOrWhiteSpace(name)) return;
+
+            page.SelectedName = name;
+            UpdateTopList(page);
+            if (name.EndsWith(" (You)", StringComparison.Ordinal))
+                name = name.Substring(0, name.Length - " (You)".Length);
+            Util.Command("/who " + name);
         }
 
         // Reissues this board's "/top" command so the server reprints it; the chat handler
