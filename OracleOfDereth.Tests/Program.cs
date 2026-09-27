@@ -20,6 +20,7 @@ internal static class Program
         if (args.Length == 2 && args[0] == "--vgi-tracking-db") VGInventoryTrackingTests.RunDatabase(args[1]);
         ItemExportTests.Run();
         ItemTextSearchTests.Run();
+        ItemCacheTests.Run();
         AssertChatFilterLifecycle();
         if (args.Length == 2 && args[0] == "--vgi") VGInventoryTests.Audit(args[1]);
         AssertScreenshotBounds();
