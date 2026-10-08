@@ -141,7 +141,6 @@ namespace OracleOfDereth
                 SettingsFile.Init();
                 QuestFavorite.Reset();
                 Setting.Init();
-                ClientMemoryMonitor.Reset();
 
                 // Initialize Collection
                 Augmentation.Init();
@@ -208,7 +207,6 @@ namespace OracleOfDereth
             {
                 if (CoreManager.Current.CharacterFilter.LoginStatus < 1) return;
 
-                ClientMemoryMonitor.Tick();
                 worldObjectIdentifier?.ExpireSelections(DateTime.UtcNow);
                 Target.RemoveAllExpired();
                 // Pause player identify requests while the Items tab or a trade window is open,
@@ -242,7 +240,6 @@ namespace OracleOfDereth
         protected override void Shutdown()
         {
             didInit = false;
-            ClientMemoryMonitor.Reset();
             var core = subscribedCore;
             subscribedCore = null;
             if (core != null)
@@ -315,7 +312,6 @@ namespace OracleOfDereth
                 else if (cmd == "/od exception") { throw new InvalidOperationException("An error occurred."); }
                 else if (cmd == "/od targetdebug") { TargetDebug.Run(); }
                 else if (cmd == "/od vtank") { VTank.Debug(); }
-                else if (cmd == "/od memory") { ClientMemoryMonitor.ShowStatus(); }
                 else if (cmd == "/od coords") { Util.AnnounceCoordinates(); }
                 else if (cmd == "/od ui off") { InterfaceVisibility.Hide(); }
                 else if (cmd == "/od ui on") { InterfaceVisibility.Show(); }

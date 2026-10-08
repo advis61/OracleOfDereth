@@ -33,7 +33,6 @@ internal static class Program
         AssertSummonOwnership();
         NearbySafetyTests.Run();
         HudImageReuseTests.Run();
-        ClientMemoryMonitorTests.Run();
         AssertJson(null, "null");
         AssertJson("", "\"\"");
         string quoteSlash = "quote " + (char)34 + " slash " + (char)92;
