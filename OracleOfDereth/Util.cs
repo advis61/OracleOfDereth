@@ -171,9 +171,9 @@ namespace OracleOfDereth
         //   ALT   -> /a  (allegiance)
         //   SHIFT -> /f  (fellowship)
         //   CTRL  -> /cg (chat group)
-        public static void Think(string message)
+        public static void Think(string message, bool useModifierKeys = true)
         {
-            var mods = System.Windows.Forms.Control.ModifierKeys;
+            var mods = useModifierKeys ? System.Windows.Forms.Control.ModifierKeys : System.Windows.Forms.Keys.None;
             string command;
 
             if ((mods & System.Windows.Forms.Keys.Alt) != 0)

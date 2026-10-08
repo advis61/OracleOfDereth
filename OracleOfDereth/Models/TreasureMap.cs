@@ -18,8 +18,8 @@ namespace OracleOfDereth
             if (!item.DoubleKeys.Contains(NorthSouthKey) || !item.DoubleKeys.Contains(EastWestKey)) return;
             string message = Format(item.Name, item.ObjectClass,
                 item.Values((DoubleValueKey)NorthSouthKey), item.Values((DoubleValueKey)EastWestKey));
-            // Use the same self-tell and modifier-key routing as quest hints.
-            if (message != null) Util.Think("[OD] " + message);
+            // Map identification stays private even when a modifier key is held.
+            if (message != null) Util.Think("[OD] " + message, useModifierKeys: false);
         }
 
         private static bool IsMap(string name, ObjectClass objectClass) =>
