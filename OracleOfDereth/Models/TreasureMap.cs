@@ -19,7 +19,7 @@ namespace OracleOfDereth
             string message = Format(item.Name, item.ObjectClass,
                 item.Values((DoubleValueKey)NorthSouthKey), item.Values((DoubleValueKey)EastWestKey));
             // Use the same self-tell and modifier-key routing as quest hints.
-            if (message != null) Util.Think(message);
+            if (message != null) Util.Think("[OD] " + message);
         }
 
         private static bool IsMap(string name, ObjectClass objectClass) =>
