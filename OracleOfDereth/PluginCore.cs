@@ -174,6 +174,7 @@ namespace OracleOfDereth
                 ConquestFship.Init();
                 ConquestBonus.Init();
                 TopBoard.Init();
+                ArenaBoard.Init();
 
 
                 // Initialize Views
@@ -412,6 +413,10 @@ namespace OracleOfDereth
                 else if (TopBoard.Matches(e.Text))
                 {
                     Suppress(e, TopBoard.NoteChat(e.Text));
+                }
+                else if (ArenaBoard.Matches(e.Text))
+                {
+                    Suppress(e, ArenaBoard.NoteChat(e.Text));
                 }
                 else if (Trade.CheckPriceRegex.IsMatch(e.Text))
                 {

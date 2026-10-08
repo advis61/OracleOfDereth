@@ -165,7 +165,7 @@ namespace OracleOfDereth
         // How long a block stays open. Generous enough for the server to spread one across
         // several messages, short enough that an unanswered request can't swallow an unrelated
         // block minutes later.
-        private static readonly TimeSpan CollectWindow = TimeSpan.FromSeconds(15);
+        private static readonly TimeSpan CollectWindow = TimeSpan.FromSeconds(5);
 
         // Ranked lines that arrived with nothing collecting — you typed "/top lum" yourself and
         // the rows beat the header that says which board they belong to. Held briefly and folded

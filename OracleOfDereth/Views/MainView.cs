@@ -195,6 +195,7 @@ namespace OracleOfDereth
                 InitConquestBank();
                 InitConquestFship();
                 InitTop();
+                InitArena();
                 InitAugmentations();
                 InitCantrips();
                 InitCredits();
@@ -258,6 +259,7 @@ namespace OracleOfDereth
                 DisposeComponent(DisposeConquestBank);
                 DisposeComponent(DisposeConquestFship);
                 DisposeComponent(DisposeTop);
+                DisposeComponent(DisposeArena);
                 DisposeComponent(DisposeAugmentations);
                 DisposeComponent(DisposeCantrips);
                 DisposeComponent(DisposeCredits);
@@ -479,7 +481,11 @@ namespace OracleOfDereth
             if (currentTab == 4_01) { UpdateConquestBank(); }
             if (currentTab == 4_03) { UpdateConquestFship(); }
             if (currentTab == 4_05) { UpdateCustomQuests(); }
-            if (currentTab == 4_06) { UpdateTop(); }
+            if (currentTab == 4_06)
+            {
+                UpdateTop();
+                UpdateArena();
+            }
             if (currentTab == 4_04) { UpdateVGInventory(); }
 
             // About / Settings / Help

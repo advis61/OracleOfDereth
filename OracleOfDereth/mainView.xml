@@ -718,6 +718,28 @@
 								</control>
 							</control>
 						</page>
+						<page label="Arena">
+							<control progid="DecalControls.FixedLayout" clipped="">
+								<control progid="DecalControls.StaticText" name="TopArenaText" left="5" top="7" width="340" height="20" text="Top Players by 1v1 Arena Rankings"/>
+								<control progid="DecalControls.PushButton" name="TopArenaRefresh" left="348" top="10" width="100" height="24" text="Refresh"/>
+								<control progid="DecalControls.StaticText" name="TopArenaRank" left="1" top="33" width="28" height="17" text="#"/>
+								<control progid="DecalControls.StaticText" name="TopArenaName" left="40" top="33" width="230" height="17" text="Player"/>
+								<control progid="DecalControls.StaticText" name="TopArenaPoints" left="180" top="33" width="50" height="17" text="Points"/>
+								<control progid="DecalControls.StaticText" name="TopArenaMatches" left="230" top="33" width="60" height="17" text="Matches"/>
+								<control progid="DecalControls.StaticText" name="TopArenaWins" left="290" top="33" width="50" height="17" text="Wins"/>
+								<control progid="DecalControls.StaticText" name="TopArenaDraws" left="340" top="33" width="50" height="17" text="Draws"/>
+								<control progid="DecalControls.StaticText" name="TopArenaLosses" left="390" top="33" width="55" height="17" text="Losses"/>
+								<control progid="DecalControls.List" name="TopArenaList" left="0" top="53" width="450" height="460">
+									<column progid="DecalControls.TextColumn" name="Rank" fixedwidth="30" />
+									<column progid="DecalControls.TextColumn" name="Name" fixedwidth="133" />
+									<column progid="DecalControls.TextColumn" name="Points" fixedwidth="50" />
+									<column progid="DecalControls.TextColumn" name="Matches" fixedwidth="50" />
+									<column progid="DecalControls.TextColumn" name="Wins" fixedwidth="46" />
+									<column progid="DecalControls.TextColumn" name="Draws" fixedwidth="40" />
+									<column progid="DecalControls.TextColumn" name="Losses" fixedwidth="57" />
+								</control>
+							</control>
+						</page>
 					</control>
 				</page>
 			</control>
