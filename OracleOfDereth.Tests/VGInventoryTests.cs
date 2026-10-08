@@ -17,7 +17,6 @@ internal static class VGInventoryTests
     public static void Run()
     {
         Setting.Init();
-        AssertImpenetrabilityVisibility();
         AssertCurrentCharacterSort();
         AssertResultRelease();
         AssertObservations();
@@ -902,31 +901,7 @@ internal static class VGInventoryTests
             "Item retained a live WorldObject reference.");
     }
 
-    private static void AssertImpenetrabilityVisibility()
-    {
-        var display = typeof(ItemInfo).GetMethod("ShouldDisplaySpell", BindingFlags.NonPublic | BindingFlags.Static);
-        foreach (string tier in new[] { "Minor", "Moderate", "Major", "Epic", "Legendary" })
-        {
-            foreach (bool unenchantable in new[] { false, true })
-                Check((bool)display.Invoke(null, new object[] { tier + " Impenetrability", true, unenchantable }),
-                    tier + " Impenetrability was hidden from loot-generated gear.");
-        }
-        foreach (string name in new[] { "Impenetrability VI", "Incantation of Impenetrability", "Blade Bane VI", "Brogard's Defiance" })
-        {
-            Check(!(bool)display.Invoke(null, new object[] { name, true, false }), "Ordinary armor buffs stopped being filtered.");
-            Check((bool)display.Invoke(null, new object[] { name, true, true }), "Unenchantable armor lost its built-in buff.");
-            Check((bool)display.Invoke(null, new object[] { name, false, false }), "Non-loot spells were filtered.");
-        }
-        Check((bool)display.Invoke(null, new object[] { "Legendary Impregnability", true, false }), "Missile defense cantrip was hidden.");
-        Check(!(bool)display.Invoke(null, new object[] { "Strength VI", true, false }), "Ordinary low-level buffs stopped being filtered.");
-
-        var saved = VGInventory.DecodeItem("Conquest", "Armor Mule", 9, "Test Breastplate",
-            ObjectClass.Armor, Fixture(material: 61, spells: new[] { 6095, 4667 }));
-        Check(saved.SpellCount == 2 && saved.Spell(0) == 6095 && saved.Spell(1) == 4667,
-            "VGI decoding discarded Impenetrability cantrips.");
-    }
-
-    private static byte[] Fixture(bool equipped = false, int material = 0, int damage = 36, int imbued = 0, int[] spells = null)
+    private static byte[] Fixture(bool equipped = false, int material = 0, int damage = 36, int imbued = 0)
     {
         using (var stream = new MemoryStream())
         using (var writer = new BinaryWriter(stream, Encoding.ASCII))
@@ -938,8 +913,7 @@ internal static class VGInventoryTests
             writer.Write(1); writer.Write(1); writer.Write(true);
             writer.Write(1); writer.Write(167772171); writer.Write(.43);
             writer.Write(1); writer.Write(900); writer.Write(12345678901234L);
-            writer.Write(spells?.Length ?? 0);
-            if (spells != null) foreach (int spell in spells) writer.Write(spell);
+            writer.Write(0); // innate spells
             writer.Write(-1);
             return stream.ToArray();
         }

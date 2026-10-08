@@ -834,21 +834,18 @@ namespace OracleOfDereth
             });
             cantrips.AddRange(others);
 
-            return string.Join(", ", cantrips);
+            return string.Join(", ", cantrips.Distinct(StringComparer.OrdinalIgnoreCase));
         }
 
         private static bool ShouldDisplaySpell(string name, bool isLootGenerated, bool isUnenchantable)
         {
             if (!isLootGenerated) return true;
 
-            // Preserve innate Impenetrability cantrips before filtering ordinary armor
-            // buffs. The broad "Impen" match otherwise hides every tier of this cantrip.
-            bool isImpenCantrip = name.Contains("Minor Impenetrability") || name.Contains("Moderate Impenetrability") || name.Contains("Major Impenetrability") || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability");
-            if (isImpenCantrip) return true;
-
-            bool isBaneImpen = name.Contains(" Bane") || name.Contains("Impen") || name.StartsWith("Brogard");
+            bool isBaneImpen = name.Contains(" Bane") || name.StartsWith("Brogard");
             if (isBaneImpen && !isUnenchantable) return false;
-            if (!isBaneImpen && !name.Contains("Augmented"))
+
+            bool isImpenCantrip = name.Contains("Minor Impenetrability") || name.Contains("Moderate Impenetrability") || name.Contains("Major Impenetrability") || name.Contains("Epic Impenetrability") || name.Contains("Legendary Impenetrability");
+            if (!isImpenCantrip && !isBaneImpen && !name.Contains("Augmented"))
             {
                 if (name.EndsWith(" I") || name.EndsWith(" II") || name.EndsWith(" III") || name.EndsWith(" IV") || name.EndsWith(" V") || name.EndsWith(" VI")) return false;
             }
@@ -871,7 +868,7 @@ namespace OracleOfDereth
             }
             parts.Sort((a, b) => CantripSortOrder(a).CompareTo(CantripSortOrder(b)));
 
-            return string.Join(", ", parts);
+            return string.Join(", ", parts.Distinct(StringComparer.OrdinalIgnoreCase));
         }
 
         private static int CantripSortOrder(string name)
