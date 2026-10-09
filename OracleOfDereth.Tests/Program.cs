@@ -22,6 +22,7 @@ internal static class Program
         ItemTextSearchTests.Run();
         ItemCacheTests.Run();
         RecallTests.Run();
+        IncomeTests.Run();
         ArenaBoardTests.Run();
         TreasureMapTests.Run();
         AssertChatFilterLifecycle();

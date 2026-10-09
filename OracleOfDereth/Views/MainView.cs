@@ -77,9 +77,10 @@ namespace OracleOfDereth
             { 4_02, 720 }, // Experience (character summary + XP bonuses) — same width as Augs
             { 4_01, 580 }, // Bank
             { 4_03, 600 }, // Fship (recruiting fellowships)
-            { 4_05, 430 }, // Quests (Custom Quests)
-            { 4_06, 450 }, // Top (leaderboards; every sub-tab is the same shape)
-            { 4_04, 1440 }, // Inventory (VGI, all characters on the current server)
+            { 4_04, 615 }, // Income
+            { 4_05, 1440 }, // Inventory (VGI, all characters on the current server)
+            { 4_06, 430 }, // Quests (Custom Quests)
+            { 4_07, 450 }, // Top (leaderboards; every sub-tab is the same shape)
 
             // About / Settings / Help
             { 5_00, 350 }, // About
@@ -119,9 +120,10 @@ namespace OracleOfDereth
             { 4_02, 310 }, // Experience (character summary + seven XP bonus rows)
             { 4_01, 350 }, // Bank
             { 4_03, 545 }, // Fship (recruiting fellowships)
-            { 4_05, 545 }, // Quests (Custom Quests)
-            { 4_06, 555 }, // Top (leaderboards) — taller: a third row of tabs above the list
-            { 4_04, 570 }, // Inventory
+            { 4_04, 320 }, // Income
+            { 4_05, 570 }, // Inventory
+            { 4_06, 545 }, // Quests (Custom Quests)
+            { 4_07, 555 }, // Top (leaderboards) — taller: a third row of tabs above the list
 
             // About / Settings / Help
             { 5_00, 270 }, // About
@@ -192,6 +194,7 @@ namespace OracleOfDereth
                 InitCustomQuests();
                 InitConquestAugmentations();
                 InitConquestExperience();
+                InitIncome();
                 InitConquestBank();
                 InitConquestFship();
                 InitTop();
@@ -256,6 +259,7 @@ namespace OracleOfDereth
                 DisposeComponent(DisposeCustomQuests);
                 DisposeComponent(DisposeConquestAugmentations);
                 DisposeComponent(DisposeConquestExperience);
+                DisposeComponent(DisposeIncome);
                 DisposeComponent(DisposeConquestBank);
                 DisposeComponent(DisposeConquestFship);
                 DisposeComponent(DisposeTop);
@@ -314,7 +318,7 @@ namespace OracleOfDereth
             // Save the new view height
             MainViewHeights[tab] = view.Height;
 
-            if (tab == 1_04 || tab == 4_04)
+            if (tab == 1_04 || tab == 4_05)
             {
                 // Item lists are freely widenable — remember each tab's width.
                 MainViewWidths[tab] = view.Width;
@@ -480,16 +484,13 @@ namespace OracleOfDereth
             if (currentTab == 4_02) { UpdateConquestExperience(); }
             if (currentTab == 4_01) { UpdateConquestBank(); }
             if (currentTab == 4_03) { UpdateConquestFship(); }
-            if (currentTab == 4_05) { UpdateCustomQuests(); }
-            if (currentTab == 4_06)
-            {
-                UpdateTop();
-                UpdateArena();
-            }
-            if (currentTab == 4_04) { UpdateVGInventory(); }
+            if (currentTab == 4_04) { UpdateIncome(); }
+            if (currentTab == 4_05) { UpdateVGInventory(); }
+            if (currentTab == 4_06) { UpdateCustomQuests(); }
+            if (currentTab == 4_07) { UpdateTop(); UpdateArena(); }
 
             // About / Settings / Help
-            if (currentTab == 5_00) {; }
+            if (currentTab == 5_00) { ; }
             if (currentTab == 5_01) { UpdateDecal(); }
             if (currentTab == 5_02) { UpdateSettings(); }
             if (currentTab == 5_03) { UpdateHelp(); }
@@ -498,14 +499,14 @@ namespace OracleOfDereth
         // Called by PluginCore's background tick, including while the window is hidden.
         public void TickInventoryCleanup()
         {
-            TickVGInventory(view.Visible && CurrentTab() == 4_04);
+            TickVGInventory(view.Visible && CurrentTab() == 4_05);
         }
 
         // The inventory scan has a faster timer; keep its tab dispatch here too.
         private void VGInventorySearchTick(object sender, EventArgs e)
         {
             if (vgInventoryTimer == null || !ReferenceEquals(sender, vgInventoryTimer)) return;
-            if (view.Visible && CurrentTab() == 4_04) AdvanceVGInventorySearch();
+            if (view.Visible && CurrentTab() == 4_05) AdvanceVGInventorySearch();
             else PauseVGInventorySearch();
         }
 

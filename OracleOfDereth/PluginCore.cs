@@ -119,11 +119,9 @@ namespace OracleOfDereth
             {
                 if(Setting.BuffsRemaining.IsYes) Util.Chat($"{Hud.BuffNowText()}", Util.ColorOrange, "[Oracle of Dereth] ");
                 if(Setting.CheckForUpdates.IsYes) UpdateChecker.Arm();
-                ConquestAugmentation.Refresh();
-                // Doesn't apply the saved plugin bar order here — plugins are still bringing their
-                // views up, and one that registers afterwards (Virindi Window Tool) would land
-                // wherever VVS puts it. Arms instead; Tick applies it once the bar stops changing.
                 if (Setting.OrderDecalPlugins.IsYes) VVSBar.ArmLoginApply();
+                ConquestAugmentation.Refresh();
+                Income.Reset();
             }
             catch (Exception ex) { Util.Log(ex); }
         }
@@ -174,6 +172,7 @@ namespace OracleOfDereth
                 ConquestBonus.Init();
                 TopBoard.Init();
                 ArenaBoard.Init();
+                Income.Init();
 
 
                 // Initialize Views
@@ -220,6 +219,7 @@ namespace OracleOfDereth
                 QuestSubmit.Tick();
                 QuestState.Tick();
                 QuestAccountFlag.Tick();
+                Income.Tick();
                 ItemList.TickAll();
                 VGInventoryTracking.Tick();
                 Trade.Tick();
@@ -276,6 +276,7 @@ namespace OracleOfDereth
             ShutdownComponent(QuestSubmit.Shutdown);
             ShutdownComponent(VGInventoryTracking.Shutdown);
             ShutdownComponent(VVSBar.Shutdown);
+            ShutdownComponent(Income.Dispose);
 
             ShutdownComponent(() => tradeView?.Dispose());
             ShutdownComponent(() => targetView?.Dispose());

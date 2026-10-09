@@ -117,7 +117,7 @@ internal static class VGInventoryTests
         using (Stream xml = typeof(Item).Assembly.GetManifestResourceStream("OracleOfDereth.mainView.xml")) layout.Load(xml);
         var tabs = layout.SelectNodes("//control[@name='ServerViewNotebook']/page");
         Check(tabs.Cast<XmlNode>().Select(tab => tab.Attributes["label"].Value).SequenceEqual(
-            new[] { "Augs", "Bank", "Experience", "Fship", "Inventory", "Quests", "Top" }),
+            new[] { "Augs", "Bank", "Experience", "Fship", "Income", "Inventory", "Quests", "Top" }),
             "Server tabs are not in alphabetical order.");
         Check(layout.SelectNodes("//control[starts-with(@name,'VGInventoryFilter') and @progid='DecalControls.CheckBox']").Count == 10, "Inventory filters differ from Items.");
         Check(layout.SelectSingleNode("//control[@name='VGInventoryList']/column[1]").Attributes["name"].Value == "Character", "First column must be Character.");
