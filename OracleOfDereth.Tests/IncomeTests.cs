@@ -62,6 +62,29 @@ internal static class IncomeTests
         Kills();
         PetKills();
         ConquestCoins();
+        Reports();
+    }
+
+    private static void Reports()
+    {
+        var session = new IncomeSession();
+        var xp = session.Register("Experience");
+        var pets = session.Register("Kills (pet)");
+        session.Reset(new DateTime(2026, 1, 1));
+        xp.AddGain(1000);
+        if (xp.Report(TimeSpan.FromMinutes(5)) != "You've made 1,000 XP in 00:05:00 for 12,000 XP/hour.")
+            throw new Exception("Reporter summary must use whole-number rates and omit an unavailable five-minute window.");
+        pets.AddGain(5);
+        for (int i = 0; i < 5; i++) session.SampleMinute();
+        if (xp.Report(TimeSpan.FromMinutes(5)) != "You've made 1,000 XP in 00:05:00 for 12,000 XP/hour (5min 12,000 XP/hour).")
+            throw new Exception("Reporter summary must include the rolling rate once available.");
+        if (pets.Report(TimeSpan.FromMinutes(5)) != "You've killed 5 creatures with your pet in 00:05:00 for 60 kills/hour (5min 60 kills/hour).")
+            throw new Exception("Pet reports must distinguish pet kills.");
+        session.Reset(new DateTime(2026, 1, 1));
+        if (xp.Report(TimeSpan.Zero) != "You've made 0 XP in 00:00:00 for 0 XP/hour.")
+            throw new Exception("A freshly reset report must not include stale rates or infinite values.");
+        if (!xp.Report(TimeSpan.FromHours(25)).Contains("25:00:00"))
+            throw new Exception("Report duration must preserve hours beyond a day.");
     }
 
     private static void ConquestCoins()

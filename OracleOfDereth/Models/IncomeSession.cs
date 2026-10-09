@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace OracleOfDereth
 {
@@ -54,6 +55,23 @@ namespace OracleOfDereth
             return baseline.HasValue ? (double)(samples[position].Value - baseline.Value) * multiplier : (double?)null;
         }
         public double SessionPerHour(TimeSpan elapsed) => elapsed.TotalHours > 0 ? Total / elapsed.TotalHours : 0;
+
+        public string Report(TimeSpan elapsed)
+        {
+            string duration = string.Format(CultureInfo.InvariantCulture, "{0:00}:{1:00}:{2:00}",
+                (long)elapsed.TotalHours, elapsed.Minutes, elapsed.Seconds);
+            bool pet = Name == "Kills (pet)";
+            bool kills = pet || Name == "Kills";
+            string unit = kills ? "kills" : Name == "Experience" ? "XP" : Name;
+            string earned = kills
+                ? "You've killed " + Total.ToString("N0", CultureInfo.InvariantCulture) + " creatures" + (pet ? " with your pet" : "")
+                : "You've made " + Total.ToString("N0", CultureInfo.InvariantCulture) + " " + unit;
+            string report = earned + " in " + duration + " for "
+                + SessionPerHour(elapsed).ToString("N0", CultureInfo.InvariantCulture) + " " + unit + "/hour";
+            if (FiveMinutePerHour.HasValue)
+                report += " (5min " + FiveMinutePerHour.Value.ToString("N0", CultureInfo.InvariantCulture) + " " + unit + "/hour)";
+            return report + ".";
+        }
     }
 
     public sealed class IncomeSession
