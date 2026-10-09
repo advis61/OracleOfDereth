@@ -19,6 +19,7 @@ namespace OracleOfDereth
         public HudButton ConquestFshipRefresh { get; private set; }
         public HudButton ConquestFshipJoin { get; private set; }
         public HudButton ConquestFshipQuit { get; private set; }
+        public HudButton ConquestFshipLandblock { get; private set; }
 
         // Column indices for ConquestFshipList (see mainView.xml). Columns start at the left edge;
         // the sort-indicator glyph floats in the header row (ConquestFshipSort), not in a column.
@@ -59,6 +60,9 @@ namespace OracleOfDereth
             ConquestFshipQuit = (HudButton)view["ConquestFshipQuit"];
             ConquestFshipQuit.Hit += ConquestFshipQuit_Hit;
             ConquestFshipQuit.Visible = false;
+            ConquestFshipLandblock = (HudButton)view["ConquestFshipLandblock"];
+            ConquestFshipLandblock.Hit += ConquestFshipLandblock_Hit;
+            ConquestFshipLandblock.Visible = false;
 
             ConquestFshipList = (HudList)view["ConquestFshipList"];
             ConquestFshipList.Click += ConquestFshipList_Click;
@@ -75,6 +79,7 @@ namespace OracleOfDereth
             ConquestFshipRefresh.Hit -= ConquestFshipRefresh_Hit;
             ConquestFshipJoin.Hit -= ConquestFshipJoin_Hit;
             ConquestFshipQuit.Hit -= ConquestFshipQuit_Hit;
+            if (ConquestFshipLandblock != null) ConquestFshipLandblock.Hit -= ConquestFshipLandblock_Hit;
             ConquestFshipList.Click -= ConquestFshipList_Click;
         }
 
@@ -97,6 +102,7 @@ namespace OracleOfDereth
                 ConquestFshipText.Text = "None";
                 ConquestFshipJoin.Visible = false;
                 ConquestFshipQuit.Visible = false;
+                ConquestFshipLandblock.Visible = false;
                 return;
             }
 
@@ -155,6 +161,7 @@ namespace OracleOfDereth
             // fellowship when you have none, Quit once you're in one.
             ConquestFshipJoin.Visible = hasSelection && !inFellowship;
             ConquestFshipQuit.Visible = inFellowship;
+            ConquestFshipLandblock.Visible = inFellowship;
         }
 
         // Reissues "/fship list" so the server reprints the recruiting fellowships, which the chat
@@ -187,6 +194,11 @@ namespace OracleOfDereth
         private void ConquestFshipQuit_Hit(object sender, EventArgs e)
         {
             Fellowship.Quit();
+        }
+
+        private void ConquestFshipLandblock_Hit(object sender, EventArgs e)
+        {
+            if (Server.IsConquest && Fellowship.IsInFellowship()) Util.Command("/fship landblock");
         }
 
         private void ConquestFshipName_Click(object sender, EventArgs e)
