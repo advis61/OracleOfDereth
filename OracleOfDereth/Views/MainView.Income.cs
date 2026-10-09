@@ -9,6 +9,7 @@ namespace OracleOfDereth
     {
         public HudStaticText IncomeSessionText { get; private set; }
         public HudButton IncomeReset { get; private set; }
+        public HudButton IncomeRefresh { get; private set; }
         public HudList IncomeList { get; private set; }
         private void InitIncome()
         {
@@ -16,6 +17,8 @@ namespace OracleOfDereth
             IncomeSessionText.FontHeight = 10;
             IncomeReset = (HudButton)view["IncomeReset"];
             IncomeReset.Hit += IncomeReset_Hit;
+            IncomeRefresh = (HudButton)view["IncomeRefresh"];
+            IncomeRefresh.Hit += IncomeRefresh_Hit;
             IncomeList = (HudList)view["IncomeList"];
             // Match the XML header bounds exactly instead of adding VVS's default
             // horizontal cell and outer padding to each column.
@@ -24,7 +27,16 @@ namespace OracleOfDereth
             foreach (string name in new[] { "IncomeTotalHeader", "IncomeHourHeader", "IncomeFiveMinuteHeader" })
                 ((HudStaticText)view[name]).TextAlignment = WriteTextFormats.Right;
         }
-        private void DisposeIncome() { if (IncomeReset != null) IncomeReset.Hit -= IncomeReset_Hit; }
+        private void DisposeIncome()
+        {
+            if (IncomeReset != null) IncomeReset.Hit -= IncomeReset_Hit;
+            if (IncomeRefresh != null) IncomeRefresh.Hit -= IncomeRefresh_Hit;
+        }
+        private void IncomeRefresh_Hit(object sender, EventArgs e)
+        {
+            if (Income.Refresh()) FlashButton(IncomeRefresh);
+            UpdateIncome();
+        }
         private void IncomeReset_Hit(object sender, EventArgs e)
         {
             Income.Reset();

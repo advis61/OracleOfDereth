@@ -30,9 +30,14 @@ namespace OracleOfDereth
         {
             Total = 0;
             previous = null;
+            ClearHistory();
+        }
+
+        public void ClearHistory()
+        {
             Array.Clear(samples, 0, samples.Length);
             position = 0;
-            samples[0] = 0;
+            samples[0] = Total;
         }
 
         internal void SampleMinute()

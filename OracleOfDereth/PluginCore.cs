@@ -220,6 +220,7 @@ namespace OracleOfDereth
                 QuestState.Tick();
                 QuestAccountFlag.Tick();
                 Income.Tick();
+                Income.UpdateVisibility(mainView.IsIncomeTabActive());
                 ItemList.TickAll();
                 VGInventoryTracking.Tick();
                 Trade.Tick();
@@ -351,6 +352,7 @@ namespace OracleOfDereth
 
             try
             {
+                Suppress(e, Income.NoteChat(e.Text));
                 if (Target.YouCastRegex.IsMatch(e.Text))
                 {
                     Target.SpellStarted(e.Text);

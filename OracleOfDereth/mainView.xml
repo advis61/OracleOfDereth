@@ -524,17 +524,18 @@
 				</page>
                 <page label="Income">
                     <control progid="DecalControls.FixedLayout" clipped="">
-                        <control progid="DecalControls.StaticText" name="IncomeSessionText" left="5" top="5" width="450" height="24" text="Session: —"/>
-                        <control progid="DecalControls.PushButton" name="IncomeReset" left="485" top="3" width="125" height="24" text="Reset Session"/>
-                        <control progid="DecalControls.StaticText" name="IncomeNameHeader" left="5" top="38" width="150" height="17" text="Name"/>
-                        <control progid="DecalControls.StaticText" name="IncomeTotalHeader" left="155" top="38" width="145" height="17" text="Total"/>
-                        <control progid="DecalControls.StaticText" name="IncomeHourHeader" left="300" top="38" width="145" height="17" text="Per hour"/>
-                        <control progid="DecalControls.StaticText" name="IncomeFiveMinuteHeader" left="445" top="38" width="145" height="17" text="Per hour (5 min)"/>
-                        <control progid="DecalControls.List" name="IncomeList" left="5" top="58" width="605" height="2000">
-                            <column progid="DecalControls.TextColumn" name="Name" fixedwidth="150"/>
-                            <column progid="DecalControls.TextColumn" name="Total" fixedwidth="145"/>
-                            <column progid="DecalControls.TextColumn" name="Hour" fixedwidth="145"/>
-                            <column progid="DecalControls.TextColumn" name="FiveMinute" fixedwidth="145"/>
+                        <control progid="DecalControls.StaticText" name="IncomeSessionText" left="5" top="5" width="320" height="24" text="Session: —"/>
+                        <control progid="DecalControls.PushButton" name="IncomeReset" left="331" top="3" width="65" height="24" text="Reset"/>
+                        <control progid="DecalControls.PushButton" name="IncomeRefresh" left="400" top="3" width="100" height="24" text="Refresh"/>
+                        <control progid="DecalControls.StaticText" name="IncomeNameHeader" left="5" top="38" width="100" height="17" text="Name"/>
+                        <control progid="DecalControls.StaticText" name="IncomeTotalHeader" left="105" top="38" width="125" height="17" text="Total"/>
+                        <control progid="DecalControls.StaticText" name="IncomeHourHeader" left="230" top="38" width="125" height="17" text="Per hour"/>
+                        <control progid="DecalControls.StaticText" name="IncomeFiveMinuteHeader" left="355" top="38" width="125" height="17" text="Per hour (5 min)"/>
+                        <control progid="DecalControls.List" name="IncomeList" left="5" top="58" width="495" height="2000">
+                            <column progid="DecalControls.TextColumn" name="Name" fixedwidth="100"/>
+                            <column progid="DecalControls.TextColumn" name="Total" fixedwidth="125"/>
+                            <column progid="DecalControls.TextColumn" name="Hour" fixedwidth="125"/>
+                            <column progid="DecalControls.TextColumn" name="FiveMinute" fixedwidth="125"/>
                         </control>
                     </control>
                 </page>

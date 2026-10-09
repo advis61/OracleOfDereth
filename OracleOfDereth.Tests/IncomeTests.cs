@@ -57,6 +57,91 @@ internal static class IncomeTests
         xp.ObserveCounter(5_000_176_201_461);
         Equal(xp.Total, 176_201_461, "Large lifetime counters preserve session gains");
         Equal(xp.SessionPerHour(TimeSpan.FromSeconds(350)), 176_201_461d / (350d / 3600), "Reporter session formula");
+        Luminance();
+        ConquestReports();
+    }
+
+    private static void ConquestReports()
+    {
+        var session = new IncomeSession();
+        var metric = session.Register("Luminance");
+        session.Reset(new DateTime(2026, 1, 1));
+        var source = new ConquestIncomeLuminance(metric);
+        source.Reset();
+        string Report(long total) => "[LPH] You've earned " + total.ToString("N0", System.Globalization.CultureInfo.InvariantCulture)
+            + " Luminance in 00:01:00 for 60,000 Lum/hour (5min 0 Lum/hour).";
+        if (source.NoteChat(Report(999), out _)) throw new Exception("Ignore reports before start acknowledgement.");
+        if (!source.NoteChat("[LPH] Luminance tracking started.", out bool isReport) || isReport || !source.Ready)
+            throw new Exception("Recognize /lph start acknowledgement.");
+        source.NoteChat(Report(1000), out isReport);
+        if (!isReport) throw new Exception("Recognize server luminance total.");
+        Equal(metric.Total, 1000, "First LPH reply includes every gain since start");
+        source.NoteChat(Report(1000), out _);
+        Equal(metric.Total, 1000, "Repeated LPH reply does not double count");
+        source.NoteChat("You've banked 203 Luminance.", out _);
+        source.NoteChat("Someone says, \"" + Report(5000) + "\"", out _);
+        Equal(metric.Total, 1000, "Bank awards and quoted reports are not additional income");
+        // Reopening receives the server's total, then establishes a fresh rolling baseline.
+        source.NoteChat(Report(6000), out _);
+        metric.ClearHistory();
+        Equal(metric.Total, 6000, "Catch up silent passup and gains earned while closed");
+        Equal(metric.FiveMinutePerHour, null, "Reopening needs fresh rolling history");
+        for (int minute = 1; minute <= 5; minute++)
+        {
+            source.NoteChat(Report(6000 + minute * 100), out _);
+            session.SampleMinute();
+        }
+        Equal(metric.FiveMinutePerHour, 6000, "Use rolling totals, not server's cached five-minute rate");
+        source.NoteChat("[LPH] Luminance tracking started.", out _);
+        source.NoteChat(Report(100), out _);
+        Equal(metric.Total, 6600, "Manual server restart preserves local earnings");
+        session.Reset(new DateTime(2026, 1, 1));
+        source.Reset();
+        source.NoteChat(Report(9999), out _);
+        Equal(metric.Total, 0, "Late old report cannot restore pre-reset gains");
+        source.NoteChat("[12:34:56] [LPH] Luminance tracking started.", out _);
+        source.NoteChat(Report(203), out _);
+        Equal(metric.Total, 203, "Session reset begins a new server total");
+        source.NoteChat("[LPH] Tracking not active. Use /lph start to begin tracking.", out _);
+        if (source.Ready) throw new Exception("Detect stopped server tracking.");
+    }
+
+    private static void Luminance()
+    {
+        var session = new IncomeSession();
+        var metric = session.Register("Luminance");
+        var start = new DateTime(2026, 1, 1);
+        session.Reset(start);
+        var conquest = new IncomeLuminance(metric);
+        conquest.NoteChat("You've banked 203 Luminance.");
+        conquest.NoteChat("[12:34:56] You've banked 1,234 Luminance.");
+        conquest.NoteChat("You've banked 5000 Luminance.");
+        Equal(metric.Total, 6437, "Conquest awards accept grouped and ungrouped amounts");
+        foreach (string text in new[] { null, "", "Someone says, \"You've banked 203 Luminance.\"",
+            "You've banked 20,3 Luminance.", "You've banked -203 Luminance.",
+            "You've banked 999999999999999999999999 Luminance.", "You've banked 203 Coins." })
+            conquest.NoteChat(text);
+        Equal(metric.Total, 6437, "Reject unrelated and malformed chat");
+        for (int minute = 0; minute < 5; minute++) session.SampleMinute();
+        Equal(metric.FiveMinutePerHour, 6437 * 12, "Luminance shares the five-minute calculation");
+        session.Reset(start);
+        conquest.ResetBaseline();
+        conquest.NoteChat("You've banked 203 Luminance.");
+        Equal(metric.Total, 203, "Conquest reset clears prior awards");
+
+        session.Reset(start);
+        var standard = new IncomeLuminance(metric);
+        standard.ObserveBalance(5_000_000_000);
+        Equal(metric.Total, 0, "Initial luminance balance is not income");
+        standard.ObserveBalance(5_000_000_203);
+        standard.ObserveBalance(4_000_000_000); // spend
+        standard.ObserveBalance(4_000_000_100);
+        standard.NoteChat("You've banked 203 Luminance.");
+        Equal(metric.Total, 506, "Property and bank chat gains add together; spending does not subtract income");
+        session.Reset(start);
+        standard.ResetBaseline();
+        standard.ObserveBalance(4_000_000_150);
+        Equal(metric.Total, 50, "First gain after reset uses the retained balance baseline");
     }
 
     private static void Equal(double? actual, double? expected, string message)

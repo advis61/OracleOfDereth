@@ -77,7 +77,7 @@ namespace OracleOfDereth
             { 4_02, 720 }, // Experience (character summary + XP bonuses) — same width as Augs
             { 4_01, 580 }, // Bank
             { 4_03, 600 }, // Fship (recruiting fellowships)
-            { 4_04, 615 }, // Income
+            { 4_04, 505 }, // Income
             { 4_05, 1440 }, // Inventory (VGI, all characters on the current server)
             { 4_06, 430 }, // Quests (Custom Quests)
             { 4_07, 450 }, // Top (leaderboards; every sub-tab is the same shape)
@@ -289,6 +289,7 @@ namespace OracleOfDereth
         }
 
         public bool IsItemsTabActive() { return view != null && MainViewNotebook != null && StatusViewNotebook != null && view.Visible && CurrentTab() == 1_04; }
+        public bool IsIncomeTabActive() { return view != null && MainViewNotebook != null && ServerViewNotebook != null && view.Visible && CurrentTab() == 4_04; }
 
         private int CurrentTab()
         {
