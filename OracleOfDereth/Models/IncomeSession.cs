@@ -12,6 +12,7 @@ namespace OracleOfDereth
         private readonly long?[] samples = new long?[6];
         private int position;
         private long? previous;
+        private double? reportedFiveMinutePerHour;
         public string Name { get; }
         public long Total { get; private set; }
         public IncomeMetric(string name) { Name = name; }
@@ -31,6 +32,7 @@ namespace OracleOfDereth
         {
             Total = 0;
             previous = null;
+            reportedFiveMinutePerHour = null;
             ClearHistory();
         }
 
@@ -48,7 +50,8 @@ namespace OracleOfDereth
         }
 
         public double? MinutePerHour => Rate(1, 60);
-        public double? FiveMinutePerHour => Rate(5, 12);
+        public double? FiveMinutePerHour => reportedFiveMinutePerHour ?? Rate(5, 12);
+        public void SetReportedFiveMinutePerHour(double? value) { reportedFiveMinutePerHour = value; }
         private double? Rate(int minutes, int multiplier)
         {
             long? baseline = samples[(position + samples.Length - minutes) % samples.Length];

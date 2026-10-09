@@ -190,17 +190,17 @@ internal static class IncomeTests
         source.NoteChat("You've banked 203 Luminance.", out _);
         source.NoteChat("Someone says, \"" + Report(5000) + "\"", out _);
         Equal(metric.Total, 1000, "Bank awards and quoted reports are not additional income");
-        // Reopening receives the server's total, then establishes a fresh rolling baseline.
+        // Reopening receives the total and retains the server's five-minute rate.
         source.NoteChat(Report(6000), out _);
         metric.ClearHistory();
         Equal(metric.Total, 6000, "Catch up silent passup and gains earned while closed");
-        Equal(metric.FiveMinutePerHour, null, "Reopening needs fresh rolling history");
+        Equal(metric.FiveMinutePerHour, 0, "Use the server's reported zero during warmup");
         for (int minute = 1; minute <= 5; minute++)
         {
             source.NoteChat(Report(6000 + minute * 100), out _);
             session.SampleMinute();
         }
-        Equal(metric.FiveMinutePerHour, 6000, "Use rolling totals, not server's cached five-minute rate");
+        Equal(metric.FiveMinutePerHour, 0, "Conquest's reported rate takes precedence over local samples");
         source.NoteChat("[LPH] Luminance tracking started.", out _);
         source.NoteChat(Report(100), out _);
         Equal(metric.Total, 6600, "Manual server restart preserves local earnings");
@@ -211,6 +211,19 @@ internal static class IncomeTests
         source.NoteChat("[12:34:56] [LPH] Luminance tracking started.", out _);
         source.NoteChat(Report(203), out _);
         Equal(metric.Total, 203, "Session reset begins a new server total");
+        source.NoteChat(" [LPH] You've earned 574,997 Luminance in 00:14:18 for 2,409,894 Lum/hour (5min 2,365,764 Lum/hour).", out isReport);
+        if (!isReport) throw new Exception("Parse the observed Conquest LPH report including leading whitespace.");
+        Equal(metric.Total, 574997, "Parse reported luminance total");
+        Equal(metric.FiveMinutePerHour, 2365764, "Use the exact Conquest five-minute rate");
+        metric.ClearHistory();
+        Equal(metric.FiveMinutePerHour, 2365764, "Reopening does not discard the server five-minute rate");
+        if (!metric.Report(TimeSpan.FromMinutes(14)).Contains("5min 2,365,764 Luminance/hour"))
+            throw new Exception("Click summary must use the same server rate as the table.");
+        session.Reset(new DateTime(2026, 1, 1));
+        source.Reset();
+        Equal(metric.FiveMinutePerHour, null, "Reset discards the old server rate");
+        source.NoteChat("[LPH] Luminance tracking started.", out _);
+        Equal(metric.FiveMinutePerHour, 0, "Server restart begins a fresh five-minute block");
         source.NoteChat("[LPH] Tracking not active. Use /lph start to begin tracking.", out _);
         if (source.Ready) throw new Exception("Detect stopped server tracking.");
     }
@@ -247,6 +260,8 @@ internal static class IncomeTests
         standard.ObserveBalance(4_000_000_100);
         standard.NoteChat("You've banked 203 Luminance.");
         Equal(metric.Total, 506, "Property and bank chat gains add together; spending does not subtract income");
+        for (int minute = 0; minute < 5; minute++) session.SampleMinute();
+        Equal(metric.FiveMinutePerHour, 6072, "Non-Conquest luminance computes its own rolling rate from gains");
         session.Reset(start);
         standard.ResetBaseline();
         standard.ObserveBalance(4_000_000_150);

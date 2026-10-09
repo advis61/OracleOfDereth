@@ -17,10 +17,7 @@ namespace OracleOfDereth
         private static ConquestIncomeLuminance conquestLuminance;
         private static readonly ChatRequest request = new ChatRequest();
         private static bool incomeVisible;
-        private static bool pendingSample;
-        private static bool pendingBaseline;
         private static DateTime nextPoll;
-        private static DateTime nextMinuteSample;
         private static WindowsTimer timer;
         private static CoreManager subscribedCore;
 
@@ -49,8 +46,6 @@ namespace OracleOfDereth
             timer.Stop();
             Session.Reset(DateTime.Now);
             luminance.ResetBaseline();
-            pendingSample = false;
-            pendingBaseline = false;
             request.Clear();
             nextPoll = DateTime.UtcNow.AddSeconds(10);
             if (conquestLuminance != null)
@@ -69,23 +64,14 @@ namespace OracleOfDereth
         public static void UpdateVisibility(bool visible)
         {
             if (conquestLuminance == null) return;
-            if ((pendingSample || pendingBaseline) && !request.Awaiting)
-            {
-                pendingSample = false;
-                pendingBaseline = true;
-                luminanceMetric.ClearHistory();
-            }
             if (incomeVisible == visible)
             {
                 if (visible && DateTime.UtcNow >= nextPoll)
-                    PollLph(!pendingBaseline && DateTime.UtcNow >= nextMinuteSample, pendingBaseline);
+                    PollLph();
                 return;
             }
             incomeVisible = visible;
-            pendingSample = false;
-            pendingBaseline = false;
-            luminanceMetric.ClearHistory();
-            if (visible) PollLph(false, true);
+            if (visible) PollLph();
         }
         private static void StartLph()
         {
@@ -100,18 +86,15 @@ namespace OracleOfDereth
             if (conquestLuminance != null)
             {
                 if (!incomeVisible) UpdateVisibility(true);
-                else PollLph(pendingSample || (!pendingBaseline && DateTime.UtcNow >= nextMinuteSample), pendingBaseline);
+                else PollLph();
             }
             return true;
         }
-        private static void PollLph(bool sample, bool baseline = false)
+        private static void PollLph()
         {
             var now = DateTime.UtcNow;
             nextPoll = now.AddSeconds(10);
-            if (baseline) nextMinuteSample = now.AddMinutes(1);
             if (!conquestLuminance.Ready) { StartLph(); return; }
-            pendingSample = sample;
-            pendingBaseline = baseline;
             request.Sent();
             Util.Command("/lph");
         }
@@ -139,20 +122,9 @@ namespace OracleOfDereth
             if (conquestLuminance == null) { luminance?.NoteChat(text); return false; }
             bool ours = request.Awaiting;
             bool wasReady = conquestLuminance.Ready;
-            if (!conquestLuminance.NoteChat(text, out bool report)) return false;
+            if (!conquestLuminance.NoteChat(text, out _)) return false;
             request.Clear();
-            if (report && pendingSample && incomeVisible)
-            {
-                luminanceMetric.SampleMinute();
-                nextMinuteSample = nextMinuteSample.AddMinutes(1);
-            }
-            else if (report && pendingBaseline && incomeVisible)
-            {
-                luminanceMetric.ClearHistory();
-            }
-            pendingSample = false;
-            pendingBaseline = false;
-            if (!wasReady && conquestLuminance.Ready && incomeVisible) PollLph(false, true);
+            if (!wasReady && conquestLuminance.Ready && incomeVisible) PollLph();
             return ours;
         }
 
@@ -197,8 +169,6 @@ namespace OracleOfDereth
             conquestCoins = null;
             conquestLuminance = null;
             incomeVisible = false;
-            pendingSample = false;
-            pendingBaseline = false;
             request.Clear();
             if (timer == null) return;
             timer.Stop();
