@@ -9,6 +9,9 @@ namespace OracleOfDereth
     {
         public static IncomeSession Session { get; private set; }
         private static IncomeMetric xp;
+        private static IncomeKills kills;
+        private static IncomePetKills petKills;
+        private static IncomeConquestCoins conquestCoins;
         private static IncomeLuminance luminance;
         private static IncomeMetric luminanceMetric;
         private static ConquestIncomeLuminance conquestLuminance;
@@ -27,8 +30,14 @@ namespace OracleOfDereth
             Session = new IncomeSession();
             xp = Session.Register("Experience");
             luminanceMetric = Session.Register("Luminance");
+            kills = new IncomeKills(Session.Register("Kills"));
+            petKills = new IncomePetKills(Session.Register("Kills (pet)"));
             luminance = new IncomeLuminance(luminanceMetric);
-            if (Server.IsConquest) conquestLuminance = new ConquestIncomeLuminance(luminanceMetric);
+            if (Server.IsConquest)
+            {
+                conquestLuminance = new ConquestIncomeLuminance(luminanceMetric);
+                conquestCoins = new IncomeConquestCoins(Session.Register("Conquest Coins"));
+            }
             timer = new WindowsTimer { Interval = 60000 };
             timer.Tick += SampleMinute;
             Reset();
@@ -125,6 +134,8 @@ namespace OracleOfDereth
         public static bool NoteChat(string text)
         {
             if (Session == null || !Session.Started) return false;
+            petKills?.NoteChat(text);
+            conquestCoins?.NoteChat(text);
             if (conquestLuminance == null) { luminance?.NoteChat(text); return false; }
             bool ours = request.Awaiting;
             bool wasReady = conquestLuminance.Ready;
@@ -147,15 +158,18 @@ namespace OracleOfDereth
 
         private static void MessageProcessed(object sender, MessageProcessedEventArgs e)
         {
-            if (conquestLuminance != null || subscribedCore == null || Session == null || !Session.Started || e == null) return;
+            if (subscribedCore == null || Session == null || !Session.Started || e == null) return;
             try
             {
+                var message = e.Message;
+                int eventType = message.Type == 0xF7B0 ? message.Value<int>("event") : 0;
+                kills.ObserveEvent(message.Type, eventType);
+                if (conquestLuminance != null) return;
                 // Same Int64 property and initial-character packet used by
                 // Virindi Reporter's cXPCounting.Core_MessageProcessed.
-                var message = e.Message;
                 if (message.Type == 0x02CF && message.Value<int>("key") == 6)
                     luminance.ObserveBalance(message.Value<long>("value"));
-                else if (message.Type == 0xF7B0 && message.Value<int>("event") == 0x13)
+                else if (message.Type == 0xF7B0 && eventType == 0x13)
                 {
                     var properties = message.Struct("properties");
                     if ((properties.Value<int>("flags") & 0x80) == 0) return;
@@ -178,6 +192,9 @@ namespace OracleOfDereth
             subscribedCore = null;
             if (core != null) core.MessageProcessed -= MessageProcessed;
             luminance = null;
+            kills = null;
+            petKills = null;
+            conquestCoins = null;
             conquestLuminance = null;
             incomeVisible = false;
             pendingSample = false;

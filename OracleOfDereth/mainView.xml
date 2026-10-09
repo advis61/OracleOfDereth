@@ -522,7 +522,7 @@
 						</control>
 					</control>
 				</page>
-                <page label="Income">
+                <page label="Hourly">
                     <control progid="DecalControls.FixedLayout" clipped="">
                         <control progid="DecalControls.StaticText" name="IncomeSessionText" left="5" top="5" width="320" height="24" text="Session: —"/>
                         <control progid="DecalControls.PushButton" name="IncomeReset" left="331" top="3" width="65" height="24" text="Reset"/>

@@ -59,6 +59,92 @@ internal static class IncomeTests
         Equal(xp.SessionPerHour(TimeSpan.FromSeconds(350)), 176_201_461d / (350d / 3600), "Reporter session formula");
         Luminance();
         ConquestReports();
+        Kills();
+        PetKills();
+        ConquestCoins();
+    }
+
+    private static void ConquestCoins()
+    {
+        var session = new IncomeSession();
+        var metric = session.Register("Conquest Coins");
+        var source = new IncomeConquestCoins(metric);
+        session.Reset(new DateTime(2026, 1, 1));
+        source.NoteChat("Treasure Guardian gives you Conquest Coin.");
+        source.NoteChat("Quest NPC gives you 45 Conquest Coins.");
+        source.NoteChat("[12:34:56] Quest NPC gives you 1,000 Conquest Coins.");
+        source.NoteChat("You have received (5) Conquest Coins!");
+        source.NoteChat("You have received (50) Conquest Coins (Bonus)!");
+        source.NoteChat("You have received Conquest Coins!");
+        source.NoteChat("You have received Conquest Coin!");
+        source.NoteChat("You have received 2 Conquest Coins!");
+        Equal(metric.Total, 1105, "Single, stacked, grouped, and treasure-map bonus rewards sum their quantities");
+        foreach (string text in new[] { null, "", "Quest NPC tries to give you 45 Conquest Coins.",
+            "Deposited 45 Conquest Coins", "Withdrew 45 Conquest Coins", "[BANK] Conquest Coins (non-transferable): 45",
+            "You have spent 45 Conquest Coins. Bank balance: 100 coins.",
+            "Someone says, \"Treasure Guardian gives you Conquest Coin.\"",
+            "Quest NPC gives you 1,00 Conquest Coins.", "Quest NPC gives you -45 Conquest Coins.",
+            "Quest NPC gives you 999999999999999999999999 Conquest Coins.",
+            "Quest NPC gives you Weakly Conquest Coins.", "You have received (50) Conquest Coins (Bonus)! trailing text" })
+            source.NoteChat(text);
+        Equal(metric.Total, 1105, "Transfers, failed rewards, quoted chat, other currencies, and invalid amounts do not count");
+        for (int i = 0; i < 5; i++) session.SampleMinute();
+        Equal(metric.FiveMinutePerHour, 13260, "Coins share rolling rates");
+        session.Reset(new DateTime(2026, 1, 1));
+        Equal(metric.Total, 0, "Reset clears coins");
+        source.NoteChat("Quest NPC gives you 45 Conquest Coins.");
+        Equal(metric.Total, 45, "Coin tracking continues after reset");
+    }
+
+    private static void Kills()
+    {
+        var session = new IncomeSession();
+        var metric = session.Register("Kills");
+        var source = new IncomeKills(metric);
+        var start = new DateTime(2026, 1, 1);
+        session.Reset(start);
+        source.ObserveEvent(0xF7B0, 0x01AD);
+        source.ObserveEvent(0xF7B0, 0x01AD);
+        Equal(metric.Total, 2, "Each killer notification counts once regardless of its text");
+        source.ObserveEvent(0xF7B0, 0x01AC); // victim notification
+        source.ObserveEvent(0xF7B0, 0x13); // character properties
+        source.ObserveEvent(0xF7B0, 0x00C9); // identify
+        source.ObserveEvent(0xF7B1, 0x01AD); // wrong packet envelope
+        Equal(metric.Total, 2, "Other events and nearby broadcasts do not count");
+        Equal(metric.SessionPerHour(session.Elapsed(start.AddMinutes(1))), 120, "Kills share session hourly rates");
+        for (int i = 0; i < 5; i++) session.SampleMinute();
+        Equal(metric.FiveMinutePerHour, 24, "Kills use the existing rolling five-minute rate");
+        session.Reset(start.AddHours(1));
+        Equal(metric.Total, 0, "Reset clears kill total");
+        Equal(metric.FiveMinutePerHour, null, "Reset clears kill history");
+        source.ObserveEvent(0xF7B0, 0x01AD);
+        Equal(metric.Total, 1, "Kill tracking continues after reset");
+    }
+
+    private static void PetKills()
+    {
+        var session = new IncomeSession();
+        var direct = session.Register("Kills");
+        var pet = session.Register("Kills (pet)");
+        var source = new IncomePetKills(pet);
+        session.Reset(new DateTime(2026, 1, 1));
+        source.NoteChat("Your Fire Elemental killed Treasure Guardian!");
+        source.NoteChat("[12:34:56] Your Your summon killed Drudge!");
+        source.NoteChat("Your Bob's Pet killed Olthoi Warrior!");
+        Equal(pet.Total, 3, "Count named pets and the server's unnamed-summon fallback");
+        foreach (string text in new[] { null, "", "You killed Drudge!", "Someone's pet killed Drudge!",
+            "Someone says, \"Your Fire Elemental killed Drudge!\"", "Your pet killed !",
+            "Your  killed Drudge!", "Your pet killed Drudge! unrelated suffix" })
+            source.NoteChat(text);
+        Equal(pet.Total, 3, "Ignore other kill messages, quotes, and incomplete messages");
+        Equal(direct.Total, 0, "Pet chat does not affect direct kills");
+        for (int i = 0; i < 5; i++) session.SampleMinute();
+        Equal(pet.FiveMinutePerHour, 36, "Pet kills share rolling rates");
+        session.Reset(new DateTime(2026, 1, 1));
+        Equal(pet.Total, 0, "Reset clears pet kills");
+        Equal(pet.FiveMinutePerHour, null, "Reset clears pet-kill history");
+        source.NoteChat("Your Fire Elemental killed Drudge!");
+        Equal(pet.Total, 1, "Pet kills continue after reset");
     }
 
     private static void ConquestReports()
