@@ -1,7 +1,21 @@
 Server,Name,QuestFlag,Url,Hint
 Conquest,Darshmaul the Brutal,assaultonaimaru,,Shoushi - Portal to Fort 33.6S 74.9E - Kill Darshmaul the Brutal 34.3S 80.7E - Loot Finger - Shoushi - Give to Vovran 33.4S 72.8E
 Conquest,Forgotten One,GhostDenCompleted,,Desolution Beach - Helsing 82.5N 43.5W - Den of Ghosts 82.4N 41.3W - Head North and hug left. Don't go downstairs - Defeat The Forgotten One and Loot Head - Back to Helsing
-Conquest,Ice Giants,icegiantkilltask,,No hint available
-Conquest,Thorsten's Tears,cragstonetearspickup,,No hint available
-Conquest,Uber Bobo,uberpawlooted,,No hint available
-Conquest,Uber Curator,uberrtwreward,,No hint available
+Conquest,Ice Giants Kill Task,icegiantkilltask,,"ENL 3+ Abandoned Mines - /tell Subway ""ice"" and take portal - Speak to Bjorn Sjostrom 95.0N 57.0W"
+Conquest,Tenebrous Subversion,shadowqueensspike,,ENL 8+ 14 players max. Flag: Zhaikhal - Zahar 13.4N 0.5E - Tou-Tou 28.2S 96.0E - Kill Teneberous Shadows loot Tenebrous Synaptic Core Matrix - Give to Zahar. Repeat: Timaru - Astral Projection 51.2N 76.1W
+Conquest,Thorsten's Tears,cragstonetearspickup,,ENL 2+ 14 players max. Abandoned Mines - Bottom before big jump - Buy Cragstone Farms Portal Gem 20.1N 43.6E - Thomas the Squire 19.1N 46.3E - Cragstone - Alter to Cragstone 26.0N 48.4E - The Knight's Hold 34.6N 41.6E
+Conquest,Uber Bellas,bellasprimaryrewardclaimed,,ENL 2+ 6 players max. Hebian-To - Ambassador Fehyin 39.0S 83.0E - 1 player turn in Eaters jaw - Augmentation Realm - Lowest Level 39.0S 83.0E
+Conquest,Uber Bellas (consolation),BellasConsolationPrize,,ENL 2+ 6 players max. Hebian-To - Ambassador Fehyin 39.0S 83.0E - 1 player turn in Eaters jaw - Augmentation Realm - Lowest Level 39.0S 83.0E
+Conquest,Uber Bobo,uberpawlooted,,"ENL 2+ 14 players max. Abandoned Mines - South passage - Legend of Tusker King - All Lefts - Throne of Tusker King - Talk to Jhango, The Second Prince - Take Uber Tusker Arena - Kill Bobo"
+Conquest,Uber Curator,uberrtwreward,,ENL 2+ Rynthid Camp 61.6S 63.2W - 1 player kill 4 sanctum wardning crystals - Fargus 61.6S 63.2W
+Conquest,Uber Curator (consolation),uberrtwconsolationprize,,ENL 2+ Rynthid Camp 61.6S 63.2W - 1 player kill 4 sanctum wardning crystals - Fargus 61.6S 63.2W
+Conquest,Uber HMD,UberHMDPrimaryRewardClaimed,,ENL 4+ 6 players max. Hosh Tent 80.7N 43.0W - Kill 3 gatekeepers and combine key or do wall jump - Hosh Castle - Mysterious Hatch in first area
+Conquest,Uber HMD (consolation),UberHMDConsolationPrize,,ENL 4+ 6 players max. Hosh Tent 80.7N 43.0W - Kill 3 gatekeepers and combine key or do wall jump - Hosh Castle - Mysterious Hatch in first area
+Conquest,Uber Metos 1,ubermetossiralfricprimary,,ENL 5+ 9 players max. Dungeon: Graveyard - 61.3S 46.6W Rewards NPC: Graveyard - 64.4S 45.8W
+Conquest,Uber Metos 1 (consolation),ubermetossiralfricconsolation,,ENL 5+ 9 players max. Dungeon: Graveyard - 61.3S 46.6W Rewards NPC: Graveyard - 64.4S 45.8W
+Conquest,Uber Metos 2,ubermetossrandprimary,,ENL 5+ 9 players max. Dungeon: Graveyard - 61.3S 46.6W Rewards NPC: Graveyard - 64.4S 45.8W
+Conquest,Uber Metos 2 (consolation),ubermetossrandconsolation,,ENL 5+ 9 players max. Dungeon: Graveyard - 61.3S 46.6W Rewards NPC: Graveyard - 64.4S 45.8W
+Conquest,Uber Slave Master,uberslavemasterprimaryrewardclaimed,,ENL 4+ 6 players max. Neftet - Katsat 20.6S 7.9E - 1 player turn in Engraved A'nekshay Bracers - Temple Rear Entrance 20.6S 7.9E
+Conquest,Uber Slave Master (consolation),uberslavemasterconsolationprize,,ENL 4+ 6 players max. Neftet - Katsat 20.6S 7.9E - 1 player turn in Engraved A'nekshay Bracers - Temple Rear Entrance 20.6S 7.9E
+Conquest,World Boss: Leafcull,lceventcompleted,,Qalabar - Villalabar 74.9S 17.8E - Old Lugian Fortification 57.8S 18.0E. Reward: Khayyaban - Brigand Sands Cottage Portal 49.3S 26.0E - Highguard Wa Shi 63.7S 26.2E
+Conquest,World Boss: Wintersebb,weeventcompleted ,,Crater Village - Mountain Retreat Cottages 66.1N 14.1E - Up mountain 56.5N 4.1W - Wintersebb 55.1N 3.5W. Reward: Mountain Retreat 59.8N 4.2W
